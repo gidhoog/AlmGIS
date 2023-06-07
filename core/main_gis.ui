@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainGis</class>
+ <widget class="QMainWindow" name="MainGis">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>693</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <layout class="QVBoxLayout" name="uiCentralVLay">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QgsMapCanvas" name="uiCanvas" native="true"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>693</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="uiBasicToolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionZoomBase"/>
+   <addaction name="actionPan"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
+   <addaction name="actionZoomePrevious"/>
+   <addaction name="actionZoomToLayer"/>
+   <addaction name="actionZoomToSelected"/>
+   <addaction name="separator"/>
+   <addaction name="actionDelSelection"/>
+   <addaction name="actionSelectFeature"/>
+   <addaction name="separator"/>
+   <addaction name="actionFeatureInfo"/>
+   <addaction name="separator"/>
+   <addaction name="actionAddFeature"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionPan">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionPan.svg</normaloff>:/svg/resources/icons/mActionPan.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Kartenfenster verschieben</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionZoomIn.svg</normaloff>:/svg/resources/icons/mActionZoomIn.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Hineinzoomen</string>
+   </property>
+  </action>
+  <action name="actionZoomBase">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionPanToBase.svg</normaloff>:/svg/resources/icons/mActionPanToBase.svg</iconset>
+   </property>
+   <property name="text">
+    <string>zoome zum Basislayer</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionZoomOut.svg</normaloff>:/svg/resources/icons/mActionZoomOut.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Herauszoomen</string>
+   </property>
+  </action>
+  <action name="actionZoomePrevious">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionZoomLast.svg</normaloff>:/svg/resources/icons/mActionZoomLast.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Zoome zum letzen Ausschnitt</string>
+   </property>
+  </action>
+  <action name="actionDelSelection">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionDeselectAll.svg</normaloff>:/svg/resources/icons/mActionDeselectAll.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Auswahl aufheben</string>
+   </property>
+  </action>
+  <action name="actionZoomToLayer">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionZoomToLayer.svg</normaloff>:/svg/resources/icons/mActionZoomToLayer.svg</iconset>
+   </property>
+   <property name="text">
+    <string>auf Layer zoomen</string>
+   </property>
+   <property name="toolTip">
+    <string>auf Layer zoomen</string>
+   </property>
+  </action>
+  <action name="actionZoomToSelected">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionZoomToSelected.svg</normaloff>:/svg/resources/icons/mActionZoomToSelected.svg</iconset>
+   </property>
+   <property name="text">
+    <string>zu ausgewählten Objekten zoomen</string>
+   </property>
+   <property name="toolTip">
+    <string>zu ausgewählten Objekten zoomen</string>
+   </property>
+  </action>
+  <action name="actionSelectFeature">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionSelectRectangle.svg</normaloff>:/svg/resources/icons/mActionSelectRectangle.svg</iconset>
+   </property>
+   <property name="text">
+    <string>wähle ein Objekt</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;wähle ein oder mehrere Objekte aus;&lt;/p&gt;&lt;p&gt;Mehrere Objekte können durch drücken der STRG-Taste ausgewählt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionFeatureInfo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionIdentify.svg</normaloff>:/svg/resources/icons/mActionIdentify.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Objektinformationen abrufen</string>
+   </property>
+   <property name="toolTip">
+    <string>Objektinformationen abrufen</string>
+   </property>
+  </action>
+  <action name="actionAddFeature">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionAddPolygon.svg</normaloff>:/svg/resources/icons/mActionAddPolygon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsMapCanvas</class>
+   <extends>QWidget</extends>
+   <header>qgis.gui</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

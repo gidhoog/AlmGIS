@@ -1,0 +1,50 @@
+<RCC>
+  <qresource prefix="png"/>
+  <qresource prefix="theme"/>
+  <qresource prefix="logo">
+    <file>resources/icons/nordpfeil01.png</file>
+    <file>resources/icons/abb_logo_ohne_schrift.svg</file>
+  </qresource>
+  <qresource prefix="html_info"/>
+  <qresource prefix="svg">
+    <file>resources/icons/akte.svg</file>
+    <file>resources/icons/mActionAddPolygon.svg</file>
+    <file>resources/icons/mActionZoomToLayer.svg</file>
+    <file>resources/icons/mActionZoomToSelected.svg</file>
+    <file>resources/icons/mActionAdd.svg</file>
+    <file>resources/icons/mActionPanToSelected.svg</file>
+    <file>resources/icons/mActionIdentify.svg</file>
+    <file>resources/icons/mActionSelectRectangle.svg</file>
+    <file>resources/icons/mActionAdd_2.svg</file>
+    <file>resources/icons/mActionAdd_3.svg</file>
+    <file>resources/icons/symbology.svg</file>
+    <file>resources/icons/mActionDataSourceManager.svg</file>
+    <file>resources/icons/filter_false.svg</file>
+    <file>resources/icons/filter_true.svg</file>
+    <file>resources/icons/add_display_area_checked.svg</file>
+    <file>resources/icons/add_display_area_unchecked.svg</file>
+    <file>resources/icons/close_mainarea_active.svg</file>
+    <file>resources/icons/close_mainarea_inactive.svg</file>
+    <file>resources/icons/edit_yellow.svg</file>
+    <file>resources/icons/export_table.svg</file>
+    <file>resources/icons/minus_red.svg</file>
+    <file>resources/icons/plus_green.svg</file>
+    <file>resources/icons/small_delete_cross_active.svg</file>
+    <file>resources/icons/small_delete_cross_inactive.svg</file>
+    <file>resources/icons/mActionFileOpen.svg</file>
+    <file>resources/icons/mActionFilePrint.svg</file>
+    <file>resources/icons/mActionFileSaveAs.svg</file>
+    <file>resources/icons/mActionRemoveLayer.svg</file>
+    <file>resources/icons/mActionZoomFullExtent.svg</file>
+    <file>resources/icons/unfloat_dock.svg</file>
+    <file>resources/icons/hamburger.svg</file>
+    <file>resources/icons/legend.svg</file>
+    <file>resources/icons/mActionDeselectAll.svg</file>
+    <file>resources/icons/mActionPanToSelected.svg</file>
+    <file>resources/icons/mActionZoomIn.svg</file>
+    <file>resources/icons/mActionZoomLast.svg</file>
+    <file>resources/icons/mActionZoomOut.svg</file>
+    <file>resources/icons/mActionPanToBase.svg</file>
+    <file>resources/icons/mActionPan.svg</file>
+  </qresource>
+</RCC>
