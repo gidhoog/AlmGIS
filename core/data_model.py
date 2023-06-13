@@ -1,6 +1,8 @@
+from typing import List
+
 from geoalchemy2 import Geometry
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import relationship, DeclarativeBase
+from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -59,8 +61,8 @@ class BCutKomplexGst(Base):
     geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
                                srid=31259))
 
-    rel_komplex = relationship('BKomplex',
-                               back_populates="rel_cut_komplex_gstversion")
+    # rel_komplex = relationship('BKomplex',
+    #                            back_populates="rel_cut_komplex_gstversion")
     rel_gstversion = relationship('BGstVersion',
                                   back_populates="rel_cut_komplex_gstversion")
 
@@ -447,27 +449,87 @@ class BKomplex(Base):
     basisdatenebene für komplexe (= eigenständige weideobjekte);
     je akt kann es mehrere komplexe geben
     """
-    __tablename__ = "a_alm_komplexe"
+    __tablename__ = "a_alm_komplex"
 
-    id = Column(Integer, primary_key=True)
-    akt_id = Column(Integer, ForeignKey('a_alm_akt.id'))
-    nr = Column(Integer)
-    name = Column(Integer)
-    jahr = Column(Integer)
-    bearbeiter = Column(String)
-    anmerkung = Column(String)
-    geometry = Column(Geometry(geometry_type="POLYGON",
-                               srid=31259))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    akt_id: Mapped[int] = mapped_column(ForeignKey('a_alm_akt.id'))
+    nr: Mapped[str]
+    name: Mapped[str]
+    anmerkung: Mapped[str]
+    inaktiv: Mapped[bool]
 
-    rel_akt = relationship('BAkt', back_populates='rel_komplexe')
-    rel_cut_komplex_gstversion = relationship('BCutKomplexGst',
-                                              back_populates="rel_komplex",
-                                              cascade="all, delete, delete-orphan")
+    # id = Column(Integer, primary_key=True)
+    # akt_id = Column(Integer, ForeignKey('a_alm_akt.id'))
+    # nr = Column(Integer)
+    # name = Column(Integer)
+    # anmerkung = Column(String)
+    # inaktiv = Column(Boolean)
+
+    # rel_akt = relationship('BAkt', back_populates='rel_komplexe')
+    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplexe')
+    rel_komplex_version: Mapped[List["BKomplexVersion"]] = relationship(back_populates="rel_komplex")
+
+    # rel_cut_komplex_gstversion = relationship('BCutKomplexGst',
+    #                                           back_populates="rel_komplex",
+    #                                           cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return f"<BKomplex(id: {self.id}, " \
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
+
+
+class BKomplexVersion(Base):
+    """
+    Datenebene für unterschiedliche Versionen eines Komplexes (Jahr,
+    Planungsversion, ...)
+    """
+    __tablename__ = "a_alm_komplex_version"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
+    jahr: Mapped[int]
+    bearbeiter: Mapped[str]
+    erfassungsart_id: Mapped[int]
+    version_id: Mapped[int]
+    anmerkung: Mapped[str]
+    inaktiv: Mapped[bool]
+
+    rel_komplex: Mapped["BKomplex"] = relationship(back_populates='rel_komplex_version')
+    rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
+
+    def __repr__(self):
+        return f"<BKomplexVersion(id: {self.id}, " \
+               f"komplex_id: {self.komplex_id}, " \
+               f"jahr: {self.jahr})>"
+
+
+class BKoppel(Base):
+    """
+    Datenebene für Koppeln
+    """
+    __tablename__ = "a_alm_koppel"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    komplex_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_version.id"))
+    nr: Mapped[int]
+    name: Mapped[str]
+    nicht_weide: Mapped[bool]
+    bearbeiter: Mapped[str]
+    seehoehe: Mapped[int]
+    domes_id: Mapped[int]
+    heuertrag_ha: Mapped[int]
+    anmerkung: Mapped[str]
+    # geometry: Mapped[Geometry(geometry_type="POLYGON", srid=31259)]
+    geometry = Column(Geometry(geometry_type="POLYGON", srid=31259))
+
+    rel_komplex_version: Mapped["BKomplex"] = \
+        relationship("BKomplexVersion", back_populates='rel_koppel')
+
+    def __repr__(self):
+        return f"<BKoppel(id: {self.id}, " \
+               f"komplex_version_id: {self.komplex_version_id}, " \
+               f"nr: {self.nr})>"
 
 
 class BRechtsgrundlage(Base):
