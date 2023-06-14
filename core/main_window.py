@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from core import main_window_UI, DbSession
 from core.data_model import BKomplex
-from core.gis_tools import cut_komplex_gstversion
+from core.gis_tools import cut_koppel_gstversion
 from core.scopes.akte import akte_all_main
 from core.scopes.gst.gst_all_main import GstAllMain
 
@@ -24,16 +24,6 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
         self.initUi()
         self.signalsMenue()
 
-        # with DbSession.session_scope() as session:
-        #
-        #     res = session.query(BKomplex).filter(BKomplex.akt_id == 675).all()
-        #
-        #     result = session.scalars(select(BKomplex).filter(BKomplex.akt_id == 675)).all()
-        #     print(f'result: {result}')
-        #     # for row in session.execute(result):
-        #     #     print(f"{row.BKomplex.id} {row.BKomplex.name}")
-        #     print(f'**')
-
     def signalsMenue(self):
         """
         menü signale
@@ -48,7 +38,7 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             lambda: self._setMainWidget("gst_match_all"))
 
         # Verschnitte:
-        self.actionCutGstVersionKomplexe.triggered.connect(cut_komplex_gstversion)
+        self.actionCutGstVersionKomplexe.triggered.connect(cut_koppel_gstversion)
 
     def _setMainWidget(self, scope):
         """

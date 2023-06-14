@@ -25,7 +25,7 @@ from core.gis_layer import getGisLayer, setLayerStyle
 from core.main_dialog import MainDialog
 from core.print_content_widget import PrintContentWidget
 
-from core.gis_tools import cut_komplex_gstversion
+from core.gis_tools import cut_koppel_gstversion
 
 
 class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
@@ -1101,7 +1101,7 @@ class DigiTool(QgsMapToolDigitizeFeature):
             self.canvas.update()
             self.canvas.refresh()
 
-            cut_komplex_gstversion()
+            cut_koppel_gstversion()
             self.parent.parent.parent().onGisEdit()
 
         else:

@@ -13,7 +13,7 @@ from core import entity, DbSession
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar
 from core.gis_control import GisControl
-from core.gis_tools import cut_komplex_gstversion
+from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
@@ -163,9 +163,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         """stelle eine relation von gis-layern und datentabellen her und
         aktiviere die überwachung dieser relation"""
-        self.linked_gis_widgets[99] = self.gst_table
-        self.linked_gis_widgets[104] = self.komplex_table
-        self.activateGisControl()
+        # self.linked_gis_widgets[99] = self.gst_table
+        # self.linked_gis_widgets[104] = self.komplex_table
+        # self.activateGisControl()
         """"""
 
     def mapData(self):
@@ -187,8 +187,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        self.gst_table.initMaintable(self.session)
-        self.komplex_table.initMaintable(self.session)
+        # self.gst_table.initMaintable(self.session)
+        # self.komplex_table.initMaintable(self.session)
 
         self.loadGisLayer()
 
@@ -336,7 +336,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def updateAkt(self):
 
         """führe den verschnitt komplexe und gst-version durch"""
-        cut_komplex_gstversion()
+        cut_koppel_gstversion()
         """"""
 
         """update canvas"""

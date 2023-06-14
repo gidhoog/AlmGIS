@@ -7,12 +7,12 @@ from qgis.core import QgsVectorLayer, edit, QgsFeature, \
 from core.config import alm_data_db_path
 
 
-def cut_komplex_gstversion():
+def cut_koppel_gstversion():
     """
-    methode zu verschneiden der layer komplexe ('a_alm_komplexe') und der
+    methode zu verschneiden der layer koppel_aktuell ('v_koppel_aktuell') und der
     im alm- und weidebuch eingetragenen grundstücke ('v_alm_gst_awbuch');
 
-    im verschnittlayer ('a_cut_komplex_gstversion') werden die id's der beiden
+    im verschnittlayer ('a_cut_koppel_aktuell_gstversion') werden die id's der beiden
     layer und der zeitpunkt des verschnittes eingetragen
     """
 
@@ -28,7 +28,7 @@ def cut_komplex_gstversion():
     try:
         """definiere den verschnittlayer"""
         layer_intersect = QgsVectorLayer(
-            str(alm_data_db_path.absolute()) + '|layername=a_cut_komplex_gstversion',
+            str(alm_data_db_path.absolute()) + '|layername=a_cut_koppel_aktuell_gstversion',
             'z_layer',
             'ogr'
         )
@@ -45,7 +45,7 @@ def cut_komplex_gstversion():
         virtuellen verschnittlayer"""
         intersect = processing.run("native:intersection", {
             'INPUT': QgsProcessingFeatureSourceDefinition(
-                str(alm_data_db_path.absolute()) + '|layername=a_alm_komplexe',
+                str(alm_data_db_path.absolute()) + '|layername=v_koppel_aktuell',
                 selectedFeaturesOnly=False,
                 featureLimit=-1,
                 flags=QgsProcessingFeatureSourceDefinition.FlagOverrideDefaultGeometryCheck,
@@ -85,12 +85,12 @@ def cut_komplex_gstversion():
         'new_features' ein"""
         for feat in intersect_features:
             cut_geom = feat.geometry()
-            komplex_id = feat['id']
+            koppel_id = feat['id']
             gstversion_id = feat['gstversion_id']
 
             new_feat = QgsFeature()
             new_feat.setAttributes \
-                ([None, komplex_id, gstversion_id, cut_timestamp])
+                ([None, koppel_id, gstversion_id, cut_timestamp])
             new_feat.setGeometry(cut_geom)
 
             new_features.append(new_feat)
@@ -107,7 +107,7 @@ def cut_komplex_gstversion():
     except:
         """der verschnitt kann nicht durchgeführt werden"""
         msg = QMessageBox()
-        msg.setText("Der Verschnitt von Komplexen und Grundstücken die im "
+        msg.setText("Der Verschnitt der aktuellen Koppeln und Grundstücken die im "
                     "AW-Buch eingetragen sind konnte nicht "
                     "durchgeführt werden.")
         msg.exec_()

@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 from core import entity, DbSession
 from core.data_model import BGstAwbStatus, BRechtsgrundlage
-from core.gis_tools import cut_komplex_gstversion
+from core.gis_tools import cut_koppel_gstversion
 from core.scopes.gst import gst_zuordnung_dataform_UI
 
 
@@ -119,6 +119,6 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def commitEntity(self):
         super().commitEntity()
 
-        cut_komplex_gstversion()
+        cut_koppel_gstversion()
         self.parent.parent.guiMainGis.uiCanvas.refresh()
         self.parent.parent.komplex_table.updateMaintable()
