@@ -1,17 +1,18 @@
 import os
+import typing
 from pathlib import Path
 
-from PyQt5.QtGui import QFont, QIntValidator, QIcon
+from PyQt5.QtGui import QFont, QIntValidator, QIcon, QStandardItem, QColor
 from PyQt5.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
-    QMenu, QAction, QTreeView
-from PyQt5.QtCore import Qt, QSize
+    QMenu, QAction, QTreeView, QHBoxLayout, QComboBox
+from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 from qgis.PyQt import QtWidgets
 from qgis.core import QgsLayoutExporter
-from sqlalchemy import desc
+from sqlalchemy import desc, select
 
 from core import entity, DbSession
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
-    BGisScopeLayer, BGisStyleLayerVar
+    BGisScopeLayer, BGisStyleLayerVar, BKomplex, BKomplexVersion, BKoppel
 from core.gis_control import GisControl
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
@@ -153,6 +154,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiKomplexeGisListeVlay.addWidget(self.komplex_table)
         """"""
 
+
+        self.komplex_tree_header_layer = QHBoxLayout(self)
+        self.uicKkJahrLbl = QLabel(self)
+        self.uicKkJahrLbl.setText('Jahr:')
+        self.uicKkJahrCombo = QComboBox(self)
+        space = QSpacerItem(1, 1, QtWidgets.QSizePolicy.Expanding,
+                    QtWidgets.QSizePolicy.Fixed)
+        self.komplex_tree_header_layer.addWidget(self.uicKkJahrLbl)
+        self.komplex_tree_header_layer.addWidget(self.uicKkJahrCombo)
+        self.komplex_tree_header_layer.addSpacerItem(space)
+
+        self.uiKomplexeGisListeVlay.addLayout(self.komplex_tree_header_layer)
+
         self.komplexe_view = QTreeView(self)
         self.uiKomplexeGisListeVlay.addWidget(self.komplexe_view)
 
@@ -193,7 +207,29 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.gst_table.initMaintable(self.session)
         self.komplex_table.initMaintable(self.session)
 
+        self.loadKKTree(self.session)
+
         self.loadGisLayer()
+
+    def loadKKTree(self, session):
+
+        with session:
+
+            kk_jahre = session.execute(select(BKomplexVersion.jahr)
+                                       .join(BKomplexVersion.rel_komplex)
+                                       .where(BKomplex.akt_id == self.data_instance.id)
+                                       .group_by(BKomplexVersion.jahr)).all()
+
+            print(f'kk_jahre')
+
+            komplex_inst = session.scalars(select(BKomplex)
+                                    .where(BKomplex.akt_id == self.data_instance.id)).all()
+
+            print(f'komplexe')
+
+            self.kk_tree_model = KKTreeModel(self, komplex_inst)
+            self.komplexe_view.setModel(self.kk_tree_model)
+            self.komplexe_view.expandAll()
 
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und
@@ -362,3 +398,247 @@ class GisDock(QDockWidget):
         super(__class__, self).__init__(parent)
 
         self.setWindowTitle('Kartenansicht')
+
+
+class KKTreeModel(QAbstractItemModel):
+
+    def __init__(self, parent, komplex_instances) -> None:
+        super(KKTreeModel, self).__init__(parent)
+
+        self.rootItem = KKTreeItem()
+
+        self.appendChildItems(self.rootItem, komplex_instances)
+
+        # self.addElement(self.rootItem, instance_list)
+    def appendChildItems(self, parent_item, komplexe):
+
+        for komplex in komplexe:
+            tree_item = KKTreeItem(data=komplex)
+            parent_item.appendRow(tree_item)
+
+            if komplex.rel_komplex_version != []:
+
+                for komplex_v in komplex.rel_komplex_version:
+                    kv = KKTreeItem(data=komplex_v)
+                    tree_item.appendRow(kv)
+
+                    if komplex_v.rel_koppel != []:
+
+                        for koppel in komplex_v.rel_koppel:
+                            kop = KKTreeItem(data=koppel)
+                            kv.appendRow(kop)
+
+            # if instance.children != []:
+            #     self.appendChildItems(tree_item, instance.children)
+
+    def columnCount(self, parent: QModelIndex = ...) -> int:
+        return 3
+
+    def rowCount(self, parent: QModelIndex = ...) -> int:
+
+        parent_item = self.getItem(parent)
+        return parent_item.rowCount()
+
+
+    def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+
+        item = self.getItem(index)
+
+        if not index.isValid():
+            return None
+
+        if role == Qt.DisplayRole and index.column() == 0:
+            print('..')
+            if type(item.data_instance) == BKomplex:
+                return item.data_instance.name
+            if type(item.data_instance) == BKomplexVersion:
+                return item.data_instance.jahr
+            if type(item.data_instance) == BKoppel:
+                if item.data_instance.nr:
+                    nr = str(item.data_instance.nr)
+                else:
+                    nr = '-'
+                if item.data_instance.name:
+                    name = item.data_instance.name
+                else:
+                    name = '---'
+                return nr + ' ' + name
+
+        # try:
+        # if role == Qt.DisplayRole:
+        #     print('...')
+        #     if index.column() == 0:
+        #         return item.name + '---'
+        #     else:
+        #         return item.data(index.column())
+
+        if role == Qt.DecorationRole:
+
+            if index.column() == 0:
+
+                if type(item.data_instance) == BKomplex:
+                    return QColor(210, 95, 70)  # rot
+                if type(item.data_instance) == BKoppel:
+                    return QColor(245, 215, 20)  # gelb
+
+        # if role == Qt.DecorationRole:
+        #     if not item.hasChildren():
+        #         return QColor(245, 210, 45)  # yellow
+        #     elif item.hasChildren():
+        #         itemlist = ''
+        #         for r in range(item.rowCount()):
+        #             if item.child(r).hasChildren():
+        #                 itemlist += 'g'
+        #             if not item.child(r).hasChildren():
+        #                 itemlist += 'i'
+        #
+        #         if 'g' in itemlist and 'i' in itemlist:
+        #                 return QColor(210, 95, 70)  # red
+        #         else:
+        #             return QColor(110, 160, 10)  # green
+        #     return QColor(130, 185, 230)  # blue
+        #
+        # if role == Qt.ForegroundRole:
+        #     return item.color
+        # if role == Qt.FontRole:
+        #     return item.fnt
+
+        if role == KKTreeItem.INSTANCE_ROLE:
+            return item.data_instance
+
+        if role == KKTreeItem.ITEM_ROLE:
+            return item
+        # except:
+        #     pass
+
+        return None
+
+    def setData(self, index, value, role=Qt.EditRole):
+        """
+        :param index: QModelIndex
+        :param value: QVariant
+        :param role: int (flag)
+        :return: bool
+        """
+        if index.isValid():
+            # if role == Qt.DecorationRole:
+            #     self.dataChanged.emit(index, index)  # <---
+            #     return True
+            if role == Qt.EditRole:
+                # item = index.internalPointer()
+                item = self.data(index, KKTreeItem.ITEM_ROLE)
+                item.name = value
+                self.dataChanged.emit(index, index)  # <---
+                return True
+
+        return False
+
+    def index(self, row, column, parent=QModelIndex()):
+
+        if parent.isValid() and parent.column() != 0:
+            return QModelIndex()
+
+        parentItem = self.getItem(parent)
+        childItem = parentItem.child(row)
+        if childItem:
+            return self.createIndex(row, column, childItem)
+        else:
+            return QModelIndex()
+
+    def getItem(self, index):
+        """
+        get the instance of the item of the given index (e.g. the instance of
+        the class 'KKTreeItem')
+        :param index:
+        :return: instance of the item
+        """
+        if index.isValid():
+            item = index.internalPointer()
+            if item:
+                return item
+
+        return self.rootItem
+
+    def parent(self, index):
+        if not index.isValid():
+            return QModelIndex()
+
+        childItem = self.getItem(index)
+        parentItem = childItem.parent()
+
+        if parentItem == self.rootItem:
+            return QModelIndex()
+
+        # return self.createIndex(parentItem.childNumber(), 0, parentItem)
+        return self.createIndex(parentItem.row(), 0, parentItem)
+
+    def insertRowsAdd(self, row: int, count: int,
+                   parent: QModelIndex = ...) -> bool:
+
+        self.beginInsertRows(parent, row, count)
+
+        new_inst = BFarmitem()
+        new_inst.name = 'fff'
+
+        new_item = KKTreeItem(new_inst.name, instance=new_inst)
+
+        parent_item = self.data(parent, KKTreeItem.ITEM_ROLE)  # parent is the selected index
+
+        parent_item.appendRow([new_item])
+
+        self.endInsertRows()
+
+        return True
+
+    def insertRowsInclude(self, row: int, count: int,
+                   parent: QModelIndex = ...) -> bool:
+
+        self.beginInsertRows(parent, row, count)
+
+        new_inst = BFarmitem()
+        new_inst.name = 'zzzz'
+
+        new_item = KKTreeItem(new_inst.name, instance=new_inst)
+
+        parent_item = self.data(parent, KKTreeItem.ITEM_ROLE)  # parent is the selected index
+
+        if parent_item.hasChildren():
+            print(f'has children!!!')
+            for cld in range(parent_item.rowCount()):
+                old_chld = parent_item.takeChild(cld, 0)
+                new_item.insertRow(0, old_chld)
+
+        parent_item.appendRow([new_item])
+
+        self.endInsertRows()
+
+        self.layoutChanged.emit()
+
+        return True
+
+
+class KKTreeItem(QStandardItem):
+
+    ITEM_ROLE = Qt.UserRole + 1
+    INSTANCE_ROLE = Qt.UserRole + 2
+
+    def __init__(self, name='', font_size=10, set_bold=False,
+                 color=QColor(0, 0, 0), data=None):
+        super().__init__()
+
+        self.name = name
+        self.data_instance = data
+        self.color = color
+        self.set_bold = set_bold
+
+        self.fnt = QFont('Open Sans', font_size)
+        self.fnt.setBold(set_bold)
+
+        # self.setEditable(False)
+        # self.setForeground(color)
+        # self.setFont(fnt)
+        # self.setText(txt)
+        # self.setData(data, self.INSTANCE_ROLE)
+
+    def childCount(self):
+        return self.rowCount()
