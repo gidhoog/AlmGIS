@@ -1,7 +1,7 @@
-from PyQt5.QtCore import Qt
+# from PyQt5.QtCore import Qt
 from sqlalchemy import func, select
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
-    BGstEz, BCutKomplexGst, BBearbeitungsstatus
+    BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus
 from core.main_table import MainTable, MaintableColumn, MainTableModel, \
     MainTableView
 from core.main_widget import MainWidget
@@ -92,6 +92,9 @@ class AkteAllMain(MainTable, MainWidget):
                                         BAkt.name,
                                         BAkt.alias))
 
+        # akt_inst = query2.all()
+        # print(f'###')
+
         # """subquery to get the area for the intersected and last gst"""
         # sub_komplex_area = session.query(
         #                     BAkt.id,
@@ -122,13 +125,13 @@ class AkteAllMain(MainTable, MainWidget):
         # """die beweidete fläche je akt die im aw-buch eingetragen ist"""
         # sub_awb_beweidet = session.query(BAkt.id,
         #                                  func.sum(func.ST_Area(
-        #                                      BCutKomplexGst.geometry))
+        #                                      BCutKoppelGstAktuell.geometry))
         #                                  .label("bew_area")) \
         #     .select_from(BAkt) \
         #     .join(BGstZuordnung) \
         #     .join(BGst)\
         #     .join(BGstVersion)\
-        #     .join(BCutKomplexGst) \
+        #     .join(BCutKoppelGstAktuell) \
         #     .filter(BGstZuordnung.awb_status_id == 1) \
         #     .group_by(BAkt.id) \
         #     .subquery()

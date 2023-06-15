@@ -3,7 +3,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QHeaderView
 from sqlalchemy import func
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
-    BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKomplexGst, \
+    BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt
 from core.main_dialog import MainDialog
 from core.main_table import MainTable, MaintableColumn, \
@@ -182,14 +182,14 @@ class GstMaintable(MainTable):
         """subquery um die flaeche des verschnittes von komplexe und 
         gst-version zu bekommen"""
         sub_cutarea = session.query(
-            BCutKomplexGst.gst_version_id,
-            func.sum(func.ST_Area(BCutKomplexGst.geometry)).label("bew_area"),
+            BCutKoppelGstAktuell.gst_version_id,
+            func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
             func.max(BKomplex.jahr)
         )\
             .join(BKomplex) \
             .join(BAkt) \
             .filter(BAkt.id == self.parent.data_instance.id)\
-            .group_by(BCutKomplexGst.gst_version_id)\
+            .group_by(BCutKoppelGstAktuell.gst_version_id)\
             .subquery()
         """"""
 

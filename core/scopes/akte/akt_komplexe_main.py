@@ -1,10 +1,10 @@
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtWidgets import QHeaderView
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, select
 
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKomplex, \
-    BCutKomplexGst
+    BCutKoppelGstAktuell
 from core.main_dialog import MainDialog
 from core.main_table import MainTable, MaintableColumn, \
     MainTableModel, MainTableView
@@ -69,10 +69,10 @@ class KomplexMaintable(MainTable):
 
         self.setStretchMethod(2)
 
-        self.insertFooterLine('davon im AWB eingetragen:',
-                              'ha', 5, 120, 0.0001, 4)
-        self.insertFooterLine('Gesamtfläche:',
-                              'ha', 7, 120, 0.0001, 4)
+        # self.insertFooterLine('davon im AWB eingetragen:',
+        #                       'ha', 5, 120, 0.0001, 4)
+        # self.insertFooterLine('Gesamtfläche:',
+        #                       'ha', 7, 120, 0.0001, 4)
 
     def finalInit(self):
         super().finalInit()
@@ -105,50 +105,80 @@ class KomplexMaintable(MainTable):
     def setMaintableColumns(self):
         super().setMaintableColumns()
 
-        self.maintable_columns[0] = MaintableColumn(column_type='int',
-                                                    visible=False)
-        self.maintable_columns[1] = MaintableColumn(heading='Nr',
+        self.maintable_columns[0] = MaintableColumn(heading='id',
                                                     column_type='int',
                                                     alignment='c')
-        self.maintable_columns[2] = MaintableColumn(heading='Name',
+        self.maintable_columns[1] = MaintableColumn(heading='Name',
                                                     column_type='str',
                                                     alignment='l')
-        self.maintable_columns[3] = MaintableColumn(heading='Jahr',
-                                                    column_type='int',
-                                                    alignment='c')
-        self.maintable_columns[4] = MaintableColumn(heading='Bearbeiter',
-                                                    column_type='str',
-                                                    alignment='l')
-        self.maintable_columns[5] = MaintableColumn(heading='AW-Buch (ha)',
-                                                    column_type='str')
-        self.maintable_columns[6] = MaintableColumn(heading='AW-Buch (%)',
-                                                    column_type='float')
-        self.maintable_columns[7] = MaintableColumn(heading='Fläche (ha)',
-                                                    column_type='str')
+
+        # self.maintable_columns[0] = MaintableColumn(column_type='int',
+        #                                             visible=False)
+        # self.maintable_columns[1] = MaintableColumn(heading='Nr',
+        #                                             column_type='int',
+        #                                             alignment='c')
+        # self.maintable_columns[2] = MaintableColumn(heading='Name',
+        #                                             column_type='str',
+        #                                             alignment='l')
+        # self.maintable_columns[3] = MaintableColumn(heading='Jahr',
+        #                                             column_type='int',
+        #                                             alignment='c')
+        # self.maintable_columns[4] = MaintableColumn(heading='Bearbeiter',
+        #                                             column_type='str',
+        #                                             alignment='l')
+        # self.maintable_columns[5] = MaintableColumn(heading='AW-Buch (ha)',
+        #                                             column_type='str')
+        # self.maintable_columns[6] = MaintableColumn(heading='AW-Buch (%)',
+        #                                             column_type='float')
+        # self.maintable_columns[7] = MaintableColumn(heading='Fläche (ha)',
+        #                                             column_type='str')
 
     def getMainQuery(self, session=None):
         super().getMainQuery(session)
 
-        query = session.query(BKomplex.id,
-                              BKomplex.nr,
-                              BKomplex.name,
-                              BKomplex.jahr,
-                              BKomplex.bearbeiter,
-                              func.sum(func.ST_Area(BCutKomplexGst.geometry)),
-                              None,  # placeholder for %
-                              func.ST_Area(BKomplex.geometry)) \
-            .select_from(BKomplex) \
-            .outerjoin(BCutKomplexGst) \
-            .outerjoin(BGstVersion) \
-            .outerjoin(BGstEz) \
-            .outerjoin(BGst) \
-            .outerjoin(BGstZuordnung,
-                       and_((BGstZuordnung.awb_status_id == 1),
-                            (BGst.id == BGstZuordnung.gst_id))) \
-            .filter(BKomplex.akt_id == self.parent.data_instance.id) \
-            .group_by(BKomplex.id)
+        # query = session.scalars(select(BKomplex)
+        #                         .where(BKomplex.akt_id == self.parent.data_instance.id))
 
-        return query
+        query = session.execute(select(BKomplex.id, BKomplex.name)
+                                .where(BKomplex.akt_id == self.parent.data_instance.id))
+
+        test_inst = query.all()
+
+        print(f'##')
+
+        # query = session.query(BKomplex.id,
+        #                       BKomplex.nr,
+        #                       BKomplex.name,
+        #                       BKomplex.jahr,
+        #                       BKomplex.bearbeiter,
+        #                       func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)),
+        #                       None,  # placeholder for %
+        #                       func.ST_Area(BKomplex.geometry)) \
+        #     .select_from(BKomplex) \
+        #     .outerjoin(BCutKoppelGstAktuell) \
+        #     .outerjoin(BGstVersion) \
+        #     .outerjoin(BGstEz) \
+        #     .outerjoin(BGst) \
+        #     .outerjoin(BGstZuordnung,
+        #                and_((BGstZuordnung.awb_status_id == 1),
+        #                     (BGst.id == BGstZuordnung.gst_id))) \
+        #     .filter(BKomplex.akt_id == self.parent.data_instance.id) \
+        #     .group_by(BKomplex.id)
+
+        return test_inst
+
+    def loadDataBySession(self):
+        """
+        frage die daten mittels der maintable_session aus der datenbank ab;
+        verwende dafür main_query
+        """
+
+        self.maintable_dataarray = self.getMainQuery(self.maintable_session)
+
+        # if self.main_query:
+        #     self.maintable_dataarray = self.main_query.all()
+
+        self.main_table_model = self.setMainTableModel()
 
     def updateMaintable(self):
         super().updateMaintable()
@@ -172,37 +202,45 @@ class KomplexModel(MainTableModel):
 
     def data(self, index: QModelIndex, role: int = ...):
 
-        if role == Qt.DisplayRole:
+        # val = self.data(index, Qt.EditRole)
+        #
+        # if role == Qt.DisplayRole:
+        #
+        #     if index.column() == 0:
+        #         return val.id
+        #
+        #     if index.column() == 1:
+        #         return val.name
 
-            if index.column() == 5:  # AW-Buch
-                val = self.data(index, Qt.EditRole)
-                if val:
-                    try:
-                        return '{:.4f}'.format(
-                            round(float(val) / 10000, 4)).replace(".", ",")
-                    except ValueError:
-                        pass
-
-            if index.column() == 6:  # AW-Buch %
-                gst_val = self.data(self.index(index.row(), 5), Qt.EditRole)
-                total_val = self.data(self.index(index.row(), 7), Qt.EditRole)
-                if not gst_val:
-                    return ''
-                else:
-                    val = (gst_val / total_val) * 100
-                    try:
-                        return '{:.2f}'.format(
-                            round(float(val), 2)).replace(".", ",")
-                    except ValueError:
-                        pass
-
-            if index.column() == 7:  # Komplexfläche
-                val = self.data(index, Qt.EditRole)
-                if val:
-                    try:
-                        return '{:.4f}'.format(
-                            round(float(val) / 10000, 4)).replace(".", ",")
-                    except ValueError:
-                        pass
+            # if index.column() == 5:  # AW-Buch
+            #     val = self.data(index, Qt.EditRole)
+            #     if val:
+            #         try:
+            #             return '{:.4f}'.format(
+            #                 round(float(val) / 10000, 4)).replace(".", ",")
+            #         except ValueError:
+            #             pass
+            #
+            # if index.column() == 6:  # AW-Buch %
+            #     gst_val = self.data(self.index(index.row(), 5), Qt.EditRole)
+            #     total_val = self.data(self.index(index.row(), 7), Qt.EditRole)
+            #     if not gst_val:
+            #         return ''
+            #     else:
+            #         val = (gst_val / total_val) * 100
+            #         try:
+            #             return '{:.2f}'.format(
+            #                 round(float(val), 2)).replace(".", ",")
+            #         except ValueError:
+            #             pass
+            #
+            # if index.column() == 7:  # Komplexfläche
+            #     val = self.data(index, Qt.EditRole)
+            #     if val:
+            #         try:
+            #             return '{:.4f}'.format(
+            #                 round(float(val) / 10000, 4)).replace(".", ",")
+            #         except ValueError:
+            #             pass
 
         return super().data(index, role)

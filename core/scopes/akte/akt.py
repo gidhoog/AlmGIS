@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PyQt5.QtGui import QFont, QIntValidator, QIcon
 from PyQt5.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
-    QMenu, QAction
+    QMenu, QAction, QTreeView
 from PyQt5.QtCore import Qt, QSize
 from qgis.PyQt import QtWidgets
 from qgis.core import QgsLayoutExporter
@@ -153,6 +153,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiKomplexeGisListeVlay.addWidget(self.komplex_table)
         """"""
 
+        self.komplexe_view = QTreeView(self)
+        self.uiKomplexeGisListeVlay.addWidget(self.komplexe_view)
+
     def finalInit(self):
         super().finalInit()
 
@@ -188,7 +191,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         super().loadSubWidgets()
 
         # self.gst_table.initMaintable(self.session)
-        # self.komplex_table.initMaintable(self.session)
+        self.komplex_table.initMaintable(self.session)
 
         self.loadGisLayer()
 

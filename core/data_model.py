@@ -48,29 +48,39 @@ class BBearbeitungsstatus(Base):
         return f"<BBearbeitungsstatus(id={self.id}, name='{self.name}')>"
 
 
-class BCutKomplexGst(Base):
+class BCutKoppelGstAktuell(Base):
     """
     basisdatenebene für den verschnitt von komplex und gst-version
     """
-    __tablename__ = 'a_cut_komplex_gstversion'
+    __tablename__ = 'a_cut_koppel_aktuell_gstversion'
 
-    pkuid = Column(Integer, primary_key=True)
-    komplex_id = Column(Integer, ForeignKey('a_alm_komplexe.id'))
-    gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
-    timestamp = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    koppel_id: Mapped[int] = mapped_column(ForeignKey("a_alm_koppel.id"))
+    gst_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_version.id"))
+    timestamp: Mapped[str]
     geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
                                srid=31259))
 
-    # rel_komplex = relationship('BKomplex',
+    rel_koppel: Mapped["BKoppel"] = relationship(back_populates='rel_cut_koppel_gst')
+    rel_gstversion: Mapped["BGstVersion"] = relationship(back_populates='rel_cut_koppel_gst')
+
+    # id = Column(Integer, primary_key=True)
+    # komplex_id = Column(Integer, ForeignKey('a_alm_koppel.id'))
+    # gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
+    # timestamp = Column(String)
+    # geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
+    #                            srid=31259))
+
+    # rel_koppel = relationship('BKomplex',
     #                            back_populates="rel_cut_komplex_gstversion")
-    rel_gstversion = relationship('BGstVersion',
-                                  back_populates="rel_cut_komplex_gstversion")
+    # rel_gstversion = relationship('BGstVersion',
+    #                               back_populates="rel_cut_komplex_gstversion")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(" \
-               f"pkuid: {self.pkuid}, " \
-               f"komplex_id: {self.komplex_id}, " \
-               f"gstversion_id:{self.gstversion_id})"
+               f"id: {self.id}, " \
+               f"koppel_id: {self.koppel_id}, " \
+               f"gstversion_id:{self.gst_version_id})"
 
 
 class BGisLayer(Base):
@@ -358,7 +368,7 @@ class BGstVersion(Base):
     rel_alm_gst_nutzung = relationship('BGstNutzung',
                                        back_populates="rel_alm_gst_version",
                                        cascade="all, delete-orphan")
-    rel_cut_komplex_gstversion = relationship('BCutKomplexGst',
+    rel_cut_koppel_gst = relationship('BCutKoppelGstAktuell',
                                               back_populates="rel_gstversion",
                                               cascade="all, delete, delete-orphan")
 
@@ -469,7 +479,7 @@ class BKomplex(Base):
     rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplexe')
     rel_komplex_version: Mapped[List["BKomplexVersion"]] = relationship(back_populates="rel_komplex")
 
-    # rel_cut_komplex_gstversion = relationship('BCutKomplexGst',
+    # rel_cut_komplex_gstversion = relationship('BCutKoppelGstAktuell',
     #                                           back_populates="rel_komplex",
     #                                           cascade="all, delete, delete-orphan")
 
@@ -523,8 +533,8 @@ class BKoppel(Base):
     # geometry: Mapped[Geometry(geometry_type="POLYGON", srid=31259)]
     geometry = Column(Geometry(geometry_type="POLYGON", srid=31259))
 
-    rel_komplex_version: Mapped["BKomplex"] = \
-        relationship("BKomplexVersion", back_populates='rel_koppel')
+    rel_komplex_version: Mapped["BKomplexVersion"] = relationship(back_populates='rel_koppel')
+    rel_cut_koppel_gst: Mapped["BCutKoppelGstAktuell"] = relationship(back_populates='rel_koppel')
 
     def __repr__(self):
         return f"<BKoppel(id: {self.id}, " \
