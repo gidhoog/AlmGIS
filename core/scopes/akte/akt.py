@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
 from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 from qgis.PyQt import QtWidgets
 from qgis.core import QgsLayoutExporter
-from sqlalchemy import desc, select
+from sqlalchemy import desc, select, and_
+from sqlalchemy.orm import joinedload, contains_eager
 
 from core import entity, DbSession
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
@@ -150,8 +151,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.gst_table = GstMaintable(self)
         self.uiGstListeVlay.addWidget(self.gst_table)
 
-        self.komplex_table = KomplexMaintable(self)
-        self.uiKomplexeGisListeVlay.addWidget(self.komplex_table)
+        # self.komplex_table = KomplexMaintable(self)
+        # self.uiKomplexeGisListeVlay.addWidget(self.komplex_table)
         """"""
 
 
@@ -205,31 +206,47 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         super().loadSubWidgets()
 
         # self.gst_table.initMaintable(self.session)
-        self.komplex_table.initMaintable(self.session)
+        # self.komplex_table.initMaintable(self.session)
 
-        self.loadKKTree(self.session)
+        self.setJahrCombo(self.session)
+        self.loadKKTree()
 
         self.loadGisLayer()
 
-    def loadKKTree(self, session):
+    def loadKKTree(self):
+        """
+        lade die Elemente des Komplex/Koppel TreeView's
+        :param session:
+        :return:
+        """
 
-        with session:
+        with self.session:
 
-            kk_jahre = session.execute(select(BKomplexVersion.jahr)
-                                       .join(BKomplexVersion.rel_komplex)
-                                       .where(BKomplex.akt_id == self.data_instance.id)
-                                       .group_by(BKomplexVersion.jahr)).all()
-
-            print(f'kk_jahre')
-
-            komplex_inst = session.scalars(select(BKomplex)
-                                    .where(BKomplex.akt_id == self.data_instance.id)).all()
-
-            print(f'komplexe')
+            komplex_inst = self.session.scalars(select(BKomplex)
+                                    .join(BKomplex.rel_komplex_version)
+                                    .where(and_((BKomplexVersion.jahr == int(self.uicKkJahrCombo.currentText())),
+                                                (BKomplex.akt_id == self.data_instance.id)))
+                                    .options(contains_eager(BKomplex.rel_komplex_version)))\
+                .unique().all()
 
             self.kk_tree_model = KKTreeModel(self, komplex_inst)
             self.komplexe_view.setModel(self.kk_tree_model)
             self.komplexe_view.expandAll()
+
+    def setJahrCombo(self, session):
+
+        with session:
+
+            jahre_query = session.execute(select(BKomplexVersion.jahr)
+                                          .join(BKomplexVersion.rel_komplex)
+                                          .where(
+                BKomplex.akt_id == self.data_instance.id)
+                                          .group_by(BKomplexVersion.jahr)).all()
+
+            jahre_list = [i[0] for i in jahre_query]
+
+            for jahr in sorted(jahre_list, reverse=True):
+                self.uicKkJahrCombo.addItem(str(jahr))
 
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und
@@ -326,6 +343,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
         self.actionPrintAWB.triggered.connect(self.createAwbPrint)
 
+        self.uicKkJahrCombo.currentIndexChanged.connect(self.loadKKTree)
+
 
     def changedGisDockLevel(self, level):
         """
@@ -369,7 +388,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         wird
         """
 
-        self.komplex_table.updateMaintable()
+        # self.komplex_table.updateMaintable()
         self.gst_table.updateMaintable()
 
     def updateAkt(self):
@@ -384,7 +403,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """"""
 
         """aktualisiere die tabellen"""
-        self.komplex_table.updateMaintable()
+        # self.komplex_table.updateMaintable()
         self.gst_table.updateMaintable()
         """"""
 
@@ -418,15 +437,15 @@ class KKTreeModel(QAbstractItemModel):
 
             if komplex.rel_komplex_version != []:
 
-                for komplex_v in komplex.rel_komplex_version:
-                    kv = KKTreeItem(data=komplex_v)
-                    tree_item.appendRow(kv)
+                # for komplex_v in komplex.rel_komplex_version:
+                #     kv = KKTreeItem(data=komplex_v)
+                #     tree_item.appendRow(kv)
 
-                    if komplex_v.rel_koppel != []:
+                if komplex.rel_komplex_version[0].rel_koppel != []:
 
-                        for koppel in komplex_v.rel_koppel:
-                            kop = KKTreeItem(data=koppel)
-                            kv.appendRow(kop)
+                    for koppel in komplex.rel_komplex_version[0].rel_koppel:
+                        kop = KKTreeItem(data=koppel)
+                        tree_item.appendRow(kop)
 
             # if instance.children != []:
             #     self.appendChildItems(tree_item, instance.children)
