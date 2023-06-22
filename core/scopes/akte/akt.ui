@@ -74,17 +74,8 @@
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="3" column="1">
-             <widget class="QLabel" name="uiStzLbl">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_2">
               <property name="font">
                <font>
                 <family>Calibri</family>
@@ -94,10 +85,25 @@
                </font>
               </property>
               <property name="text">
-               <string>TextLabel</string>
+               <string>Alias:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="uiAliasLedit">
+              <property name="font">
+               <font>
+                <family>Calibri</family>
+                <pointsize>11</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -113,6 +119,42 @@
               </property>
               <property name="text">
                <string>Status:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="font">
+               <font>
+                <family>Calibri</family>
+                <pointsize>11</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Stammzahl:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="font">
+               <font>
+                <family>Calibri</family>
+                <pointsize>11</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>AlmBNR:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -170,41 +212,17 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="uiAliasLedit">
-              <property name="font">
-               <font>
-                <family>Calibri</family>
-                <pointsize>11</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
+            <item row="3" column="1">
+             <widget class="QLabel" name="uiStzLbl">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
-              <property name="clearButtonEnabled">
-               <bool>true</bool>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
               </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="font">
-               <font>
-                <family>Calibri</family>
-                <pointsize>11</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>AlmBNR:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_3">
               <property name="font">
                <font>
                 <family>Calibri</family>
@@ -214,25 +232,10 @@
                </font>
               </property>
               <property name="text">
-               <string>Stammzahl:</string>
+               <string>TextLabel</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="uiAlmBnrLedit">
-              <property name="font">
-               <font>
-                <family>Calibri</family>
-                <pointsize>11</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="clearButtonEnabled">
-               <bool>true</bool>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -245,24 +248,6 @@
                 <weight>50</weight>
                 <bold>false</bold>
                </font>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="font">
-               <font>
-                <family>Calibri</family>
-                <pointsize>11</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Alias:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -289,6 +274,24 @@
                </font>
               </property>
              </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="uiAlmBnrLedit">
+              <property name="font">
+               <font>
+                <family>Calibri</family>
+                <pointsize>11</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="InfoButton" name="uiInfoStatus" native="true"/>
             </item>
            </layout>
           </item>
@@ -352,6 +355,14 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>InfoButton</class>
+   <extends>QWidget</extends>
+   <header>core/info_button</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../resources.qrc"/>
  </resources>
