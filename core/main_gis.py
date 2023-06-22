@@ -239,17 +239,17 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         """"""
 
         """füge einen button zum einfügen von externer layer ein"""
-        self.add_layer = QToolButton(self)
-        self.add_layer.setIcon(QIcon(":/svg/resources/icons/mActionAdd.svg"))
-        self.add_layer.setToolTip('füge einen <b>externen</b> Layer ein')
-        self.add_layer.setIconSize(QSize(25, 25))
-        self.add_layer.setPopupMode(QToolButton.InstantPopup)
-        self.uiBasicToolbar.addWidget(self.add_layer)
+        self.add_layer_tbtn = QToolButton(self)
+        self.add_layer_tbtn.setIcon(QIcon(":/svg/resources/icons/mActionAdd.svg"))
+        self.add_layer_tbtn.setToolTip('füge einen <b>externen</b> Layer ein')
+        self.add_layer_tbtn.setIconSize(QSize(25, 25))
+        self.add_layer_tbtn.setPopupMode(QToolButton.InstantPopup)
+        self.uiBasicToolbar.addWidget(self.add_layer_tbtn)
         """"""
 
         """lade den menübaum zum einfügen externer layer"""
         menu = self.getLayerMenu(1)
-        self.add_layer.setMenu(menu)
+        self.add_layer_tbtn.setMenu(menu)
         """"""
 
         """füge einen button zum einfügen von hintergrund-layer ein"""
@@ -556,6 +556,15 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
                     if layer_var.code_value == True:
                         var_value = getattr(self, layer_var.value)
+                        expression1 = f'jahr={var_value}'
+
+                        expression2 = '"akt_id"=54'
+                        expression = expression1 + ' and ' + expression2
+
+                        test_obj = eval('self.parent.parent()')
+                        test_val = getattr(test_obj, 'komplex_jahr')
+
+                        gis_layer.setSubsetString(expression)
                     else:
                         var_value = layer_var.value
 

@@ -6,8 +6,11 @@ from PyQt5.QtGui import QFont, QIntValidator, QIcon, QStandardItem, QColor
 from PyQt5.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
     QMenu, QAction, QTreeView, QHBoxLayout, QComboBox
 from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
+from geoalchemy2 import functions
+from geoalchemy2.shape import to_shape
 from qgis.PyQt import QtWidgets
-from qgis.core import QgsLayoutExporter
+from qgis.core import QgsLayoutExporter, QgsFeature, QgsVectorLayer, \
+    QgsGeometry, edit
 from sqlalchemy import desc, select, and_
 from sqlalchemy.orm import joinedload, contains_eager
 
@@ -15,6 +18,7 @@ from core import entity, DbSession
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BKomplex, BKomplexVersion, BKoppel
 from core.gis_control import GisControl
+from core.gis_layer import setLayerStyle
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
@@ -37,6 +41,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     _name = ''
     _stz = ''
     _status = 0
+
+    _komplex_jahr = 0
 
     @property  # getter
     def alm_bnr(self):
@@ -121,6 +127,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiStzLbl.setText(value)
         self._stz = value
 
+    @property  # getter
+    def komplex_jahr(self):
+
+        self._komplex_jahr = self.uicKkJahrCombo.currentText()
+
+        return self._komplex_jahr
+
+    @komplex_jahr.setter
+    def komplex_jahr(self, value):
+
+        self.uicKkJahrCombo.setCurrentText(value)
+        self._komplex_jahr = value
+
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
@@ -138,6 +157,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
         self.uiGisDock = GisDock(self)
         self.guiMainGis = MainGis(self.uiGisDock, self)
+        self.guiMainGis.komplex_jahr = 2018
         self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
         self.uiGisDock.setWidget(self.guiMainGis)
         """"""
@@ -155,21 +175,58 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.uiKomplexeGisListeVlay.addWidget(self.komplex_table)
         """"""
 
-
+        """erzeuge ein Layout über dem Komplex-TreeView mit Elementen"""
         self.komplex_tree_header_layer = QHBoxLayout(self)
         self.uicKkJahrLbl = QLabel(self)
         self.uicKkJahrLbl.setText('Jahr:')
         self.uicKkJahrCombo = QComboBox(self)
         space = QSpacerItem(1, 1, QtWidgets.QSizePolicy.Expanding,
                     QtWidgets.QSizePolicy.Fixed)
+        self.uicAddKoppelTbtn = QToolButton(self)
+        self.uicAddKoppelTbtn.setIcon(QIcon(":/svg/resources/icons/plus_green.svg"))
+        self.uicAddKoppelTbtn.setToolTip('füge eine oder mehrere Koppeln ein')
+        self.uicAddKoppelTbtn.setIconSize(QSize(25, 25))
+        self.uicAddKoppelTbtn.setPopupMode(QToolButton.InstantPopup)
+
+        self.actionAddKoppel = QAction(self)
+        self.actionAddKoppel.setText('füge eine neue Koppel beim ausgewählten Layer ein')
+        self.actionAddKoppelByYear = QAction(self)
+        self.actionAddKoppelByYear.setText('kopiere alle Koppeln eines Jahres')
+
+        self.uicAddKoppelMenu = QMenu(self)
+        self.uicAddKoppelMenu.addAction(self.actionAddKoppel)
+        self.uicAddKoppelMenu.addAction(self.actionAddKoppelByYear)
+        self.uicAddKoppelTbtn.setMenu(self.uicAddKoppelMenu)
+
         self.komplex_tree_header_layer.addWidget(self.uicKkJahrLbl)
         self.komplex_tree_header_layer.addWidget(self.uicKkJahrCombo)
         self.komplex_tree_header_layer.addSpacerItem(space)
+        self.komplex_tree_header_layer.addWidget(self.uicAddKoppelTbtn)
 
         self.uiKomplexeGisListeVlay.addLayout(self.komplex_tree_header_layer)
+        """"""
 
+        """erzeuge ein TreeView für Komplexe und Koppeln"""
         self.komplexe_view = QTreeView(self)
         self.uiKomplexeGisListeVlay.addWidget(self.komplexe_view)
+
+        """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
+        self.koppel_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Koppeln", "memory")
+        self.koppel_dp = self.koppel_layer.dataProvider()
+        self.koppel_layer.back = False
+        self.koppel_layer.base = True
+        setLayerStyle(self.koppel_layer, 'koppel_gelb')
+        self.guiMainGis.addLayer(self.koppel_layer)
+        """"""
+
+        """erzeuge einen Layer für die Komplexe und füge ihn ins canvas ein"""
+        self.komplex_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Komplexe", "memory")
+        self.komplex_dp = self.komplex_layer.dataProvider()
+        self.komplex_layer.back = False
+        self.komplex_layer.base = True
+        setLayerStyle(self.komplex_layer, 'komplex_rot')
+        self.guiMainGis.addLayer(self.komplex_layer)
+        """"""
 
     def finalInit(self):
         super().finalInit()
@@ -220,6 +277,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         :return:
         """
 
+        """entferne alle features vom layer Koppeln"""
+        with edit(self.koppel_layer):
+            listOfIds = [feat.id() for feat in self.koppel_layer.getFeatures()]
+            self.koppel_layer.deleteFeatures(listOfIds)
+        """"""
+
+        """entferne alle features vom layer Komplexe"""
+        with edit(self.komplex_layer):
+            listOfIds = [feat.id() for feat in self.komplex_layer.getFeatures()]
+            self.komplex_layer.deleteFeatures(listOfIds)
+        """"""
+
         with self.session:
 
             komplex_inst = self.session.scalars(select(BKomplex)
@@ -232,6 +301,51 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             self.kk_tree_model = KKTreeModel(self, komplex_inst)
             self.komplexe_view.setModel(self.kk_tree_model)
             self.komplexe_view.expandAll()
+
+            self.komplex_features = []
+            self.koppel_features = []
+            for komplex in komplex_inst:
+                new_komp_feat = QgsFeature()
+                new_komp_feat.setAttributes \
+                    ([komplex.id, komplex.name])
+
+                new_komp_geom = new_komp_feat.geometry()
+                for koppel in komplex.rel_komplex_version[0].rel_koppel:
+                    new_feat = QgsFeature()
+                    new_feat.setAttributes \
+                        ([koppel.id, koppel.name])
+                    new_wkbelement = koppel.geometry
+                    shply_geom = to_shape(new_wkbelement)
+                    new_feat.setGeometry(QgsGeometry.fromWkt(shply_geom.wkt))
+                    self.koppel_features.append(new_feat)
+
+                    # new_komp_geom = QgsGeometry.fromWkt(shply_geom.wkt)
+                    # new_komp_geom = QgsGeometry.fromWkt(shply_geom.wkt).combine(new_komp_geom)
+                    # new_komp_geom = new_komp_geom.combine(QgsGeometry.fromWkt(shply_geom.wkt))
+
+                new_komp_geom = self.koppel_features[0].geometry()
+                for i in range(len(self.koppel_features) - 1):
+                    new_komp_geom = self.koppel_features[i+1].geometry().combine(new_komp_geom)
+
+
+                # new_komp_feat.setGeometry(new_komp_geom)
+                new_komp_feat.setGeometry(new_komp_geom)
+                self.komplex_features.append(new_komp_feat)
+
+
+        # self.koppel_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "koppel_test", "memory")
+        # self.koppel_dp = self.koppel_layer.dataProvider()
+        # self.koppel_layer.back = False
+        # self.koppel_layer.base = False
+        # self.guiMainGis.addLayer(self.koppel_layer)
+
+        self.koppel_dp.addFeatures(self.koppel_features)
+        self.koppel_layer.setName(f'Koppeln {self.uicKkJahrCombo.currentText()}')
+
+        self.komplex_dp.addFeatures(self.komplex_features)
+        self.komplex_layer.setName(
+            f'Komplexe {self.uicKkJahrCombo.currentText()}')
+
 
     def setJahrCombo(self, session):
 

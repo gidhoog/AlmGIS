@@ -43,12 +43,20 @@ def getGisLayer(layer_instance, base_id_column=None,
             """füge einen feature-filter an den uri-string falls gefordert"""
             if base_id_column:
                 uri = uri + "|subset=\"" + base_id_column + "\" = '" + str(id_val) + "'"
-            if feat_filt_expr:
-                expr = feat_filt_expr.replace("<id_val>", str(id_val))
-                uri = uri + "|subset=" + expr
+            # if feat_filt_expr:
+            #     e = f'{feat_filt_expr}'
+            #     expr = feat_filt_expr.replace("<id_val>", str(id_val))
+            #     expr_str = f'{expr}'
+            #     uri = uri + "|subset=" + expr_str
             """"""
 
+            # "akt_id" = 54  AND "jahr" = {self.parent.parent().komplex_jahr}
+
         layer = GisVectorLayer(uri, name, provider)
+
+        # if feat_filt_expr:
+        #
+        #     layer.setSubsetString('"akt_id" = 54')
     """"""
     return layer
 
