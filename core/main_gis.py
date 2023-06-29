@@ -556,15 +556,6 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
                     if layer_var.code_value == True:
                         var_value = getattr(self, layer_var.value)
-                        expression1 = f'jahr={var_value}'
-
-                        expression2 = '"akt_id"=54'
-                        expression = expression1 + ' and ' + expression2
-
-                        # test_obj = eval('self.parent.parent()')
-                        # test_val = getattr(test_obj, 'komplex_jahr')
-
-                        gis_layer.setSubsetString(expression)
                     else:
                         var_value = layer_var.value
 
@@ -574,6 +565,33 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
                                                            var_name,
                                                            var_value)
             """"""
+
+            # """setzte die layer_variablen, falls für diesen layer_style welche
+            # gesetzt sind (im daten-model 'BGisStyleLayerVar') """
+            # if layer_style_inst.rel_gis_style_layer_var:
+            #
+            #     for layer_var in layer_style_inst.rel_gis_style_layer_var:
+            #
+            #         if layer_var.code_value == True:
+            #             var_value = getattr(self, layer_var.value)
+            #             expression1 = f'jahr={var_value}'
+            #
+            #             expression2 = '"akt_id"=54'
+            #             expression = expression1 + ' and ' + expression2
+            #
+            #             # test_obj = eval('self.parent.parent()')
+            #             # test_val = getattr(test_obj, 'komplex_jahr')
+            #
+            #             gis_layer.setSubsetString(expression)
+            #         else:
+            #             var_value = layer_var.value
+            #
+            #     var_name = layer_var.name
+            #
+            #     QgsExpressionContextUtils.setLayerVariable(gis_layer,
+            #                                                var_name,
+            #                                                var_value)
+            # """"""
 
             """modifiziere die namen die im layer_tree_view angezeigt
             werden"""
