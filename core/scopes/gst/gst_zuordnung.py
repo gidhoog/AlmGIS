@@ -22,7 +22,7 @@ from os.path import isfile, join
 from PyQt5.QtCore import QModelIndex, Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QLabel, QMainWindow, QComboBox, QHeaderView, \
-    QDockWidget
+    QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform
 
@@ -607,6 +607,25 @@ class GstTable(MainTable):
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
         self.uiDeleteDataTbtn.setVisible(False)
+
+        """füge einen Bereich für vorgemerkte Gst ein"""
+        # spacerItem = QSpacerItem(1, 1,
+        #                          QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # self.uicGstVormerkenPbtn = QPushButton(self)
+        # self.uicGstVormerkenPbtn.setText('Gst vormerken')
+        #
+        # self.uicGstVormerkenDelPbtn = QPushButton(self)
+        # self.uicGstVormerkenDelPbtn.setText('Gst-Vormerkung aufheben')
+        #
+        # self.btnLayoutHbox = QHBoxLayout(self)
+        # self.btnLayoutHbox.addSpacerItem(spacerItem)
+        # self.btnLayoutHbox.insertWidget(1, self.uicGstVormerkenPbtn)
+        # self.btnLayoutHbox.insertWidget(2, self.uicGstVormerkenDelPbtn)
+        # self.uiFooterSubVlay.addLayout(self.btnLayoutHbox)
+        #
+        # self.uicGstVorgemerktTblv = QTableView(self)
+        # self.uiFooterSubVlay.addWidget(self.uicGstVorgemerktTblv)
+        """"""
 
         self.guiGstChecked = QLabel()
         self.uiFooterSubVlay.addWidget(self.guiGstChecked)
