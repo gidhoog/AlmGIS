@@ -50,7 +50,7 @@ class BBearbeitungsstatus(Base):
 
 class BCutKoppelGstAktuell(Base):
     """
-    basisdatenebene für den verschnitt von komplex und gst-version
+    basisdatenebene für den verschnitt von koppel und gst-version
     """
     __tablename__ = 'a_cut_koppel_aktuell_gstversion'
 

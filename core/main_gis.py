@@ -561,8 +561,8 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
                         expression2 = '"akt_id"=54'
                         expression = expression1 + ' and ' + expression2
 
-                        test_obj = eval('self.parent.parent()')
-                        test_val = getattr(test_obj, 'komplex_jahr')
+                        # test_obj = eval('self.parent.parent()')
+                        # test_val = getattr(test_obj, 'komplex_jahr')
 
                         gis_layer.setSubsetString(expression)
                     else:

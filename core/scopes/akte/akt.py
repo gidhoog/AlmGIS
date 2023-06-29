@@ -286,13 +286,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        # self.gst_table.initMaintable(self.session)
+        self.gst_table.initMaintable(self.session)
         # self.komplex_table.initMaintable(self.session)
 
         self.setJahrCombo(self.session)
         self.loadKKTree()
 
-        # self.loadGisLayer()  # lade layer die in der db definiert sind
+        self.loadGisLayer()  # lade layer die in der db definiert sind
 
     def loadKKTree(self):
         """

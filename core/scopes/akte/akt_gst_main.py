@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QHeaderView
 from sqlalchemy import func
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
-    BKomplex, BAkt
+    BKomplex, BAkt, BKoppel, BKomplexVersion
 from core.main_dialog import MainDialog
 from core.main_table import MainTable, MaintableColumn, \
     MainTableModel, MainTableView
@@ -179,19 +179,36 @@ class GstMaintable(MainTable):
     def getMainQuery(self, session):
         super().getMainQuery(session)
 
-        """subquery um die flaeche des verschnittes von komplexe und 
+        """subquery um die flaeche des verschnittes von koppel und 
         gst-version zu bekommen"""
         sub_cutarea = session.query(
             BCutKoppelGstAktuell.gst_version_id,
             func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
-            func.max(BKomplex.jahr)
+            func.max(BKomplexVersion.jahr)
         )\
-            .join(BKomplex) \
-            .join(BAkt) \
+            .select_from(BCutKoppelGstAktuell)\
+            .join(BKoppel)\
+            .join(BKomplexVersion)\
+            .join(BKomplex)\
+            .join(BAkt)\
             .filter(BAkt.id == self.parent.data_instance.id)\
             .group_by(BCutKoppelGstAktuell.gst_version_id)\
             .subquery()
         """"""
+
+        sub_test = session.query(
+            BCutKoppelGstAktuell.gst_version_id,
+            func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
+            func.max(BKomplexVersion.jahr)
+        )\
+            .select_from(BCutKoppelGstAktuell)\
+            .join(BKoppel)\
+            .join(BKomplexVersion)\
+            .join(BKomplex)\
+            .join(BAkt)\
+            .filter(BAkt.id == self.parent.data_instance.id)\
+            .group_by(BCutKoppelGstAktuell.gst_version_id)\
+            .all()
 
         query = session.query(BGstZuordnung.id,
                               BGst.gst,
