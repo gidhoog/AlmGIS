@@ -79,6 +79,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
     def signals(self):
 
         self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
+        self.guiGstTable.guiPreSelectPbtn.clicked.connect(self.preselectGst)
 
     def loadGisLayer(self):
 
@@ -137,6 +138,18 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         """erzeuge eine liste mit den id's aus dem query (=list in list)"""
         self.akt_zugeordnete_gst = [r[0] for r in zuord_query]
         """"""
+
+    def preselectGst(self):
+        """
+        merke die ausgewählten Gst für die Zuordnung vor
+        :return:
+        """
+        selection = self.guiGstTable.getSelectedRows()
+
+        item = self.guiGstTable.main_table_model.data(
+            self.guiGstTable.main_table_model.index(selection[0].row(), 9), Qt.DisplayRole
+        )
+        print(f'gst')
 
     def loadGdbDaten(self):
         """
