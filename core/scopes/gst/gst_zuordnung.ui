@@ -147,6 +147,9 @@
     <item>
      <layout class="QVBoxLayout" name="uiVorgemerkteGstVlay"/>
     </item>
+    <item>
+     <widget class="QWidget" name="uiPreSelectionWdg" native="true"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -161,6 +164,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

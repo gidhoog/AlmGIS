@@ -2,6 +2,8 @@ import sys
 from qgis.core import QgsApplication, QgsProviderRegistry
 from core.main_window import AlmgisMainWindow
 
+from PyQt5.QtWidgets import QWidget
+
 if sys.version < '3.0':
     sys.exit("This program requires a python3 runtime")
 
@@ -14,6 +16,7 @@ def run():
     app.initQgis()
 
     main_window = AlmgisMainWindow()
+    aaa = QWidget()
 
     main_window.show()
 

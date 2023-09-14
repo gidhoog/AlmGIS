@@ -1,5 +1,7 @@
 # from PyQt5.QtCore import Qt
 from sqlalchemy import func, select
+
+from core import DbSession
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus
 from core.main_table import MainTable, MaintableColumn, MainTableModel, \
@@ -25,6 +27,24 @@ class AkteAllMain(MainTable, MainWidget):
         super(__class__, self).__init__(parent)
 
         self.data_model_class = BAkt
+
+        # with DbSession.session_scope() as session:
+        #
+        #     test_inst = session.get(BGst, 12499)
+        #
+        #     print(f'test_inst: {test_inst}')
+        #
+        #     area = func.ST_Area(test_inst.rel_alm_gst_version[0].geometry)
+        #
+        #     print(f'area: {area}')
+        #     print('........')
+        #
+        #     test_02_inst = select(BGst, BGstVersion.geometry.ST_Area()).join(BGstVersion).where(BGst.id == 12499)
+        #     test_03_inst = session.scalars(test_02_inst)
+        #
+        #     print(f'----------------------')
+
+
 
     def initUi(self):
         super().initUi()

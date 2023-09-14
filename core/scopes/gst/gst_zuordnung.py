@@ -627,6 +627,10 @@ class GstTable(MainTable):
         # self.uiFooterSubVlay.addWidget(self.uicGstVorgemerktTblv)
         """"""
 
+        self.guiPreSelectPbtn = QPushButton()
+        self.guiPreSelectPbtn.setText('Auswahl übernehmen')
+        self.uiFooterHlay.addWidget(self.guiPreSelectPbtn)
+
         self.guiGstChecked = QLabel()
         self.uiFooterSubVlay.addWidget(self.guiGstChecked)
 

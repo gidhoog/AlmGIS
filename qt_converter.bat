@@ -14,6 +14,7 @@ call pyuic5 core/print_content_widget.ui -o core/print_content_widget_UI.py
 call pyuic5 core/scopes/akte/akt.ui -o core/scopes/akte/akt_UI.py
 
 call pyuic5 core/scopes/gst/gst_gemeinsame_werte.ui -o core/scopes/gst/gst_gemeinsame_werte_UI.py
+call pyuic5 core/scopes/gst/gst_zuordnung.ui -o core/scopes/gst/gst_zuordnung_UI.py
 call pyuic5 core/scopes/gst/gst_zuordnung_dataform.ui -o core/scopes/gst/gst_zuordnung_dataform_UI.py
 
 call pyuic5 core/scopes/komplex/komplex_dataform.ui -o core/scopes/komplex/komplex_dataform_UI.py
