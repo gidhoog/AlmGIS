@@ -132,3 +132,8 @@ dmypy.json
 
 .idea
 .idea/
+
+# Projektdaten
+
+import_gdb/
+/import_gdb
