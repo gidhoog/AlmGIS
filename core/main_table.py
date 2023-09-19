@@ -581,12 +581,25 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         :param
         :return:
         """
+        self.initUi()
+        self.setMaintableColumns()
+
         self.maintable_session = session
 
-        self.initUi()
+        if session:
+            # self.loadData()
+            self.loadDataBySession()
+            # self.filter_proxy.setSourceModel(self.main_table_model)
+            # self.maintable_view.setModel(self.filter_proxy)
+        else:
+            self.main_table_model = self.data_model_class(self, self.maintable_dataarray)
 
-        self.setMaintableColumns()
-        self.loadData()
+        self.filter_proxy.setSourceModel(self.main_table_model)
+        self.maintable_view.setModel(self.filter_proxy)
+
+        self.updateFooter()
+        self.setFilter()
+
         self.setAddEntityMenu()
         self.setMaintableLayout()
 
@@ -611,8 +624,15 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         self.filter_proxy.setSourceModel(self.main_table_model)
         self.maintable_view.setModel(self.filter_proxy)
 
+        # self.updateFooter()
+        # self.setFilter()
+
+    def updateMaintableNew(self):
+
+        self.main_table_model.layoutChanged.emit()
         self.updateFooter()
-        self.setFilter()
+
+
 
     def loadDataBySession(self):
         """

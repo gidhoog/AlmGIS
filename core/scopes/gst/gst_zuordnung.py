@@ -19,7 +19,7 @@ from io import TextIOWrapper
 from os import listdir
 from os.path import isfile, join
 
-from PyQt5.QtCore import QModelIndex, Qt
+from PyQt5.QtCore import QModelIndex, Qt, QAbstractTableModel
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QLabel, QMainWindow, QComboBox, QHeaderView, \
     QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView
@@ -75,6 +75,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.linked_gis_widgets[108] = self.guiGstTable
         self.activateGisControl()
         self.dialog_widget._guiApplyDbtn.setEnabled(False)
+
+        self.guiGstPreSelTview = GstPreSelTable(self)
+        self.guiGstPreSelTview.initMaintable()
+        self.uiVorgemerkteGstVlay.addWidget(self.guiGstPreSelTview)
 
     def signals(self):
 
@@ -913,6 +917,29 @@ class GstMainModel(MainTableModel):
                     self.data(self.index(index.row(), 9), Qt.DisplayRole))
             """"""
 
+            print(f'check now!!')
+
+            gst_id = self.data(self.index(index.row(), 0), Qt.DisplayRole)
+            gst_nr = self.data(self.index(index.row(), 2), Qt.DisplayRole)
+            kg_nr = self.data(self.index(index.row(), 3), Qt.DisplayRole)
+            kg_name = self.data(self.index(index.row(), 4), Qt.DisplayRole)
+            ez = self.data(self.index(index.row(), 5), Qt.DisplayRole)
+
+            gst_data = [gst_id, gst_nr, kg_nr, kg_name, ez]
+
+            if self.parent.parent.guiGstPreSelTview.main_table_model.data_array == None:
+                self.parent.parent.guiGstPreSelTview.main_table_model.data_array = [gst_data]
+            else:
+                self.parent.parent.guiGstPreSelTview.main_table_model.data_array.append(gst_data)
+
+            # self.parent.parent.guiGstPreSelTview.main_table_model.layoutChanged.emit()
+            # self.parent.parent.guiGstPreSelTview.updateFooter()
+
+            self.parent.parent.guiGstPreSelTview.updateMaintableNew()
+
+            # self.parent.parent.guiGstPreSelTview.initMaintable()
+            # self.parent.parent.guiGstPreSelTview.maintable_view.setModel(self.parent.parent.guiGstPreSelTview.main_table_model)
+
             """zeige die anzahl der neu zugeordneten gst:"""
             self.setCheckedGstLabel()
             """"""
@@ -924,28 +951,31 @@ class GstMainModel(MainTableModel):
         setze den wert für die anzahl der markierte grundstücke und passe
         die dialog-buttons an die aktuelle situation an
         """
+        pass
 
-        while self.parent.parent.uiVorgemerkteGstVlay.count():
-            child = self.parent.parent.uiVorgemerkteGstVlay.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
+        """entferne alle widgets"""
+        # while self.parent.parent.uiVorgemerkteGstVlay.count():
+        #     child = self.parent.parent.uiVorgemerkteGstVlay.takeAt(0)
+        #     if child.widget():
+        #         child.widget().deleteLater()
+        """"""
 
-        if len(self.parent.parent.checked_gst_instances) > 0:
-            vorgemerkt_text = QLabel()
-            vorgemerkt_text.setText(str(len(self.parent.parent.checked_gst_instances))+ ' Grundstücke vorgemerkt:')
-            self.parent.parent.uiVorgemerkteGstVlay.addWidget(vorgemerkt_text)
-            self.parent.parent.uiVorgemerkteGstVlay.addWidget(QLabel())
-
-            for gst in self.parent.parent.checked_gst_instances:
-                gst_label = QLabel()
-                gst_label.setText(gst.gst)
-                self.parent.parent.uiVorgemerkteGstVlay.addWidget(gst_label)
-
-            self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(True)
-            self.parent.parent.dialog_widget.set_reject_button_text('&Abbrechen')
-        else:
-            self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(False)
-            self.parent.parent.dialog_widget.set_reject_button_text('&Schließen')
+        # if len(self.parent.parent.checked_gst_instances) > 0:
+        #     vorgemerkt_text = QLabel()
+        #     vorgemerkt_text.setText(str(len(self.parent.parent.checked_gst_instances))+ ' Grundstücke vorgemerkt:')
+        #     self.parent.parent.uiVorgemerkteGstVlay.addWidget(vorgemerkt_text)
+        #     self.parent.parent.uiVorgemerkteGstVlay.addWidget(QLabel())
+        #
+        #     for gst in self.parent.parent.checked_gst_instances:
+        #         gst_label = QLabel()
+        #         gst_label.setText(gst.gst)
+        #         self.parent.parent.uiVorgemerkteGstVlay.addWidget(gst_label)
+        #
+        #     self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(True)
+        #     self.parent.parent.dialog_widget.set_reject_button_text('&Abbrechen')
+        # else:
+        #     self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(False)
+        #     self.parent.parent.dialog_widget.set_reject_button_text('&Schließen')
 
     def flags(self, index):
 
@@ -956,6 +986,100 @@ class GstMainModel(MainTableModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
         else:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+
+
+class GstPreSelModel(MainTableModel):
+
+    def __init__(self, parent, data_array=None):
+        super(__class__, self).__init__(parent, data_array)
+
+        self.parent = parent
+        self.data_array = None
+
+        if data_array:
+            self.data_array = data_array
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        if not index.isValid():
+            return None
+
+        if role == Qt.DisplayRole or role == Qt.EditRole:
+            return self.data_array[index.row()][index.column()]
+
+    # def columnCount(self, parent: QModelIndex = ...):
+    #
+    #     return 5
+    #
+    # def rowCount(self, parent: QModelIndex = ...):
+    #
+    #     return len(self.data_array)
+    #
+    # def headerData(self, column, orientation, role=None):
+    #     """
+    #     wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+    #     dann nehme diese
+    #     """
+    #     header = ['a', 'b', 'c', 'd', 'e']
+    #     # super().headerData(column, orientation, role)
+    #
+    #     # if self.parent.maintable_columns:
+    #     if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    #         return header[column]
+    #     else:
+    #         return super().headerData(column, orientation, role)
+
+
+class GstPreSelTable(MainTable):
+
+    _data_view = MainTableView
+
+    data_model_class = GstPreSelModel
+
+    # maintable_dataarray = [[1,1,1,'a',1],
+    #                         [2,2,2,'b',2]]
+
+    maintable_dataarray = []
+
+
+    def __init__(self, parent):
+        super(__class__, self).__init__(parent)
+
+        self.parent = parent
+
+        self.title = 'vorgemerkte Grundstücke'
+
+        self.maintable_text = ["vorgemerktesGrundstück",
+                               "vorgemerkte Grundstücke",
+                               "kein vorgemerktes Grundstück"]
+
+    def initUi(self):
+        super().initUi()
+
+        self.uiAddDataTbtn.setVisible(False)
+        self.uiEditDataTbtn.setVisible(False)
+
+    def setMaintableColumns(self):
+        super().setMaintableColumns()
+
+        self.maintable_columns[0] = MaintableColumn(column_type='int',
+                                                    visible=False)
+        self.maintable_columns[1] = MaintableColumn(column_type='int',
+                                                    heading='Gst')
+        self.maintable_columns[2] = MaintableColumn(heading='KG-Nr',
+                                                    column_type='int')
+        self.maintable_columns[3] = MaintableColumn(heading='KG-Name',
+                                                    column_type='str')
+        self.maintable_columns[4] = MaintableColumn(heading='EZ',
+                                                    column_type='int')
+
+    # def setMainTableModel(self):
+    #     super().setMainTableModel()
+    #
+    #     gst_presel_array = [[1,1,1,'a',1],
+    #                         [2,2,2,'b',2]]
+    #
+    #     return GstMainModel(parent=self, data_array=gst_presel_array)
 
 
 class GstGemWerteMainDialog(main_dialog.MainDialog):
