@@ -83,7 +83,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
     def signals(self):
 
         self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
-        self.guiGstTable.guiPreSelectPbtn.clicked.connect(self.preselectGst)
+        self.guiGstTable.guiPreSelectPbtn.clicked.connect(self.reserveSelectedGst)
+
 
     def loadGisLayer(self):
 
@@ -154,6 +155,30 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             self.guiGstTable.main_table_model.index(selection[0].row(), 9), Qt.DisplayRole
         )
         print(f'gst')
+
+    def reserveSelectedGst(self):
+
+        model = self.guiGstTable.main_table_model
+
+        if self.guiGstTable.maintable_view.selectionModel():
+            _selected_rows_idx = self.guiGstTable.maintable_view.selectionModel().selectedRows()
+
+            for row_idx in _selected_rows_idx:
+                row = self.guiGstTable.filter_proxy.mapToSource(row_idx).row()
+
+                if model.data(model.index(row, 2), Qt.CheckStateRole) == 0:  # 2 waere angehackt
+                    model.setData(
+                        model.index(row, 2), Qt.Checked, Qt.CheckStateRole)
+                    print(f'sel row: {row}')
+
+        # self.guiGstTable.updateMaintableNew()
+        # model.layoutChanged.emit()
+        self.guiGstTable.updateFooter()
+
+    # def removeReservedGst(self):
+    #
+    #     index = self.guiGstTable.maintable_view.currentIndex()
+    #     self.guiGstTable.main_table_model.removeRows(index.row(), 1, index)
 
     def loadGdbDaten(self):
         """
@@ -875,7 +900,7 @@ class GstMainModel(MainTableModel):
                     return QColor(15, 153, 222)
         """"""
 
-        """setze den check-status"""
+        """setze den check-status auf spalte 2"""
         if role == Qt.CheckStateRole:
             if index.column() == 2:
                 return self.checkState(QModelIndex(index))
@@ -915,27 +940,31 @@ class GstMainModel(MainTableModel):
 
                 self.parent.parent.checked_gst_instances.append(
                     self.data(self.index(index.row(), 9), Qt.DisplayRole))
+
+                print(f'check now!!')
+
+                gst_id = self.data(self.index(index.row(), 0), Qt.DisplayRole)
+                gst_nr = self.data(self.index(index.row(), 2), Qt.DisplayRole)
+                kg_nr = self.data(self.index(index.row(), 3), Qt.DisplayRole)
+                kg_name = self.data(self.index(index.row(), 4), Qt.DisplayRole)
+                ez = self.data(self.index(index.row(), 5), Qt.DisplayRole)
+
+                gst_data = [gst_id, gst_nr, kg_nr, kg_name, ez]
+
+                if self.parent.parent.guiGstPreSelTview.main_table_model.data_array == None:
+                    self.parent.parent.guiGstPreSelTview.main_table_model.data_array = [
+                        gst_data]
+                else:
+                    self.parent.parent.guiGstPreSelTview.main_table_model.data_array.append(
+                        gst_data)
+
+                self.parent.parent.guiGstPreSelTview.updateMaintableNew()
             """"""
-
-            print(f'check now!!')
-
-            gst_id = self.data(self.index(index.row(), 0), Qt.DisplayRole)
-            gst_nr = self.data(self.index(index.row(), 2), Qt.DisplayRole)
-            kg_nr = self.data(self.index(index.row(), 3), Qt.DisplayRole)
-            kg_name = self.data(self.index(index.row(), 4), Qt.DisplayRole)
-            ez = self.data(self.index(index.row(), 5), Qt.DisplayRole)
-
-            gst_data = [gst_id, gst_nr, kg_nr, kg_name, ez]
-
-            if self.parent.parent.guiGstPreSelTview.main_table_model.data_array == None:
-                self.parent.parent.guiGstPreSelTview.main_table_model.data_array = [gst_data]
-            else:
-                self.parent.parent.guiGstPreSelTview.main_table_model.data_array.append(gst_data)
 
             # self.parent.parent.guiGstPreSelTview.main_table_model.layoutChanged.emit()
             # self.parent.parent.guiGstPreSelTview.updateFooter()
 
-            self.parent.parent.guiGstPreSelTview.updateMaintableNew()
+            # self.parent.parent.guiGstPreSelTview.updateMaintableNew()
 
             # self.parent.parent.guiGstPreSelTview.initMaintable()
             # self.parent.parent.guiGstPreSelTview.maintable_view.setModel(self.parent.parent.guiGstPreSelTview.main_table_model)
@@ -943,6 +972,12 @@ class GstMainModel(MainTableModel):
             """zeige die anzahl der neu zugeordneten gst:"""
             self.setCheckedGstLabel()
             """"""
+
+            """aktualisiere das model am entsprechenden index
+            (siehe: https://stackoverflow.com/questions/65386552/update-object-when-checkbox-clicked-in-qtableview"""
+            self.dataChanged.emit(index, index)
+            """"""
+
             return True
         return False
 
@@ -1007,27 +1042,21 @@ class GstPreSelModel(MainTableModel):
         if role == Qt.DisplayRole or role == Qt.EditRole:
             return self.data_array[index.row()][index.column()]
 
-    # def columnCount(self, parent: QModelIndex = ...):
-    #
-    #     return 5
-    #
-    # def rowCount(self, parent: QModelIndex = ...):
-    #
-    #     return len(self.data_array)
-    #
-    # def headerData(self, column, orientation, role=None):
-    #     """
-    #     wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
-    #     dann nehme diese
-    #     """
-    #     header = ['a', 'b', 'c', 'd', 'e']
-    #     # super().headerData(column, orientation, role)
-    #
-    #     # if self.parent.maintable_columns:
-    #     if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-    #         return header[column]
-    #     else:
-    #         return super().headerData(column, orientation, role)
+    def removeRows(self, position, rows, QModelIndex):
+        self.layoutAboutToBeChanged.emit()
+        self.beginRemoveRows(QModelIndex, position, position+rows-1)
+        for i in range(rows):
+            del(self.data_array[position])
+        self.endRemoveRows()
+        self.layoutChanged.emit()
+        # self.dataChanged.emit(QModelIndex, QModelIndex)
+        return True
+
+    def removeRow(self, row, QModelIndex):
+        self.layoutAboutToBeChanged.emit()
+        del (self.data_array[row])
+        self.layoutChanged.emit()
+        return True
 
 
 class GstPreSelTable(MainTable):
@@ -1035,9 +1064,6 @@ class GstPreSelTable(MainTable):
     _data_view = MainTableView
 
     data_model_class = GstPreSelModel
-
-    # maintable_dataarray = [[1,1,1,'a',1],
-    #                         [2,2,2,'b',2]]
 
     maintable_dataarray = []
 
@@ -1059,6 +1085,13 @@ class GstPreSelTable(MainTable):
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
 
+    def signals(self):
+        super().signals()
+
+        self.uiDeleteDataTbtn.clicked.disconnect()
+
+        self.uiDeleteDataTbtn.clicked.connect(self.removeReservedGst)
+
     def setMaintableColumns(self):
         super().setMaintableColumns()
 
@@ -1073,13 +1106,17 @@ class GstPreSelTable(MainTable):
         self.maintable_columns[4] = MaintableColumn(heading='EZ',
                                                     column_type='int')
 
-    # def setMainTableModel(self):
-    #     super().setMainTableModel()
-    #
-    #     gst_presel_array = [[1,1,1,'a',1],
-    #                         [2,2,2,'b',2]]
-    #
-    #     return GstMainModel(parent=self, data_array=gst_presel_array)
+    def removeReservedGst(self):
+
+        index = self.maintable_view.currentIndex()
+        # self.main_table_model.removeRows(index.row(), 1, index)
+        self.main_table_model.removeRow(index.row(), index)
+
+        print(f'rem row!')
+
+        self.parent.guiGstTable.main_table_model.setData(
+            self.parent.guiGstTable.main_table_model.index(index.row(), 2),
+            Qt.Unchecked, Qt.CheckStateRole)
 
 
 class GstGemWerteMainDialog(main_dialog.MainDialog):

@@ -628,8 +628,15 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         # self.setFilter()
 
     def updateMaintableNew(self):
+        """
+        aktualisiere das table_view
+        :return:
+        """
 
+        """wenn das layout der daten (z.b. die sortierung) geändert wird"""
         self.main_table_model.layoutChanged.emit()
+        """"""
+
         self.updateFooter()
 
 
