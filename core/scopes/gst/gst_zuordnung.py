@@ -12,14 +12,14 @@ from core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
 from core.gis_control import GisControl
 from core.main_gis import MainGis
 from core.main_table import MainTable, MaintableColumn, MainTableModel, \
-    MainTableView
+    MainTableView, SortFilterProxyModel
 
 import zipfile
 from io import TextIOWrapper
 from os import listdir
 from os.path import isfile, join
 
-from PyQt5.QtCore import QModelIndex, Qt, QAbstractTableModel
+from PyQt5.QtCore import QModelIndex, Qt, QAbstractTableModel, QSortFilterProxyModel, QItemSelectionModel
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QLabel, QMainWindow, QComboBox, QHeaderView, \
     QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView
@@ -77,8 +77,50 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.dialog_widget._guiApplyDbtn.setEnabled(False)
 
         self.guiGstPreSelTview = GstPreSelTable(self)
-        self.guiGstPreSelTview.initMaintable()
+
+        """setzte das model für die vorgemerkte Tabelle"""
+        presel_model = self.guiGstTable.main_table_model
+        """"""
+        """filtere die Ansicht in diesem View auf die angehackten Grundstücke;
+        das wird in der Klasse 'GstPreSelFilter' erledigt """
+        self.presel_proxy_model = GstPreSelFilter(self)
+        self.presel_proxy_model.setSourceModel(presel_model)
+        """"""
+
+        """da in diesem Maintabel die 'initMaintable' Methode nicht verwendet
+        wird muss neben dem main_table_model auch dem view direkt das
+        model mit den daten übergeben werden"""
+        self.guiGstPreSelTview.maintable_view.setModel(self.presel_proxy_model)
+        self.guiGstPreSelTview.main_table_model = self.presel_proxy_model
+        """"""
+
+        """richte self.guiGstPreSelTview ein"""
+        self.guiGstPreSelTview.initUi()
         self.uiVorgemerkteGstVlay.addWidget(self.guiGstPreSelTview)
+        self.guiGstPreSelTview.updateMaintableNew()
+        self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
+        """"""
+
+    def selPreChanged(self):
+        """wenn die Auswahl im presel_view geändert wird"""
+
+        """entferne die gesamte Auswahl im gst_view"""
+        self.guiGstTable.maintable_view.clearSelection()
+        """"""
+
+        """wähle die Reihen aus"""
+        for ind in self.guiGstPreSelTview.maintable_view.selectionModel().selectedIndexes():
+            """wandle den gewählten proxy-index in den index für das 
+            basis-model um"""
+            basis_index = self.presel_proxy_model.mapToSource(ind)
+            """"""
+            self.guiGstTable.maintable_view.selectionModel().select(
+                basis_index, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        """"""
+
+        """wichtig um die anzahl der ausgewählten Zeilen im Footer anzuzeigen"""
+        self.guiGstPreSelTview.updateMaintableNew()
+        """"""
 
     def signals(self):
 
@@ -144,19 +186,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.akt_zugeordnete_gst = [r[0] for r in zuord_query]
         """"""
 
-    def preselectGst(self):
-        """
-        merke die ausgewählten Gst für die Zuordnung vor
-        :return:
-        """
-        selection = self.guiGstTable.getSelectedRows()
-
-        item = self.guiGstTable.main_table_model.data(
-            self.guiGstTable.main_table_model.index(selection[0].row(), 9), Qt.DisplayRole
-        )
-        print(f'gst')
-
     def reserveSelectedGst(self):
+        """übernehme ausgewählte Grundstücke der Gst-Tabelle in die Tabelle mit
+        den vorgemerkten Grundstücke"""
 
         model = self.guiGstTable.main_table_model
 
@@ -164,21 +196,14 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             _selected_rows_idx = self.guiGstTable.maintable_view.selectionModel().selectedRows()
 
             for row_idx in _selected_rows_idx:
+                """wandle den proxy-index in den 'model-index' um"""
                 row = self.guiGstTable.filter_proxy.mapToSource(row_idx).row()
-
+                """"""
+                """füge ein Gst nur ein, wenn es nicht angehackt ist!"""
                 if model.data(model.index(row, 2), Qt.CheckStateRole) == 0:  # 2 waere angehackt
                     model.setData(
                         model.index(row, 2), Qt.Checked, Qt.CheckStateRole)
-                    print(f'sel row: {row}')
-
-        # self.guiGstTable.updateMaintableNew()
-        # model.layoutChanged.emit()
-        self.guiGstTable.updateFooter()
-
-    # def removeReservedGst(self):
-    #
-    #     index = self.guiGstTable.maintable_view.currentIndex()
-    #     self.guiGstTable.main_table_model.removeRows(index.row(), 1, index)
+                """"""
 
     def loadGdbDaten(self):
         """
@@ -650,25 +675,6 @@ class GstTable(MainTable):
         self.uiEditDataTbtn.setVisible(False)
         self.uiDeleteDataTbtn.setVisible(False)
 
-        """füge einen Bereich für vorgemerkte Gst ein"""
-        # spacerItem = QSpacerItem(1, 1,
-        #                          QSizePolicy.Expanding, QSizePolicy.Expanding)
-        # self.uicGstVormerkenPbtn = QPushButton(self)
-        # self.uicGstVormerkenPbtn.setText('Gst vormerken')
-        #
-        # self.uicGstVormerkenDelPbtn = QPushButton(self)
-        # self.uicGstVormerkenDelPbtn.setText('Gst-Vormerkung aufheben')
-        #
-        # self.btnLayoutHbox = QHBoxLayout(self)
-        # self.btnLayoutHbox.addSpacerItem(spacerItem)
-        # self.btnLayoutHbox.insertWidget(1, self.uicGstVormerkenPbtn)
-        # self.btnLayoutHbox.insertWidget(2, self.uicGstVormerkenDelPbtn)
-        # self.uiFooterSubVlay.addLayout(self.btnLayoutHbox)
-        #
-        # self.uicGstVorgemerktTblv = QTableView(self)
-        # self.uiFooterSubVlay.addWidget(self.uicGstVorgemerktTblv)
-        """"""
-
         self.guiPreSelectPbtn = QPushButton()
         self.guiPreSelectPbtn.setText('Auswahl übernehmen')
         self.uiFooterHlay.addWidget(self.guiPreSelectPbtn)
@@ -926,7 +932,10 @@ class GstMainModel(MainTableModel):
         if not index.isValid():
             return False
 
-        if role == Qt.CheckStateRole:
+        if role == Qt.CheckStateRole and index.column() == 2:
+            """durch das setzten eines Hakens wird die Liste 
+            'checked_gst_instances' modifiziert, auf dieser basierend wird
+            der Haken mit der Methode 'checkState' gesetzt. """
 
             """entferne die kg_gst wenn sie sich in der liste der marktierten gst befindet:"""
             if self.data(self.index(index.row(), 0), Qt.DisplayRole) \
@@ -940,77 +949,19 @@ class GstMainModel(MainTableModel):
 
                 self.parent.parent.checked_gst_instances.append(
                     self.data(self.index(index.row(), 9), Qt.DisplayRole))
-
-                print(f'check now!!')
-
-                gst_id = self.data(self.index(index.row(), 0), Qt.DisplayRole)
-                gst_nr = self.data(self.index(index.row(), 2), Qt.DisplayRole)
-                kg_nr = self.data(self.index(index.row(), 3), Qt.DisplayRole)
-                kg_name = self.data(self.index(index.row(), 4), Qt.DisplayRole)
-                ez = self.data(self.index(index.row(), 5), Qt.DisplayRole)
-
-                gst_data = [gst_id, gst_nr, kg_nr, kg_name, ez]
-
-                if self.parent.parent.guiGstPreSelTview.main_table_model.data_array == None:
-                    self.parent.parent.guiGstPreSelTview.main_table_model.data_array = [
-                        gst_data]
-                else:
-                    self.parent.parent.guiGstPreSelTview.main_table_model.data_array.append(
-                        gst_data)
-
-                self.parent.parent.guiGstPreSelTview.updateMaintableNew()
-            """"""
-
-            # self.parent.parent.guiGstPreSelTview.main_table_model.layoutChanged.emit()
-            # self.parent.parent.guiGstPreSelTview.updateFooter()
-
-            # self.parent.parent.guiGstPreSelTview.updateMaintableNew()
-
-            # self.parent.parent.guiGstPreSelTview.initMaintable()
-            # self.parent.parent.guiGstPreSelTview.maintable_view.setModel(self.parent.parent.guiGstPreSelTview.main_table_model)
-
-            """zeige die anzahl der neu zugeordneten gst:"""
-            self.setCheckedGstLabel()
-            """"""
+                """"""
 
             """aktualisiere das model am entsprechenden index
             (siehe: https://stackoverflow.com/questions/65386552/update-object-when-checkbox-clicked-in-qtableview"""
             self.dataChanged.emit(index, index)
             """"""
+            """nachdem (!) das model aktualisiert wurde, aktualisiere das
+            view"""
+            self.parent.parent.guiGstPreSelTview.updateMaintableNew()
+            """"""
 
             return True
         return False
-
-    def setCheckedGstLabel(self):
-        """
-        setze den wert für die anzahl der markierte grundstücke und passe
-        die dialog-buttons an die aktuelle situation an
-        """
-        pass
-
-        """entferne alle widgets"""
-        # while self.parent.parent.uiVorgemerkteGstVlay.count():
-        #     child = self.parent.parent.uiVorgemerkteGstVlay.takeAt(0)
-        #     if child.widget():
-        #         child.widget().deleteLater()
-        """"""
-
-        # if len(self.parent.parent.checked_gst_instances) > 0:
-        #     vorgemerkt_text = QLabel()
-        #     vorgemerkt_text.setText(str(len(self.parent.parent.checked_gst_instances))+ ' Grundstücke vorgemerkt:')
-        #     self.parent.parent.uiVorgemerkteGstVlay.addWidget(vorgemerkt_text)
-        #     self.parent.parent.uiVorgemerkteGstVlay.addWidget(QLabel())
-        #
-        #     for gst in self.parent.parent.checked_gst_instances:
-        #         gst_label = QLabel()
-        #         gst_label.setText(gst.gst)
-        #         self.parent.parent.uiVorgemerkteGstVlay.addWidget(gst_label)
-        #
-        #     self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(True)
-        #     self.parent.parent.dialog_widget.set_reject_button_text('&Abbrechen')
-        # else:
-        #     self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(False)
-        #     self.parent.parent.dialog_widget.set_reject_button_text('&Schließen')
 
     def flags(self, index):
 
@@ -1023,50 +974,9 @@ class GstMainModel(MainTableModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
 
-class GstPreSelModel(MainTableModel):
-
-    def __init__(self, parent, data_array=None):
-        super(__class__, self).__init__(parent, data_array)
-
-        self.parent = parent
-        self.data_array = None
-
-        if data_array:
-            self.data_array = data_array
-
-    def data(self, index: QModelIndex, role: int = ...):
-
-        if not index.isValid():
-            return None
-
-        if role == Qt.DisplayRole or role == Qt.EditRole:
-            return self.data_array[index.row()][index.column()]
-
-    def removeRows(self, position, rows, QModelIndex):
-        self.layoutAboutToBeChanged.emit()
-        self.beginRemoveRows(QModelIndex, position, position+rows-1)
-        for i in range(rows):
-            del(self.data_array[position])
-        self.endRemoveRows()
-        self.layoutChanged.emit()
-        # self.dataChanged.emit(QModelIndex, QModelIndex)
-        return True
-
-    def removeRow(self, row, QModelIndex):
-        self.layoutAboutToBeChanged.emit()
-        del (self.data_array[row])
-        self.layoutChanged.emit()
-        return True
-
-
 class GstPreSelTable(MainTable):
 
     _data_view = MainTableView
-
-    data_model_class = GstPreSelModel
-
-    maintable_dataarray = []
-
 
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
@@ -1085,6 +995,15 @@ class GstPreSelTable(MainTable):
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
 
+        """blende unnötige Spalten aus"""
+        self.maintable_view.setColumnHidden(0, True)
+        self.maintable_view.setColumnHidden(1, True)
+        self.maintable_view.setColumnHidden(6, True)
+        self.maintable_view.setColumnHidden(7, True)
+        self.maintable_view.setColumnHidden(8, True)
+        self.maintable_view.setColumnHidden(9, True)
+        """"""
+
     def signals(self):
         super().signals()
 
@@ -1092,31 +1011,24 @@ class GstPreSelTable(MainTable):
 
         self.uiDeleteDataTbtn.clicked.connect(self.removeReservedGst)
 
-    def setMaintableColumns(self):
-        super().setMaintableColumns()
 
-        self.maintable_columns[0] = MaintableColumn(column_type='int',
-                                                    visible=False)
-        self.maintable_columns[1] = MaintableColumn(column_type='int',
-                                                    heading='Gst')
-        self.maintable_columns[2] = MaintableColumn(heading='KG-Nr',
-                                                    column_type='int')
-        self.maintable_columns[3] = MaintableColumn(heading='KG-Name',
-                                                    column_type='str')
-        self.maintable_columns[4] = MaintableColumn(heading='EZ',
-                                                    column_type='int')
+class GstPreSelFilter(QSortFilterProxyModel):
 
-    def removeReservedGst(self):
+    def __init__(self, parent):
+        QSortFilterProxyModel.__init__(self, parent)
 
-        index = self.maintable_view.currentIndex()
-        # self.main_table_model.removeRows(index.row(), 1, index)
-        self.main_table_model.removeRow(index.row(), index)
+        self.parent = parent
 
-        print(f'rem row!')
+    def filterAcceptsRow(self, pos, index):
 
-        self.parent.guiGstTable.main_table_model.setData(
-            self.parent.guiGstTable.main_table_model.index(index.row(), 2),
-            Qt.Unchecked, Qt.CheckStateRole)
+        model = self.sourceModel()
+        """zeige nur Zeilen die angehakt sind und deren kg_gst-key sich aber 
+        nicht in der Liste 'akt_zugeordnete_gst' befindet"""
+        if (model.data(model.index(pos, 2), Qt.CheckStateRole) == Qt.Checked and
+                model.data(model.index(pos, 0), Qt.DisplayRole) not in self.parent.akt_zugeordnete_gst):
+            return True
+        """"""
+        return False
 
 
 class GstGemWerteMainDialog(main_dialog.MainDialog):

@@ -634,12 +634,9 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
 
         """wenn das layout der daten (z.b. die sortierung) geändert wird"""
-        self.main_table_model.layoutChanged.emit()
+        self.maintable_view.model().layoutChanged.emit()
         """"""
-
         self.updateFooter()
-
-
 
     def loadDataBySession(self):
         """
@@ -733,7 +730,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         for i in range(len(self.footer_list)):
             self.footer_list[i].update_footer_line()
 
-        self.displayed_rows = self.filter_proxy.rowCount()
+        self.displayed_rows = self.maintable_view.model().rowCount()
         if self.getSelectedRows():
             self.selected_rows_number = len(self.getSelectedRows())
         else:
