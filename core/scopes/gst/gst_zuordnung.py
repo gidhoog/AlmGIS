@@ -685,11 +685,12 @@ class GstTable(MainTable):
     def finalInit(self):
         super().finalInit()
 
-        # """setzt bestimmte spaltenbreiten"""
-        # self.guiMainTableTvw.setColumnWidth(4, 200)
-        # self.guiMainTableTvw.setColumnWidth(6, 200)
-        # self.guiMainTableTvw.setColumnWidth(7, 130)
-        # """"""
+        """setzt bestimmte spaltenbreiten"""
+        self.maintable_view.setColumnWidth(2, 80)
+        self.maintable_view.setColumnWidth(3, 45)
+        self.maintable_view.setColumnWidth(4, 130)
+        self.maintable_view.setColumnWidth(5, 40)
+        """"""
         """passe die Zeilenhöhen an den Inhalt an"""
         self.maintable_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
@@ -702,13 +703,17 @@ class GstTable(MainTable):
         self.maintable_columns[1] = MaintableColumn(column_type='str',
                                                     visible=False)
         self.maintable_columns[2] = MaintableColumn(column_type='str',
-                                                    heading='Gst')
+                                                    heading='Gst',
+                                                    alignment='l')
         self.maintable_columns[3] = MaintableColumn(heading='KG-Nr',
-                                                    column_type='int')
+                                                    column_type='int',
+                                                    alignment='r')
         self.maintable_columns[4] = MaintableColumn(heading='KG-Name',
-                                                    column_type='str')
+                                                    column_type='str',
+                                                    alignment='l')
         self.maintable_columns[5] = MaintableColumn(heading='EZ',
-                                                    column_type='int')
+                                                    column_type='int',
+                                                    alignment='c')
         self.maintable_columns[6] = MaintableColumn(heading="bereits zugeordnet zu",
                                                     column_type='str')
         self.maintable_columns[7] = MaintableColumn(heading='Datenstand',
@@ -911,6 +916,8 @@ class GstMainModel(MainTableModel):
             if index.column() == 2:
                 return self.checkState(QModelIndex(index))
         """"""
+
+        return super().data(index, role)
 
     def checkState(self, index):
         """markiere wenn das gst in der liste checked_gst ist"""
