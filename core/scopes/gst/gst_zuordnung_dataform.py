@@ -121,4 +121,4 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
         cut_koppel_gstversion()
         self.parent.parent.guiMainGis.uiCanvas.refresh()
-        self.parent.parent.komplex_table.updateMaintable()
+        # self.parent.parent.komplex_table.updateMaintable()

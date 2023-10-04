@@ -967,6 +967,11 @@ class GstMainModel(MainTableModel):
             self.parent.parent.guiGstPreSelTview.updateMaintableNew()
             """"""
 
+            if self.parent.parent.checked_gst_instances:
+                self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(True)
+            else:
+                self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(False)
+
             return True
         return False
 
