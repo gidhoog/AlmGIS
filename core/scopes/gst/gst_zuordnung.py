@@ -967,10 +967,12 @@ class GstMainModel(MainTableModel):
             self.parent.parent.guiGstPreSelTview.updateMaintableNew()
             """"""
 
+            """aktiviere oder deaktiviere den Dialog-Accept-Button"""
             if self.parent.parent.checked_gst_instances:
                 self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(True)
             else:
                 self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(False)
+            """"""
 
             return True
         return False

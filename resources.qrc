@@ -42,6 +42,8 @@
     <file>resources/icons/hamburger.svg</file>
     <file>resources/icons/legend.svg</file>
     <file>resources/icons/mActionDeselectAll.svg</file>
+    <file>resources/icons/mActionDeselectAllRows.svg</file>
+    <file>resources/icons/mActionSelectAllRows.svg</file>
     <file>resources/icons/mActionPanToSelected.svg</file>
     <file>resources/icons/mActionZoomIn.svg</file>
     <file>resources/icons/mActionZoomLast.svg</file>
