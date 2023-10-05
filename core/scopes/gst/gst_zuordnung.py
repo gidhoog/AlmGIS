@@ -690,6 +690,8 @@ class GstTable(MainTable):
         self.maintable_view.setColumnWidth(3, 45)
         self.maintable_view.setColumnWidth(4, 130)
         self.maintable_view.setColumnWidth(5, 40)
+        self.maintable_view.setColumnWidth(6, 180)
+        self.maintable_view.setColumnWidth(7, 130)
         """"""
         """passe die Zeilenhöhen an den Inhalt an"""
         self.maintable_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -714,7 +716,7 @@ class GstTable(MainTable):
         self.maintable_columns[5] = MaintableColumn(heading='EZ',
                                                     column_type='int',
                                                     alignment='c')
-        self.maintable_columns[6] = MaintableColumn(heading="bereits zugeordnet zu",
+        self.maintable_columns[6] = MaintableColumn(heading="zugeordnet zu",
                                                     column_type='str')
         self.maintable_columns[7] = MaintableColumn(heading='Datenstand',
                                                     column_type='str')
@@ -1008,6 +1010,8 @@ class GstPreSelTable(MainTable):
 
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
+        self.uiDeleteDataTbtn.setVisible(False)
+        self.uiToolsTbtn.setVisible(False)
 
         """blende unnötige Spalten aus"""
         self.maintable_view.setColumnHidden(0, True)

@@ -85,7 +85,8 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
         new_x = pos.x()+(widget.size().width()/2) - (
                 self.dialogWidget.size().width() / 2)
 
-        new_y = pos.y()-py2 + 20
+        # new_y = pos.y()-py2 + 20
+        new_y = pos.y()-py2
 
         self.setGeometry(int(new_x), int(new_y), self.dialogWidget.size().width(),
                          self.dialogWidget.size().height())
@@ -98,11 +99,12 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
 
         self.insertWidget(entity_widget)
         self.resize(self.minimumSizeHint())
-        if center_in is not None:
-            self.centerDialogInGivenWidget(center_in)
 
         if width is not None and height is not None:
             self.resize(width, height)
+
+        if center_in is not None:
+            self.centerDialogInGivenWidget(center_in)
 
     def set_apply_button_text(self, text):
         """

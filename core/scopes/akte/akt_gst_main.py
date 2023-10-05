@@ -100,7 +100,9 @@ class GstMaintable(MainTable):
         self.gst_zuordnung_widget.dialog_widget = self.zuordnungs_dialog
 
         self.gst_zuordnung_widget.initWidget()
-        self.zuordnungs_dialog.initDialog(self.gst_zuordnung_widget, self, 1500, 700)
+        self.zuordnungs_dialog.initDialog(self.gst_zuordnung_widget,
+                                          width=1700,
+                                          height=700)
         result = self.zuordnungs_dialog.exec()
 
         if result:
@@ -121,6 +123,8 @@ class GstMaintable(MainTable):
                               'ha', 9, 120, 0.0001, 4)
 
         self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
+
+        # self.maintable_view.setAlternatingRowColors(True)
 
     def signals(self):
         super().signals()

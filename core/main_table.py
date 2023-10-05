@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, \
     QSortFilterProxyModel, QItemSelectionModel, QItemSelection, \
     QItemSelectionRange
+from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit
 from sqlalchemy.exc import IntegrityError
@@ -437,6 +438,15 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         self.uiActionExportCsv = QAction(self.uiToolsTbtn)
         self.uiActionExportCsv.setText('exportiere csv-Datei')
         self.uiToolsTbtn.addAction(self.uiActionExportCsv)
+
+        """definiere für eine alternative zeilen farbe"""
+        maintable_palette = self.maintable_view.palette()
+        # maintable_palette.setColor(QPalette.Base, QColor(255, 0, 0, 127))
+        # maintable_palette.setColor(QPalette.AlternateBase, QColor(183, 180, 25, 27))
+        maintable_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
+        self.maintable_view.setPalette(maintable_palette)
+        self.maintable_view.setAlternatingRowColors(True)
+        """"""
 
     def setDisplayVetricalHeader(self):
         """
