@@ -15,11 +15,9 @@ class Ui_MainTable(object):
     def setupUi(self, MainTable):
         MainTable.setObjectName("MainTable")
         MainTable.resize(791, 374)
-        self.gridLayout = QtWidgets.QGridLayout(MainTable)
-        self.gridLayout.setContentsMargins(4, 4, 4, 4)
-        self.gridLayout.setHorizontalSpacing(0)
-        self.gridLayout.setVerticalSpacing(6)
-        self.gridLayout.setObjectName("gridLayout")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(MainTable)
+        self.horizontalLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiMainVlay = QtWidgets.QVBoxLayout()
         self.uiMainVlay.setContentsMargins(-1, 0, -1, -1)
         self.uiMainVlay.setSpacing(6)
@@ -208,7 +206,7 @@ class Ui_MainTable(object):
         self.uiFooterHlay.addLayout(self.uiFooterLinesVlay)
         self.uiFooterHlay.setStretch(1, 1)
         self.uiMainVlay.addLayout(self.uiFooterHlay)
-        self.gridLayout.addLayout(self.uiMainVlay, 4, 0, 1, 7)
+        self.horizontalLayout_2.addLayout(self.uiMainVlay)
 
         self.retranslateUi(MainTable)
         QtCore.QMetaObject.connectSlotsByName(MainTable)

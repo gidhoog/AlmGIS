@@ -99,10 +99,11 @@ class GstMaintable(MainTable):
         self.zuordnungs_dialog = self.gst_zuordnung_dlg_class(self)
         self.gst_zuordnung_widget.dialog_widget = self.zuordnungs_dialog
 
-        self.gst_zuordnung_widget.initWidget()
         self.zuordnungs_dialog.initDialog(self.gst_zuordnung_widget,
                                           width=1700,
                                           height=700)
+        self.gst_zuordnung_widget.initWidget()
+
         result = self.zuordnungs_dialog.exec()
 
         if result:

@@ -21,8 +21,9 @@ from os.path import isfile, join
 
 from PyQt5.QtCore import QModelIndex, Qt, QAbstractTableModel, QSortFilterProxyModel, QItemSelectionModel
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QLabel, QMainWindow, QComboBox, QHeaderView, \
-    QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView
+from PyQt5.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
+    QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView,
+                             QSplitter, QVBoxLayout, QWidget)
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform
 
@@ -55,9 +56,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.guiGisDock.setWidget(self.guiMainGis)
 
         self.guiGstTable = GstTable(self)
-        self.uiTableVlay.addWidget(self.guiGstTable)
-
-    def initWidget(self):
+        self.guiGstPreSelTview = GstPreSelTable(self)
 
         self.getZugeordneteGst()
 
@@ -66,17 +65,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             self.guiGstTable.initMaintable(session)
         """"""
 
-        self.setLoadTimeLabel()
-
-        self.loadGisLayer()
-
-        self.signals()
-
-        self.linked_gis_widgets[108] = self.guiGstTable
-        self.activateGisControl()
-        self.dialog_widget._guiApplyDbtn.setEnabled(False)
-
-        self.guiGstPreSelTview = GstPreSelTable(self)
+        # self.uiTableVlay.addWidget(self.guiGstTable)
 
         """setzte das model für die vorgemerkte Tabelle"""
         presel_model = self.guiGstTable.main_table_model
@@ -96,10 +85,60 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         """richte self.guiGstPreSelTview ein"""
         self.guiGstPreSelTview.initUi()
-        self.uiVorgemerkteGstVlay.addWidget(self.guiGstPreSelTview)
+        # self.uiVorgemerkteGstVlay.insertWidget(0, self.guiGstPreSelTview)
         self.guiGstPreSelTview.updateMaintableNew()
         self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
         """"""
+
+        self.presel_wid = QWidget(self)
+        self.guiMatchPreSelGstPbtn = QPushButton(self)
+        self.guiMatchPreSelGstPbtn.setText('vvvorgemerkte Gst zuordnen')
+
+        self.presel_layout = QHBoxLayout(self)
+        self.presel_layout.setContentsMargins(0, 0, 0, 0)
+        self.presel_wid.setLayout(self.presel_layout)
+
+        self.presel_layout.insertWidget(0, self.guiGstPreSelTview)
+        self.presel_layout.insertWidget(1, self.guiMatchPreSelGstPbtn)
+
+
+        self.table_splitter = QSplitter()
+        self.table_splitter.setOrientation(Qt.Vertical)
+        self.table_splitter.setStyleSheet('QSplitter::handle {background: grey; }')
+        self.table_splitter.addWidget(self.guiGstTable)
+        self.table_splitter.addWidget(self.presel_wid)
+
+        self.uiCentralLayout.addWidget(self.table_splitter)
+
+
+        self.setLoadTimeLabel()
+
+        self.loadGisLayer()
+
+        self.signals()
+
+        self.linked_gis_widgets[108] = self.guiGstTable
+        self.activateGisControl()
+        # self.dialog_widget._guiApplyDbtn.setEnabled(False)
+
+    def initWidget(self):
+
+        # self.getZugeordneteGst()
+        #
+        # """initialisiere die grundstückstabelle"""
+        # with DbSession.session_scope() as session:
+        #     self.guiGstTable.initMaintable(session)
+        # """"""
+
+        # self.setLoadTimeLabel()
+        #
+        # self.loadGisLayer()
+        #
+        # self.signals()
+
+        self.linked_gis_widgets[108] = self.guiGstTable
+        self.activateGisControl()
+        self.dialog_widget._guiApplyDbtn.setEnabled(False)
 
     def selPreChanged(self):
         """wenn die Auswahl im presel_view geändert wird"""
@@ -693,9 +732,9 @@ class GstTable(MainTable):
         self.maintable_view.setColumnWidth(6, 180)
         self.maintable_view.setColumnWidth(7, 130)
         """"""
-        """passe die Zeilenhöhen an den Inhalt an"""
-        self.maintable_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        """"""
+        # """passe die Zeilenhöhen an den Inhalt an"""
+        # self.maintable_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        # """"""
 
     def setMaintableColumns(self):
         super().setMaintableColumns()
