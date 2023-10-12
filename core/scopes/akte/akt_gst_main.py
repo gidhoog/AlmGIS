@@ -44,16 +44,8 @@ class GstZuordnungMainDialog(MainDialog):
 
         self.parent = parent
 
-        self.enableApply = True
-
         self.dialog_window_title = 'Grundstücke zuordnen'
-        self.set_apply_button_text('&Grundstück(e) zuordnen')
         self.set_reject_button_text('&Schließen')
-
-    def accept(self):
-        super().accept()
-
-        self.dialogWidget.matchGstMultiple()
 
 
 class GstMaintable(MainTable):

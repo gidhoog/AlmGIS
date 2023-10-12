@@ -19,8 +19,9 @@ from io import TextIOWrapper
 from os import listdir
 from os.path import isfile, join
 
-from PyQt5.QtCore import QModelIndex, Qt, QAbstractTableModel, QSortFilterProxyModel, QItemSelectionModel
-from PyQt5.QtGui import QColor
+from PyQt5.QtCore import (QModelIndex, Qt, QAbstractTableModel,
+                          QSortFilterProxyModel, QItemSelectionModel, QSize)
+from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
     QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView,
                              QSplitter, QVBoxLayout, QWidget)
@@ -85,6 +86,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         """richte self.guiGstPreSelTview ein"""
         self.guiGstPreSelTview.initUi()
+        self.guiGstPreSelTview.finalInit()
         # self.uiVorgemerkteGstVlay.insertWidget(0, self.guiGstPreSelTview)
         self.guiGstPreSelTview.updateMaintableNew()
         self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
@@ -92,7 +94,12 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.presel_wid = QWidget(self)
         self.guiMatchPreSelGstPbtn = QPushButton(self)
-        self.guiMatchPreSelGstPbtn.setText('vvvorgemerkte Gst zuordnen')
+        self.guiMatchPreSelGstPbtn.setText('Grundstücke zuordnen')
+        self.guiMatchPreSelGstPbtn.setIcon(QIcon(":/svg/resources/icons/tick_green.svg"))
+        self.guiMatchPreSelGstPbtn.setToolTip('übernehme die ausgewählten Grundstücke<br>'
+                                              'in den aktuellen Akt')
+        self.guiMatchPreSelGstPbtn.setIconSize(QSize(30, 30))
+        self.guiMatchPreSelGstPbtn.setEnabled(False)
 
         self.presel_layout = QHBoxLayout(self)
         self.presel_layout.setContentsMargins(0, 0, 0, 0)
@@ -100,7 +107,6 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.presel_layout.insertWidget(0, self.guiGstPreSelTview)
         self.presel_layout.insertWidget(1, self.guiMatchPreSelGstPbtn)
-
 
         self.table_splitter = QSplitter()
         self.table_splitter.setOrientation(Qt.Vertical)
@@ -165,6 +171,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
         self.guiGstTable.guiPreSelectPbtn.clicked.connect(self.reserveSelectedGst)
+
+        self.guiMatchPreSelGstPbtn.clicked.connect(self.matchGstMultiple)
 
 
     def loadGisLayer(self):
@@ -651,6 +659,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             self.parent.parent.updateAkt()
             """"""
 
+            self.dialog_widget.reject()  # schliesse  zuordungs-dialog
+
     def deleteUnusedGst(self):
         """
         lösche Gst-Daten aus der db die nicht genutzt werden
@@ -732,9 +742,6 @@ class GstTable(MainTable):
         self.maintable_view.setColumnWidth(6, 180)
         self.maintable_view.setColumnWidth(7, 130)
         """"""
-        # """passe die Zeilenhöhen an den Inhalt an"""
-        # self.maintable_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        # """"""
 
     def setMaintableColumns(self):
         super().setMaintableColumns()
@@ -1008,11 +1015,12 @@ class GstMainModel(MainTableModel):
             self.parent.parent.guiGstPreSelTview.updateMaintableNew()
             """"""
 
-            """aktiviere oder deaktiviere den Dialog-Accept-Button"""
+            """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
+            Grundstücke"""
             if self.parent.parent.checked_gst_instances:
-                self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(True)
+                self.parent.parent.guiMatchPreSelGstPbtn.setEnabled(True)
             else:
-                self.parent.parent.dialog_widget._guiApplyDbtn.setEnabled(False)
+                self.parent.parent.guiMatchPreSelGstPbtn.setEnabled(False)
             """"""
 
             return True
@@ -1038,6 +1046,8 @@ class GstPreSelTable(MainTable):
 
         self.parent = parent
 
+        self.available_filters = ''
+
         self.title = 'vorgemerkte Grundstücke'
 
         self.maintable_text = ["vorgemerktesGrundstück",
@@ -1060,6 +1070,18 @@ class GstPreSelTable(MainTable):
         self.maintable_view.setColumnHidden(8, True)
         self.maintable_view.setColumnHidden(9, True)
         """"""
+
+    def finalInit(self):
+        super().finalInit()
+
+        """setzt bestimmte spaltenbreiten"""
+        self.maintable_view.setColumnWidth(2, 80)
+        self.maintable_view.setColumnWidth(3, 45)
+        self.maintable_view.setColumnWidth(4, 150)
+        self.maintable_view.setColumnWidth(5, 40)
+        """"""
+
+        self.setMaximumWidth(450)
 
     def signals(self):
         super().signals()
