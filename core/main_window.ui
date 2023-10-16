@@ -75,9 +75,16 @@
     </property>
     <addaction name="uiAactionAllMatchGst"/>
    </widget>
+   <widget class="QMenu" name="menuOptionen">
+    <property name="title">
+     <string>Optionen</string>
+    </property>
+    <addaction name="actionSettings"/>
+   </widget>
    <addaction name="menuAkten"/>
    <addaction name="menuGrundst_cke"/>
    <addaction name="menuWerkzeuge"/>
+   <addaction name="menuOptionen"/>
   </widget>
   <widget class="QToolBar" name="uiMainToolBar">
    <attribute name="toolBarArea">
@@ -106,6 +113,15 @@
   <action name="uiAactionAllMatchGst">
    <property name="text">
     <string>Alle zugeordeten Grundstücke</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/mActionOptions.svg</normaloff>:/svg/resources/icons/mActionOptions.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Einstellungen</string>
    </property>
   </action>
  </widget>

@@ -1,6 +1,5 @@
-import csv
+import csv, sys, webbrowser, os
 
-import sys
 from datetime import datetime
 
 from geoalchemy2 import WKTElement
@@ -96,7 +95,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.guiMatchPreSelGstPbtn = QPushButton(self)
         self.guiMatchPreSelGstPbtn.setText('Grundstücke zuordnen')
         self.guiMatchPreSelGstPbtn.setIcon(QIcon(":/svg/resources/icons/tick_green.svg"))
-        self.guiMatchPreSelGstPbtn.setToolTip('übernehme die ausgewählten Grundstücke<br>'
+        self.guiMatchPreSelGstPbtn.setToolTip('übernehme die <p>vorgemerkten</p> Grundstücke<br>'
                                               'in den aktuellen Akt')
         self.guiMatchPreSelGstPbtn.setIconSize(QSize(30, 30))
         self.guiMatchPreSelGstPbtn.setEnabled(False)
@@ -173,6 +172,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.guiGstTable.guiPreSelectPbtn.clicked.connect(self.reserveSelectedGst)
 
         self.guiMatchPreSelGstPbtn.clicked.connect(self.matchGstMultiple)
+
+        self.uiOpenImpPathPbtn.clicked.connect(self.openImpPath)
 
 
     def loadGisLayer(self):
@@ -661,6 +662,13 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
             self.dialog_widget.reject()  # schliesse  zuordungs-dialog
 
+    def openImpPath(self):
+
+        imp_path = str(config.gdb_import_path.absolute())
+
+        path = "C:/Daten"
+        webbrowser.open(os.path.realpath(imp_path))
+
     def deleteUnusedGst(self):
         """
         lösche Gst-Daten aus der db die nicht genutzt werden
@@ -726,6 +734,11 @@ class GstTable(MainTable):
 
         self.guiPreSelectPbtn = QPushButton()
         self.guiPreSelectPbtn.setText('Auswahl übernehmen')
+        self.guiPreSelectPbtn.setIcon(QIcon(":/svg/resources/icons/arrow_down_blue.svg"))
+        self.guiPreSelectPbtn.setToolTip('merke die ausgewählten Grundstücke vor')
+        self.guiPreSelectPbtn.setIconSize(QSize(30, 30))
+        self.guiPreSelectPbtn.setEnabled(False)
+
         self.uiFooterHlay.addWidget(self.guiPreSelectPbtn)
 
         self.guiGstChecked = QLabel()
@@ -763,7 +776,8 @@ class GstTable(MainTable):
                                                     column_type='int',
                                                     alignment='c')
         self.maintable_columns[6] = MaintableColumn(heading="zugeordnet zu",
-                                                    column_type='str')
+                                                    column_type='str',
+                                                    alignment='l')
         self.maintable_columns[7] = MaintableColumn(heading='Datenstand',
                                                     column_type='str')
         self.maintable_columns[8] = MaintableColumn(heading='Importzeit',
@@ -929,6 +943,18 @@ class GstTable(MainTable):
         except:
             print("Filter Error:", sys.exc_info())
 
+    def selectedRowsChanged(self):
+        super().selectedRowsChanged()
+
+        """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
+        Grundstücke"""
+        if self.maintable_view.selectionModel().selectedRows():
+            self.guiPreSelectPbtn.setEnabled(True)
+        else:
+            self.guiPreSelectPbtn.setEnabled(False)
+        """"""
+
+
 class GstMainModel(MainTableModel):
 
     col_with_kg_gst_value = 0
@@ -1054,6 +1080,10 @@ class GstPreSelTable(MainTable):
                                "vorgemerkte Grundstücke",
                                "kein vorgemerktes Grundstück"]
 
+        self.uiClearSelectionPbtn.setText('deselect')
+        self.uiClearSelectionPbtn.setIcon(QIcon(":/svg/resources/icons/arrow_down_blue.svg"))
+        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+
     def initUi(self):
         super().initUi()
 
@@ -1089,6 +1119,13 @@ class GstPreSelTable(MainTable):
         self.uiDeleteDataTbtn.clicked.disconnect()
 
         self.uiDeleteDataTbtn.clicked.connect(self.removeReservedGst)
+
+        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+
+    def clearSelectedRows(self):
+        # super().clearSelectedRows()
+
+        self.maintable_view.selectionModel().clear()
 
 
 class GstPreSelFilter(QSortFilterProxyModel):

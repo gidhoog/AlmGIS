@@ -9,6 +9,7 @@ from core.data_model import BKomplex
 from core.gis_tools import cut_koppel_gstversion
 from core.scopes.akte import akte_all_main
 from core.scopes.gst.gst_all_main import GstAllMain
+from core.settings import SettingsDlg, SettingsWdg
 
 
 class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
@@ -39,6 +40,21 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
 
         # Verschnitte:
         self.actionCutGstVersionKomplexe.triggered.connect(cut_koppel_gstversion)
+
+        # Einstellungen:
+        self.actionSettings.triggered.connect(self.openSettings)
+
+    def openSettings(self):
+
+        settings_dlg = SettingsDlg(self)
+
+        settings_wdg = SettingsWdg(self)
+
+        settings_dlg.insertWidget(settings_wdg)
+        settings_dlg.setMinimumWidth(1000)
+        settings_dlg.setMinimumHeight(600)
+
+        settings_dlg.exec()
 
     def _setMainWidget(self, scope):
         """
@@ -73,7 +89,7 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
 
         """füge einen button ein um eine zusätzliche display_area einzufügen"""
         self._guiAddMainAreaPbtn = QPushButton()
-        self._guiAddMainAreaPbtn.setFlat(0)
+        self._guiAddMainAreaPbtn.setFlat(True)
         self._guiAddMainAreaPbtn.setMaximumWidth(30)
         self._guiAddMainAreaPbtn.setIcon(
             QIcon(':/svg/resources/icons/add_display_area_unchecked.svg'))
@@ -205,6 +221,7 @@ class DisplayAreaTab(QWidget):
             QIcon(':/svg/resources/icons/close_mainarea_inactive.svg'))
         self.gui_close_button.setIconSize(QSize(16, 16))
         self.gui_close_button.setFixedSize(20, 20)
+        self.gui_close_button.setFlat(True)
         self.gui_close_button.setToolTip('schließe den Darstellungsbereich')
 
         self.frame = DisplayAreaFrame(self)

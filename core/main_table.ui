@@ -73,6 +73,9 @@
            <height>25</height>
           </size>
          </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -89,6 +92,9 @@
            <width>25</width>
            <height>25</height>
           </size>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -125,6 +131,9 @@
            <height>25</height>
           </size>
          </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -153,6 +162,9 @@
            <width>25</width>
            <height>25</height>
           </size>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -189,6 +201,9 @@
            <height>25</height>
           </size>
          </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -220,6 +235,9 @@
          </property>
          <property name="popupMode">
           <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -310,6 +328,9 @@
                <height>25</height>
               </size>
              </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -345,6 +366,9 @@
                <height>25</height>
               </size>
              </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -379,6 +403,9 @@
                <width>25</width>
                <height>25</height>
               </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
              </property>
             </widget>
            </item>

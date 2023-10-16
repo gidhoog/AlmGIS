@@ -9,6 +9,7 @@ call pyuic5 core/footer_line.ui -o core/footer_line_UI.py
 call pyuic5 core/main_window.ui -o core/main_window_UI.py
 call pyuic5 core/main_table.ui -o core/main_table_UI.py
 call pyuic5 core/main_gis.ui -o core/main_gis_UI.py
+call pyuic5 core/settings.ui -o core/settings_UI.py
 call pyuic5 core/print_content_widget.ui -o core/print_content_widget_UI.py
 
 call pyuic5 core/scopes/akte/akt.ui -o core/scopes/akte/akt_UI.py
