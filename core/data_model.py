@@ -564,6 +564,22 @@ class BRechtsgrundlage(Base):
                f"name='{self.name}')>"
 
 
+class BSettings(Base):
+    """
+    Einstellungen
+    """
+    __tablename__ = 'a_sys_settings'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    code: Mapped[str]
+    name: Mapped[str]
+    description: Mapped[str]
+    value: Mapped[str]
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}(id={self.id}, " \
+               f"code='{self.code}, name='{self.name}')>"
+
 class BSys(Base):
     """
     Systemwerte

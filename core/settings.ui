@@ -47,12 +47,32 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QListView" name="uiOptionLview">
+     <widget class="QListWidget" name="uiOptionLwdg">
       <property name="maximumSize">
        <size>
         <width>300</width>
         <height>16777215</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Calibri</family>
+        <pointsize>14</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="layoutMode">
+       <enum>QListView::SinglePass</enum>
+      </property>
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="currentRow">
+       <number>-1</number>
       </property>
      </widget>
      <widget class="QStackedWidget" name="uiSettingStackW">
