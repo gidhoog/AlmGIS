@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QMenu, QAction, QToolButton, \
     QHBoxLayout, QToolBar, QDialog, QApplication
 from PyQt5.QtXml import QDomDocument
 
-from core import main_gis_UI, DbSession, config
+from core import main_gis_UI, db_session_cm, config
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsLayerTreeModel,\
     QgsLayerTreeLayer, QgsExpressionContextUtils, QgsLayout, QgsVectorLayer, \
@@ -297,7 +297,7 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         :return: QMenu
         """
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
 
             menu_query = session.query(BGisLayerMenu)\
                 .filter(BGisLayerMenu.menu_id == menu_id)\
@@ -428,7 +428,7 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
         back_menu = QMenu()
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             session.expire_on_commit = False
 
             lay = session.query(BGisStyle)\

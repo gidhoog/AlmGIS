@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform
 
-from core import DbSession, config, main_dialog
+from core import db_session_cm, config, main_dialog
 from core.scopes.gst import gst_zuordnung_UI
 from core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
 
@@ -61,7 +61,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.getZugeordneteGst()
 
         """initialisiere die grundstückstabelle"""
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             self.guiGstTable.initMaintable(session)
         """"""
 
@@ -131,7 +131,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         # self.getZugeordneteGst()
         #
         # """initialisiere die grundstückstabelle"""
-        # with DbSession.session_scope() as session:
+        # with db_session_cm() as session:
         #     self.guiGstTable.initMaintable(session)
         # """"""
 
@@ -178,7 +178,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
     def loadGisLayer(self):
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             session.expire_on_commit = False
 
             scope_layer_inst = session.query(BGisScopeLayer)\
@@ -194,7 +194,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         trage die Zeit für den gdb-import in der datenbank ein
         """
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             time_sys_query = session.query(BSys).filter(BSys.key == 'last_gdb_import').first()
             time_sys_query.value = str(time)
 
@@ -204,7 +204,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         """
         erhalte die Zeit des letzten gdb-importes aus der alm_sys tabelle
         """
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             time_sys_query = session.query(BSys).filter(BSys.key == 'last_gdb_import').first()
             return time_sys_query.value
 
@@ -224,7 +224,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.akt_id = self.parent.parent.entity_id
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
 
             zuord_query = session.query(BGst.id)\
                 .join(BGstZuordnung) \
@@ -271,7 +271,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.ez_import_path = []  # liste der ez's im import-pfad (ez als base-class)
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             session.expire_on_commit = False
 
             """hole alle Gst die aktuell einem Akt zugeordnet sind"""
@@ -323,7 +323,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         """
         importiere die Gdb-Daten, die in die Liste self.ez_import_path geladen wurden
         """
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
 
             """erstelle ein dict mit allen kg_gst aus der tabelle a_alm_gst mit der klasse BGst als value"""
             self.vorhandene_kg_gst = {}
@@ -640,7 +640,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             accept_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             """übernehme die markierten Gst in die GDB-Tabelle (inkl. EZ, Eigentuemer u. Nutzungen)"""
-            with DbSession.session_scope() as session:
+            with db_session_cm() as session:
                 session.expire_on_commit = False
                 for gst_instance in self.checked_gst_instances:
 
@@ -677,7 +677,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         mache die aus performace-gründen direkt in der db
         """
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
 
             """aktiviere foreign_key-Support in der alm-datenbank"""
             session.execute(text('pragma foreign_keys=ON'))
@@ -843,7 +843,7 @@ class GstTable(MainTable):
 
     def setFilterKgnr(self):
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             item_query = session.query(BGstEz.kgnr).distinct()
 
         try:
@@ -866,7 +866,7 @@ class GstTable(MainTable):
 
     def setFilterKgName(self):
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             item_query = session.query(BKatGem.kgname).join(BGstEz).distinct()
 
         try:
@@ -889,7 +889,7 @@ class GstTable(MainTable):
 
     def setFilterEz(self):
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             item_query = session.query(BGstEz.ez).distinct()
 
         try:

@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit
 from sqlalchemy.exc import IntegrityError
 
-from core import main_table_UI, DbSession
+from core import main_table_UI, db_session_cm
 from core.entity import EntityMainDialog
 from core.footer_line import FooterLine
 from core.main_widget import MainWidget
@@ -824,7 +824,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
             """hole die daten die bearbeitet werden sollen, um sie im
             entity-widget bearbeiten zu können"""
-            with DbSession.session_scope() as session:
+            with db_session_cm() as session:
                 session.expire_on_commit = False
 
                 if self.inst_column is not None:
@@ -890,7 +890,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
         type_data_class = list(self.entity_typ_column.values())[0]
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             instance = session.query(type_data_class)\
                 .filter(type_data_class.id == type_id)\
                 .first()
@@ -946,7 +946,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         for index in indexes:
             try:
                 """lösche den datensatz mit SQLAlchemy-session"""
-                with DbSession.session_scope() as session:
+                with db_session_cm() as session:
                     inst = session.query(self.data_model_class).filter(
                         self.data_model_class.id == self.filter_proxy.data(
                             self.filter_proxy.index(
@@ -1138,7 +1138,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         :return:
         """
         if self.entity_typ_column:
-            with DbSession.session_scope() as session:
+            with db_session_cm() as session:
                 session.expire_on_commit = False
                 type_class = list(self.entity_typ_column.values())[0]
                 type_list = session.query(type_class)\

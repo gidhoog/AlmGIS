@@ -5,7 +5,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QLabel, QComboBox
 from sqlalchemy import func
 
-from core import DbSession
+from core import db_session_cm
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt
@@ -171,7 +171,7 @@ class GstAllMain(MainTable, MainWidget):
 
     def setFilterAwb(self):
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             item_query = session.query(BGstAwbStatus.name).distinct()
 
         try:

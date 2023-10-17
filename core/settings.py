@@ -1,9 +1,10 @@
 
 from PyQt5.QtWidgets import QWidget, QListWidgetItem, QFileDialog
+from select import select
 
-
+from core.data_model import BSettings
 from core.main_dialog import MainDialog
-from core import settings_UI
+from core import settings_UI, DbSession
 
 
 class SettingsDlg(MainDialog):
@@ -52,14 +53,23 @@ class SettingsWdg(settings_UI.Ui_Settings, QWidget):
 
         self.uiGstImportPbtn.clicked.connect(self.setImportPath)
 
+        self.loadData()
+
     def loadData(self):
 
-        self.session = DbSession()
+        session = DbSession()
+
+        item_query = session.query(BSettings) \
+            .all()
+
+        # stmt = select(BSettings)
 
         # stmt = select(BFarmitem) \
         #     .filter(BFarmitem.parent_id == None)
-        #
+
         # item_query = self.session.scalars(stmt).all()
+
+        print(f'item_query: {item_query}')
 
     def indexChanged(self, index):
 

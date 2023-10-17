@@ -2,7 +2,7 @@ from functools import wraps
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow
 
-from core import DbSession
+from core import db_session_cm
 from core.main_dialog import MainDialog
 
 
@@ -255,7 +255,7 @@ class Entity(QMainWindow):
         """
         'commit' die daten der entity_session in die datenbank
         """
-        with DbSession.session_scope() as self.entity_session:
+        with db_session_cm() as self.entity_session:
             try:
                 self.entity_session.add(self.data_instance)
             except:

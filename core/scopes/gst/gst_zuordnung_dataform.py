@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from core import entity, DbSession
+from core import entity, db_session_cm
 from core.data_model import BGstAwbStatus, BRechtsgrundlage
 from core.gis_tools import cut_koppel_gstversion
 from core.scopes.gst import gst_zuordnung_dataform_UI
@@ -86,7 +86,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.setupUi(self)
 
         """lade die listenelemente für die comboboxen"""
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
 
             status_items = session.query(BGstAwbStatus).\
                 order_by(BGstAwbStatus.sort).\

@@ -9,7 +9,7 @@ from qgis.core import QgsPrintLayout, QgsUnitTypes, QgsLayoutItemPage,\
     QgsLayoutPoint, QgsLayoutSize, QgsLayoutItemMap, QgsRectangle, \
     QgsLayoutItemHtml
 from sqlalchemy import func, and_, desc
-from core import DbSession
+from core import db_session_cm
 from core.data_model import BGst, BKatGem, BGstEz, BGstZuordnung, BGstVersion, \
     BGisScopeLayer
 from core.gis_layer import getGisLayer, setLayerStyle
@@ -55,7 +55,7 @@ class AwbAuszug(QgsPrintLayout):
         """"""
 
         """hole die daten"""
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             session.expire_on_commit = False
 
             self.gst_query = session.query(BGst.kgnr,
@@ -650,7 +650,7 @@ class AwbAuszug(QgsPrintLayout):
             extent.setMinimal()
 
             """hole die layer für die karte"""
-            with DbSession.session_scope() as session:
+            with db_session_cm() as session:
 
                 map_layer_query = session.query(BGisScopeLayer)\
                     .filter(BGisScopeLayer.gis_scope_id == 3) \

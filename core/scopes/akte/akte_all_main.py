@@ -1,7 +1,7 @@
 # from PyQt5.QtCore import Qt
 from sqlalchemy import func, select
 
-from core import DbSession
+from core import db_session_cm
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus
 from core.main_table import MainTable, MaintableColumn, MainTableModel, \
@@ -28,7 +28,7 @@ class AkteAllMain(MainTable, MainWidget):
 
         self.data_model_class = BAkt
 
-        # with DbSession.session_scope() as session:
+        # with db_session_cm() as session:
         #
         #     test_inst = session.get(BGst, 12499)
         #

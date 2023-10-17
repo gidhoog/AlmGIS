@@ -15,7 +15,7 @@ from qgis.core import QgsLayoutExporter, QgsFeature, QgsVectorLayer, \
 from sqlalchemy import desc, select, and_, func
 from sqlalchemy.orm import joinedload, contains_eager
 
-from core import entity, DbSession
+from core import entity, db_session_cm
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BKomplex, BKomplexVersion, BKoppel
 from core.gis_control import GisControl
@@ -397,7 +397,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """"""
 
         """hole die daten für die gis-layer aus der datenbank"""
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             session.expire_on_commit = False
 
             akt_gis_scope_layer = session.query(BGisScopeLayer)\
@@ -469,7 +469,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         die combobox ein
         """
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             status_items = session.query(BBearbeitungsstatus).\
                 order_by(BBearbeitungsstatus.sort).\
                 all()

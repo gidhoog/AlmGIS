@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
     QScrollArea, QFrame, QVBoxLayout, QWidget
 from sqlalchemy import select
 
-from core import main_window_UI, DbSession
+from core import main_window_UI, db_session_cm
 from core.data_model import BKomplex
 from core.gis_tools import cut_koppel_gstversion
 from core.scopes.akte import akte_all_main
@@ -71,7 +71,7 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             widget = GstAllMain(self)
             widget_title = "zugeordnete Grundstücke"
 
-        with DbSession.session_scope() as session:
+        with db_session_cm() as session:
             session.expire_on_commit = False
 
             widget.initMaintable(session=session)

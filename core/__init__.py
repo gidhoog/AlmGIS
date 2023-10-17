@@ -21,31 +21,28 @@ def load_spatialite(dbapi_conn, connection_record):
 engine = create_engine(f"sqlite:///{config.alm_data_db_path}")
 listen(engine, 'connect', load_spatialite)
 
-SessionFactory = sessionmaker()
-SessionFactory.configure(bind=engine)
+"""verwende die Klasse 'DbSession' für Sessions bei denen du 'commit' und
+'close' steuerst"""
+DbSession = sessionmaker()
+DbSession.configure(bind=engine)
+""""""
 
-
-class DbSession:
-    """
-    klasse mit einer methode als context-manager für den datenzugriff
-    """
-
-    @staticmethod
-    @contextmanager
-    def session_scope():
-        """stelle eine generelle session zur verfügung die für datenzugriffe
-        auf die db verwendet werden kann"""
-        # print(f"- create SESSION -")
-        session = SessionFactory()
-        session.expire_on_commit = False
-        try:
-            yield session
-            # print(f"-- commit SESSION --")
-            session.commit()
-        except:
-            # print("-- rollback SESSION --")
-            session.rollback()
-            raise
-        finally:
-            # print(f"--- close SESSION ---")
-            session.close()
+"""verwende den Contextmanager 'db_session_cm' für schnelle Datenbankzugriffe;
+danach wird automatisch 'commit' und 'close' ausgeführt"""
+@contextmanager
+def db_session_cm(expire_on_commit=False, name=''):
+    print(f"- create SESSION - {name}")
+    session = DbSession()
+    session.expire_on_commit = expire_on_commit
+    try:
+        yield session
+        print(f"-- commit SESSION -- {name}")
+        session.commit()
+    except:
+        print(f"-- except SESSION -- {name}")
+        session.rollback()
+        raise
+    finally:
+        print(f"--- close SESSION --- {name}")
+        session.close()
+""""""
