@@ -1,10 +1,26 @@
 
 from PyQt5.QtWidgets import QWidget, QListWidgetItem, QFileDialog
-from select import select
+
+from sqlalchemy import select
 
 from core.data_model import BSettings
 from core.main_dialog import MainDialog
-from core import settings_UI, DbSession
+from core import settings_UI, DbSession, db_session_cm
+
+
+def getSettingValue(code):
+    """
+    lese die Einstellung mit dem übergebenen Code aus der Datenbank
+    und liefere den Wert zurück
+
+    :param code: str
+    :return: value
+    """
+    with db_session_cm() as session:
+        stmt = select(BSettings).filter(BSettings.code == code)
+        query = session.scalars(stmt).first()
+
+    return query.value
 
 
 class SettingsDlg(MainDialog):
@@ -22,9 +38,9 @@ class SettingsDlg(MainDialog):
         self.dialog_window_title = 'Alm- und Weidebuch - Einstellungen'
         self.set_apply_button_text('Änderungen übernehmen und Schließen')
 
-    # def accept(self):
-    #     if self.dialogWidget.acceptEntity():
-    #         super().accept()
+    def accept(self):
+        if self.dialogWidget.acceptEntity():
+            super().accept()
 
 class SettingsWdg(settings_UI.Ui_Settings, QWidget):
     """
@@ -53,23 +69,59 @@ class SettingsWdg(settings_UI.Ui_Settings, QWidget):
 
         self.uiGstImportPbtn.clicked.connect(self.setImportPath)
 
+        # print(f'bev_path: {self.getSettingValue("bev_imp_path")}')
         self.loadData()
+
+    def acceptEntity(self):
+
+        aaa = self.setSettingValue("bev_imp_path", self.uiGstImportLedit.text())
+
+        print(f'speichern')
+
+        return True
 
     def loadData(self):
 
-        session = DbSession()
+        # self.uiGstImportLedit.setText(self.getSettingValue("bev_imp_path"))
+        self.uiGstImportLedit.setText(getSettingValue("bev_imp_path"))
 
-        item_query = session.query(BSettings) \
-            .all()
 
-        # stmt = select(BSettings)
+    # @staticmethod
+    # def getSettingValue(code):
+    #     """
+    #     lese die Einstellung mit dem übergebenen Code aus der Datenbank
+    #     und liefere den Wert zurück
+    #
+    #     :param code: str
+    #     :return: value
+    #     """
+    #     with db_session_cm() as session:
+    #
+    #         stmt = select(BSettings).filter(BSettings.code == code)
+    #         query = session.scalars(stmt).first()
+    #
+    #     return query.value
 
-        # stmt = select(BFarmitem) \
-        #     .filter(BFarmitem.parent_id == None)
+    def setSettingValue(self, code, value: str):
+        """
+        schreibe den Wert einer Einstelung in die Datenbank
 
-        # item_query = self.session.scalars(stmt).all()
+        :param code: str
+        :param value: str
+        :return: bool
+        """
+        try:
+            with db_session_cm() as session:
 
-        print(f'item_query: {item_query}')
+                stmt = select(BSettings).filter(BSettings.code == code)
+                query = session.scalars(stmt).first()
+
+                query.value = value
+            return True
+        except:
+            print(f"failed to write the value '{value}' to the setting-code: '{code}'")
+            return False
+
 
     def indexChanged(self, index):
 

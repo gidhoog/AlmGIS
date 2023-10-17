@@ -1,6 +1,7 @@
 import csv, sys, webbrowser, os
 
 from datetime import datetime
+from pathlib import Path
 
 from geoalchemy2 import WKTElement
 from sqlalchemy import desc, text
@@ -27,7 +28,7 @@ from PyQt5.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform
 
-from core import db_session_cm, config, main_dialog
+from core import db_session_cm, config, main_dialog, settings
 from core.scopes.gst import gst_zuordnung_UI
 from core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
 
@@ -264,7 +265,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.loading_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         """erstelle eine Liste mit den dateien im importverzeichnis:"""
-        gdb_files = [f for f in listdir(config.gdb_import_path) if isfile(join(config.gdb_import_path, f))]
+        bev_import_path = settings.getSettingValue("bev_imp_path")
+        gdb_files = [f for f in listdir(bev_import_path) if isfile(join(bev_import_path, f))]
         """"""
 
         self.gst_geometries = {}  # dict für die geomentrien
@@ -285,7 +287,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
                 file_endung = file[point_pos+1:]  #: erhalte die Dateiendung
                 if file_endung == 'zip':
                     """definiere das zip-file"""
-                    zip_file = zipfile.ZipFile(str(config.gdb_import_path.absolute() / file), 'r')
+                    path_to_zip_file = settings.getSettingValue("bev_imp_path")
+                    zip_file = zipfile.ZipFile(str(Path(path_to_zip_file) / file), 'r')
                     """durchsuche die zip-datei nach dateien:
                     Wichtig: führe zuerst den loop auf dem shp-Layer durch und
                     erst dann den loop in der Grundstücks-csv"""
@@ -663,11 +666,15 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             self.dialog_widget.reject()  # schliesse  zuordungs-dialog
 
     def openImpPath(self):
+        """
+        öffne das BEV-Import-Verzeichnis
 
-        imp_path = str(config.gdb_import_path.absolute())
+        :return:
+        """
 
-        path = "C:/Daten"
-        webbrowser.open(os.path.realpath(imp_path))
+        path = settings.getSettingValue("bev_imp_path")
+
+        webbrowser.open(os.path.realpath(path))
 
     def deleteUnusedGst(self):
         """
