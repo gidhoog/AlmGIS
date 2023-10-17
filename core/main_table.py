@@ -322,6 +322,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         self.maintable_view.selectionModel().selectionChanged\
             .connect(self.selectedRowsChanged)
         self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+        self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
 
         self.uiActionExportCsv.triggered.connect(self.export_csv)
 
@@ -336,6 +337,10 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
             indexes = self.maintable_view.selectionModel().selectedRows()
 
             return indexes
+
+    def selectAllRows(self):
+
+        self.maintable_view.selectAll()
 
     def clearSelectedRows(self):
         """

@@ -566,7 +566,7 @@ class BRechtsgrundlage(Base):
 
 class BSettings(Base):
     """
-    Einstellungen
+    Einstellungen die vom Benutzer verändert werden können
     """
     __tablename__ = 'a_sys_settings'
 

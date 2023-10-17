@@ -260,6 +260,11 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         lade dann alle Gst-Daten die sich im GDB-Importverzeichnis befinden;
         :return:
         """
+
+        """entferne alle vorgemerkten Grundstücke"""
+        self.guiGstPreSelTview.undoPreSelGst()
+        """"""
+
         self.deleteUnusedGst()
 
         self.loading_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -1087,9 +1092,29 @@ class GstPreSelTable(MainTable):
                                "vorgemerkte Grundstücke",
                                "kein vorgemerktes Grundstück"]
 
-        self.uiClearSelectionPbtn.setText('deselect')
-        self.uiClearSelectionPbtn.setIcon(QIcon(":/svg/resources/icons/arrow_down_blue.svg"))
-        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+        self.guiUndoPreSelPbtn = QPushButton(self)
+        self.guiUndoPreSelPbtn.setIcon(
+            QIcon(":/svg/resources/icons/arrow_up_blue.svg"))
+        self.guiUndoPreSelPbtn.setIconSize(QSize(25, 25))
+        self.guiUndoPreSelPbtn.setFixedSize(32, 32)
+        self.guiUndoPreSelPbtn.setFlat(True)
+        self.guiUndoPreSelPbtn.setToolTip('entferne alle vorgemerkten Grundstücke')
+        self.uiHeaderHley.insertWidget(1, self.guiUndoPreSelPbtn)
+
+        self.guiUndoPreSelPbtn.clicked.connect(self.undoPreSelGst)
+
+    def undoPreSelGst(self):
+        """
+        entferne alle vorgemerkten Grundstücke
+        :return:
+        """
+
+        """bearbeite die Zeilen der Tabelle von oben nach unten (z.B. von 
+        Zeile 10 nach 0); nur so können alle Zeilen der Tabelle gelöscht werden"""
+        for r in range(self.main_table_model.rowCount(), 0, -1):
+            self.main_table_model.setData(self.main_table_model.index(r - 1, 2),
+                                          False, Qt.CheckStateRole)
+        """"""
 
     def initUi(self):
         super().initUi()
@@ -1120,20 +1145,21 @@ class GstPreSelTable(MainTable):
 
         self.setMaximumWidth(450)
 
-    def signals(self):
-        super().signals()
+        self.signals()
 
-        self.uiDeleteDataTbtn.clicked.disconnect()
+    # def signals(self):
+    #     super().signals()
+    #
+    #     self.uiDeleteDataTbtn.clicked.disconnect()
+    #
+    #     self.uiDeleteDataTbtn.clicked.connect(self.removeReservedGst)
 
-        self.uiDeleteDataTbtn.clicked.connect(self.removeReservedGst)
+        # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
 
-        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
-
-    def clearSelectedRows(self):
-        # super().clearSelectedRows()
-
-        self.maintable_view.selectionModel().clear()
-
+    # def clearSelectedRows(self):
+    #     # super().clearSelectedRows()
+    #
+    #     self.maintable_view.selectionModel().clear()
 
 class GstPreSelFilter(QSortFilterProxyModel):
 
