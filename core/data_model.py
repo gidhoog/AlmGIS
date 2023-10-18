@@ -383,25 +383,38 @@ class BGstZuordnung(Base):
     """
     __tablename__ = "a_alm_gst_zuordnung"
 
-    id = Column(Integer, primary_key=True)
-    akt_id = Column(Integer, ForeignKey('a_alm_akt.id'))
-    gst_id = Column(String, ForeignKey('a_alm_gst.id'))
-    awb_status_id = Column(Integer, ForeignKey('a_alm_awb_status.id'))
-    rechtsgrundlage_id = Column(Integer, ForeignKey('a_alm_rechtsgrundlage.id'))
-    anmerkung = Column(String)
-    probleme = Column(String)
-    aufgaben = Column(String)
-    user = Column(String)
-    time = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    akt_id: Mapped[int] = mapped_column(ForeignKey("a_alm_akt.id"))
+    gst_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst.id"))
+    awb_status_id: Mapped[int] = mapped_column(ForeignKey("a_alm_awb_status.id"))
+    rechtsgrundlage_id: Mapped[int] = mapped_column(ForeignKey("a_alm_rechtsgrundlage.id"))
 
-    rel_akt = relationship('BAkt',
-                           back_populates='rel_gst_zuordnung')
-    rel_gst = relationship('BGst',
-                           back_populates='rel_gst_zuordnung')
-    rel_awb_status = relationship('BGstAwbStatus',
-                                  back_populates='rel_gst_zuordnung')
-    rel_rechtsgrundlage = relationship('BRechtsgrundlage',
-                                       back_populates='rel_gst_zuordnung')
+    anmerkung: Mapped[str]
+    probleme: Mapped[str]
+    aufgaben: Mapped[str]
+    gb_wrong: Mapped[bool]
+    awb_wrong: Mapped[bool]
+
+    user: Mapped[str]
+    time: Mapped[str]
+
+    """alle Beziehungen sind 'parent' Beziehungen"""
+    # rel_akt = relationship('BAkt',
+    #                        back_populates='rel_gst_zuordnung')
+    rel_akt: Mapped["BAkt"] = relationship(back_populates="rel_gst_zuordnung")
+
+    # rel_gst = relationship('BGst',
+    #                        back_populates='rel_gst_zuordnung')
+    rel_gst: Mapped["BGst"] = relationship(back_populates="rel_gst_zuordnung")
+
+    # rel_awb_status = relationship('BGstAwbStatus',
+    #                               back_populates='rel_gst_zuordnung')
+    rel_awb_status: Mapped["BGstAwbStatus"] = relationship(back_populates="rel_gst_zuordnung")
+
+    # rel_rechtsgrundlage = relationship('BRechtsgrundlage',
+    #                                    back_populates='rel_gst_zuordnung')
+    rel_rechtsgrundlage: Mapped["BRechtsgrundlage"] = relationship(back_populates="rel_gst_zuordnung")
+    """"""
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \

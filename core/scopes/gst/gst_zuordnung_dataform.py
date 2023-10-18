@@ -3,6 +3,7 @@ from core import entity, db_session_cm
 from core.data_model import BGstAwbStatus, BRechtsgrundlage
 from core.gis_tools import cut_koppel_gstversion
 from core.scopes.gst import gst_zuordnung_dataform_UI
+from core.scopes.gst.gst import Gst
 
 
 class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
@@ -16,6 +17,13 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     _kg = ''
     _awb_status = 0
     _rechtsgrundlage = 0
+
+    _anmerkung = ''
+    _probleme = ''
+    _aufgaben = ''
+
+    _gb_wrong = False
+    _awb_wrong = False
 
     @property  # getter
     def akt(self):
@@ -81,6 +89,76 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         )
         self._rechtsgrundlage = value
 
+    @property  # getter
+    def anmerkung(self):
+
+        self._anmerkung = self.uiAnmTedit.toPlainText()
+        return self._anmerkung
+
+    @anmerkung.setter
+    def anmerkung(self, value):
+
+        self.uiAnmTedit.setPlainText(value)
+        self._anmerkung = value
+
+    @property  # getter
+    def probleme(self):
+
+        self._probleme = self.uiProblemTedit.toPlainText()
+        return self._probleme
+
+    @probleme.setter
+    def probleme(self, value):
+
+        self.uiProblemTedit.setPlainText(value)
+        self._probleme = value
+
+    @property  # getter
+    def aufgaben(self):
+
+        self._aufgaben = self.uiAufgabeTedit.toPlainText()
+        return self._aufgaben
+
+    @aufgaben.setter
+    def aufgaben(self, value):
+
+        self.uiAufgabeTedit.setPlainText(value)
+        self._aufgaben = value
+
+    @property  # getter
+    def gb_wrong(self):
+
+        if self.uiGbWrongCbox.checkState() == 2:
+            self._gb_wrong = True
+        else:
+            self._gb_wrong = False
+        return self._gb_wrong
+
+    @gb_wrong.setter
+    def gb_wrong(self, value):
+
+        if value == True:
+            self.uiGbWrongCbox.setChecked(Qt.Checked)
+
+        self._gb_wrong = value
+
+    @property  # getter
+    def awb_wrong(self):
+
+        if self.uiAwbWrongCbox.checkState() == 2:
+            self._awb_wrong = True
+        else:
+            self._awb_wrong = False
+        return self._awb_wrong
+
+    @awb_wrong.setter
+    def awb_wrong(self, value):
+
+        if value == True:
+            self.uiAwbWrongCbox.setChecked(Qt.Checked)
+
+        self._awb_wrong = value
+
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
@@ -101,6 +179,14 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
             self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item.id)
         """"""
 
+        self.gst_info = Gst(self)
+
+        self.addGstInfo()
+
+    def addGstInfo(self):
+
+        self.uiCentralLayoutHbox.addWidget(self.gst_info)
+
     def mapData(self):
         super().mapData()
 
@@ -110,11 +196,23 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.awb_status = self.data_instance.awb_status_id
         self.rechtsgrundlage = self.data_instance.rechtsgrundlage_id
 
+        self.anmerkung = self.data_instance.anmerkung
+        self.probleme = self.data_instance.probleme
+        self.aufgaben = self.data_instance.aufgaben
+        self.gb_wrong = self.data_instance.gb_wrong
+        self.awb_wrong = self.data_instance.awb_wrong
+
     def submitEntity(self):
         super().submitEntity()
 
         self.data_instance.awb_status_id = self.awb_status
         self.data_instance.rechtsgrundlage_id = self.rechtsgrundlage
+
+        self.data_instance.anmerkung = self.anmerkung
+        self.data_instance.probleme = self.probleme
+        self.data_instance.aufgaben = self.aufgaben
+        self.data_instance.gb_wrong = self.gb_wrong
+        self.data_instance.awb_wrong = self.awb_wrong
 
     def commitEntity(self):
         super().commitEntity()
