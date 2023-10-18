@@ -58,6 +58,72 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.guiGstTable = GstTable(self)
         self.guiGstPreSelTview = GstPreSelTable(self)
+        self.presel_proxy_model = GstPreSelFilter(self)
+
+        # self.getZugeordneteGst()
+        #
+        # """initialisiere die grundstückstabelle"""
+        # with db_session_cm() as session:
+        #     self.guiGstTable.initMaintable(session)
+        # """"""
+        #
+        # """setzte das model für die vorgemerkte Tabelle"""
+        # presel_model = self.guiGstTable.main_table_model
+        # """"""
+        # """filtere die Ansicht in diesem View auf die angehackten Grundstücke;
+        # das wird in der Klasse 'GstPreSelFilter' erledigt """
+        # self.presel_proxy_model.setSourceModel(presel_model)
+        # """"""
+        #
+        # """da in diesem Maintabel die 'initMaintable' Methode nicht verwendet
+        # wird muss neben dem main_table_model auch dem view direkt das
+        # model mit den daten übergeben werden"""
+        # self.guiGstPreSelTview.maintable_view.setModel(self.presel_proxy_model)
+        # self.guiGstPreSelTview.main_table_model = self.presel_proxy_model
+        # """"""
+
+        # """richte self.guiGstPreSelTview ein"""
+        # self.guiGstPreSelTview.initUi()
+        # self.guiGstPreSelTview.finalInit()
+        # self.guiGstPreSelTview.updateMaintableNew()
+        # self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
+        # """"""
+
+        # self.presel_wid = QWidget(self)
+        # self.guiMatchPreSelGstPbtn = QPushButton(self)
+        # self.guiMatchPreSelGstPbtn.setText('Grundstücke zuordnen')
+        # self.guiMatchPreSelGstPbtn.setIcon(QIcon(":/svg/resources/icons/tick_green.svg"))
+        # self.guiMatchPreSelGstPbtn.setToolTip('übernehme die <p>vorgemerkten</p> Grundstücke<br>'
+        #                                       'in den aktuellen Akt')
+        # self.guiMatchPreSelGstPbtn.setIconSize(QSize(30, 30))
+        # self.guiMatchPreSelGstPbtn.setEnabled(False)
+        #
+        # self.presel_layout = QHBoxLayout(self)
+        # self.presel_layout.setContentsMargins(0, 0, 0, 0)
+        # self.presel_wid.setLayout(self.presel_layout)
+        #
+        # self.presel_layout.insertWidget(0, self.guiGstPreSelTview)
+        # self.presel_layout.insertWidget(1, self.guiMatchPreSelGstPbtn)
+        #
+        # self.table_splitter = QSplitter()
+        # self.table_splitter.setOrientation(Qt.Vertical)
+        # self.table_splitter.setStyleSheet('QSplitter::handle {background: grey; }')
+        # self.table_splitter.addWidget(self.guiGstTable)
+        # self.table_splitter.addWidget(self.presel_wid)
+        #
+        # self.uiCentralLayout.addWidget(self.table_splitter)
+
+
+        # self.setLoadTimeLabel()
+        #
+        # self.loadGisLayer()
+        #
+        # self.signals()
+        #
+        # self.linked_gis_widgets[108] = self.guiGstTable
+        # self.activateGisControl()
+
+    def loadData(self):
 
         self.getZugeordneteGst()
 
@@ -66,16 +132,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             self.guiGstTable.initMaintable(session)
         """"""
 
-        # self.uiTableVlay.addWidget(self.guiGstTable)
-
-        """setzte das model für die vorgemerkte Tabelle"""
-        presel_model = self.guiGstTable.main_table_model
-        """"""
-        """filtere die Ansicht in diesem View auf die angehackten Grundstücke;
-        das wird in der Klasse 'GstPreSelFilter' erledigt """
-        self.presel_proxy_model = GstPreSelFilter(self)
-        self.presel_proxy_model.setSourceModel(presel_model)
-        """"""
+        self.setPreSelModel()
 
         """da in diesem Maintabel die 'initMaintable' Methode nicht verwendet
         wird muss neben dem main_table_model auch dem view direkt das
@@ -84,13 +141,20 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.guiGstPreSelTview.main_table_model = self.presel_proxy_model
         """"""
 
-        """richte self.guiGstPreSelTview ein"""
-        self.guiGstPreSelTview.initUi()
-        self.guiGstPreSelTview.finalInit()
-        # self.uiVorgemerkteGstVlay.insertWidget(0, self.guiGstPreSelTview)
-        self.guiGstPreSelTview.updateMaintableNew()
-        self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
+    def setPreSelModel(self):
+        """
+        setzte das model für die vorgemerkte Tabelle
+        :return:
+        """
+        presel_model = self.guiGstTable.main_table_model
+
+        """filtere die Ansicht im View 'self.guiGstPreSelTview' auf die 
+        angehackten Grundstücke;
+        das wird in 'self.presel_proxy_model' erledigt """
+        self.presel_proxy_model.setSourceModel(presel_model)
         """"""
+
+    def initUi(self):
 
         self.presel_wid = QWidget(self)
         self.guiMatchPreSelGstPbtn = QPushButton(self)
@@ -116,35 +180,33 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.uiCentralLayout.addWidget(self.table_splitter)
 
+        """richte self.guiGstPreSelTview ein"""
+        self.guiGstPreSelTview.initUi()
+        self.guiGstPreSelTview.finalInit()
+        self.guiGstPreSelTview.updateMaintableNew()
+        self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
+        """"""
+
+    def initWidget(self):
+
+        self.loadData()
 
         self.setLoadTimeLabel()
 
         self.loadGisLayer()
 
-        self.signals()
+        self.initUi()
 
         self.linked_gis_widgets[108] = self.guiGstTable
         self.activateGisControl()
-        # self.dialog_widget._guiApplyDbtn.setEnabled(False)
-
-    def initWidget(self):
-
-        # self.getZugeordneteGst()
-        #
-        # """initialisiere die grundstückstabelle"""
-        # with db_session_cm() as session:
-        #     self.guiGstTable.initMaintable(session)
-        # """"""
-
-        # self.setLoadTimeLabel()
-        #
-        # self.loadGisLayer()
-        #
-        # self.signals()
 
         self.linked_gis_widgets[108] = self.guiGstTable
         self.activateGisControl()
         self.dialog_widget._guiApplyDbtn.setEnabled(False)
+
+        self.signals()
+
+        self.guiGstTable.updateMaintableNew()
 
     def selPreChanged(self):
         """wenn die Auswahl im presel_view geändert wird"""
@@ -182,9 +244,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         with db_session_cm() as session:
             session.expire_on_commit = False
 
-            scope_layer_inst = session.query(BGisScopeLayer)\
-                .filter(BGisScopeLayer.gis_scope_id == 2)\
-                .order_by(desc(BGisScopeLayer.order))\
+            scope_layer_inst = session.query(BGisScopeLayer) \
+                .filter(BGisScopeLayer.gis_scope_id == 2) \
+                .order_by(desc(BGisScopeLayer.order)) \
                 .all()
 
         self.guiMainGis.loadLayer(scope_layer_inst)
@@ -227,9 +289,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         with db_session_cm() as session:
 
-            zuord_query = session.query(BGst.id)\
+            zuord_query = session.query(BGst.id) \
                 .join(BGstZuordnung) \
-                .filter(BGstZuordnung.akt_id == self.akt_id)\
+                .filter(BGstZuordnung.akt_id == self.akt_id) \
                 .all()
         """erzeuge eine liste mit den id's aus dem query (=list in list)"""
         self.akt_zugeordnete_gst = [r[0] for r in zuord_query]
@@ -318,9 +380,12 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.setLoadTimeLabel()
         """"""
 
-        """lade die Gst-Tabelle:"""
-        self.guiGstTable.updateMaintable()
+        self.guiGstTable.loadData()  # lade die Daten in der Gst-Tabelle neu
+        """setzte das model für den Filter erneut, damit dieser korrekt 
+        funktioniert"""
+        self.setPreSelModel()
         """"""
+        self.guiGstTable.updateMaintableNew()
 
         """aktualisiere main_gis"""
         self.guiMainGis.uiCanvas.update()
@@ -509,7 +574,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             datenstand_h = headers[12][15:17]
             datenstand_min = headers[12][18:20]
             datenstand_str = datenstand_jahr + '-' + datenstand_monat + '-' + datenstand_tag + ' ' + \
-                         datenstand_h + ':' + datenstand_min + ':00'
+                             datenstand_h + ':' + datenstand_min + ':00'
             """"""
 
             """hole die ez daten von der ersten Daten-Zeile in der csv-datei"""
@@ -556,8 +621,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
                 """pro csv-zeile wird auf jeden fall eine ba-instanz erzeugt"""
                 nutzung_instance = BGstNutzung(ba_id=ba_id,
-                                        nu_id=nu_id,
-                                        area=flaeche)
+                                               nu_id=nu_id,
+                                               area=flaeche)
 
                 """kontrolliere, ob dieses gst bereits als solches erfasst wurde;
                 wenn nicht, dann erzeuge eine gst-instanz und gst_version-instanz, weise sie einander zu
@@ -732,6 +797,7 @@ class GstTable(MainTable):
         super(__class__, self).__init__(parent)
 
         self.parent = parent
+        self.title = 'Grundstücke die zugeordnet werden können:'
 
         self.available_filters = 'gs'
 
@@ -1085,8 +1151,7 @@ class GstPreSelTable(MainTable):
         self.parent = parent
 
         self.available_filters = ''
-
-        self.title = 'vorgemerkte Grundstücke'
+        self.title = 'vorgemerkte Grundstücke:'
 
         self.maintable_text = ["vorgemerktesGrundstück",
                                "vorgemerkte Grundstücke",
@@ -1096,7 +1161,7 @@ class GstPreSelTable(MainTable):
         self.guiUndoPreSelPbtn.setIcon(
             QIcon(":/svg/resources/icons/arrow_up_blue.svg"))
         self.guiUndoPreSelPbtn.setIconSize(QSize(25, 25))
-        self.guiUndoPreSelPbtn.setFixedSize(32, 32)
+        self.guiUndoPreSelPbtn.setFixedSize(32, 31)
         self.guiUndoPreSelPbtn.setFlat(True)
         self.guiUndoPreSelPbtn.setToolTip('entferne alle vorgemerkten Grundstücke')
         self.uiHeaderHley.insertWidget(1, self.guiUndoPreSelPbtn)
