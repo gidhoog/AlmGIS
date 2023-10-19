@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GstZuordnungDataForm(object):
     def setupUi(self, GstZuordnungDataForm):
         GstZuordnungDataForm.setObjectName("GstZuordnungDataForm")
-        GstZuordnungDataForm.resize(594, 517)
+        GstZuordnungDataForm.resize(629, 517)
         self.centralwidget = QtWidgets.QWidget(GstZuordnungDataForm)
         self.centralwidget.setObjectName("centralwidget")
         self.uiCentralLayoutHbox = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -206,7 +206,7 @@ class Ui_GstZuordnungDataForm(object):
         self.uiCentralLayoutHbox.addLayout(self.gridLayout)
         GstZuordnungDataForm.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(GstZuordnungDataForm)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 594, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 629, 21))
         self.menubar.setObjectName("menubar")
         GstZuordnungDataForm.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(GstZuordnungDataForm)

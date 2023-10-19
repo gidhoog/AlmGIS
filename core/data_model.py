@@ -236,17 +236,26 @@ class BGst(Base):
     """
     __tablename__ = 'a_alm_gst'
 
-    id = Column(Integer, primary_key=True)
-    kg_gst = Column(String)
-    kgnr = Column(Integer)
-    gst = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    kg_gst: Mapped[str]
+    kgnr: Mapped[int]
+    gst: Mapped[int]
 
-    rel_alm_gst_version = relationship('BGstVersion',
-                                       back_populates="rel_alm_gst",
-                                       cascade="all, delete, delete-orphan",
-                                       passive_deletes=True)
-    rel_gst_zuordnung = relationship('BGstZuordnung',
-                                     back_populates="rel_gst")
+    """folgende Beziehungen sind 'child' Beziehungen"""
+    # rel_alm_gst_version = relationship('BGstVersion',
+    #                                    back_populates="rel_alm_gst",
+    #                                    cascade="all, delete, delete-orphan",
+    #                                    passive_deletes=True)
+    rel_alm_gst_version: Mapped[List["BGstVersion"]] = relationship(
+        back_populates="rel_alm_gst",
+        cascade="all, delete, delete-orphan",
+        passive_deletes=True)
+
+    # rel_gst_zuordnung = relationship('BGstZuordnung',
+    #                                  back_populates="rel_gst")
+    rel_gst_zuordnung: Mapped[List["BGstZuordnung"]] = relationship(
+        back_populates="rel_gst")
+    """"""
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -279,17 +288,20 @@ class BGstEigentuemer(Base):
     """
     __tablename__ = "a_alm_gst_eigentuemer"
 
-    id = Column(Integer, primary_key=True)
-    ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
-    kg_ez = Column(Integer)
-    anteil = Column(Integer)
-    anteil_von = Column(Integer)
-    name = Column(String)
-    geb_dat = Column(String)
-    adresse = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
+    ez_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_ez.id"))
+    kg_ez: Mapped[int]
+    anteil: Mapped[int]
+    anteil_von: Mapped[int]
+    name: Mapped[str]
+    geb_dat: Mapped[str]
+    adresse: Mapped[str]
 
-    rel_alm_gst_ez = relationship("BGstEz",
-                                  back_populates="rel_alm_gst_eigentuemer")
+    # rel_alm_gst_ez = relationship("BGstEz",
+    #                               back_populates="rel_alm_gst_eigentuemer")
+    rel_alm_gst_ez: Mapped["BGstEz"] = relationship(
+        back_populates="rel_alm_gst_eigentuemer")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id}, " \
@@ -302,22 +314,31 @@ class BGstEz(Base):
     """
     __tablename__ = "a_alm_gst_ez"
 
-    id = Column(Integer, primary_key=True)
-    kgnr = Column(Integer, ForeignKey('a_sys_kg.kgnr'))
-    ez = Column(Integer)
-    kg_ez = Column(String)
-    datenstand = Column(String)
-    import_time = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # kgnr = Column(Integer, ForeignKey('a_sys_kg.kgnr'))
+    kgnr: Mapped[int] = mapped_column(ForeignKey("a_sys_kg.kgnr"))
 
-    rel_alm_gst_version = relationship("BGstVersion",
-                                       back_populates="rel_alm_gst_ez")
+    ez: Mapped[int]
+    kg_ez: Mapped[str]
+    datenstand: Mapped[str]
+    import_time: Mapped[str]
 
-    rel_alm_gst_eigentuemer = relationship("BGstEigentuemer",
-                                           back_populates="rel_alm_gst_ez",
-                                           cascade="all, delete-orphan")
+    # rel_alm_gst_version = relationship("BGstVersion",
+    #                                    back_populates="rel_alm_gst_ez")
+    rel_alm_gst_version: Mapped[List["BGstVersion"]] = relationship(
+        back_populates="rel_alm_gst_ez")
 
-    rel_kat_gem = relationship("BKatGem",
-                               back_populates="rel_alm_gst_ez")
+    # rel_alm_gst_eigentuemer = relationship("BGstEigentuemer",
+    #                                        back_populates="rel_alm_gst_ez",
+    #                                        cascade="all, delete-orphan")
+    rel_alm_gst_eigentuemer: Mapped[List["BGstEigentuemer"]] = relationship(
+        back_populates="rel_alm_gst_ez",
+        cascade="all, delete-orphan")
+
+    # rel_kat_gem = relationship("BKatGem",
+    #                            back_populates="rel_alm_gst_ez")
+    rel_kat_gem: Mapped["BKatGem"] = relationship(
+        back_populates="rel_alm_gst_ez")
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -330,14 +351,17 @@ class BGstNutzung(Base):
     """
     __tablename__ = "a_alm_gst_nutzung"
 
-    id = Column(Integer, primary_key=True)
-    gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
-    ba_id = Column(Integer)
-    nu_id = Column(Integer)
-    area = Column(Integer)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
+    gst_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_version.id"))
+    ba_id: Mapped[int]
+    nu_id: Mapped[int]
+    area: Mapped[int]
 
-    rel_alm_gst_version = relationship("BGstVersion",
-                                       back_populates="rel_alm_gst_nutzung")
+    # rel_alm_gst_version = relationship("BGstVersion",
+    #                                    back_populates="rel_alm_gst_nutzung")
+    rel_alm_gst_version: Mapped["BGstVersion"] = relationship(
+        back_populates="rel_alm_gst_nutzung")
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -352,25 +376,51 @@ class BGstVersion(Base):
     """
     __tablename__ = 'a_alm_gst_version'
 
-    id = Column(Integer, primary_key=True)
-    gst_id = Column(Integer, ForeignKey('a_alm_gst.id', ondelete='CASCADE'))
-    ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
-    gk = Column(String)
-    source_id = Column(Integer)
-    import_time = Column(String)
-    geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
-                               srid=31259))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # gst_id = Column(Integer, ForeignKey('a_alm_gst.id', ondelete='CASCADE'))
+    gst_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst.id", ondelete='CASCADE'))
 
-    rel_alm_gst = relationship('BGst',
-                               back_populates="rel_alm_gst_version")
-    rel_alm_gst_ez = relationship('BGstEz',
-                                  back_populates="rel_alm_gst_version")
-    rel_alm_gst_nutzung = relationship('BGstNutzung',
-                                       back_populates="rel_alm_gst_version",
-                                       cascade="all, delete-orphan")
-    rel_cut_koppel_gst = relationship('BCutKoppelGstAktuell',
-                                              back_populates="rel_gstversion",
-                                              cascade="all, delete, delete-orphan")
+    # ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
+    ez_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_ez.id"))
+
+    gk: Mapped[str]
+    source_id: Mapped[int]
+    import_time: Mapped[str]
+    geometry: Mapped[object] = mapped_column(Geometry(geometry_type="MULTIPOLYGON",
+                               srid=31259))
+    """alte configuration"""
+    # geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
+    #                            srid=31259))
+    """"""
+
+    """'child' Beziehungen:"""
+    # rel_alm_gst_nutzung = relationship('BGstNutzung',
+    #                                    back_populates="rel_alm_gst_version",
+    #                                    cascade="all, delete-orphan")
+    rel_alm_gst_nutzung: Mapped[List["BGstNutzung"]] = relationship(
+        back_populates="rel_alm_gst_version",
+        cascade="all, delete-orphan")
+
+    # rel_cut_koppel_gst = relationship('BCutKoppelGstAktuell',
+    #                                           back_populates="rel_gstversion",
+    #                                           cascade="all, delete, delete-orphan")
+    rel_cut_koppel_gst: Mapped[List["BCutKoppelGstAktuell"]] = relationship(
+        back_populates="rel_gstversion",
+        cascade="all, delete, delete-orphan")
+    """"""
+
+    """'parent' Beziehungen:"""
+    # rel_alm_gst = relationship('BGst',
+    #                            back_populates="rel_alm_gst_version")
+    rel_alm_gst: Mapped["BGst"] = relationship(
+        back_populates="rel_alm_gst_version")
+
+    # rel_alm_gst_ez = relationship('BGstEz',
+    #                               back_populates="rel_alm_gst_version")
+    rel_alm_gst_ez: Mapped["BGstEz"] = relationship(
+        back_populates="rel_alm_gst_version")
+    """"""
+
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id}, " \
@@ -452,15 +502,17 @@ class BKatGem(Base):
     """
     __tablename__ = "a_sys_kg"
 
-    kgnr = Column(Integer, primary_key=True)
-    kgname = Column(String)
-    pgnr = Column(Integer)
-    pgname = Column(String)
-    pbnr = Column(Integer)
-    pbname = Column(String)
+    kgnr: Mapped[int] = mapped_column(primary_key=True)
+    kgname: Mapped[str]
+    pgnr: Mapped[int]
+    pgname: Mapped[str]
+    pbnr: Mapped[int]
+    pbname: Mapped[str]
 
-    rel_alm_gst_ez = relationship("BGstEz",
-                                  back_populates="rel_kat_gem")
+    # rel_alm_gst_ez = relationship("BGstEz",
+    #                               back_populates="rel_kat_gem")
+    rel_alm_gst_ez: Mapped["BGstEz"] = relationship(
+        back_populates="rel_kat_gem")
 
     def __repr__(self):
         return f"<BKatGem(kgnr: {self.kgnr}, kgname: {self.kgname}, " \

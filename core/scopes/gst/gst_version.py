@@ -1,6 +1,7 @@
 
 from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 
+from qgis.PyQt.QtWidgets import QMainWindow
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsField
 
@@ -10,7 +11,7 @@ from core.main_gis import MainGis
 from core.scopes.gst import gst_version_UI
 
 
-class GstVersion(gst_version_UI.Ui_GstVersion):
+class GstVersion(gst_version_UI.Ui_GstVersion, QMainWindow):
     """
     baseclass für eine gst-version
     """
@@ -37,7 +38,7 @@ class GstVersion(gst_version_UI.Ui_GstVersion):
 
 
     def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+        super(__class__, self).__init__()
         self.setupUi(self)
 
 

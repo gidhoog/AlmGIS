@@ -98,13 +98,8 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>-1</number>
       </property>
-      <widget class="QWidget" name="uiAktuellWdg">
-       <attribute name="title">
-        <string>aktuell</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>

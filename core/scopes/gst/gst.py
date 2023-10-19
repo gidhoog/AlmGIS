@@ -2,39 +2,47 @@
 from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 
 from qgis.PyQt.QtCore import QVariant
-from qgis.PyQt.QtWidgets import QMainWindow
+from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.core import QgsVectorLayer, QgsField
 
+from core.entity import Entity
 from core.gis_layer import setLayerStyle
 from core.main_gis import MainGis
 
 from core.scopes.gst import gst_UI
+from core.scopes.gst.gst_version import GstVersion
 
 
-class Gst(gst_UI.Ui_Gst, QMainWindow):
+class Gst(gst_UI.Ui_Gst, Entity):
     """
     baseclass für ein grundstück
     """
 
-    # _alm_bnr = 0
-    #
-    # @property  # getter
-    # def alm_bnr(self):
-    #
-    #     if self.uiAlmBnrLedit.text() != '':
-    #         self._alm_bnr = int(self.uiAlmBnrLedit.text())
-    #     else:
-    #         self._alm_bnr = ''
-    #     return self._alm_bnr
-    #
-    # @alm_bnr.setter
-    # def alm_bnr(self, value):
-    #
-    #     if value == 'None' or value == None:
-    #         self._alm_bnr = ''
-    #     else:
-    #         self.uiAlmBnrLedit.setText(str(value))
-    #         self._alm_bnr = value
+    _gst = ''
+    _kgnr = ''
+    _kggst = 0
+
+    @property  # getter
+    def gst(self):
+
+        return self._gst
+
+    @gst.setter
+    def gst(self, value):
+
+        self.uiGstLbl.setText(value)
+        self._gst = value
+
+    @property  # getter
+    def kgnr(self):
+
+        return self._kgnr
+
+    @kgnr.setter
+    def kgnr(self, value):
+
+        self.uiKgLbl.setText(str(value))
+        self._kgnr = value
 
 
     def __init__(self, parent=None):
@@ -42,3 +50,29 @@ class Gst(gst_UI.Ui_Gst, QMainWindow):
         self.setupUi(self)
 
         self.parent = parent
+
+        # gst_version = GstVersion(self)
+
+        akt_lay = QVBoxLayout(self)
+        # akt_lay.addWidget(gst_version)
+
+        # self.uiAktuellWdg.setLayout(akt_lay)
+
+    def mapData(self):
+        super().mapData()
+
+        self.gst = self.data_instance.gst
+        self.kgnr = self.data_instance.kgnr
+
+    def loadSubWidgets(self):
+        super().loadSubWidgets()
+
+        for gst_version in self.data_instance.rel_alm_gst_version:
+            gst_version_wdg = GstVersion(self)
+
+            self.uiGstVersionTab.addTab(gst_version_wdg, f'Stand: {gst_version.import_time}')
+
+
+
+
+

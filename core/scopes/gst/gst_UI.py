@@ -66,9 +66,6 @@ class Ui_Gst(object):
         self.uiGstVersionTab.setFont(font)
         self.uiGstVersionTab.setTabPosition(QtWidgets.QTabWidget.North)
         self.uiGstVersionTab.setObjectName("uiGstVersionTab")
-        self.uiAktuellWdg = QtWidgets.QWidget()
-        self.uiAktuellWdg.setObjectName("uiAktuellWdg")
-        self.uiGstVersionTab.addTab(self.uiAktuellWdg, "")
         self.verticalLayout.addWidget(self.uiGstVersionTab)
         Gst.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Gst)
@@ -80,7 +77,7 @@ class Ui_Gst(object):
         Gst.setStatusBar(self.statusbar)
 
         self.retranslateUi(Gst)
-        self.uiGstVersionTab.setCurrentIndex(0)
+        self.uiGstVersionTab.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(Gst)
 
     def retranslateUi(self, Gst):
@@ -91,4 +88,3 @@ class Ui_Gst(object):
         self.label_2.setText(_translate("Gst", "KG:"))
         self.uiGstLbl.setText(_translate("Gst", "TextLabel"))
         self.uiKgLbl.setText(_translate("Gst", "TextLabel"))
-        self.uiGstVersionTab.setTabText(self.uiGstVersionTab.indexOf(self.uiAktuellWdg), _translate("Gst", "aktuell"))
