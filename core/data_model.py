@@ -33,6 +33,25 @@ class BAkt(Base):
                             self.id, self.name, self.az)
 
 
+class BBanu(Base):
+    """
+    Datenebene für den banu-Wert
+    """
+    __tablename__ = 'a_sys_banu'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    ba_id: Mapped[int]
+    ba_name: Mapped[str]
+    ba_name_short: Mapped[str]
+    nu_id: Mapped[int]
+    nu_name: Mapped[str]
+    nu_name_short: Mapped[str]
+    symbol: Mapped[int]
+
+    rel_alm_gst_nutzung: Mapped["BGstNutzung"] = relationship(
+        back_populates='rel_banu')
+
+
 class BBearbeitungsstatus(Base):
     """
     basisdatenebene für den bearbeitungsstatus
@@ -357,7 +376,7 @@ class BGstNutzung(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     # gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
     gst_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_version.id"))
-    banu_id: Mapped[int]
+    banu_id: Mapped[int] = mapped_column(ForeignKey("a_sys_banu.id"))
     ba_id: Mapped[int]
     nu_id: Mapped[int]
     area: Mapped[int]
@@ -365,6 +384,9 @@ class BGstNutzung(Base):
     # rel_alm_gst_version = relationship("BGstVersion",
     #                                    back_populates="rel_alm_gst_nutzung")
     rel_alm_gst_version: Mapped["BGstVersion"] = relationship(
+        back_populates="rel_alm_gst_nutzung")
+
+    rel_banu: Mapped["BBanu"] = relationship(
         back_populates="rel_alm_gst_nutzung")
 
     def __repr__(self):
