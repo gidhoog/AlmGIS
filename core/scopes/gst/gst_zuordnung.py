@@ -455,7 +455,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
                                                               geometry=gst_version.geometry)
                                 """hole die bisher eingelesenen nutzungen und weise sie der neuen gst_version zu"""
                                 for nutz in gst_version.rel_alm_gst_nutzung:
-                                    new_nutz = BGstNutzung(ba_id=nutz.ba_id,
+                                    new_nutz = BGstNutzung(banu_id=nutz.banu_id,
+                                                           ba_id=nutz.ba_id,
                                                            nu_id=nutz.nu_id,
                                                            area=nutz.area)
                                     new_gst_version.rel_alm_gst_nutzung.append(new_nutz)
@@ -472,7 +473,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
                                                               geometry=gst_version.geometry)
                                 """hole die bisher eingelesenen nutzungen und weise sie der neuen gst_version zu"""
                                 for nutz in gst_version.rel_alm_gst_nutzung:
-                                    new_nutz = BGstNutzung(ba_id=nutz.ba_id,
+                                    new_nutz = BGstNutzung(banu_id=nutz.banu_id,
+                                                           ba_id=nutz.ba_id,
                                                            nu_id=nutz.nu_id,
                                                            area=nutz.area)
                                     new_gst_version.rel_alm_gst_nutzung.append(new_nutz)
@@ -507,7 +509,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
                                 """hole die bisher eingelesenen nutzungen und weise sie der neuen gst_version zu"""
                                 for nutz in gst_version.rel_alm_gst_nutzung:
-                                    new_nutz = BGstNutzung(ba_id=nutz.ba_id,
+                                    new_nutz = BGstNutzung(banu_id=nutz.banu_id,
+                                                           ba_id=nutz.ba_id,
                                                            nu_id=nutz.nu_id,
                                                            area=nutz.area)
                                     new_gst_version.rel_alm_gst_nutzung.append(new_nutz)
@@ -613,6 +616,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
                 gst = gst_row[1]
                 gk = gst_row[2]
 
+                banu_id = int(str(gst_row[3]) + gst_row[4])
                 ba_id = gst_row[3]
                 nu_id = gst_row[4]
                 flaeche = gst_row[7]
@@ -620,7 +624,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
                 kg_gst = str(kgnr) + str(gst)
 
                 """pro csv-zeile wird auf jeden fall eine ba-instanz erzeugt"""
-                nutzung_instance = BGstNutzung(ba_id=ba_id,
+                nutzung_instance = BGstNutzung(banu_id=banu_id,
+                                               ba_id=ba_id,
                                                nu_id=nu_id,
                                                area=flaeche)
 

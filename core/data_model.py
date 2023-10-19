@@ -238,7 +238,7 @@ class BGst(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     kg_gst: Mapped[str]
-    kgnr: Mapped[int]
+    kgnr: Mapped[int] = mapped_column(ForeignKey("a_sys_kg.kgnr"))
     gst: Mapped[int]
 
     """folgende Beziehungen sind 'child' Beziehungen"""
@@ -256,6 +256,9 @@ class BGst(Base):
     rel_gst_zuordnung: Mapped[List["BGstZuordnung"]] = relationship(
         back_populates="rel_gst")
     """"""
+
+    rel_kat_gem: Mapped["BKatGem"] = relationship(
+        back_populates="rel_alm_gst")
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -354,6 +357,7 @@ class BGstNutzung(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     # gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
     gst_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_version.id"))
+    banu_id: Mapped[int]
     ba_id: Mapped[int]
     nu_id: Mapped[int]
     area: Mapped[int]
@@ -512,6 +516,9 @@ class BKatGem(Base):
     # rel_alm_gst_ez = relationship("BGstEz",
     #                               back_populates="rel_kat_gem")
     rel_alm_gst_ez: Mapped["BGstEz"] = relationship(
+        back_populates="rel_kat_gem")
+
+    rel_alm_gst: Mapped["BGst"] = relationship(
         back_populates="rel_kat_gem")
 
     def __repr__(self):

@@ -1,40 +1,71 @@
 
 from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 
-from qgis.PyQt.QtWidgets import QMainWindow
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsField
 
+from core.entity import Entity
 from core.gis_layer import setLayerStyle
 from core.main_gis import MainGis
 
 from core.scopes.gst import gst_version_UI
 
 
-class GstVersion(gst_version_UI.Ui_GstVersion, QMainWindow):
+class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
     """
     baseclass für eine gst-version
     """
 
-    # _alm_bnr = 0
-    #
-    # @property  # getter
-    # def alm_bnr(self):
-    #
-    #     if self.uiAlmBnrLedit.text() != '':
-    #         self._alm_bnr = int(self.uiAlmBnrLedit.text())
-    #     else:
-    #         self._alm_bnr = ''
-    #     return self._alm_bnr
-    #
-    # @alm_bnr.setter
-    # def alm_bnr(self, value):
-    #
-    #     if value == 'None' or value == None:
-    #         self._alm_bnr = ''
-    #     else:
-    #         self.uiAlmBnrLedit.setText(str(value))
-    #         self._alm_bnr = value
+    _ez = 0
+    _ezkg = 0
+    _datenstand = ''
+    _importzeit = ''
+
+    @property  # getter
+    def ez(self):
+
+        return self._ez
+
+    @ez.setter
+    def ez(self, value):
+
+        self.uiEZLbl.setText(str(value))
+        self._ez = value
+
+    @property  # getter
+    def ezkg(self):
+
+        return self._ezkg
+
+    @ezkg.setter
+    def ezkg(self, value):
+
+        kgname = self.data_instance.rel_alm_gst_ez.rel_kat_gem.kgname
+
+        self.uiEzKgLbl.setText(str(value) + ' - ' + kgname)
+        self._ezkg = value
+
+    @property  # getter
+    def datenstand(self):
+
+        return self._datenstand
+
+    @datenstand.setter
+    def datenstand(self, value):
+
+        self.uiDatenstandLbl.setText(value)
+        self._datenstand = value
+
+    @property  # getter
+    def importzeit(self):
+
+        return self._importzeit
+
+    @importzeit.setter
+    def importzeit(self, value):
+
+        self.uiImportZeitLbl.setText(value)
+        self._importzeit = value
 
 
     def __init__(self, parent=None):
@@ -83,3 +114,12 @@ class GstVersion(gst_version_UI.Ui_GstVersion, QMainWindow):
         # setLayerStyle(self.komplex_layer, 'komplex_rot')
         # self.guiMainGis.addLayer(self.komplex_layer)
         # """"""
+
+    def mapData(self):
+        super().mapData()
+
+        self.ez = self.data_instance.rel_alm_gst_ez.ez
+        self.ezkg = self.data_instance.rel_alm_gst_ez.kgnr
+        self.datenstand = self.data_instance.rel_alm_gst_ez.datenstand
+        self.importzeit = self.data_instance.rel_alm_gst_ez.import_time
+

@@ -41,7 +41,9 @@ class Gst(gst_UI.Ui_Gst, Entity):
     @kgnr.setter
     def kgnr(self, value):
 
-        self.uiKgLbl.setText(str(value))
+        kgname = self.data_instance.rel_kat_gem.kgname
+
+        self.uiKgLbl.setText(str(value) + ' - ' + kgname)
         self._kgnr = value
 
 
@@ -68,9 +70,11 @@ class Gst(gst_UI.Ui_Gst, Entity):
         super().loadSubWidgets()
 
         for gst_version in self.data_instance.rel_alm_gst_version:
-            gst_version_wdg = GstVersion(self)
 
-            self.uiGstVersionTab.addTab(gst_version_wdg, f'Stand: {gst_version.import_time}')
+            gst_version_wdg = GstVersion(self)
+            gst_version_wdg.editEntity(gst_version, None)
+
+            self.uiGstVersionTab.addTab(gst_version_wdg, f'Stand: {gst_version.rel_alm_gst_ez.datenstand[0:10]}')
 
 
 
