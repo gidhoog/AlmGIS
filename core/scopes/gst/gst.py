@@ -9,7 +9,7 @@ from core.entity import Entity
 from core.gis_layer import setLayerStyle
 from core.main_gis import MainGis
 
-from core.scopes.gst import gst_UI, gst_version_banu_UI
+from core.scopes.gst import gst_UI, gst_version_banu_UI, gst_version_eigentuemer_UI
 from core.scopes.gst.gst_version import GstVersion
 
 
@@ -86,12 +86,24 @@ class Gst(gst_UI.Ui_Gst, Entity):
                                  reverse=True)
             """"""
 
-            """füge die Banu-Widgets in das vorgesehene Layout ein"""
+            """füge die Banu-Widgets in das vorgesehene Layout ein und
+            errechne die Gst-Fläche"""
+            gst_gb_area = 0
             for banu in sorted_banu:
                 banu_wdg = GstVersionBanu(self)
                 banu_wdg.initData(banu)
                 gst_version_wdg.uiBanuVlay.insertWidget(0, banu_wdg)
+                gst_gb_area = gst_gb_area + banu.area
             """"""
+
+            gst_version_wdg.area_gb = gst_gb_area
+
+            for eig in gst_version.rel_alm_gst_ez.rel_alm_gst_eigentuemer:
+
+                eig_wdg = GstEigentuemer(self)
+                eig_wdg.initData(eig)
+                gst_version_wdg.uiEigentuemerVlay.insertWidget(0, eig_wdg)
+
 
 
 class GstVersionBanu(QWidget, gst_version_banu_UI.Ui_GstVersionBanu):
@@ -134,4 +146,62 @@ class GstVersionBanu(QWidget, gst_version_banu_UI.Ui_GstVersionBanu):
 
         self.name = data_instance.rel_banu.nu_name
         self.area = data_instance.area
+
+
+class GstEigentuemer(QWidget, gst_version_eigentuemer_UI.Ui_GstEigentuemer):
+
+    _anteil = ''
+    _name = ''
+    _adresse = ''
+
+    @property  # getter
+    def name(self):
+
+        return self._name
+
+    @name.setter
+    def name(self, value):
+
+        self.uiNameLbl.setText(value)
+        self._name = value
+
+    @property  # getter
+    def anteil(self):
+
+        return self._anteil
+
+    @anteil.setter
+    def anteil(self, value):
+
+        anteil_str = str(value) + '/' + str(self.data_instance.anteil_von)
+
+        self.uiAnteilLbl.setText(anteil_str)
+        self._anteil = value
+
+    @property  # getter
+    def adresse(self):
+
+        return self._adresse
+
+    @adresse.setter
+    def adresse(self, value):
+
+        self.uiAdresseLbl.setText(value)
+        self._adresse = value
+
+    def __init__(self, parent=None):
+        super(__class__, self).__init__()
+        self.setupUi(self)
+
+        self.parent = parent
+
+        self.data_instance = None
+
+    def initData(self, data_instance):
+
+        self.data_instance = data_instance
+
+        self.name = data_instance.name
+        self.anteil = data_instance.anteil
+        self.adresse = data_instance.adresse
 

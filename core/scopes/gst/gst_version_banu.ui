@@ -28,6 +28,12 @@
    </property>
    <item>
     <widget class="QLabel" name="uiNameLbl">
+     <property name="font">
+      <font>
+       <family>Calibri</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="text">
       <string>TextLabel</string>
      </property>
@@ -35,6 +41,12 @@
    </item>
    <item>
     <widget class="QLabel" name="uiAreaLbl">
+     <property name="font">
+      <font>
+       <family>Calibri</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="text">
       <string>TextLabel</string>
      </property>

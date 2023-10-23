@@ -18,6 +18,7 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
 
     _ez = 0
     _ezkg = 0
+    _area_gb = 0
     _datenstand = ''
     _importzeit = ''
 
@@ -44,6 +45,20 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
 
         self.uiEzKgLbl.setText(str(value) + ' - ' + kgname)
         self._ezkg = value
+
+    @property  # getter
+    def area_gb(self):
+
+        return self._area_gb
+
+    @area_gb.setter
+    def area_gb(self, value):
+
+        val = ('{:.4f}'.format(round(float(value) / 10000, 4))
+               .replace(".", ","))
+        self.uiAreaGbLbl.setText(str(val) + 'ha')
+
+        self._area_gb = value
 
     @property  # getter
     def datenstand(self):

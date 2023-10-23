@@ -20,6 +20,7 @@ call pyuic5 core/scopes/gst/gst_zuordnung_dataform.ui -o core/scopes/gst/gst_zuo
 call pyuic5 core/scopes/gst/gst.ui -o core/scopes/gst/gst_UI.py
 call pyuic5 core/scopes/gst/gst_version.ui -o core/scopes/gst/gst_version_UI.py
 call pyuic5 core/scopes/gst/gst_version_banu.ui -o core/scopes/gst/gst_version_banu_UI.py
+call pyuic5 core/scopes/gst/gst_version_eigentuemer.ui -o core/scopes/gst/gst_version_eigentuemer_UI.py
 
 call pyuic5 core/scopes/komplex/komplex_dataform.ui -o core/scopes/komplex/komplex_dataform_UI.py
 
