@@ -676,7 +676,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         """lese die eigentuemer-csv-datei"""
         with zip_file.open(eigentuemer_csv) as eigentuemer_csvfile:
             read_eig_csv = csv.reader(TextIOWrapper(eigentuemer_csvfile, 'utf-8'), delimiter=';')
-            # headers = next(read_eig_csv, None)  # erhalte eine liste mit den Spaltennamen
+            """überspringe die erste Zeile mit den Spaltenüberschriften"""
+            headers = next(read_eig_csv, None)  # erhalte eine liste mit den Spaltennamen
+            """"""
 
             for eig_row in read_eig_csv:
                 row_name = eig_row[7] + ' ' + eig_row[8] + ' ' + eig_row[13]
