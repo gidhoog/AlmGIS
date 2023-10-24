@@ -1,3 +1,5 @@
+import os
+from datetime import datetime
 from typing import List
 
 from geoalchemy2 import Geometry
@@ -471,8 +473,15 @@ class BGstZuordnung(Base):
     gb_wrong: Mapped[bool]
     awb_wrong: Mapped[bool]
 
-    user: Mapped[str]
-    time: Mapped[str]
+    user_create: Mapped[str] = mapped_column(default=os.getlogin())
+    time_create: Mapped[str] = mapped_column(default=datetime.now())
+    user_edit: Mapped[str] = mapped_column(default=os.getlogin(),
+                                           onupdate=os.getlogin())
+    time_edit: Mapped[str] = mapped_column(default=datetime.now(),
+                                           onupdate=datetime.now())
+
+    # update = Column(DateTime, onupdate=datetime.now())
+    # update_user = Column(String, onupdate=os.getlogin())
 
     """alle Beziehungen sind 'parent' Beziehungen"""
     # rel_akt = relationship('BAkt',

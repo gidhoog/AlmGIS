@@ -14,8 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GstVersion(object):
     def setupUi(self, GstVersion):
         GstVersion.setObjectName("GstVersion")
-        GstVersion.resize(450, 600)
-        GstVersion.setMinimumSize(QtCore.QSize(450, 600))
+        GstVersion.resize(450, 500)
+        GstVersion.setMinimumSize(QtCore.QSize(450, 500))
         self.centralwidget = QtWidgets.QWidget(GstVersion)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -33,7 +33,7 @@ class Ui_GstVersion(object):
         self.uiEigentuemerSa.setWidgetResizable(True)
         self.uiEigentuemerSa.setObjectName("uiEigentuemerSa")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 305, 192))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 305, 142))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -144,7 +144,7 @@ class Ui_GstVersion(object):
         self.uiBenuetzungsartenSa.setWidgetResizable(True)
         self.uiBenuetzungsartenSa.setObjectName("uiBenuetzungsartenSa")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 305, 191))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 305, 141))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)

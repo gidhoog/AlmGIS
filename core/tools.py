@@ -1,3 +1,4 @@
+import os
 
 def convertMtoHa(m, decimal=4):
     """
@@ -9,3 +10,10 @@ def convertMtoHa(m, decimal=4):
 
     return ha
 
+def getUser():
+    """
+    erhalte den aktuellen Benutzer
+
+    :return: str
+    """
+    return os.getlogin()

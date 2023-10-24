@@ -717,7 +717,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             anm = gemeinsame_werte.uiAnmerkungTedit.toPlainText()
             problem = gemeinsame_werte.uiProblemTedit.toPlainText()
 
-            accept_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            # accept_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             """übernehme die markierten Gst in die GDB-Tabelle (inkl. EZ, Eigentuemer u. Nutzungen)"""
             with db_session_cm() as session:
@@ -729,8 +729,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
                                                   awb_status_id=awb_status,
                                                   rechtsgrundlage_id=rechtsgrundlage,
                                                   anmerkung=anm,
-                                                  probleme=problem,
-                                                  time=accept_time)
+                                                  probleme=problem)
                     session.add(gst_zuordnung)
 
             session.commit()
