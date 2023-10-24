@@ -10,7 +10,7 @@ from core.config import alm_data_db_path
 def cut_koppel_gstversion():
     """
     methode zu verschneiden der layer koppel_aktuell ('v_koppel_aktuell') und der
-    im alm- und weidebuch eingetragenen grundstücke ('v_alm_gst_awbuch');
+    Grundstücke, die einem Akt zugeordnet sind ('v_alm_gst')
 
     im verschnittlayer ('a_cut_koppel_aktuell_gstversion') werden die id's der beiden
     layer und der zeitpunkt des verschnittes eingetragen
@@ -51,7 +51,7 @@ def cut_koppel_gstversion():
                 flags=QgsProcessingFeatureSourceDefinition.FlagOverrideDefaultGeometryCheck,
                 geometryCheck=QgsFeatureRequest.GeometryNoCheck),
             'OVERLAY': QgsProcessingFeatureSourceDefinition(
-                str(alm_data_db_path.absolute()) + '|layername=v_alm_gst_awbuch',
+                str(alm_data_db_path.absolute()) + '|layername=v_alm_gst',
                 selectedFeaturesOnly=False,
                 featureLimit=-1,
                 flags=QgsProcessingFeatureSourceDefinition.FlagOverrideDefaultGeometryCheck,

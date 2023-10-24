@@ -108,9 +108,11 @@ class GstMaintable(MainTable):
 
         self.setStretchMethod(2)
 
-        self.insertFooterLine('davon beweidet:',
+        self.insertFooterLine('im AWB eingetragen und beweidet:',
                               'ha', 7, 120, 0.0001, 4, 5, '==', 'eingetragen')
-        self.insertFooterLine('davon im AWB eingetragen:',
+        self.insertFooterLine('beweidet:',
+                              'ha', 7, 120, 0.0001, 4)
+        self.insertFooterLine('im AWB eingetrage Grundstücksfläche:',
                               'ha', 9, 120, 0.0001, 4, 5, '==', 'eingetragen')
         self.insertFooterLine('zugeordnete Grundstücksgesamtfläche:',
                               'ha', 9, 120, 0.0001, 4)
@@ -193,19 +195,19 @@ class GstMaintable(MainTable):
             .subquery()
         """"""
 
-        sub_test = session.query(
-            BCutKoppelGstAktuell.gst_version_id,
-            func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
-            func.max(BKomplexVersion.jahr)
-        )\
-            .select_from(BCutKoppelGstAktuell)\
-            .join(BKoppel)\
-            .join(BKomplexVersion)\
-            .join(BKomplex)\
-            .join(BAkt)\
-            .filter(BAkt.id == self.parent.data_instance.id)\
-            .group_by(BCutKoppelGstAktuell.gst_version_id)\
-            .all()
+        # sub_test = session.query(
+        #     BCutKoppelGstAktuell.gst_version_id,
+        #     func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
+        #     func.max(BKomplexVersion.jahr)
+        # )\
+        #     .select_from(BCutKoppelGstAktuell)\
+        #     .join(BKoppel)\
+        #     .join(BKomplexVersion)\
+        #     .join(BKomplex)\
+        #     .join(BAkt)\
+        #     .filter(BAkt.id == self.parent.data_instance.id)\
+        #     .group_by(BCutKoppelGstAktuell.gst_version_id)\
+        #     .all()
 
         query = session.query(BGstZuordnung.id,
                               BGst.gst,
