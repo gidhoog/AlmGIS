@@ -1,13 +1,8 @@
 
-from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 
-from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QHBoxLayout, QWidget, QLabel
-from qgis.core import QgsVectorLayer, QgsField
 
 from core.entity import Entity
-from core.gis_layer import setLayerStyle
-from core.main_gis import MainGis
 
 from core.scopes.gst import gst_UI, gst_version_banu_UI, gst_version_eigentuemer_UI
 from core.scopes.gst.gst_version import GstVersion
@@ -52,13 +47,6 @@ class Gst(gst_UI.Ui_Gst, Entity):
         self.setupUi(self)
 
         self.parent = parent
-
-        # gst_version = GstVersion(self)
-
-        # akt_lay = QVBoxLayout(self)
-        # akt_lay.addWidget(gst_version)
-
-        # self.uiAktuellWdg.setLayout(akt_lay)
 
     def mapData(self):
         super().mapData()
