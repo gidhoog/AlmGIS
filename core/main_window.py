@@ -1,7 +1,9 @@
+import os
+
 from PyQt5.QtCore import QSize, Qt, QEvent
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
-    QScrollArea, QFrame, QVBoxLayout, QWidget
+    QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
 from sqlalchemy import select
 
 from core import main_window_UI, db_session_cm
@@ -102,8 +104,18 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             self.setAddDisplayAreaCheckStatus)
         """"""
 
-        #: set the statusbar-frame invisible
-        # self.setStyleSheet('QStatusBar::item{border:0px}')
+        self.uicUserLbl = QLabel()
+        self.uicUserLbl.setText(f'Benutzer: {os.getlogin()}')
+        self.statusBar.addWidget(self.uicUserLbl)
+
+        """set the statusbar-frame invisible"""
+        self.setStyleSheet('QStatusBar::item{border:0px}')
+        """"""
+
+        """entferne die 'angreifer' im eck rechts unten die die größenänderung
+        des widgets sichtbar machen"""
+        self.statusBar.setSizeGripEnabled(False)
+        """"""
 
     def _addMaintable(self, table_widget, tab_title):
         """
