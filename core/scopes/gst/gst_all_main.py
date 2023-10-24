@@ -8,7 +8,7 @@ from sqlalchemy import func
 from core import db_session_cm
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
-    BKomplex, BAkt
+    BKomplex, BAkt, BKomplexVersion, BKoppel
 from core.main_table import MainTable, MaintableColumn, \
     MainTableModel, MainTableView
 import typing
@@ -63,7 +63,7 @@ class GstAllMain(MainTable, MainWidget):
         self.maintable_view.sortByColumn(1, Qt.AscendingOrder)
 
         """setzt bestimmte spaltenbreiten"""
-        self.maintable_view.setColumnWidth(1, 70)
+        self.maintable_view.setColumnWidth(1, 200)
         self.maintable_view.setColumnWidth(2, 50)
         self.maintable_view.setColumnWidth(3, 70)
         self.maintable_view.setColumnWidth(4, 50)
@@ -110,19 +110,26 @@ class GstAllMain(MainTable, MainWidget):
     def getMainQuery(self, session):
         super().getMainQuery(session)
 
-        """subquery um die flaeche des verschnittes von komplexe und 
+        """subquery um die flaeche des verschnittes von koppeln und 
         gst-version zu bekommen"""
         sub_cutarea = session.query(
+            BAkt.id.label("akt_id"),
             BCutKoppelGstAktuell.gst_version_id,
             func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
-            func.max(BKomplex.jahr)
+            func.max(BKomplexVersion.jahr)
         )\
+            .select_from(BCutKoppelGstAktuell) \
+            .join(BKoppel) \
+            .join(BKomplexVersion) \
             .join(BKomplex) \
             .join(BAkt) \
-            .group_by(BCutKoppelGstAktuell.gst_version_id)\
+            .group_by(BCutKoppelGstAktuell.gst_version_id,
+                      BAkt.id)\
             .subquery()
         """"""
-
+        """eigentliche Abfrage für die Darstellung der Tabelle;
+        wichtig ist hier, dass auf den akt-id und (!!) auf den gst-id gruppiert
+        wird"""
         query = session.query(BGstZuordnung.id,
                               BAkt.name,
                               BGst.gst,
@@ -143,8 +150,11 @@ class GstAllMain(MainTable, MainWidget):
             .join(BKatGem) \
             .join(BGstAwbStatus) \
             .join(BRechtsgrundlage) \
-            .outerjoin(sub_cutarea, BGstVersion.id == sub_cutarea.c.gst_version_id) \
+            .outerjoin(sub_cutarea,
+                       (BGstVersion.id == sub_cutarea.c.gst_version_id) &
+                       (BAkt.id == sub_cutarea.c.akt_id)) \
             .group_by(BGstZuordnung.id)
+        """"""
 
         return query
 

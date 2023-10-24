@@ -12,7 +12,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>450</width>
+    <width>400</width>
     <height>500</height>
    </size>
   </property>
@@ -29,6 +29,8 @@
          <font>
           <family>Calibri</family>
           <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -477,6 +479,10 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>uiEigentuemerSa</tabstop>
+  <tabstop>uiBenuetzungsartenSa</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

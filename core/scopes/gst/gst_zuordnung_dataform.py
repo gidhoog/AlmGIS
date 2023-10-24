@@ -25,6 +25,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     _gb_wrong = False
     _awb_wrong = False
 
+    _last_edit = ''
+
     @property  # getter
     def akt(self):
 
@@ -159,6 +161,21 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
         self._awb_wrong = value
 
+    @property  # getter
+    def last_edit(self):
+        return self._last_edit
+
+    @last_edit.setter
+    def last_edit(self, value):
+
+        if value and self.data_instance.time_edit:
+            user = value
+            time = self.data_instance.time_edit[0:19]
+            le = user + '/' + str(time)
+            self.uiLastEditedLbl.setText(le)
+
+        self._last_edit = value
+
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
@@ -201,6 +218,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.aufgaben = self.data_instance.aufgaben
         self.gb_wrong = self.data_instance.gb_wrong
         self.awb_wrong = self.data_instance.awb_wrong
+        self.last_edit = self.data_instance.user_edit
 
     def submitEntity(self):
         super().submitEntity()

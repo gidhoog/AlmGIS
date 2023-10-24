@@ -15,7 +15,7 @@ class Ui_GstVersion(object):
     def setupUi(self, GstVersion):
         GstVersion.setObjectName("GstVersion")
         GstVersion.resize(450, 500)
-        GstVersion.setMinimumSize(QtCore.QSize(450, 500))
+        GstVersion.setMinimumSize(QtCore.QSize(400, 500))
         self.centralwidget = QtWidgets.QWidget(GstVersion)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -26,6 +26,8 @@ class Ui_GstVersion(object):
         font = QtGui.QFont()
         font.setFamily("Calibri")
         font.setPointSize(11)
+        font.setBold(True)
+        font.setWeight(75)
         self.uiDatenstandDatumLbl.setFont(font)
         self.uiDatenstandDatumLbl.setObjectName("uiDatenstandDatumLbl")
         self.gridLayout.addWidget(self.uiDatenstandDatumLbl, 9, 1, 1, 1)
@@ -218,6 +220,7 @@ class Ui_GstVersion(object):
 
         self.retranslateUi(GstVersion)
         QtCore.QMetaObject.connectSlotsByName(GstVersion)
+        GstVersion.setTabOrder(self.uiEigentuemerSa, self.uiBenuetzungsartenSa)
 
     def retranslateUi(self, GstVersion):
         _translate = QtCore.QCoreApplication.translate

@@ -61,7 +61,7 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
 
         val = ('{:.6f}'.format(round(float(value) / 10000, 6))
                .replace(".", ","))
-        self.uiAreaGbLbl.setText(str(val) + 'ha')
+        self.uiAreaGbLbl.setText(str(val) + ' ha')
 
         self._area_gb = value
 
@@ -74,7 +74,7 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
     def area_kat(self, value):
 
         val = ('{:.6f}'.format(round(value / 10000, 6)).replace(".", ","))
-        self.uiAreaKatLbl.setText(str(val) + 'ha')
+        self.uiAreaKatLbl.setText(str(val) + ' ha')
 
         self._area_kat = value
 
@@ -107,48 +107,6 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
         super(__class__, self).__init__()
         self.setupUi(self)
 
-
-        # """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
-        # self.uiGisDock = GisDock(self)
-        # self.guiMainGis = MainGis(self.uiGisDock, self)
-        # self.guiMainGis.komplex_jahr = 2018
-        # self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
-        # self.uiGisDock.setWidget(self.guiMainGis)
-        # """"""
-        #
-        # """setzte den 'scope_id'; damit die richtigen layer aus dem
-        # daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
-        # self.guiMainGis.scope_id = 1
-        # """"""
-        #
-        # """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-        # self.koppel_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Koppeln", "memory")
-        # self.koppel_dp = self.koppel_layer.dataProvider()
-        #
-        # # add fields
-        # self.koppel_dp.addAttributes([QgsField("id", QVariant.Int),
-        #                               QgsField("name", QVariant.String),
-        #                               QgsField("bearbeiter", QVariant.String),
-        #                               QgsField("aw_ha", QVariant.String),
-        #                               QgsField("aw_proz", QVariant.String),
-        #                               QgsField("area", QVariant.String)])
-        #
-        # self.koppel_layer.updateFields()  # tell the vector layer to fetch changes from the provider
-        #
-        # self.koppel_layer.back = False
-        # self.koppel_layer.base = True
-        # setLayerStyle(self.koppel_layer, 'koppel_gelb')
-        # self.guiMainGis.addLayer(self.koppel_layer)
-        # """"""
-        #
-        # """erzeuge einen Layer für die Komplexe und füge ihn ins canvas ein"""
-        # self.komplex_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Komplexe", "memory")
-        # self.komplex_dp = self.komplex_layer.dataProvider()
-        # self.komplex_layer.back = False
-        # self.komplex_layer.base = True
-        # setLayerStyle(self.komplex_layer, 'komplex_rot')
-        # self.guiMainGis.addLayer(self.komplex_layer)
-        # """"""
 
     def mapData(self):
         super().mapData()
