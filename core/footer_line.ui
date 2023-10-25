@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
-    <height>34</height>
+    <width>472</width>
+    <height>26</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,30 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="uiValueLbl">
+    <widget class="QLineEdit" name="uiValueSelLedit">
+     <property name="font">
+      <font>
+       <family>Calibri</family>
+       <pointsize>11</pointsize>
+       <italic>false</italic>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frame">
+      <bool>true</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="uiValueLedit">
      <property name="enabled">
       <bool>true</bool>
      </property>

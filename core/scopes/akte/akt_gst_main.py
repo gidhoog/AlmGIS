@@ -119,8 +119,6 @@ class GstMaintable(MainTable):
 
         self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
 
-        # self.maintable_view.setAlternatingRowColors(True)
-
     def signals(self):
         super().signals()
 

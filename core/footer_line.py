@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtGui import QColor
 
 from core import footer_line_UI
 
@@ -19,6 +20,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
     _label = ''
     _unit = ''
     _value = ''
+    _value_sel = ''
     _value_width = ''
 
     @property  # getter
@@ -69,8 +71,17 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
     @value.setter
     def value(self, val):
-        self.uiValueLbl.setText(val)
+        self.uiValueLedit.setText(val)
         self._value = val
+
+    @property  # getter
+    def value_sel(self):
+        return self._value_sel
+
+    @value_sel.setter
+    def value_sel(self, val):
+        self.uiValueSelLedit.setText(val)
+        self._value_sel = val
 
     @property  # getter
     def value_width(self):
@@ -78,7 +89,8 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
     @value_width.setter
     def value_width(self, val):
-        self.uiValueLbl.setMaximumWidth(val)
+        self.uiValueLedit.setMaximumWidth(val)
+        self.uiValueSelLedit.setMaximumWidth(val)
         self._value_width = val
 
     def __init__(self, parent, label_text, unit, column_calc, value_width,
@@ -100,27 +112,53 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         self.filter_operator = filter_operator
         self.filter_criterion = filter_criterion
 
-        self.uiValueLbl.setFocusPolicy(Qt.NoFocus)
+        self.uiValueLedit.setFocusPolicy(Qt.NoFocus)
 
-    def update_footer_line(self):
+        """setze die Hintergrundfarbe für das LineEdit mit der Summe der
+        ausgewählten Zeilen"""
+        pal_sel = self.uiValueSelLedit.palette()
+        pal_sel.setColor(self.uiValueSelLedit.backgroundRole(), QColor(130, 185, 230))
+        self.uiValueSelLedit.setPalette(pal_sel)
+        """"""
+
+        self.uiValueSelLedit.setVisible(False)
+
+    def update_footer_line(self, sel_indexes):
         """
         aktualisiere die footer_line
         :return:
         """
+
         value_text = ''
+        value_sel_text = ''
         if self.parent.filter_proxy:
             footer_model = self.parent.filter_proxy
-            amount = self.calc_column(footer_model, self.column_calc)
-            value_text = str(amount)
+            amount = self.calc_column(footer_model, self.column_calc, sel_indexes)
+            value_text = str(amount[0])
+            value_sel_text = str(amount[1])
+
 
         self.value = value_text
+        self.value_sel = value_sel_text
 
-    def calc_column(self, model, col):
+        """steuere die Sichtbarkeit der des Wertes für ausgewählte Zeilen"""
+        if len(sel_indexes) > 1:
+            self.uiValueSelLedit.setVisible(True)
+        else:
+            self.uiValueSelLedit.setVisible(False)
+        """"""
+
+    def calc_column(self, model, col, sel_indexes=None):
         """
         summiere die werte der angegebenen spalte (col)
-        :return: col_sum
+
+        :param model: table_model
+        :param col: int
+        :param sel_indexes: list
+        :return: result, result_sel
         """
         try:
+            col_sel_sum = 0
             col_sum = 0
             for i in range(model.rowCount()):
                 value = model.data(model.index(i, col), Qt.EditRole)
@@ -130,22 +168,36 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
                             model.index(i, self.filter_col), Qt.EditRole)
                         if filter_compare == self.filter_criterion:
                             col_sum = col_sum + value
+                            if sel_indexes:
+                                if i in [x.row() for x in sel_indexes]:
+                                    col_sel_sum = col_sel_sum + value
                     else:
                         if type(value) == str:
                             try:
                                 col_sum = col_sum + int(value)
+                                if sel_indexes:
+                                    if i in [x.row() for x in sel_indexes]:
+                                        col_sel_sum = col_sel_sum + int(value)
                             except:
                                 pass
                         else:
                             col_sum = col_sum + value
+                            if sel_indexes:
+                                if i in [x.row() for x in sel_indexes]:
+                                    col_sel_sum = col_sel_sum + value
 
             if self.decimal:
                 decimal_string = '{:.' + str(self.decimal) + 'f}'
-                return decimal_string.format(
+                result = decimal_string.format(
                     round(float(col_sum * self.factor),
                           self.decimal)).replace(".", ",")
+                result_sel = decimal_string.format(
+                    round(float(col_sel_sum * self.factor),
+                          self.decimal)).replace(".", ",")
             else:
-                return col_sum * self.factor
+                result = col_sum * self.factor
+                result_sel = col_sel_sum * self.factor
+            return result, result_sel
 
         except:
             print(f'Cannot calculate footer value!')

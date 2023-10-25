@@ -741,9 +741,8 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         aktualisiere alle footer elemente (zeilenanzahl, summenelemente, ...)
         """
-
-        for i in range(len(self.footer_list)):
-            self.footer_list[i].update_footer_line()
+        for line in self.footer_list:
+            line.update_footer_line(self.getSelectedRows())
 
         self.displayed_rows = self.maintable_view.model().rowCount()
         if self.getSelectedRows():
