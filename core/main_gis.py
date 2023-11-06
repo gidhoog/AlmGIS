@@ -605,7 +605,7 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
             self.addLayer(gis_layer)
 
-    def addLayer(self, layer):
+    def addLayer(self, layer, group=None):
         """
         füge den layer ins projekt ein
         """
@@ -631,6 +631,8 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
                 self.project_instance.addMapLayer(layer, False)
                 self.layertree_root_group.insertChildNode(
                     -1, QgsLayerTreeLayer(layer))
+            elif group is not None:
+                group.addLayer(layer)
             else:
                 self.project_instance.addMapLayer(layer)
             """"""

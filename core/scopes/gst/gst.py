@@ -1,7 +1,12 @@
 
-
+import time
 from qgis.PyQt.QtWidgets import QHBoxLayout, QWidget, QLabel, QDockWidget
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, QVariant
+
+from qgis.core import (QgsVectorLayer, QgsField, QgsFeature, QgsGeometry,
+                       QgsLayerTreeGroup)
+
+from geoalchemy2.shape import to_shape
 
 from core.entity import Entity
 from core.main_gis import MainGis
@@ -27,8 +32,8 @@ class Gst(gst_UI.Ui_Gst, Entity):
     @gst.setter
     def gst(self, value):
 
-        self.uiGstLbl.setText(value)
         self._gst = value
+        self.uiGstLbl.setText(value)
 
     @property  # getter
     def kgnr(self):
@@ -50,13 +55,36 @@ class Gst(gst_UI.Ui_Gst, Entity):
 
         self.parent = parent
 
-        """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
-        self.uiGisDock = GisDock(self)
-        self.guiMainGis = MainGis(self.uiGisDock, self)
-        # self.guiMainGis.komplex_jahr = 2018
-        self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
-        self.uiGisDock.setWidget(self.guiMainGis)
-        """"""
+        # """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
+        # self.uiGisDock = GisDock(self)
+        # self.guiMainGis = MainGis(self.uiGisDock, self)
+        # # self.guiMainGis.komplex_jahr = 2018
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
+        # self.uiGisDock.setWidget(self.guiMainGis)
+        # """"""
+        #
+        # """erzeuge einen Layer für das Grundstück und füge ihn ins canvas ein"""
+        # gst_name = "Grundstück " + self.gst
+        # self.gst_layer = QgsVectorLayer("Polygon?crs=epsg:31259",
+        #                                    gst_name,
+        #                                    "memory")
+        # self.gst_dp = self.gst_layer.dataProvider()
+        #
+        # # add fields
+        # self.gst_dp.addAttributes([QgsField("id", QVariant.Int),
+        #                            QgsField("name", QVariant.String),
+        #                            QgsField("bearbeiter", QVariant.String),
+        #                            QgsField("aw_ha", QVariant.String),
+        #                            QgsField("aw_proz", QVariant.String),
+        #                            QgsField("area", QVariant.String)])
+        #
+        # self.gst_layer.updateFields()  # tell the vector layer to fetch changes from the provider
+        #
+        # self.gst_layer.back = False
+        # self.gst_layer.base = True
+        # # setLayerStyle(self.gst_layer, 'koppel_gelb')
+        # self.guiMainGis.addLayer(self.gst_layer)
+        # """"""
 
         # """setzte den 'scope_id'; damit die richtigen layer aus dem
         # daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
@@ -64,23 +92,23 @@ class Gst(gst_UI.Ui_Gst, Entity):
         # """"""
         #
         # """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-        # self.koppel_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Koppeln", "memory")
-        # self.koppel_dp = self.koppel_layer.dataProvider()
+        # self.gst_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Koppeln", "memory")
+        # self.gst_dp = self.gst_layer.dataProvider()
         #
         # # add fields
-        # self.koppel_dp.addAttributes([QgsField("id", QVariant.Int),
+        # self.gst_dp.addAttributes([QgsField("id", QVariant.Int),
         #                               QgsField("name", QVariant.String),
         #                               QgsField("bearbeiter", QVariant.String),
         #                               QgsField("aw_ha", QVariant.String),
         #                               QgsField("aw_proz", QVariant.String),
         #                               QgsField("area", QVariant.String)])
         #
-        # self.koppel_layer.updateFields()  # tell the vector layer to fetch changes from the provider
+        # self.gst_layer.updateFields()  # tell the vector layer to fetch changes from the provider
         #
-        # self.koppel_layer.back = False
-        # self.koppel_layer.base = True
-        # setLayerStyle(self.koppel_layer, 'koppel_gelb')
-        # self.guiMainGis.addLayer(self.koppel_layer)
+        # self.gst_layer.back = False
+        # self.gst_layer.base = True
+        # setLayerStyle(self.gst_layer, 'koppel_gelb')
+        # self.guiMainGis.addLayer(self.gst_layer)
         # """"""
         #
         # """erzeuge einen Layer für die Komplexe und füge ihn ins canvas ein"""
@@ -105,7 +133,21 @@ class Gst(gst_UI.Ui_Gst, Entity):
                                  key=lambda x:x.rel_alm_gst_ez.datenstand,
                                  reverse=True)
 
+        """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
+        self.uiGisDock = GisDock(self)
+        self.guiMainGis = MainGis(self.uiGisDock, self)
+        # self.guiMainGis.komplex_jahr = 2018
+        self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
+        self.uiGisDock.setWidget(self.guiMainGis)
+        """"""
+
+        # gst_group = QgsLayerTreeGroup("Grundstück " + self.gst, checked=True)
+        self.gst_group = self.guiMainGis.layer_tree_root.addGroup("Grundstück " + self.gst)
+
+        self.gst_layers = []
+
         for gst_version in gst_versions_sorted:
+        # for gst_version in self.data_instance.rel_alm_gst_version:
 
             gst_version_wdg = GstVersion(self)
             gst_version_wdg.editEntity(gst_version, None)
@@ -139,6 +181,51 @@ class Gst(gst_UI.Ui_Gst, Entity):
                 eig_wdg = GstEigentuemer(self)
                 eig_wdg.initData(eig)
                 gst_version_wdg.uiEigentuemerVlay.insertWidget(0, eig_wdg)
+
+            """erzeuge einen Layer für das Grundstück und füge ihn ins canvas ein"""
+            # gst_name = "Grundstück " + self.gst
+            gst_layer = QgsVectorLayer("Polygon?crs=epsg:31259",
+                                            'Stand: ' + gst_version.rel_alm_gst_ez.datenstand,
+                                            "memory")
+            gst_dp = gst_layer.dataProvider()
+
+            # add fields
+            gst_dp.addAttributes([QgsField("id", QVariant.Int),
+                                       QgsField("gst", QVariant.String),
+                                       QgsField("area", QVariant.String)])
+            gst_layer.updateFields()  # tell the vector layer to fetch changes from the provider
+            """"""
+
+            gst_feat = QgsFeature(gst_layer.fields())
+            gst_feat.setAttributes([gst_version.id,
+                                    gst_version.rel_alm_gst.gst,
+                                    to_shape(gst_version.geometry).area])
+            gst_feat.setGeometry(QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt))
+
+            # gst_features.append(gst_feat)
+            gst_dp.addFeatures([gst_feat])
+
+            gst_layer.back = False
+            gst_layer.base = True
+            # setLayerStyle(self.gst_layer, 'koppel_gelb')
+            # self.guiMainGis.addLayer(gst_layer, self.gst_group)
+            # extent = gst_layer.extent()
+            # self.guiMainGis.uiCanvas.setExtent(extent)
+            self.gst_layers.append(gst_layer)
+
+        for gst_layer in self.gst_layers:
+            self.guiMainGis.addLayer(gst_layer, self.gst_group)
+        # (res, kop_feat) = self.gst_dp.addFeatures(gst_features)
+
+        # self.gst_layer.back = False
+        # self.gst_layer.base = True
+        # # setLayerStyle(self.gst_layer, 'koppel_gelb')
+        # self.guiMainGis.addLayer(self.gst_layer)
+        #
+        # extent = self.gst_layer.extent()
+        # self.guiMainGis.uiCanvas.setExtent(extent)
+
+        """"""
 
 
 

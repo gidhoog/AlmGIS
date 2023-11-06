@@ -224,7 +224,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # """"""
 
         """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-        self.koppel_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Koppeln", "memory")
+        self.koppel_layer = QgsVectorLayer("Polygon?crs=epsg:31259",
+                                           "Koppeln",
+                                           "memory")
         self.koppel_dp = self.koppel_layer.dataProvider()
 
         # add fields
@@ -244,7 +246,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """"""
 
         """erzeuge einen Layer für die Komplexe und füge ihn ins canvas ein"""
-        self.komplex_layer = QgsVectorLayer("Polygon?crs=epsg:31259", "Komplexe", "memory")
+        self.komplex_layer = QgsVectorLayer("Polygon?crs=epsg:31259",
+                                            "Komplexe",
+                                            "memory")
         self.komplex_dp = self.komplex_layer.dataProvider()
         self.komplex_layer.back = False
         self.komplex_layer.base = True
@@ -540,8 +544,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         #
         # kop_id = self.komplexe_view.model().getItem(index).data_instance.id
         #
-        # self.koppel_layer.select([kop_id])
-        # self.koppel_layer.selectByExpression(f'"id"={str(kop_id)}')
+        # self.gst_layer.select([kop_id])
+        # self.gst_layer.selectByExpression(f'"id"={str(kop_id)}')
 
 
     def changedGisDockLevel(self, level):

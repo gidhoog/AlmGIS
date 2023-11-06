@@ -260,7 +260,7 @@ class BGst(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     kg_gst: Mapped[str]
     kgnr: Mapped[int] = mapped_column(ForeignKey("a_sys_kg.kgnr"))
-    gst: Mapped[int]
+    gst: Mapped[str]
 
     """folgende Beziehungen sind 'child' Beziehungen"""
     # rel_alm_gst_version = relationship('BGstVersion',

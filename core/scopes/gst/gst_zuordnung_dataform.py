@@ -196,8 +196,11 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
             self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item.id)
         """"""
 
-        self.gst_info = Gst(self)
+    def loadSubWidgets(self):
+        super().loadSubWidgets()
 
+        self.gst_info = Gst(self)
+        self.gst_info.editEntity(self.data_instance.rel_gst, None)
         self.addGstInfo()
 
     def addGstInfo(self):
@@ -238,10 +241,3 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         cut_koppel_gstversion()
         self.parent.parent.guiMainGis.uiCanvas.refresh()
         # self.parent.parent.komplex_table.updateMaintable()
-
-    def loadSubWidgets(self):
-        super().loadSubWidgets()
-
-        self.gst_info.editEntity(self.data_instance.rel_gst, None)
-
-
