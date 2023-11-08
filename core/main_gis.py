@@ -13,7 +13,7 @@ from core import main_gis_UI, db_session_cm, config
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsLayerTreeModel,\
     QgsLayerTreeLayer, QgsExpressionContextUtils, QgsLayout, QgsVectorLayer, \
-    QgsReadWriteContext, QgsLayoutItemPage, QgsLayoutExporter
+    QgsReadWriteContext, QgsLayoutItemPage, QgsLayoutExporter, QgsVectorFileWriter
 
 from qgis.gui import QgsLayerTreeView, QgsLayerTreeMapCanvasBridge, QgsMapToolPan, \
     QgsMapToolZoom, QgsMapToolIdentifyFeature, QgsMapToolIdentify, QgsMessageBar, \
@@ -499,6 +499,14 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.load_layer.triggered.connect(self.addCustomLayer)
         self.main_menu.addAction(self.load_layer)
 
+        self.export = QMenu('Export')
+        self.main_menu.addMenu(self.export)
+
+        self.save_layer = QAction(QIcon(":/svg/resources/icons/export_layer.svg"),
+                                  'Layer speichern als ...')
+        self.save_layer.triggered.connect(self.exportLayer)
+        self.export.addAction(self.save_layer)
+
         self.main_menu.addSeparator()
 
         self.print_manager = QAction(QIcon(":/svg/resources/icons/mActionFilePrint.svg"),
@@ -506,6 +514,20 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.main_menu.addAction(self.print_manager)
 
         self.uiMainMenuTbtn.setMenu(self.main_menu)
+
+    def exportLayer(self):
+        """
+        exportiere den ausgewählten Layer
+        :return:
+        """
+        if self.current_layer:
+            QgsVectorFileWriter.writeAsVectorFormat(layer=self.current_layer,
+                                                    fileName='C:/work/gst.gpkg',
+                                                    fileEncoding='utf-8',
+                                                    destCRS=self.current_layer.crs(),
+                                                    driverName='GPKG')
+
+        print(self.current_layer)
 
     def loadLayer(self, layer_instance_list):
         """
