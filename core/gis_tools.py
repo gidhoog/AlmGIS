@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 import processing
 from processing.core.Processing import Processing
 from qgis.core import QgsVectorLayer, edit, QgsFeature, \
-    QgsProcessing, QgsProcessingFeatureSourceDefinition, QgsFeatureRequest
+    QgsProcessingFeatureSourceDefinition, QgsFeatureRequest
 from core.config import alm_data_db_path
 
 

@@ -4,11 +4,11 @@ from PyQt5.QtCore import QSize, Qt, QEvent
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
-from sqlalchemy import select
+# from sqlalchemy import select
 
 from core import main_window_UI, db_session_cm
-from core.data_model import BKomplex
-from core.gis_tools import cut_koppel_gstversion
+# from core.data_model import BKomplex
+# from core.gis_tools import cut_koppel_gstversion
 from core.scopes.akte import akte_all_main
 from core.scopes.gst.gst_all_main import GstAllMain
 from core.settings import SettingsDlg, SettingsWdg
@@ -41,7 +41,7 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             lambda: self._setMainWidget("gst_match_all"))
 
         # Verschnitte:
-        self.actionCutGstVersionKomplexe.triggered.connect(cut_koppel_gstversion)
+        # self.actionCutGstVersionKomplexe.triggered.connect(cut_koppel_gstversion)
 
         # Einstellungen:
         self.actionSettings.triggered.connect(self.openSettings)
