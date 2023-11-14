@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QHeaderView
+from qgis.PyQt.QtCore import Qt, QModelIndex
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QHeaderView
 from sqlalchemy import func
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \

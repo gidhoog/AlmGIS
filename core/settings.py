@@ -1,5 +1,5 @@
 
-from PyQt5.QtWidgets import QWidget, QListWidgetItem, QFileDialog
+from qgis.PyQt.QtWidgets import QWidget, QListWidgetItem, QFileDialog
 
 from sqlalchemy import select
 

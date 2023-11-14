@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from PyQt5.QtCore import QEvent
-from PyQt5.QtSvg import QSvgWidget
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from qgis.PyQt.QtCore import QEvent
+from qgis.PyQt.QtSvg import QSvgWidget
+from qgis.PyQt.QtWidgets import QWidget, QVBoxLayout
 
 import resources_rc
 

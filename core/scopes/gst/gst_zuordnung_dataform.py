@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from qgis.PyQt.QtCore import Qt
 from core import entity, db_session_cm
 from core.data_model import BGstAwbStatus, BRechtsgrundlage
 from core.gis_tools import cut_koppel_gstversion

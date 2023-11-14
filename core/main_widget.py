@@ -1,5 +1,5 @@
 
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
 class MainWidget:

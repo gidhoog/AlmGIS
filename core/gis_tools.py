@@ -1,5 +1,5 @@
 from datetime import datetime
-from PyQt5.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox
 import processing
 from processing.core.Processing import Processing
 from qgis.core import QgsVectorLayer, edit, QgsFeature, \

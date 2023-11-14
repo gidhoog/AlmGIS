@@ -2,10 +2,10 @@ import os
 import typing
 from pathlib import Path
 
-from PyQt5.QtGui import QFont, QIntValidator, QIcon, QStandardItem, QColor
-from PyQt5.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
+from qgis.PyQt.QtGui import QFont, QIntValidator, QIcon, QStandardItem, QColor
+from qgis.PyQt.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
     QMenu, QAction, QTreeView, QHBoxLayout, QComboBox, QAbstractItemView
-from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
+from qgis.PyQt.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 from geoalchemy2 import functions
 from geoalchemy2.shape import to_shape
 from qgis.PyQt import QtWidgets

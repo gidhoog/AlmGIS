@@ -1,8 +1,8 @@
 import math
 from datetime import datetime
 
-from PyQt5.QtCore import Qt, QRectF, QPointF
-from PyQt5.QtGui import QFont, QPolygonF
+from qgis.PyQt.QtCore import Qt, QRectF, QPointF
+from qgis.PyQt.QtGui import QFont, QPolygonF
 from qgis.core import QgsPrintLayout, QgsUnitTypes, QgsLayoutItemPage,\
     QgsLayoutItemLabel, QgsProject, QgsLayoutItemPicture, QgsLayoutItemPolygon, \
     QgsLayoutTableColumn, QgsLayoutItemTextTable, QgsLayoutFrame, \

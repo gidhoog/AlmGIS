@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtCore import Qt, QModelIndex
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QLabel, QComboBox
+from qgis.PyQt.QtCore import Qt, QModelIndex
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QLabel, QComboBox
 from sqlalchemy import func
 
 from core import db_session_cm

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QColor
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QWidget
+from qgis.PyQt.QtGui import QColor
 
 from core import footer_line_UI
 

@@ -1,6 +1,6 @@
 from core import main_dialog_UI
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 
 
 class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):

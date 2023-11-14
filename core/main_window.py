@@ -1,10 +1,13 @@
 import os
 
-from PyQt5.QtCore import QSize, Qt, QEvent
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
+# from PyQt5.QtCore import QSize, Qt, QEvent
+from qgis.PyQt.QtCore import QSize, Qt, QEvent
+# from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
-# from sqlalchemy import select
+# from PyQt5.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
+#     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
 
 from core import main_window_UI, db_session_cm
 # from core.data_model import BKomplex

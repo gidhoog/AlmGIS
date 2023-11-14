@@ -2,11 +2,11 @@ import csv
 import sys
 import typing
 from dataclasses import dataclass
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, \
+from qgis.PyQt.QtCore import QAbstractTableModel, Qt, QModelIndex, \
     QSortFilterProxyModel, QItemSelectionModel, QItemSelection, \
     QItemSelectionRange
-from PyQt5.QtGui import QPalette, QColor
-from PyQt5.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
+from qgis.PyQt.QtGui import QPalette, QColor
+from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit
 from sqlalchemy.exc import IntegrityError
 

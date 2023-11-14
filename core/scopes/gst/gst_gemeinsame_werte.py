@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtWidgets import QWidget
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QStandardItemModel
+from qgis.PyQt.QtWidgets import QWidget
 
 from core import db_session_cm
 from core.data_model import BRechtsgrundlage, BGstAwbStatus

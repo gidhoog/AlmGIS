@@ -1,4 +1,4 @@
-# from PyQt5.QtCore import Qt
+# from qgis.PyQt.QtCore import Qt
 from sqlalchemy import func, select
 
 from core import db_session_cm

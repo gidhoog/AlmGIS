@@ -2,10 +2,9 @@
 
 from functools import partial
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt, pyqtSignal, QSize, QEvent
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QHBoxLayout, QSizePolicy, QFrame, \
+from qgis.PyQt.QtCore import Qt, pyqtSignal, QSize, QEvent
+from qgis.PyQt.QtGui import QIcon, QResizeEvent
+from qgis.PyQt.QtWidgets import QHBoxLayout, QSizePolicy, QFrame, \
     QLabel, QPushButton, QWidget, QSplitter
 
 
@@ -98,7 +97,7 @@ class Itemlist(QWidget):
             self.item_id_list.append(item[0])
             self.layout.insertWidget(0, element)
 
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+    def resizeEvent(self, a0: QResizeEvent) -> None:
 
         print(f".............{self.__class__.__name__} resized!!!!!")
 

@@ -19,10 +19,10 @@ from io import TextIOWrapper
 from os import listdir
 from os.path import isfile, join
 
-from PyQt5.QtCore import (QModelIndex, Qt, QAbstractTableModel,
+from qgis.PyQt.QtCore import (QModelIndex, Qt, QAbstractTableModel,
                           QSortFilterProxyModel, QItemSelectionModel, QSize)
-from PyQt5.QtGui import QColor, QIcon
-from PyQt5.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
+from qgis.PyQt.QtGui import QColor, QIcon
+from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
     QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView,
                              QSplitter, QVBoxLayout, QWidget)
 from qgis.core import QgsVectorLayer, QgsProject, \

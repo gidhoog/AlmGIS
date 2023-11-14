@@ -1,6 +1,6 @@
 from functools import wraps
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow
+from qgis.PyQt.QtGui import QFont
+from qgis.PyQt.QtWidgets import QLabel, QMessageBox, QMainWindow
 
 from core import db_session_cm
 from core.main_dialog import MainDialog

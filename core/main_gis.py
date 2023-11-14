@@ -2,12 +2,12 @@ import os
 import sys
 from pathlib import Path
 
-from PyQt5.QtCore import Qt, QSize, QEvent
-from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
-from PyQt5.QtWidgets import QWidget, QMenu, QAction, QToolButton, \
+from qgis.PyQt.QtCore import Qt, QSize, QEvent
+from qgis.PyQt.QtGui import QIcon, QStandardItemModel, QStandardItem
+from qgis.PyQt.QtWidgets import QWidget, QMenu, QAction, QToolButton, \
     QFileDialog, QMessageBox, QDockWidget, QMainWindow, QSizePolicy, \
     QHBoxLayout, QToolBar, QDialog, QApplication
-from PyQt5.QtXml import QDomDocument
+from qgis.PyQt.QtXml import QDomDocument
 
 from core import main_gis_UI, db_session_cm, config
 

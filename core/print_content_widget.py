@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from qgis.PyQt.QtWidgets import QWidget
 from core import print_content_widget_UI
 
 

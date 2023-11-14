@@ -1,5 +1,5 @@
 
-from PyQt5.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
+from qgis.PyQt.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsField
