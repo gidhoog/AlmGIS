@@ -1,6 +1,7 @@
 import sys
-from qgis.core import QgsApplication, QgsProviderRegistry
+from qgis.core import QgsApplication
 from core.main_window import AlmgisMainWindow
+from importlib import resources
 
 # from PyQt5.QtWidgets import QWidget
 

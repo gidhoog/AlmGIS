@@ -7,7 +7,7 @@ from qgis.core import QgsPrintLayout, QgsUnitTypes, QgsLayoutItemPage,\
     QgsLayoutItemLabel, QgsProject, QgsLayoutItemPicture, QgsLayoutItemPolygon, \
     QgsLayoutTableColumn, QgsLayoutItemTextTable, QgsLayoutFrame, \
     QgsLayoutPoint, QgsLayoutSize, QgsLayoutItemMap, QgsRectangle, \
-    QgsLayoutItemHtml
+    QgsLayoutItemHtml, QgsTextFormat
 from sqlalchemy import func, and_, desc
 from core import db_session_cm
 from core.data_model import BGst, BKatGem, BGstEz, BGstZuordnung, BGstVersion, \
@@ -76,7 +76,7 @@ class AwbAuszug(QgsPrintLayout):
 
         self.hoch = self.top_margin
 
-        self.insertDeckblatt()
+        # self.insertDeckblatt()
 
         new_page = QgsLayoutItemPage(self)
         self.page_collection.addPage(new_page)
@@ -107,7 +107,12 @@ class AwbAuszug(QgsPrintLayout):
         abb_name_label = QgsLayoutItemLabel(self)
         abb_name_label.setText(abb_name)
         abb_name_label.setPos(self.left_margin + 63, self.hoch)
-        abb_name_label.setFont(abb_name_font)
+
+        abb_name_format = QgsTextFormat()
+        abb_name_format.setFont(abb_name_font)
+        # abb_name_label.setFont(abb_name_font)
+        abb_name_label.setTextFormat(abb_name_format)
+
         abb_name_label.adjustSizeToText()
         self.addLayoutItem(abb_name_label)
 
@@ -116,7 +121,9 @@ class AwbAuszug(QgsPrintLayout):
         abb_adresse_label = QgsLayoutItemLabel(self)
         abb_adresse_label.setText(abb_adresse)
         abb_adresse_label.setPos(self.left_margin + 63, self.hoch + 5.5)
-        abb_adresse_label.setFont(abb_adresse_font)
+        abb_adresse_format = QgsTextFormat()
+        abb_adresse_format.setFont(abb_adresse_font)
+        abb_adresse_label.setTextFormat(abb_adresse_format)
         abb_adresse_label.adjustSizeToText()
         self.addLayoutItem(abb_adresse_label)
 
@@ -143,7 +150,9 @@ class AwbAuszug(QgsPrintLayout):
         datenstand = QgsLayoutItemLabel(self)
 
         datenstand.setText(datenstand_string)
-        datenstand.setFont(datenstand_font)
+        datenstand_format = QgsTextFormat()
+        datenstand_format.setFont(datenstand_font)
+        datenstand.setTextFormat(datenstand_format)
         datenstand.adjustSizeToText()
         datenstand_width = datenstand.sizeForText().width()
         datenstand.setPos(self.page_with - self.right_margin - datenstand_width - 5, self.hoch + 12)
@@ -162,7 +171,9 @@ class AwbAuszug(QgsPrintLayout):
         titel_font = QFont('Arial', 20)
         titel_font.setBold(True)
         titel.setText(titel_string)
-        titel.setFont(titel_font)
+        titel_format = QgsTextFormat()
+        titel_format.setFont(titel_font)
+        titel.setTextFormat(titel_format)
         titel.adjustSizeToText()
         titel_width = titel.sizeForText().width()
         titel.setPos((self.page_with / 2) - (titel_width / 2), self.hoch)
@@ -181,7 +192,9 @@ class AwbAuszug(QgsPrintLayout):
         az_string = 'Aktenzahl:'
         az = QgsLayoutItemLabel(self)
         az.setText(az_string)
-        az.setFont(label_font)
+        az_format = QgsTextFormat()
+        az_format.setFont(label_font)
+        az.setTextFormat(az_format)
         az.adjustSizeToText()
         az.setPos(self.left_margin, self.hoch)
         self.addLayoutItem(az)
@@ -191,7 +204,9 @@ class AwbAuszug(QgsPrintLayout):
         az_value_string = str(self.akt_instance.az)
         az_value = QgsLayoutItemLabel(self)
         az_value.setText(az_value_string)
-        az_value.setFont(value_font)
+        az_value_format = QgsTextFormat()
+        az_value_format.setFont(value_font)
+        az_value.setTextFormat(az_value_format)
         az_value.adjustSizeToText()
         az_value.setPos(self.left_margin + az_label_width + 5, self.hoch - 0.5)
         self.addLayoutItem(az_value)
@@ -199,7 +214,9 @@ class AwbAuszug(QgsPrintLayout):
         name_string = 'Name:'
         name = QgsLayoutItemLabel(self)
         name.setText(name_string)
-        name.setFont(label_font)
+        name_format = QgsTextFormat()
+        name_format.setFont(label_font)
+        name.setTextFormat(name_format)
         name.adjustSizeToText()
         name_label_width = name.sizeForText().width()
 
@@ -209,7 +226,9 @@ class AwbAuszug(QgsPrintLayout):
         name_value_string = str(self.akt_instance.name)
         name_value = QgsLayoutItemLabel(self)
         name_value.setText(name_value_string)
-        name_value.setFont(value_font)
+        name_value_format = QgsTextFormat()
+        name_value_format.setFont(value_font)
+        name_value.setTextFormat(name_value_format)
         name_value.adjustSizeToText()
         name_value.setPos(self.left_margin + az_label_width + 5, self.hoch + 9.5)
         self.addLayoutItem(name_value)
@@ -221,7 +240,9 @@ class AwbAuszug(QgsPrintLayout):
         seitennummer_font = QFont('Arial', 8)
         seitennummer_string = 'Seite 1 von 2'
         seitennummer.setText(seitennummer_string)
-        seitennummer.setFont(seitennummer_font)
+        seitennummer_format = QgsTextFormat()
+        seitennummer_format.setFont(seitennummer_font)
+        seitennummer.setTextFormat(seitennummer_format)
         seitennummer.adjustSizeToText()
         seitennummer.setPos(self.page_with - self.right_margin - 17,
                             self.page_height - self.bottom_margin + 2)
@@ -239,7 +260,9 @@ class AwbAuszug(QgsPrintLayout):
             gst_label = QgsLayoutItemLabel(self)
             gst_label_string = 'eingetragene Grundstücke:'
             gst_label.setText(gst_label_string)
-            gst_label.setFont(label_font)
+            gst_label_format = QgsTextFormat()
+            gst_label_format.setFont(label_font)
+            gst_label.setTextFormat(gst_label_format)
             gst_label.adjustSizeToText()
             gst_label.setPos(self.left_margin, self.hoch)
             self.addItem(gst_label)
@@ -332,7 +355,9 @@ class AwbAuszug(QgsPrintLayout):
                                        ' Grundstücke eingetragen'
 
                 gst_count_label.setText(gst_count_string)
-                gst_count_label.setFont(table_footer_font)
+                gst_count_label_format = QgsTextFormat()
+                gst_count_label_format.setFont(table_footer_font)
+                gst_count_label.setTextFormat(gst_count_label_format)
                 gst_count_label.adjustSizeToText()
                 gst_count_label.setPos(self.left_margin, self.hoch)
                 self.addItem(gst_count_label)
@@ -343,7 +368,9 @@ class AwbAuszug(QgsPrintLayout):
                 area_sum_label_string = 'eingetragene Gesamtfläche:    ' + \
                                         str(convertMtoHa(float(area_sum))) + ' ha'
                 area_sum_label.setText(area_sum_label_string)
-                area_sum_label.setFont(table_footer_font)
+                area_sum_label_format = QgsTextFormat()
+                area_sum_label_format.setFont(table_footer_font)
+                area_sum_label.setTextFormat(area_sum_label_format)
                 area_sum_label.adjustSizeToText()
                 area_sum_label.setPos(self.left_margin, self.hoch + 9.5)
                 self.addItem(area_sum_label)
@@ -381,7 +408,7 @@ class AwbAuszug(QgsPrintLayout):
         self.rechts = self.left_margin
 
         self.insertMapHeader()
-        self.insertMap()
+        # self.insertMap()
 
     def insertMapHeader(self):
 
@@ -422,210 +449,233 @@ class AwbAuszug(QgsPrintLayout):
         abb_name_label.attemptMove(
             QgsLayoutPoint(self.rechts + 22, self.hoch + 4.5,
                            QgsUnitTypes.LayoutMillimeters), page=self.page)
-        abb_name_label.setFont(abb_name_font)
+        abb_name_format = QgsTextFormat()
+        abb_name_format.setFont(abb_name_font)
+        # abb_name_label.setFont(abb_name_font)
+        abb_name_label.setTextFormat(abb_name_format)
         abb_name_label.adjustSizeToText()
         self.addLayoutItem(abb_name_label)
 
-        abb_adresse = '3109 St. Pölten, Landhausplatz 1/12'
-        abb_adresse_font = QFont('Arial', 10)
-        abb_adresse_label = QgsLayoutItemLabel(self)
-        abb_adresse_label.setText(abb_adresse)
-        abb_adresse_label.attemptMove(
-            QgsLayoutPoint(self.rechts + 22, self.hoch + 10.5,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        abb_adresse_label.setFont(abb_adresse_font)
-        abb_adresse_label.adjustSizeToText()
-        self.addLayoutItem(abb_adresse_label)
-
-        self.rechts += 96
-
-        """füge eine Linie rechts der Adresse ein"""
-        line = QPolygonF()
-        line.append(QPointF(self.rechts, self.hoch))
-        line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
-        adress_line = QgsLayoutItemPolygon(line, self)
-        adress_line.attemptMove(
-            QgsLayoutPoint(self.rechts, self.hoch,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(adress_line)
-        """"""
-
-        self.rechts += 10
-
-        """füge den Kartentitel ein"""
-        titel = QgsLayoutItemLabel(self)
-        titel_string = 'Karte zum NÖ Alm- und Weidebuch'
-        titel_font = QFont('Arial', 16)
-        titel_font.setBold(True)
-        titel.setText(titel_string)
-        titel.setFont(titel_font)
-        titel.adjustSizeToText()
-        titel.attemptMove(
-            QgsLayoutPoint(self.rechts, self.hoch + 7.5,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(titel)
-
-        self.rechts += 105
-
-        """füge eine Linie rechts des Titels ein"""
-        t_line = QPolygonF()
-        t_line.append(QPointF(self.rechts, self.hoch))
-        t_line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
-        titel_line = QgsLayoutItemPolygon(t_line, self)
-        titel_line.attemptMove(
-            QgsLayoutPoint(self.rechts, self.hoch,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(titel_line)
-        """"""
-
-        """füge die Beschreibung zur Karte ein"""
-        map_html = QgsLayoutItemHtml(self)
-        map_html_frame = QgsLayoutFrame(self, map_html)
-        map_html_frame.attemptSetSceneRect(QRectF(10, 10, 60, 15))
-        map_html.addFrame(map_html_frame)
-
-        map_html.setContentMode(QgsLayoutItemHtml.ManualHtml)
-        map_html.setHtml(
-            '''<body style="margin:0;"><p style="font-family:arial; 
-            font-size:12px">
-            Darstellung der im NÖ Alm- und Weidebuch eingetragenen 
-            Grundstücke (blau).</p></body>''')
-        map_html.loadHtml()
-        map_html_frame.attemptMove(
-            QgsLayoutPoint(self.rechts + 3, self.hoch + 5,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(map_html_frame)
-        """"""
-        self.rechts += 68
-
-        """füge eine Linie rechts der Bechreibung ein"""
-        d_line = QPolygonF()
-        d_line.append(QPointF(self.rechts, self.hoch))
-        d_line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
-        descr_line = QgsLayoutItemPolygon(d_line, self)
-        descr_line.attemptMove(
-            QgsLayoutPoint(self.rechts, self.hoch,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(descr_line)
-        """"""
-
-        detail_label_font = QFont('Arial', 8)
-        detail_value_font = QFont('Arial', 8)
-        detail_value_font.setBold(True)
-
-        az = QgsLayoutItemLabel(self)
-        az_string = 'Aktenzahl:'
-        az.setText(az_string)
-        az.setFont(detail_label_font)
-        az.adjustSizeToText()
-        az.attemptMove(QgsLayoutPoint(self.rechts + 2, self.hoch + 4,
-                                      QgsUnitTypes.LayoutMillimeters),
-                                page=self.page)
-        self.addItem(az)
-
-        """füge die aktenzahl ein"""
-        az_value = QgsLayoutItemLabel(self)
-        az_value_string = str(self.akt_instance.az)
-        az_value.setText(az_value_string)
-        az_value.setFont(detail_value_font)
-        az_value.adjustSizeToText()
-        az_value.attemptMove(
-            QgsLayoutPoint(self.rechts + 23, self.hoch + 4.8,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(az_value)
-        """"""
-
-        name = QgsLayoutItemLabel(self)
-        name_string = 'Name:'
-        name.setText(name_string)
-        name.setFont(detail_label_font)
-        name.adjustSizeToText()
-        name.attemptMove(QgsLayoutPoint(
-            self.rechts + 2, self.hoch + 9,
-            QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(name)
-
-        """füge den namen ein"""
-        name_value = QgsLayoutItemLabel(self)
-        name_value_string = str(self.akt_instance.name)
-        name_value.setText(name_value_string)
-        name_value.setFont(detail_value_font)
-        name_value.adjustSizeToText()
-        name_value.attemptMove(
-            QgsLayoutPoint(self.rechts + 23, self.hoch + 9.8,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(name_value)
-        """"""
-
-        datenstand = QgsLayoutItemLabel(self)
-        datenstand_string = 'Datenstand:'
-        datenstand.setText(datenstand_string)
-        datenstand.setFont(detail_label_font)
-        datenstand.adjustSizeToText()
-        datenstand.attemptMove(QgsLayoutPoint(self.rechts + 2, self.hoch + 14, QgsUnitTypes.LayoutMillimeters),
-                                page=self.page)
-        self.addLayoutItem(datenstand)
-
-        datenstand_value = QgsLayoutItemLabel(self)
-        today = datetime.now().strftime('%d. %B %Y')
-        datenstand_value_string = today
-        datenstand_value.setText(datenstand_value_string)
-        datenstand_value.setFont(detail_value_font)
-        datenstand_value.adjustSizeToText()
-        datenstand_value.attemptMove(QgsLayoutPoint(self.rechts + 23, self.hoch + 14.8,
-                                                    QgsUnitTypes.LayoutMillimeters),
-                                page=self.page)
-        self.addLayoutItem(datenstand_value)
-
-        self.rechts += 65
-
-        """füge eine Linie rechts der Aktendetails ein"""
-        a_line = QPolygonF()
-        a_line.append(QPointF(self.rechts, self.hoch))
-        a_line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
-        akt_line = QgsLayoutItemPolygon(a_line, self)
-        akt_line.attemptMove(QgsLayoutPoint(self.rechts, self.hoch, QgsUnitTypes.LayoutMillimeters),
-                               page=self.page)
-        self.addLayoutItem(akt_line)
-        """"""
-
-        """füge Maßstabs-Infos ein"""
-        scale_string = 'Maßstab'
-        scale = QgsLayoutItemLabel(self)
-        scale.setText(scale_string)
-        scale_font = QFont('Arial', 12)
-        scale.setFont(scale_font)
-        scale.adjustSizeToText()
-        scale.attemptMove(
-            QgsLayoutPoint(self.rechts + 4, self.hoch + 5,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addLayoutItem(scale)
-
-        """der maßstabswert wird nach dem einfügen der karte eingefügt!"""
-
-        """füge einen Nordpfeil ein"""
-        north = QgsLayoutItemPicture(self)
-        north.setPicturePath(':/logo/resources/icons/nordpfeil01.png')
-        north.attemptSetSceneRect(QRectF(self.rechts + 30, self.hoch + 4, 10, 15))
-        north.attemptMove(
-            QgsLayoutPoint(self.rechts + 28, self.hoch + 4,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addItem(north)
-        """"""
-
-        """füge die Seitennummer ein"""
-        seitennummer = QgsLayoutItemLabel(self)
-        seitennummer_font = QFont('Arial', 8)
-        seitennummer_string = 'Seite 2 von 2'
-        seitennummer.setText(seitennummer_string)
-        seitennummer.setFont(seitennummer_font)
-        seitennummer.adjustSizeToText()
-        seitennummer.attemptMove(
-            QgsLayoutPoint(self.page_with - self.right_margin - 17,
-                           self.page_height - self.bottom_margin + 2,
-                           QgsUnitTypes.LayoutMillimeters), page=self.page)
-        self.addItem(seitennummer)
-        """"""
+        # abb_adresse = '3109 St. Pölten, Landhausplatz 1/12'
+        # abb_adresse_font = QFont('Arial', 10)
+        # abb_adresse_label = QgsLayoutItemLabel(self)
+        # abb_adresse_label.setText(abb_adresse)
+        # abb_adresse_label.attemptMove(
+        #     QgsLayoutPoint(self.rechts + 22, self.hoch + 10.5,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # abb_adresse_format = QgsTextFormat()
+        # abb_adresse_format.setFont(abb_adresse_font)
+        # abb_adresse_label.setTextFormat(abb_adresse_format)
+        # abb_adresse_label.adjustSizeToText()
+        # self.addLayoutItem(abb_adresse_label)
+        #
+        # self.rechts += 96
+        #
+        # """füge eine Linie rechts der Adresse ein"""
+        # line = QPolygonF()
+        # line.append(QPointF(self.rechts, self.hoch))
+        # line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
+        # adress_line = QgsLayoutItemPolygon(line, self)
+        # adress_line.attemptMove(
+        #     QgsLayoutPoint(self.rechts, self.hoch,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(adress_line)
+        # """"""
+        #
+        # self.rechts += 10
+        #
+        # """füge den Kartentitel ein"""
+        # titel = QgsLayoutItemLabel(self)
+        # titel_string = 'Karte zum NÖ Alm- und Weidebuch'
+        # titel_font = QFont('Arial', 16)
+        # titel_font.setBold(True)
+        # titel.setText(titel_string)
+        # titel_format = QgsTextFormat()
+        # titel_format.setFont(titel_font)
+        # titel.setTextFormat(titel_format)
+        # titel.adjustSizeToText()
+        # titel.attemptMove(
+        #     QgsLayoutPoint(self.rechts, self.hoch + 7.5,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(titel)
+        #
+        # self.rechts += 105
+        #
+        # """füge eine Linie rechts des Titels ein"""
+        # t_line = QPolygonF()
+        # t_line.append(QPointF(self.rechts, self.hoch))
+        # t_line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
+        # titel_line = QgsLayoutItemPolygon(t_line, self)
+        # titel_line.attemptMove(
+        #     QgsLayoutPoint(self.rechts, self.hoch,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(titel_line)
+        # """"""
+        #
+        # """füge die Beschreibung zur Karte ein"""
+        # map_html = QgsLayoutItemHtml(self)
+        # map_html_frame = QgsLayoutFrame(self, map_html)
+        # map_html_frame.attemptSetSceneRect(QRectF(10, 10, 60, 15))
+        # map_html.addFrame(map_html_frame)
+        #
+        # map_html.setContentMode(QgsLayoutItemHtml.ManualHtml)
+        # map_html.setHtml(
+        #     '''<body style="margin:0;"><p style="font-family:arial;
+        #     font-size:12px">
+        #     Darstellung der im NÖ Alm- und Weidebuch eingetragenen
+        #     Grundstücke (blau).</p></body>''')
+        # map_html.loadHtml()
+        # map_html_frame.attemptMove(
+        #     QgsLayoutPoint(self.rechts + 3, self.hoch + 5,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(map_html_frame)
+        # """"""
+        # self.rechts += 68
+        #
+        # """füge eine Linie rechts der Bechreibung ein"""
+        # d_line = QPolygonF()
+        # d_line.append(QPointF(self.rechts, self.hoch))
+        # d_line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
+        # descr_line = QgsLayoutItemPolygon(d_line, self)
+        # descr_line.attemptMove(
+        #     QgsLayoutPoint(self.rechts, self.hoch,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(descr_line)
+        # """"""
+        #
+        # detail_label_font = QFont('Arial', 8)
+        # detail_value_font = QFont('Arial', 8)
+        # detail_value_font.setBold(True)
+        #
+        # az = QgsLayoutItemLabel(self)
+        # az_string = 'Aktenzahl:'
+        # az.setText(az_string)
+        # az_format = QgsTextFormat()
+        # az_format.setFont(detail_label_font)
+        # az.setTextFormat(az_format)
+        # az.adjustSizeToText()
+        # az.attemptMove(QgsLayoutPoint(self.rechts + 2, self.hoch + 4,
+        #                               QgsUnitTypes.LayoutMillimeters),
+        #                         page=self.page)
+        # self.addItem(az)
+        #
+        # """füge die aktenzahl ein"""
+        # az_value = QgsLayoutItemLabel(self)
+        # az_value_string = str(self.akt_instance.az)
+        # az_value.setText(az_value_string)
+        # az_value_format = QgsTextFormat()
+        # az_value_format.setFont(detail_value_font)
+        # az_value.setTextFormat(az_value_format)
+        # az_value.adjustSizeToText()
+        # az_value.attemptMove(
+        #     QgsLayoutPoint(self.rechts + 23, self.hoch + 4.8,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(az_value)
+        # """"""
+        #
+        # name = QgsLayoutItemLabel(self)
+        # name_string = 'Name:'
+        # name.setText(name_string)
+        # name_format = QgsTextFormat()
+        # name_format.setFont(detail_label_font)
+        # name.setTextFormat(name_format)
+        # name.adjustSizeToText()
+        # name.attemptMove(QgsLayoutPoint(
+        #     self.rechts + 2, self.hoch + 9,
+        #     QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(name)
+        #
+        # """füge den namen ein"""
+        # name_value = QgsLayoutItemLabel(self)
+        # name_value_string = str(self.akt_instance.name)
+        # name_value.setText(name_value_string)
+        # name_value_format = QgsTextFormat()
+        # name_value_format.setFont(detail_value_font)
+        # name_value.setTextFormat(name_value_format)
+        # name_value.adjustSizeToText()
+        # name_value.attemptMove(
+        #     QgsLayoutPoint(self.rechts + 23, self.hoch + 9.8,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(name_value)
+        # """"""
+        #
+        # datenstand = QgsLayoutItemLabel(self)
+        # datenstand_string = 'Datenstand:'
+        # datenstand.setText(datenstand_string)
+        # datenstand_format = QgsTextFormat()
+        # datenstand_format.setFont(detail_label_font)
+        # datenstand.setTextFormat(datenstand_format)
+        # datenstand.adjustSizeToText()
+        # datenstand.attemptMove(QgsLayoutPoint(self.rechts + 2, self.hoch + 14, QgsUnitTypes.LayoutMillimeters),
+        #                         page=self.page)
+        # self.addLayoutItem(datenstand)
+        #
+        # datenstand_value = QgsLayoutItemLabel(self)
+        # today = datetime.now().strftime('%d. %B %Y')
+        # datenstand_value_string = today
+        # datenstand_value.setText(datenstand_value_string)
+        # datenstand_format = QgsTextFormat()
+        # # datenstand_value.setFont(detail_value_font)
+        # datenstand_value.setTextFormat(datenstand_format)
+        # datenstand_value.adjustSizeToText()
+        # datenstand_value.attemptMove(QgsLayoutPoint(self.rechts + 23, self.hoch + 14.8,
+        #                                             QgsUnitTypes.LayoutMillimeters),
+        #                         page=self.page)
+        # self.addLayoutItem(datenstand_value)
+        #
+        # self.rechts += 65
+        #
+        # """füge eine Linie rechts der Aktendetails ein"""
+        # a_line = QPolygonF()
+        # a_line.append(QPointF(self.rechts, self.hoch))
+        # a_line.append(QPointF(self.rechts, self.hoch + self.info_block_height))
+        # akt_line = QgsLayoutItemPolygon(a_line, self)
+        # akt_line.attemptMove(QgsLayoutPoint(self.rechts, self.hoch, QgsUnitTypes.LayoutMillimeters),
+        #                        page=self.page)
+        # self.addLayoutItem(akt_line)
+        # """"""
+        #
+        # """füge Maßstabs-Infos ein"""
+        # scale_string = 'Maßstab'
+        # scale = QgsLayoutItemLabel(self)
+        # scale.setText(scale_string)
+        # scale_font = QFont('Arial', 12)
+        # scale_format = QgsTextFormat()
+        # scale_format.setFont(scale_font)
+        # scale.setTextFormat(scale_format)
+        # scale.adjustSizeToText()
+        # scale.attemptMove(
+        #     QgsLayoutPoint(self.rechts + 4, self.hoch + 5,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addLayoutItem(scale)
+        #
+        # """der maßstabswert wird nach dem einfügen der karte eingefügt!"""
+        #
+        # """füge einen Nordpfeil ein"""
+        # north = QgsLayoutItemPicture(self)
+        # north.setPicturePath(':/logo/resources/icons/nordpfeil01.png')
+        # north.attemptSetSceneRect(QRectF(self.rechts + 30, self.hoch + 4, 10, 15))
+        # north.attemptMove(
+        #     QgsLayoutPoint(self.rechts + 28, self.hoch + 4,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addItem(north)
+        # """"""
+        #
+        # """füge die Seitennummer ein"""
+        # seitennummer = QgsLayoutItemLabel(self)
+        # seitennummer_font = QFont('Arial', 8)
+        # seitennummer_string = 'Seite 2 von 2'
+        # seitennummer.setText(seitennummer_string)
+        # seitennummer_format =QgsTextFormat()
+        # seitennummer_format.setFont(seitennummer_font)
+        # seitennummer.setTextFormat(seitennummer_format)
+        # seitennummer.adjustSizeToText()
+        # seitennummer.attemptMove(
+        #     QgsLayoutPoint(self.page_with - self.right_margin - 17,
+        #                    self.page_height - self.bottom_margin + 2,
+        #                    QgsUnitTypes.LayoutMillimeters), page=self.page)
+        # self.addItem(seitennummer)
+        # """"""
 
     def insertMap(self):
 
@@ -690,7 +740,8 @@ class AwbAuszug(QgsPrintLayout):
 
             """setzte das crs für das layout um den maßstab richtig zu bekommen"""
             map_crs = self.layout_map.crs()
-            map_crs.createFromId(31259)
+            # map_crs.createFromId(31259)
+            map_crs.createFromString('EPSG:31259')
             self.layout_map.setCrs(map_crs)
             """"""
 
@@ -712,7 +763,9 @@ class AwbAuszug(QgsPrintLayout):
 
             scale_label = QgsLayoutItemLabel(self)
             scale_label.setText(scale_string)
-            scale_label.setFont(scale_font)
+            scale_label_format = QgsTextFormat()
+            scale_label_format.setFont(scale_font)
+            scale_label.setTextFormat(scale_label_format)
             scale_label.adjustSizeToText()
             scale_label.attemptMove(
                 QgsLayoutPoint(370, 32,

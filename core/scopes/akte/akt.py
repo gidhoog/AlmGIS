@@ -571,7 +571,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         grundstücke
         """
 
+
         awb_auszug = AwbAuszug(akt_instance=self.data_instance)
+        print(f'create AWB')
 
         """erzeuge eine pdf-Datei"""
         exporter = QgsLayoutExporter(awb_auszug)

@@ -5,17 +5,24 @@ block_cipher = None
 a = Analysis(
     ['almgis.py'],
     pathex=[],
-    binaries=[('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', 'mod_spatialite')],
-    datas=[('almgis.cmd', '.'),
+    binaries=[
+    ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', 'mod_spatialite'),
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', '.')
+    ],
+    datas=[
+    ('almgis.cmd', '.'),
     ('C:/work/Projekte/AlmGIS/almgis/core/print_layouts/', 'core/print_layouts'),
     ('C:/work/Projekte/AlmGIS/almgis/core/print_templates/', 'core/print_templates'),
     ('C:/work/Projekte/AlmGIS/almgis/core/styles/', 'core/styles'),
     ('C:/work/_anwendungen/OSGeo4W/share/proj/proj.db','proj_db'),
     ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', 'processing'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/sagaprovider/', 'sagaprovider')],
-    hiddenimports=['pkgutil', 'PyQt5.QtPositioning', 'PyQt5.QtPrintSupport',
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/sagaprovider/', 'sagaprovider')
+    ],
+    hiddenimports=[
+    'pkgutil', 'PyQt5.QtPositioning', 'PyQt5.QtPrintSupport',
     'PyQt5.QtSql', 'PyQt5.QtNetwork', 'PyQt5.QtXml', 'PyQt5.Qsci', 'PyQt5.sip',
-    'shapely._geos'],
+    'shapely._geos'
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
