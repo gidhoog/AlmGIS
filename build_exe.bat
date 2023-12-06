@@ -1,6 +1,6 @@
 @echo off
 
-set PATH=C:\work\_anwendungen\OSGeo4W\apps\qgis-ltr\bin;C:\work\_anwendungen\OSGeo4W\apps\qgis-ltr\bin;%PATH%
+set PATH=C:\work\_anwendungen\OSGeo4W\apps\qgis-ltr\bin;%PATH%
 set O4W_QT_BINARIES=C:\work\_anwendungen\OSGeo4W\apps\Qt5\bin
 set O4W_QT_LIBRARIES=C:\work\_anwendungen\OSGeo4W\apps\Qt5\lib
 set O4W_QT_PLUGINS=C:\work\_anwendungen\OSGeo4W\apps\Qt5\plugins

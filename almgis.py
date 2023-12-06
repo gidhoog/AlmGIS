@@ -1,4 +1,9 @@
 import sys
+
+print(f'PATH: ++++++++++++++++++++++++++++++++++++++++++++++')
+for path in sys.path:
+    print(path)
+print(f'++++++++++++++++++++++++++++++++++++++++++++++++++++')
 from qgis.core import QgsApplication
 from core.main_window import AlmgisMainWindow
 from importlib import resources

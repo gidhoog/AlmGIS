@@ -1,22 +1,26 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-
+# ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', 'mod_spatialite'),
+#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', 'qgis_dll'),
+#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', './qgis_dll')
+#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/qgis/_core.pyd', 'qgis_pyd')
 a = Analysis(
     ['almgis.py'],
     pathex=[],
     binaries=[
-    ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', 'mod_spatialite'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', '.')
+    ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', './dll'),
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', '.'),
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/qgis/_core.pyd', './qgis')
     ],
     datas=[
     ('almgis.cmd', '.'),
-    ('C:/work/Projekte/AlmGIS/almgis/core/print_layouts/', 'core/print_layouts'),
-    ('C:/work/Projekte/AlmGIS/almgis/core/print_templates/', 'core/print_templates'),
-    ('C:/work/Projekte/AlmGIS/almgis/core/styles/', 'core/styles'),
-    ('C:/work/_anwendungen/OSGeo4W/share/proj/proj.db','proj_db'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', 'processing'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/sagaprovider/', 'sagaprovider')
+    ('C:/work/Projekte/AlmGIS/almgis/core/print_layouts/', './core/print_layouts'),
+    ('C:/work/Projekte/AlmGIS/almgis/core/print_templates/', './core/print_templates'),
+    ('C:/work/Projekte/AlmGIS/almgis/core/styles/', './core/styles'),
+    ('C:/work/_anwendungen/OSGeo4W/share/proj/proj.db','./proj_db'),
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing'),
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/sagaprovider/', './sagaprovider')
     ],
     hiddenimports=[
     'pkgutil', 'PyQt5.QtPositioning', 'PyQt5.QtPrintSupport',
@@ -26,7 +30,8 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=[
+    ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,

@@ -15,8 +15,8 @@ def load_spatialite(dbapi_conn, connection_record):
     :return:
     """
     dbapi_conn.enable_load_extension(True)
-    # dbapi_conn.load_extension('C:/Program Files/OSGeo4W/bin/mod_spatialite.dll')
-    dbapi_conn.load_extension('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll')
+    # dbapi_conn.load_extension('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll')
+    dbapi_conn.load_extension(str(config.mod_spatialite_dll))
 
 engine = create_engine(f"sqlite:///{config.alm_data_db_path}")
 listen(engine, 'connect', load_spatialite)

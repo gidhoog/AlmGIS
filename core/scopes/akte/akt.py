@@ -2,7 +2,8 @@ import os
 import typing
 from pathlib import Path
 
-from qgis.PyQt.QtGui import QFont, QIntValidator, QIcon, QStandardItem, QColor
+from qgis.PyQt.QtGui import (QFont, QIntValidator, QIcon, QStandardItem, QColor,
+                             QStandardItemModel)
 from qgis.PyQt.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
     QMenu, QAction, QTreeView, QHBoxLayout, QComboBox, QAbstractItemView
 from qgis.PyQt.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
@@ -19,6 +20,7 @@ from core import entity, db_session_cm
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BKomplex, BKomplexVersion, BKoppel
 from core.gis_control import GisControl
+from core.gis_item import GisItem
 from core.gis_layer import setLayerStyle
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
@@ -26,6 +28,8 @@ from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
 from core.scopes.akte.akt_gst_main import GstMaintable
 from core.scopes.akte.akt_komplexe_main import KomplexMaintable
+from core.scopes.komplex.komplex_item import KomplexItem
+from core.scopes.koppel.koppel_item import KoppelItem
 
 
 class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
@@ -219,6 +223,12 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiKomplexeGisListeVlay.addWidget(self.komplexe_view)
         """"""
 
+        """erzeuge einen neuen TreeView für die neue Item-basierte Layererstellung"""
+        self.komplexe_view_new = QTreeView(self)
+        # self.komplexe_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.uiKomplexeGisListeVlay.addWidget(self.komplexe_view_new)
+        """"""
+
         # """erzeuge ein selection-model für das tree-view"""
         # self.tree_selection_model = self.komplexe_view.selectionModel()
         # """"""
@@ -305,6 +315,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         :return:
         """
 
+        self.komplex_model = KomplexModel()
+        self.komplex_root_item = self.komplex_model.invisibleRootItem()
+
         """entferne alle features vom layer Koppeln"""
         with edit(self.koppel_layer):
             listOfIds = [feat.id() for feat in self.koppel_layer.getFeatures()]
@@ -376,6 +389,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         extent = self.komplex_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
+
+
+        for komp in komplex_inst:
+
+            komplex_item = KomplexItem(komp)
+            self.komplex_root_item.appendRow(komplex_item)
+
+            for kop in komp.rel_komplex_version[0].rel_koppel:
+
+                koppel_item = KoppelItem(kop)
+                komplex_item.appendRow(koppel_item)
+
+        self.komplexe_view_new.setModel(self.komplex_model)
 
     def setJahrCombo(self, session):
 
@@ -621,6 +647,51 @@ class GisDock(QDockWidget):
         super(__class__, self).__init__(parent)
 
         self.setWindowTitle('Kartenansicht')
+
+
+class KomplexModel(QStandardItemModel):
+
+    def __init__(self, parent=None) -> None:
+        super(KomplexModel, self).__init__(parent)
+
+        self.parent = parent
+
+        self.setColumnCount(4)
+        self.setHorizontalHeaderLabels(['Name', '2', '3', 'Fläche'])
+        # self.setItemPrototype(KomplexItem())
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        item = self.itemFromIndex(index)
+
+        """get the item of the first column if you are in an other"""
+        if index.column() != 0:
+            first_index = index.sibling(index.row(), 0)
+            first_item = self.itemFromIndex(first_index)
+        """"""
+
+        # if role == TreeItem.Name_Role:
+        #     print(f'--->  name')
+
+        if not index.isValid():
+            return None
+
+        if index.column() == 0:
+
+            # if role == Qt.DecorationRole:
+            #     return item.data(TreeItem.Color_Role)
+
+            # if type(item) == TreeItemCollection:
+
+            # if role == Qt.EditRole:
+            #     return item.data(TreeItem.Name_Role)
+
+            if role == Qt.DisplayRole:
+                print(f'{item.data(GisItem.Instance_Role).name}')
+                return item.data(GisItem.Instance_Role).name
+
+            if role == Qt.DecorationRole:
+                return item.data(GisItem.Color_Role)
 
 
 class KKTreeModel(QAbstractItemModel):
