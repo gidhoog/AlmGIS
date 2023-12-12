@@ -4,8 +4,9 @@ from pathlib import Path
 
 from qgis.PyQt.QtGui import (QFont, QIntValidator, QIcon, QStandardItem, QColor,
                              QStandardItemModel)
-from qgis.PyQt.QtWidgets import QLabel, QSpacerItem, QDockWidget, QToolButton, \
-    QMenu, QAction, QTreeView, QHBoxLayout, QComboBox, QAbstractItemView
+from qgis.PyQt.QtWidgets import (QLabel, QSpacerItem, QDockWidget, QToolButton, \
+    QMenu, QAction, QTreeView, QHBoxLayout, QComboBox, QAbstractItemView,
+                                 QPushButton)
 from qgis.PyQt.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 from geoalchemy2 import functions
 from geoalchemy2.shape import to_shape
@@ -199,6 +200,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uicAddKoppelTbtn.setIconSize(QSize(25, 25))
         self.uicAddKoppelTbtn.setPopupMode(QToolButton.InstantPopup)
 
+        self.uicCollapsNodesPbtn = QPushButton(self)
+        self.uicCollapsNodesPbtn.setIcon(QIcon(":/svg/resources/icons/treeview_collapse.svg"))
+        self.uicCollapsNodesPbtn.setToolTip('alle Knoten einklappen')
+        self.uicCollapsNodesPbtn.setIconSize(QSize(25, 25))
+
+        self.uicExpandNodesPbtn = QPushButton(self)
+        self.uicExpandNodesPbtn.setIcon(QIcon(":/svg/resources/icons/treeview_expand.svg"))
+        self.uicExpandNodesPbtn.setToolTip('alle Knoten ausklappen')
+        self.uicExpandNodesPbtn.setIconSize(QSize(25, 25))
+
         self.actionAddKoppel = QAction(self)
         self.actionAddKoppel.setText('füge eine neue Koppel beim ausgewählten Layer ein')
         self.actionAddKoppelByYear = QAction(self)
@@ -212,6 +223,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.komplex_tree_header_layer.addWidget(self.uicKkJahrLbl)
         self.komplex_tree_header_layer.addWidget(self.uicKkJahrCombo)
         self.komplex_tree_header_layer.addSpacerItem(space)
+        self.komplex_tree_header_layer.addWidget(self.uicExpandNodesPbtn)
+        self.komplex_tree_header_layer.addWidget(self.uicCollapsNodesPbtn)
         self.komplex_tree_header_layer.addWidget(self.uicAddKoppelTbtn)
 
         self.uiKomplexeGisListeVlay.addLayout(self.komplex_tree_header_layer)
@@ -253,6 +266,28 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.koppel_layer.base = True
         setLayerStyle(self.koppel_layer, 'koppel_gelb')
         self.guiMainGis.addLayer(self.koppel_layer)
+        """"""
+
+        """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
+        self.koppel_layer_new = QgsVectorLayer("Polygon?crs=epsg:31259",
+                                           "Koppeln",
+                                           "memory")
+        self.koppel_dp_new = self.koppel_layer_new.dataProvider()
+
+        # add fields
+        self.koppel_dp_new.addAttributes([QgsField("id", QVariant.Int),
+                                      QgsField("name", QVariant.String),
+                                      QgsField("bearbeiter", QVariant.String),
+                                      QgsField("aw_ha", QVariant.String),
+                                      QgsField("aw_proz", QVariant.String),
+                                      QgsField("area", QVariant.String)])
+
+        self.koppel_layer_new.updateFields()  # tell the vector layer to fetch changes from the provider
+
+        self.koppel_layer_new.back = False
+        self.koppel_layer_new.base = True
+        setLayerStyle(self.koppel_layer_new, 'koppel_gelb')
+        self.guiMainGis.addLayer(self.koppel_layer_new)
         """"""
 
         """erzeuge einen Layer für die Komplexe und füge ihn ins canvas ein"""
@@ -339,9 +374,58 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                     .options(contains_eager(BKomplex.rel_komplex_version)))\
                 .unique().all()
 
+            #################################
+            for komp in komplex_inst:
+
+                komplex_item = KomplexItem(komp)
+                self.komplex_root_item.appendRow(komplex_item)
+
+                for kop in komp.rel_komplex_version[0].rel_koppel:
+
+                    koppel_item = KoppelItem(kop)
+                    koppel_item.id = kop.id
+                    komplex_item.appendRow([koppel_item, None, None, None])
+
+            self.komplexe_view_new.setModel(self.komplex_model)
+
+            self.koppel_features_new = []
+            self.koppel_list = []
+            for kx in range(self.komplex_root_item.rowCount()):
+
+                komplex = self.komplex_root_item.child(kx)
+                for ko in range(komplex.rowCount()):
+                    koppel = komplex.child(ko)
+                    self.koppel_list.append(koppel)
+                    # kop_feat = QgsFeature(self.koppel_layer_new.fields())
+                    # kop_feat.setAttributes([koppel.data(GisItem.Name_Role), None])
+                    # kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koppel.data(GisItem.Geometry_Role)).wkt))
+                    # koppel.setData(kop_feat, GisItem.Feature_Role)
+                    # self.koppel_features_new.append(kop_feat)
+
+            for koo in self.koppel_list:
+                kop_feat = QgsFeature(self.koppel_layer_new.fields())
+                kop_feat.setAttributes([koo.data(GisItem.Name_Role)])
+                kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koo.data(GisItem.Geometry_Role)).wkt))
+                # self.koppel_features_new.append(kop_feat)
+
+                (result, added_kop_feat) = self.koppel_dp_new.addFeatures([kop_feat])
+                koo.setData(added_kop_feat[0], GisItem.Feature_Role)
+
+            self.koppel_layer_new.setName(f'Koppeln neu')
+
+            for f in self.koppel_layer_new.getFeatures():
+                print(f'new feature.id(): {f.id()} - [id]: {f["id"]}')
+            ####################################
+
             self.kk_tree_model = KKTreeModel(self, komplex_inst)
             self.komplexe_view.setModel(self.kk_tree_model)
             self.komplexe_view.expandAll()
+
+            """erzeuge ein selection-model für das tree-view"""
+            self.kk_selection_model = self.komplexe_view_new.selectionModel()
+            self.komplexe_view_new.setSelectionMode(
+                QAbstractItemView.ExtendedSelection)
+            """"""
 
             """erzeuge ein selection-model für das tree-view"""
             self.tree_selection_model = self.komplexe_view.selectionModel()
@@ -390,18 +474,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         extent = self.komplex_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
 
-
-        for komp in komplex_inst:
-
-            komplex_item = KomplexItem(komp)
-            self.komplex_root_item.appendRow(komplex_item)
-
-            for kop in komp.rel_komplex_version[0].rel_koppel:
-
-                koppel_item = KoppelItem(kop)
-                komplex_item.appendRow(koppel_item)
-
-        self.komplexe_view_new.setModel(self.komplex_model)
 
     def setJahrCombo(self, session):
 
@@ -518,6 +590,54 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.komplexe_view.clicked.connect(self.clickedTreeElement)
         self.tree_selection_model.selectionChanged.connect(self.treeselectionChanged)
 
+        self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
+        self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
+
+        self.kk_selection_model.selectionChanged.connect(
+            self.selectionChangedTreeNew)
+
+    def collapsKKTree(self):
+
+        self.komplexe_view_new.collapseAll()
+
+    def expandKKTree(self):
+
+        self.komplexe_view_new.expandAll()
+
+    def selectionChangedTreeNew(self, tree_selection):
+
+        print(f'kk selection changed!!')
+        print(f'index: {tree_selection}')
+
+        # for idx in tree_selection.indexes():
+        #
+        #     item = self.komplex_model.itemFromIndex(idx)
+        #
+        #     print(f'{item.data(GisItem.Name_Role)}')
+
+        feature_id_list = []
+        sel_item = []
+
+        for idx in self.kk_selection_model.selectedIndexes():
+            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+
+                item = self.komplex_model.itemFromIndex(idx)
+                sel_item.append(item)
+                feature_id_list.append(item.data(GisItem.Feature_Role).id())
+
+                # print(f':: {item.data(GisItem.Name_Role)}')
+            # self.komplex_model.itemFromIndex(
+            #     self.kk_selection_model.selectedIndexes()[0]).data(
+            #     GisItem.Feature_Role).id()
+
+        print(f'feature_ids:')
+        for ii in sel_item:
+            print(f'name: {ii.data(GisItem.Name_Role)}  id: {ii.data(GisItem.Feature_Role)}')
+        print(f'fffffffffffffffffffffff')
+
+        self.guiMainGis.layer_tree_view.setCurrentLayer(self.koppel_layer_new)
+        self.selectFeaturesNew([s.data(GisItem.Feature_Role).id() for s in sel_item])
+
     def treeselectionChanged(self, tree_selection):
 
         print(f'index: {tree_selection}')
@@ -530,7 +650,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 print(f'koppel: {kop_id}')
                 sel_ids.append(kop_id)
 
-
         self.guiMainGis.layer_tree_view.setCurrentLayer(self.koppel_layer)
         self.setSelectFeature(sel_ids)
 
@@ -542,6 +661,17 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     #             self.layer_tree_view.setCurrentLayer(layer)
     #             self.setSelectFeature(feature_ids)
     #
+    def selectFeaturesNew(self, feat_id_list):
+
+        self.guiMainGis.removeSelectedAll()
+        curr_layer = self.guiMainGis.layer_tree_view.currentLayer()
+
+        # curr_layer.select(feat_id_list.id())
+        # curr_layer.select([f.id() for f in curr_layer.getFeatures() if
+        #                    f['id'] in feat_id_list])
+        curr_layer.select([f.id() for f in curr_layer.getFeatures() if f.id()
+                           in feat_id_list])
+
     def setSelectFeature(self, feature_ids):
         """
         select features
@@ -657,7 +787,7 @@ class KomplexModel(QStandardItemModel):
         self.parent = parent
 
         self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(['Name', '2', '3', 'Fläche'])
+        self.setHorizontalHeaderLabels(['Komplex/Koppel', '2', '3', 'Fläche'])
         # self.setItemPrototype(KomplexItem())
 
     def data(self, index: QModelIndex, role: int = ...):
@@ -687,11 +817,43 @@ class KomplexModel(QStandardItemModel):
             #     return item.data(TreeItem.Name_Role)
 
             if role == Qt.DisplayRole:
-                print(f'{item.data(GisItem.Instance_Role).name}')
-                return item.data(GisItem.Instance_Role).name
+                return item.data(GisItem.Name_Role)
 
             if role == Qt.DecorationRole:
                 return item.data(GisItem.Color_Role)
+
+        if index.column() == 1:
+
+            if role == Qt.DisplayRole:
+                return first_item.data(GisItem.Nr_Role)
+                # return 'gg'
+
+        if index.column() == 2:
+            pass
+
+        if index.column() == 3:
+
+            if role == Qt.DisplayRole:
+
+                if type(first_item) == KoppelItem:
+                    k_area = to_shape(first_item.data(GisItem.Instance_Role).geometry).area
+                    k_area_rounded = '{:.4f}'.format(
+                        round(float(k_area) / 10000, 4)).replace(".", ",")
+
+                    return f'{str(k_area_rounded)} ha'
+
+                if type(first_item) == KomplexItem:
+                    komp_area = 0.00
+                    for k in range(first_item.rowCount()):
+                        kop_area = to_shape(first_item.child(k).data(GisItem.Instance_Role).geometry).area
+                        komp_area = komp_area + kop_area
+
+                    komp_area_rounded = '{:.4f}'.format(
+                        round(float(komp_area) / 10000, 4)).replace(".", ",")
+
+                    return f'{str(komp_area_rounded)} ha'
+
+        return QStandardItemModel.data(self, index, role)
 
 
 class KKTreeModel(QAbstractItemModel):

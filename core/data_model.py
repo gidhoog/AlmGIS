@@ -566,7 +566,7 @@ class BKomplex(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     akt_id: Mapped[int] = mapped_column(ForeignKey('a_alm_akt.id'))
-    nr: Mapped[str]
+    nr: Mapped[int]
     name: Mapped[str]
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]

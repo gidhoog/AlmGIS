@@ -13,6 +13,22 @@ class GisItem(QStandardItem):
 
     Color_Role = Qt.UserRole + 20
 
+    Nr_Role = Qt.UserRole + 100
+    Name_Role = Qt.UserRole + 101
+
+    Geometry_Role = Qt.UserRole + 200
+
+    def __init__(self, data_instance=None):
+        super().__init__()
+
+        if data_instance != None:
+
+            self.setData(data_instance, GisItem.Instance_Role)
+
+            self.setData(data_instance.nr, GisItem.Nr_Role)
+            self.setData(data_instance.name, GisItem.Name_Role)
+
+
     # @staticmethod
     # def clone(self) -> 'QStandardItem':
     #     return GisItem()

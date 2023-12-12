@@ -7,6 +7,8 @@
   </qresource>
   <qresource prefix="html_info"/>
   <qresource prefix="svg">
+    <file>resources/icons/treeview_collapse.svg</file>
+    <file>resources/icons/treeview_expand.svg</file>
     <file>resources/icons/export_layer.svg</file>
     <file>resources/icons/arrow_up_blue.svg</file>
     <file>resources/icons/mActionOptions.svg</file>
