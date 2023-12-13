@@ -29,7 +29,7 @@ from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
 from core.scopes.akte.akt_gst_main import GstMaintable
 from core.scopes.akte.akt_komplexe_main import KomplexMaintable
-from core.scopes.komplex.komplex_item import KomplexItem
+from core.scopes.komplex.komplex_item import KomplexItem, KomplexVersionItem
 from core.scopes.koppel.koppel_item import KoppelItem
 
 
@@ -192,6 +192,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uicKkJahrLbl = QLabel(self)
         self.uicKkJahrLbl.setText('Jahr:')
         self.uicKkJahrCombo = QComboBox(self)
+        self.uicKkJahrComboNew = QComboBox(self)
         space = QSpacerItem(1, 1, QtWidgets.QSizePolicy.Expanding,
                     QtWidgets.QSizePolicy.Fixed)
         self.uicAddKoppelTbtn = QToolButton(self)
@@ -222,6 +223,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.komplex_tree_header_layer.addWidget(self.uicKkJahrLbl)
         self.komplex_tree_header_layer.addWidget(self.uicKkJahrCombo)
+        self.komplex_tree_header_layer.addWidget(self.uicKkJahrComboNew)
         self.komplex_tree_header_layer.addSpacerItem(space)
         self.komplex_tree_header_layer.addWidget(self.uicExpandNodesPbtn)
         self.komplex_tree_header_layer.addWidget(self.uicCollapsNodesPbtn)
@@ -341,6 +343,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.setJahrCombo(self.session)
         self.loadKKTree()
 
+        self.loadKKGis()
+
         self.loadGisLayer()  # lade layer die in der db definiert sind
 
     def loadKKTree(self):
@@ -365,7 +369,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             self.komplex_layer.deleteFeatures(listOfIds)
         """"""
 
-        with self.session:
+        with (self.session):
 
             komplex_inst = self.session.scalars(select(BKomplex)
                                     .join(BKomplex.rel_komplex_version)
@@ -373,48 +377,92 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                                 (BKomplex.akt_id == self.data_instance.id)))
                                     .options(contains_eager(BKomplex.rel_komplex_version)))\
                 .unique().all()
-
             #################################
-            for komp in komplex_inst:
 
-                komplex_item = KomplexItem(komp)
-                self.komplex_root_item.appendRow(komplex_item)
+            komplex_inst_new = self.session.scalars(select(BKomplexVersion)
+                                    .where(BKomplexVersion.akt_id == self.data_instance.id)
+                                                    ).unique().all()
 
-                for kop in komp.rel_komplex_version[0].rel_koppel:
+            self.komplex_years = {}
 
-                    koppel_item = KoppelItem(kop)
-                    koppel_item.id = kop.id
+            for komplex_version in komplex_inst_new:
+
+                komplex_item = KomplexVersionItem(komplex_version)
+
+                if komplex_version.jahr not in self.komplex_years:
+
+                    year_item = QStandardItem()
+                    year_item.setData(komplex_version.jahr, Qt.DisplayRole)
+                    year_item.setData(komplex_version.jahr, Qt.EditRole)
+
+                    year_item.appendRow(komplex_item)
+
+                    self.komplex_years[komplex_version.jahr] = year_item
+                    self.komplex_root_item.appendRow(year_item)
+
+                else:
+                    self.komplex_years[komplex_version.jahr].appendRow(komplex_item)
+
+                for koppel in komplex_version.rel_koppel:
+
+                    koppel_item = KoppelItem(koppel)
                     komplex_item.appendRow([koppel_item, None, None, None])
 
+                    """erzeuge das Koppel-Feature"""
+                    koppel_feat = QgsFeature(self.koppel_layer_new.fields())
+                    koppel_feat.setAttributes([koppel_item.data(GisItem.Name_Role), None])
+                    koppel_feat.setGeometry(QgsGeometry.fromWkt(
+                        to_shape(koppel_item.data(GisItem.Geometry_Role)).wkt)
+                    )
+                    (result, added_kop_feat) = self.koppel_dp_new.addFeatures([koppel_feat])
+                    koppel_item.setData(added_kop_feat[0], GisItem.Feature_Role)
+                    """"""
+
+            # for komp in komplex_inst:
+            #
+            #     komplex_item = KomplexItem(komp)
+            #     self.komplex_root_item.appendRow(komplex_item)
+            #
+            #     for kop in komp.rel_komplex_version[0].rel_koppel:
+            #
+            #         koppel_item = KoppelItem(kop)
+            #         koppel_item.id = kop.id
+            #         komplex_item.appendRow([koppel_item, None, None, None])
+            #
             self.komplexe_view_new.setModel(self.komplex_model)
+            self.uiVersionsTv.setModel(self.komplex_model)
 
-            self.koppel_features_new = []
-            self.koppel_list = []
-            for kx in range(self.komplex_root_item.rowCount()):
+            self.uicKkJahrComboNew.setModel(self.komplex_model)
 
-                komplex = self.komplex_root_item.child(kx)
-                for ko in range(komplex.rowCount()):
-                    koppel = komplex.child(ko)
-                    self.koppel_list.append(koppel)
-                    # kop_feat = QgsFeature(self.koppel_layer_new.fields())
-                    # kop_feat.setAttributes([koppel.data(GisItem.Name_Role), None])
-                    # kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koppel.data(GisItem.Geometry_Role)).wkt))
-                    # koppel.setData(kop_feat, GisItem.Feature_Role)
-                    # self.koppel_features_new.append(kop_feat)
-
-            for koo in self.koppel_list:
-                kop_feat = QgsFeature(self.koppel_layer_new.fields())
-                kop_feat.setAttributes([koo.data(GisItem.Name_Role)])
-                kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koo.data(GisItem.Geometry_Role)).wkt))
-                # self.koppel_features_new.append(kop_feat)
-
-                (result, added_kop_feat) = self.koppel_dp_new.addFeatures([kop_feat])
-                koo.setData(added_kop_feat[0], GisItem.Feature_Role)
-
-            self.koppel_layer_new.setName(f'Koppeln neu')
-
-            for f in self.koppel_layer_new.getFeatures():
-                print(f'new feature.id(): {f.id()} - [id]: {f["id"]}')
+            print(f'***')
+            #
+            # self.koppel_features_new = []
+            # self.koppel_list = []
+            # for kx in range(self.komplex_root_item.rowCount()):
+            #
+            #     komplex = self.komplex_root_item.child(kx)
+            #     for ko in range(komplex.rowCount()):
+            #         koppel = komplex.child(ko)
+            #         self.koppel_list.append(koppel)
+            #         # kop_feat = QgsFeature(self.koppel_layer_new.fields())
+            #         # kop_feat.setAttributes([koppel.data(GisItem.Name_Role), None])
+            #         # kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koppel.data(GisItem.Geometry_Role)).wkt))
+            #         # koppel.setData(kop_feat, GisItem.Feature_Role)
+            #         # self.koppel_features_new.append(kop_feat)
+            #
+            # for koo in self.koppel_list:
+            #     kop_feat = QgsFeature(self.koppel_layer_new.fields())
+            #     kop_feat.setAttributes([koo.data(GisItem.Name_Role)])
+            #     kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koo.data(GisItem.Geometry_Role)).wkt))
+            #     # self.koppel_features_new.append(kop_feat)
+            #
+            #     (result, added_kop_feat) = self.koppel_dp_new.addFeatures([kop_feat])
+            #     koo.setData(added_kop_feat[0], GisItem.Feature_Role)
+            #
+            # self.koppel_layer_new.setName(f'Koppeln neu')
+            #
+            # for f in self.koppel_layer_new.getFeatures():
+            #     print(f'new feature.id(): {f.id()} - [id]: {f["id"]}')
             ####################################
 
             self.kk_tree_model = KKTreeModel(self, komplex_inst)
@@ -474,6 +522,54 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         extent = self.komplex_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
 
+    def changedYear(self, index):
+
+        print(f'index: {index}')
+        self.loadKKGis()
+
+    def loadKKGis(self):
+
+        with edit(self.koppel_layer_new):
+            listOfIds = [feat.id() for feat in self.koppel_layer_new.getFeatures()]
+            self.koppel_layer_new.deleteFeatures(listOfIds)
+
+        year = self.uicKkJahrComboNew.currentText()
+
+        found_year = self.komplex_model.findItems(year)
+
+        for kom in range(found_year[0].rowCount()):
+
+            komplex = found_year[0].child(kom)
+            for ko in range(komplex.rowCount()):
+                koppel = komplex.child(ko)
+                koppel_feat = koppel.data(GisItem.Feature_Role)
+                (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
+                    [koppel_feat])
+                koppel.setData(added_kop_feat[0], GisItem.Feature_Role)
+
+        # for y in range(self.komplex_root_item.rowCount()):
+        #
+        #     year_item = self.komplex_root_item.child(y)
+        #     year = year_item.data(Qt.DisplayRole)
+        #
+        #     if str(year) == self.uicKkJahrCombo.currentText():
+        #
+        #         for kom in range(year_item.rowCount()):
+        #
+        #             komplex_item = year_item.child(kom)
+        #             for ko in range(komplex_item.rowCount()):
+        #
+        #                 koppel_item = komplex_item.child(ko)
+        #
+        #                 koppel_feat = QgsFeature(self.koppel_layer_new.fields())
+        #                 koppel_feat.setAttributes([koppel_item.data(GisItem.Name_Role), None])
+        #                 koppel_feat.setGeometry(QgsGeometry.fromWkt(
+        #                     to_shape(koppel_item.data(GisItem.Geometry_Role)).wkt))
+        #                 (result, added_kop_feat) = self.koppel_dp_new.addFeatures([koppel_feat])
+        #                 koppel_item.setData(added_kop_feat[0], GisItem.Feature_Role)
+        #                 print(f'***')
+
+        self.koppel_layer_new.setName(f'Koppeln neu ' + self.uicKkJahrCombo.currentText())
 
     def setJahrCombo(self, session):
 
@@ -593,8 +689,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
         self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
 
-        self.kk_selection_model.selectionChanged.connect(
-            self.selectionChangedTreeNew)
+        # self.kk_selection_model.selectionChanged.connect(
+        #     self.selectionChangedTreeNew)
+
+        self.uicKkJahrComboNew.currentIndexChanged.connect(self.changedYear)
 
     def collapsKKTree(self):
 
@@ -817,7 +915,11 @@ class KomplexModel(QStandardItemModel):
             #     return item.data(TreeItem.Name_Role)
 
             if role == Qt.DisplayRole:
-                return item.data(GisItem.Name_Role)
+
+                if type(item) == QStandardItem:
+                    return item.data(Qt.DisplayRole)
+                else:
+                    return item.data(GisItem.Name_Role)
 
             if role == Qt.DecorationRole:
                 return item.data(GisItem.Color_Role)

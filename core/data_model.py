@@ -28,7 +28,8 @@ class BAkt(Base):
 
     rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
     rel_gst_zuordnung = relationship('BGstZuordnung', back_populates='rel_akt')
-    rel_komplexe = relationship('BKomplex', back_populates='rel_akt')
+    rel_komplex = relationship('BKomplex', back_populates='rel_akt')
+    rel_komplex_version = relationship('BKomplexVersion', back_populates='rel_akt')
 
     def __repr__(self):
         return "<BAkt(id='%s', name='%s', az='%s')>" % (
@@ -571,20 +572,8 @@ class BKomplex(Base):
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 
-    # id = Column(Integer, primary_key=True)
-    # akt_id = Column(Integer, ForeignKey('a_alm_akt.id'))
-    # nr = Column(Integer)
-    # name = Column(Integer)
-    # anmerkung = Column(String)
-    # inaktiv = Column(Boolean)
-
-    # rel_akt = relationship('BAkt', back_populates='rel_komplexe')
-    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplexe')
+    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplex')
     rel_komplex_version: Mapped[List["BKomplexVersion"]] = relationship(back_populates="rel_komplex")
-
-    # rel_cut_komplex_gstversion = relationship('BCutKoppelGstAktuell',
-    #                                           back_populates="rel_komplex",
-    #                                           cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return f"<BKomplex(id: {self.id}, " \
@@ -600,6 +589,7 @@ class BKomplexVersion(Base):
     __tablename__ = "a_alm_komplex_version"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    akt_id: Mapped[int] = mapped_column(ForeignKey("a_alm_akt.id"))
     komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
     jahr: Mapped[int]
     bearbeiter: Mapped[str]
@@ -608,6 +598,7 @@ class BKomplexVersion(Base):
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 
+    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplex_version')
     rel_komplex: Mapped["BKomplex"] = relationship(back_populates='rel_komplex_version')
     rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
 
