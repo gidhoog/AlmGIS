@@ -303,6 +303,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.guiMainGis.addLayer(self.komplex_layer)
         """"""
 
+    def initUi(self):
+        super().initUi()
+
+
+
     def finalInit(self):
         super().finalInit()
 
@@ -381,6 +386,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
             komplex_inst_new = self.session.scalars(select(BKomplexVersion)
                                     .where(BKomplexVersion.akt_id == self.data_instance.id)
+                                    .order_by(desc(BKomplexVersion.jahr))
                                                     ).unique().all()
 
             self.komplex_years = {}
@@ -430,7 +436,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             #         komplex_item.appendRow([koppel_item, None, None, None])
             #
             self.komplexe_view_new.setModel(self.komplex_model)
-            self.uiVersionsTv.setModel(self.komplex_model)
+            self.uiVersionTv.setModel(self.komplex_model)
+            self.uiKKTv.setModel(self.komplex_model)
 
             self.uicKkJahrComboNew.setModel(self.komplex_model)
 
@@ -694,6 +701,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.uicKkJahrComboNew.currentIndexChanged.connect(self.changedYear)
 
+        self.uiVersionTv.selectionModel().selectionChanged.connect(
+            self.selectedVersionChanged)
+
     def collapsKKTree(self):
 
         self.komplexe_view_new.collapseAll()
@@ -701,6 +711,25 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def expandKKTree(self):
 
         self.komplexe_view_new.expandAll()
+
+    def selectedVersionChanged(self, selected):
+
+        self._selected_version_index = selected[0].indexes()[0]
+        self._selected_version_item = self.uiVersionTv.model()\
+            .itemFromIndex(self._selected_version_index)
+
+        # self.uiVersionNrLbl.setText(
+        #     self._selected_version_item.data(TreeItem.Code_Role))
+
+        self.setKKTv(self._selected_version_index)
+
+    def setKKTv(self, index):
+
+        self.uiKKTv.setModel(self.komplex_model)
+        self.uiKKTv.expandAll()
+        # self.uiKKTv.setColumnWidth(0, 200)
+
+        self.uiKKTv.setRootIndex(index)
 
     def selectionChangedTreeNew(self, tree_selection):
 

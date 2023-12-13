@@ -473,7 +473,23 @@
                </layout>
               </item>
               <item>
-               <widget class="QTableView" name="uiVersionsTv"/>
+               <widget class="QTableView" name="uiVersionTv">
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="showGrid">
+                 <bool>false</bool>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -555,7 +571,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QTreeView" name="treeView"/>
+               <widget class="QTreeView" name="uiKKTv"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_5">

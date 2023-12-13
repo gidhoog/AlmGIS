@@ -594,7 +594,7 @@ class BKomplexVersion(Base):
     jahr: Mapped[int]
     bearbeiter: Mapped[str]
     erfassungsart_id: Mapped[int]
-    version_id: Mapped[int]
+    status_id: Mapped[int]
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 
