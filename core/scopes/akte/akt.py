@@ -169,7 +169,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
         self.uiGisDock = GisDock(self)
         self.guiMainGis = MainGis(self.uiGisDock, self)
-        self.guiMainGis.komplex_jahr = 2018
+        # self.guiMainGis.komplex_jahr = 2018
         self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
         self.uiGisDock.setWidget(self.guiMainGis)
         """"""
@@ -272,7 +272,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
         self.koppel_layer_new = QgsVectorLayer("Polygon?crs=epsg:31259",
-                                           "Koppeln",
+                                           "Koppeln new1",
                                            "memory")
         self.koppel_dp_new = self.koppel_layer_new.dataProvider()
 
@@ -305,8 +305,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
     def initUi(self):
         super().initUi()
-
-
 
     def finalInit(self):
         super().finalInit()
@@ -347,42 +345,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.setJahrCombo(self.session)
         self.loadKKTree()
+        self.loadKKTreeNew()
 
-        self.loadKKGis()
+        # self.loadKKGis()
 
         self.loadGisLayer()  # lade layer die in der db definiert sind
 
-    def loadKKTree(self):
-        """
-        lade die Elemente des Komplex/Koppel TreeView's
-        :param session:
-        :return:
-        """
-
-        self.komplex_model = KomplexModel()
-        self.komplex_root_item = self.komplex_model.invisibleRootItem()
-
-        """entferne alle features vom layer Koppeln"""
-        with edit(self.koppel_layer):
-            listOfIds = [feat.id() for feat in self.koppel_layer.getFeatures()]
-            self.koppel_layer.deleteFeatures(listOfIds)
-        """"""
-
-        """entferne alle features vom layer Komplexe"""
-        with edit(self.komplex_layer):
-            listOfIds = [feat.id() for feat in self.komplex_layer.getFeatures()]
-            self.komplex_layer.deleteFeatures(listOfIds)
-        """"""
+    def loadKKTreeNew(self):
 
         with (self.session):
-
-            komplex_inst = self.session.scalars(select(BKomplex)
-                                    .join(BKomplex.rel_komplex_version)
-                                    .where(and_((BKomplexVersion.jahr == int(self.uicKkJahrCombo.currentText())),
-                                                (BKomplex.akt_id == self.data_instance.id)))
-                                    .options(contains_eager(BKomplex.rel_komplex_version)))\
-                .unique().all()
-            #################################
 
             komplex_inst_new = self.session.scalars(select(BKomplexVersion)
                                     .where(BKomplexVersion.akt_id == self.data_instance.id)
@@ -424,53 +395,53 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                     koppel_item.setData(added_kop_feat[0], GisItem.Feature_Role)
                     """"""
 
-            # for komp in komplex_inst:
-            #
-            #     komplex_item = KomplexItem(komp)
-            #     self.komplex_root_item.appendRow(komplex_item)
-            #
-            #     for kop in komp.rel_komplex_version[0].rel_koppel:
-            #
-            #         koppel_item = KoppelItem(kop)
-            #         koppel_item.id = kop.id
-            #         komplex_item.appendRow([koppel_item, None, None, None])
-            #
             self.komplexe_view_new.setModel(self.komplex_model)
             self.uiVersionTv.setModel(self.komplex_model)
-            self.uiKKTv.setModel(self.komplex_model)
+            # self.uiKKTv.setModel(self.komplex_model)
 
             self.uicKkJahrComboNew.setModel(self.komplex_model)
 
+            if self.komplex_root_item.rowCount() > 0:
+
+                self._selected_version_item = self.komplex_root_item.child(0)
+                self.setKKTv(self._selected_version_item.index())
+                self.uiVersionTv.selectRow(0)
+
             print(f'***')
-            #
-            # self.koppel_features_new = []
-            # self.koppel_list = []
-            # for kx in range(self.komplex_root_item.rowCount()):
-            #
-            #     komplex = self.komplex_root_item.child(kx)
-            #     for ko in range(komplex.rowCount()):
-            #         koppel = komplex.child(ko)
-            #         self.koppel_list.append(koppel)
-            #         # kop_feat = QgsFeature(self.koppel_layer_new.fields())
-            #         # kop_feat.setAttributes([koppel.data(GisItem.Name_Role), None])
-            #         # kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koppel.data(GisItem.Geometry_Role)).wkt))
-            #         # koppel.setData(kop_feat, GisItem.Feature_Role)
-            #         # self.koppel_features_new.append(kop_feat)
-            #
-            # for koo in self.koppel_list:
-            #     kop_feat = QgsFeature(self.koppel_layer_new.fields())
-            #     kop_feat.setAttributes([koo.data(GisItem.Name_Role)])
-            #     kop_feat.setGeometry(QgsGeometry.fromWkt(to_shape(koo.data(GisItem.Geometry_Role)).wkt))
-            #     # self.koppel_features_new.append(kop_feat)
-            #
-            #     (result, added_kop_feat) = self.koppel_dp_new.addFeatures([kop_feat])
-            #     koo.setData(added_kop_feat[0], GisItem.Feature_Role)
-            #
-            # self.koppel_layer_new.setName(f'Koppeln neu')
-            #
-            # for f in self.koppel_layer_new.getFeatures():
-            #     print(f'new feature.id(): {f.id()} - [id]: {f["id"]}')
-            ####################################
+
+        self.uiVersionTv.selectionModel().selectionChanged.connect(
+            self.selectedVersionChanged)
+
+    def loadKKTree(self):
+        """
+        lade die Elemente des Komplex/Koppel TreeView's
+        :param session:
+        :return:
+        """
+
+        self.komplex_model = KomplexModel()
+        self.komplex_root_item = self.komplex_model.invisibleRootItem()
+
+        """entferne alle features vom layer Koppeln"""
+        with edit(self.koppel_layer):
+            listOfIds = [feat.id() for feat in self.koppel_layer.getFeatures()]
+            self.koppel_layer.deleteFeatures(listOfIds)
+        """"""
+
+        """entferne alle features vom layer Komplexe"""
+        with edit(self.komplex_layer):
+            listOfIds = [feat.id() for feat in self.komplex_layer.getFeatures()]
+            self.komplex_layer.deleteFeatures(listOfIds)
+        """"""
+
+        with (self.session):
+
+            komplex_inst = self.session.scalars(select(BKomplex)
+                                    .join(BKomplex.rel_komplex_version)
+                                    .where(and_((BKomplexVersion.jahr == int(self.uicKkJahrCombo.currentText())),
+                                                (BKomplex.akt_id == self.data_instance.id)))
+                                    .options(contains_eager(BKomplex.rel_komplex_version)))\
+                .unique().all()
 
             self.kk_tree_model = KKTreeModel(self, komplex_inst)
             self.komplexe_view.setModel(self.kk_tree_model)
@@ -529,10 +500,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         extent = self.komplex_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
 
-    def changedYear(self, index):
+    def changedVersion(self, index):
 
         print(f'index: {index}')
-        self.loadKKGis()
+        # self.loadKKGis()
 
     def loadKKGis(self):
 
@@ -689,6 +660,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.actionPrintAWB.triggered.connect(self.createAwbPrint)
 
         self.uicKkJahrCombo.currentIndexChanged.connect(self.loadKKTree)
+        self.uicKkJahrComboNew.currentIndexChanged.connect(self.changedVersion)
 
         # self.komplexe_view.clicked.connect(self.clickedTreeElement)
         self.tree_selection_model.selectionChanged.connect(self.treeselectionChanged)
@@ -699,10 +671,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.kk_selection_model.selectionChanged.connect(
         #     self.selectionChangedTreeNew)
 
-        self.uicKkJahrComboNew.currentIndexChanged.connect(self.changedYear)
 
-        self.uiVersionTv.selectionModel().selectionChanged.connect(
-            self.selectedVersionChanged)
+        # self.uiVersionTv.selectionModel().selectionChanged.connect(
+        #     self.selectedVersionChanged)
 
     def collapsKKTree(self):
 
@@ -722,6 +693,26 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         #     self._selected_version_item.data(TreeItem.Code_Role))
 
         self.setKKTv(self._selected_version_index)
+
+        """lösche alle Features vom Layer Koppel"""
+        with edit(self.koppel_layer_new):
+            listOfIds = [feat.id() for feat in self.koppel_layer_new.getFeatures()]
+            self.koppel_layer_new.deleteFeatures(listOfIds)
+        """"""
+
+        for kom in range(self._selected_version_item.rowCount()):
+
+            komplex = self._selected_version_item.child(kom)
+            for ko in range(komplex.rowCount()):
+                koppel = komplex.child(ko)
+                koppel_feat = koppel.data(GisItem.Feature_Role)
+                (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
+                    [koppel_feat])
+                koppel.setData(added_kop_feat[0], GisItem.Feature_Role)
+
+        self.koppel_layer_new.setName(f'Koppeln neu '
+                                      + self.uicKkJahrCombo.currentText())
+
 
     def setKKTv(self, index):
 

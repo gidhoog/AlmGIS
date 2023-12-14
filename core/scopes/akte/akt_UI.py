@@ -357,7 +357,7 @@ class Ui_Akt(object):
         Akt.setStatusBar(self.statusbar)
 
         self.retranslateUi(Akt)
-        self.tabAkt.setCurrentIndex(3)
+        self.tabAkt.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Akt)
 
     def retranslateUi(self, Akt):
