@@ -32,6 +32,7 @@ from core.scopes.akte.akt_komplexe_main import KomplexMaintable
 from core.scopes.komplex.komplex_item import KomplexItem, KomplexVersionItem
 from core.scopes.koppel.koppel_item import KoppelItem
 
+import resources_rc
 
 class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     """
@@ -238,6 +239,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiKomplexeGisListeVlay.addWidget(self.komplexe_view)
         """"""
 
+        self.komplex_model = KomplexModel()
+        self.komplex_root_item = self.komplex_model.invisibleRootItem()
+
         """erzeuge einen neuen TreeView für die neue Item-basierte Layererstellung"""
         self.komplexe_view_new = QTreeView(self)
         # self.komplexe_view.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -344,7 +348,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.komplex_table.initMaintable(self.session)
 
         self.setJahrCombo(self.session)
-        self.loadKKTree()
+        # self.loadKKTree()
         self.loadKKTreeNew()
 
         # self.loadKKGis()
@@ -352,6 +356,39 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.loadGisLayer()  # lade layer die in der db definiert sind
 
     def loadKKTreeNew(self):
+
+        def appendKoppelItems(koppel_inst_list, komplex_itm):
+            """
+            erzeuge aus der Liste der übergebenen Koppel-Instanzen Items und
+            füge diese in das ebenfalls übergebene Komplex-Item ein
+            :param koppel_inst_list: List
+            :param komplex_item: KomplexItem
+            :return: None
+            """
+
+            for koppel in koppel_inst_list:
+                koppel_item = KoppelItem(koppel)
+
+                """erzeuge das Koppel-Feature"""
+                koppel_feat = QgsFeature(self.koppel_layer_new.fields())
+                koppel_feat.setAttributes(
+                    [koppel_item.data(GisItem.Instance_Role).id,
+                     koppel_item.data(GisItem.Name_Role),
+                     None,
+                     None,
+                     None,
+                     '0,123'])
+                koppel_feat.setGeometry(QgsGeometry.fromWkt(
+                    to_shape(
+                        koppel_item.data(GisItem.Geometry_Role)).wkt)
+                )
+                (result,
+                 added_kop_feat) = self.koppel_dp_new.addFeatures(
+                    [koppel_feat])
+                koppel_item.setData(added_kop_feat[0],
+                                    GisItem.Feature_Role)
+
+                komplex_itm.appendRow([koppel_item, None, None, None])
 
         with (self.session):
 
@@ -364,40 +401,57 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
             for komplex_version in komplex_inst_new:
 
-                komplex_item = KomplexVersionItem(komplex_version)
+                """finde alle komplex-versionen mit dem status 0 und danach 
+                das jüngste Jahr"""
+                ist_versions = [ i for i in komplex_inst_new if i.status_id == 0]
+                max_version_year = max([y.jahr for y in ist_versions])
+                """"""
+
+                """erzeuge ein komplex-item"""
+                komplex_item = KomplexItem(komplex_version.rel_komplex)
+                """"""
 
                 if komplex_version.jahr not in self.komplex_years:
-
-                    year_item = QStandardItem()
-                    year_item.setData(komplex_version.jahr, Qt.DisplayRole)
-                    year_item.setData(komplex_version.jahr, Qt.EditRole)
-
+                    """für dieses Jahr ist noch kein Version-Knoten angelegt"""
+                    year_item = KomplexVersionItem(komplex_version)
+                    if komplex_version.jahr == max_version_year and komplex_version.status_id == 0:
+                        version_icon = QIcon(
+                            ":/svg/resources/icons/triangle_right_green.svg")
+                    else:
+                        version_icon = QIcon(
+                            ":/svg/resources/icons/_leeres_icon.svg")
+                    year_item.setIcon(version_icon)
+                    """"""
+                    """füge das Komplex-item in das Jahr-Item ein"""
                     year_item.appendRow(komplex_item)
+                    """"""
 
+                    """füge das Jahr-Item in das 'komplex_years'-Dict und
+                    in das unsichtbare root-item ein"""
                     self.komplex_years[komplex_version.jahr] = year_item
                     self.komplex_root_item.appendRow(year_item)
+                    """"""
+
+                    """füge alle Koppel-Items für diesen Komplex ein"""
+                    appendKoppelItems(komplex_version.rel_koppel, komplex_item)
+                    """"""
 
                 else:
+                    """für dieses Jahr ist bereits ein Version-Knoten angelegt"""
                     self.komplex_years[komplex_version.jahr].appendRow(komplex_item)
 
-                for koppel in komplex_version.rel_koppel:
-
-                    koppel_item = KoppelItem(koppel)
-                    komplex_item.appendRow([koppel_item, None, None, None])
-
-                    """erzeuge das Koppel-Feature"""
-                    koppel_feat = QgsFeature(self.koppel_layer_new.fields())
-                    koppel_feat.setAttributes([koppel_item.data(GisItem.Name_Role), None])
-                    koppel_feat.setGeometry(QgsGeometry.fromWkt(
-                        to_shape(koppel_item.data(GisItem.Geometry_Role)).wkt)
-                    )
-                    (result, added_kop_feat) = self.koppel_dp_new.addFeatures([koppel_feat])
-                    koppel_item.setData(added_kop_feat[0], GisItem.Feature_Role)
+                    """füge alle Koppel-Items für diesen Komplex ein"""
+                    appendKoppelItems(komplex_version.rel_koppel, komplex_item)
                     """"""
 
             self.komplexe_view_new.setModel(self.komplex_model)
             self.uiVersionTv.setModel(self.komplex_model)
-            # self.uiKKTv.setModel(self.komplex_model)
+
+            """erzeuge ein selection-model für das tree-view"""
+            self.kk_selection_model = self.komplexe_view_new.selectionModel()
+            self.komplexe_view_new.setSelectionMode(
+                QAbstractItemView.ExtendedSelection)
+            """"""
 
             self.uicKkJahrComboNew.setModel(self.komplex_model)
 
@@ -412,6 +466,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiVersionTv.selectionModel().selectionChanged.connect(
             self.selectedVersionChanged)
 
+        """wichig wenn neue features eingefügt werden, da die Änderung im 
+        provider nicht an den Layer übermittelt wird"""
+        self.koppel_layer_new.updateExtents()
+        """"""
+
+        # self.guiMainGis.uiCanvas.refresh()
+
+        extent = self.koppel_layer_new.extent()
+        self.guiMainGis.uiCanvas.setExtent(extent)
+
+        # self.guiMainGis.uiCanvas.refresh()
+
     def loadKKTree(self):
         """
         lade die Elemente des Komplex/Koppel TreeView's
@@ -419,20 +485,20 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         :return:
         """
 
-        self.komplex_model = KomplexModel()
-        self.komplex_root_item = self.komplex_model.invisibleRootItem()
+        # self.komplex_model = KomplexModel()
+        # self.komplex_root_item = self.komplex_model.invisibleRootItem()
 
-        """entferne alle features vom layer Koppeln"""
-        with edit(self.koppel_layer):
-            listOfIds = [feat.id() for feat in self.koppel_layer.getFeatures()]
-            self.koppel_layer.deleteFeatures(listOfIds)
-        """"""
-
-        """entferne alle features vom layer Komplexe"""
-        with edit(self.komplex_layer):
-            listOfIds = [feat.id() for feat in self.komplex_layer.getFeatures()]
-            self.komplex_layer.deleteFeatures(listOfIds)
-        """"""
+        # """entferne alle features vom layer Koppeln"""
+        # with edit(self.koppel_layer):
+        #     listOfIds = [feat.id() for feat in self.koppel_layer.getFeatures()]
+        #     self.koppel_layer.deleteFeatures(listOfIds)
+        # """"""
+        #
+        # """entferne alle features vom layer Komplexe"""
+        # with edit(self.komplex_layer):
+        #     listOfIds = [feat.id() for feat in self.komplex_layer.getFeatures()]
+        #     self.komplex_layer.deleteFeatures(listOfIds)
+        # """"""
 
         with (self.session):
 
@@ -446,12 +512,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             self.kk_tree_model = KKTreeModel(self, komplex_inst)
             self.komplexe_view.setModel(self.kk_tree_model)
             self.komplexe_view.expandAll()
-
-            """erzeuge ein selection-model für das tree-view"""
-            self.kk_selection_model = self.komplexe_view_new.selectionModel()
-            self.komplexe_view_new.setSelectionMode(
-                QAbstractItemView.ExtendedSelection)
-            """"""
 
             """erzeuge ein selection-model für das tree-view"""
             self.tree_selection_model = self.komplexe_view.selectionModel()
@@ -663,7 +723,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uicKkJahrComboNew.currentIndexChanged.connect(self.changedVersion)
 
         # self.komplexe_view.clicked.connect(self.clickedTreeElement)
-        self.tree_selection_model.selectionChanged.connect(self.treeselectionChanged)
+        # self.tree_selection_model.selectionChanged.connect(self.treeselectionChanged)
 
         self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
         self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
@@ -926,23 +986,18 @@ class KomplexModel(QStandardItemModel):
 
         if index.column() == 0:
 
-            # if role == Qt.DecorationRole:
-            #     return item.data(TreeItem.Color_Role)
-
-            # if type(item) == TreeItemCollection:
-
-            # if role == Qt.EditRole:
-            #     return item.data(TreeItem.Name_Role)
-
             if role == Qt.DisplayRole:
-
-                if type(item) == QStandardItem:
-                    return item.data(Qt.DisplayRole)
-                else:
-                    return item.data(GisItem.Name_Role)
+                return item.data(GisItem.Name_Role)
 
             if role == Qt.DecorationRole:
-                return item.data(GisItem.Color_Role)
+
+                if type(item) != KomplexVersionItem:
+                #     if item.latest_version:
+                #         return item.data(GisItem.Color_Role)
+                #     else:
+                #         return QColor(0, 0, 0, 0)
+                # else:
+                    return item.data(GisItem.Color_Role)
 
         if index.column() == 1:
 

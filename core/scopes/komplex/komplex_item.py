@@ -10,7 +10,7 @@ class KomplexVersionItem(GisItem):
     def __init__(self, data_instance=None):
         super().__init__(data_instance)
 
-        self.setData(data_instance.rel_komplex.name, GisItem.Name_Role)
+        self.setData(data_instance.jahr, GisItem.Name_Role)
 
         self.setData(QColor(70, 160, 240), GisItem.Color_Role)
 
@@ -23,12 +23,7 @@ class KomplexItem(GisItem):
     def __init__(self, data_instance=None):
         super().__init__(data_instance)
 
-        # if data_instance != None:
-        #
-        #     self.setData(data_instance, GisItem.Instance_Role)
-        #
-        #     self.setData(data_instance.nr, GisItem.Nr_Role)
-        #     self.setData(data_instance.name, GisItem.Name_Role)
+        self.setData(data_instance.name, GisItem.Name_Role)
 
         self.setData(QColor(70, 160, 240), GisItem.Color_Role)
 
