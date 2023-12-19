@@ -217,20 +217,28 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
+        self.initGis()
+
         self.gst_table.initMaintable(self.session)
 
         self.loadKKTreeNew()
 
-        # self.loadKKGis()
-
         self.loadGisLayer()  # lade layer die in der db definiert sind
+
+    def initGis(self):
+
+        self.kk_gis_group = self.guiMainGis.layer_tree_root.addGroup(
+            'sonstige Komplexe und Koppeln')
+
 
     def loadKKTreeNew(self):
 
         def appendKoppelItems(koppel_inst_list, komplex_itm):
             """
             erzeuge aus der Liste der übergebenen Koppel-Instanzen Items und
-            füge diese in das ebenfalls übergebene Komplex-Item ein
+            füge diese in das ebenfalls übergebene Komplex-Item ein; erzeuge
+            gleichzeitig Gis-Features und füge diese in den Koppellayer ein
+
             :param koppel_inst_list: List
             :param komplex_item: KomplexItem
             :return: None
@@ -283,23 +291,30 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
                 if komplex_version.jahr not in self.komplex_years:
                     """für dieses Jahr ist noch kein Version-Knoten angelegt"""
-                    year_item = KomplexVersionItem(komplex_version)
+                    version_item = KomplexVersionItem(komplex_version)
                     if komplex_version.jahr == max_version_year and komplex_version.status_id == 0:
+                        """diese version ist die aktuelle"""
+                        version_item.setData(1, GisItem.Current_Role)
                         version_icon = QIcon(
                             ":/svg/resources/icons/triangle_right_green.svg")
+                        """"""
                     else:
+                        """diese version nicht die aktuelle version"""
+                        version_item.setData(0, GisItem.Current_Role)
                         version_icon = QIcon(
                             ":/svg/resources/icons/_leeres_icon.svg")
-                    year_item.setIcon(version_icon)
+                        """"""
+                    version_item.setIcon(version_icon)
                     """"""
+
                     """füge das Komplex-item in das Jahr-Item ein"""
-                    year_item.appendRow(komplex_item)
+                    version_item.appendRow(komplex_item)
                     """"""
 
                     """füge das Jahr-Item in das 'komplex_years'-Dict und
                     in das unsichtbare root-item ein"""
-                    self.komplex_years[komplex_version.jahr] = year_item
-                    self.komplex_root_item.appendRow(year_item)
+                    self.komplex_years[komplex_version.jahr] = version_item
+                    self.komplex_root_item.appendRow(version_item)
                     """"""
 
                     """füge alle Koppel-Items für diesen Komplex ein"""
@@ -332,28 +347,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         extent = self.koppel_layer_new.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
-
-    def loadKKGis(self):
-
-        with edit(self.koppel_layer_new):
-            listOfIds = [feat.id() for feat in self.koppel_layer_new.getFeatures()]
-            self.koppel_layer_new.deleteFeatures(listOfIds)
-
-        year = self.uicKkJahrComboNew.currentText()
-
-        found_year = self.komplex_model.findItems(year)
-
-        for kom in range(found_year[0].rowCount()):
-
-            komplex = found_year[0].child(kom)
-            for ko in range(komplex.rowCount()):
-                koppel = komplex.child(ko)
-                koppel_feat = koppel.data(GisItem.Feature_Role)
-                (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
-                    [koppel_feat])
-                koppel.setData(added_kop_feat[0], GisItem.Feature_Role)
-
-        self.koppel_layer_new.setName(f'Koppeln neu ' + self.uicKkJahrCombo.currentText())
 
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und

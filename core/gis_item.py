@@ -10,6 +10,7 @@ class GisItem(QStandardItem):
 
     Instance_Role = Qt.UserRole + 10
     Feature_Role = Qt.UserRole + 11
+    Current_Role = Qt.UserRole + 12  # 0 für aktuelle und 1 für alte versionen
 
     Color_Role = Qt.UserRole + 20
 
