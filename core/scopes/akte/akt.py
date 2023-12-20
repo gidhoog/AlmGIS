@@ -19,7 +19,7 @@ from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BKomplexVersion
 from core.gis_control import GisControl
 from core.gis_item import GisItem
-from core.gis_layer import setLayerStyle
+from core.gis_layer import setLayerStyle, KoppelLayer
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
@@ -169,23 +169,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.komplex_root_item = self.komplex_model.invisibleRootItem()
 
         """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-        self.koppel_layer_new = QgsVectorLayer("Polygon?crs=epsg:31259",
-                                           "Koppeln new1",
-                                           "memory")
-        self.koppel_dp_new = self.koppel_layer_new.dataProvider()
-
-        self.koppel_dp_new.addAttributes([QgsField("id", QVariant.Int),
-                                      QgsField("name", QVariant.String),
-                                      QgsField("bearbeiter", QVariant.String),
-                                      QgsField("aw_ha", QVariant.String),
-                                      QgsField("aw_proz", QVariant.String),
-                                      QgsField("area", QVariant.String)])
-
-        self.koppel_layer_new.updateFields()  # tell the vector layer to fetch changes from the provider
-
-        self.koppel_layer_new.back = False
-        self.koppel_layer_new.base = True
-        setLayerStyle(self.koppel_layer_new, 'koppel_gelb')
+        self.koppel_layer_new = KoppelLayer("Polygon?crs=epsg:31259",
+                                            "Koppeln new1",
+                                            "memory"
+                                            )
         self.guiMainGis.addLayer(self.koppel_layer_new)
         """"""
 
@@ -261,7 +248,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                         koppel_item.data(GisItem.Geometry_Role)).wkt)
                 )
                 (result,
-                 added_kop_feat) = self.koppel_dp_new.addFeatures(
+                 # added_kop_feat) = self.koppel_dp_new.addFeatures(
+                 #    [koppel_feat])
+                 added_kop_feat) = self.koppel_layer_new.data_provider.addFeatures(
                     [koppel_feat])
                 koppel_item.setData(added_kop_feat[0],
                                     GisItem.Feature_Role)
@@ -270,18 +259,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         with (self.session):
 
-            komplex_inst_new = self.session.scalars(select(BKomplexVersion)
+            komplex_version_instances = self.session.scalars(select(BKomplexVersion)
                                     .where(BKomplexVersion.akt_id == self.data_instance.id)
                                     .order_by(desc(BKomplexVersion.jahr))
                                                     ).unique().all()
 
             self.komplex_years = {}
 
-            for komplex_version in komplex_inst_new:
+            for komplex_version in komplex_version_instances:
 
                 """finde alle komplex-versionen mit dem status 0 und danach 
                 das jüngste Jahr"""
-                ist_versions = [ i for i in komplex_inst_new if i.status_id == 0]
+                ist_versions = [ i for i in komplex_version_instances if i.status_id == 0]
                 max_version_year = max([y.jahr for y in ist_versions])
                 """"""
 
@@ -479,7 +468,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             for ko in range(komplex.rowCount()):
                 koppel = komplex.child(ko)
                 koppel_feat = koppel.data(GisItem.Feature_Role)
-                (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
+                # (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
+                #     [koppel_feat])
+                (result, added_kop_feat) = self.koppel_layer_new.data_provider.addFeatures(
                     [koppel_feat])
                 koppel.setData(added_kop_feat[0], GisItem.Feature_Role)
 

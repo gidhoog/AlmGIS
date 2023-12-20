@@ -1,4 +1,7 @@
 from pathlib import Path
+
+from qgis._core import QgsField
+from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsRasterLayer
 from core.config import alm_data_db_path
 
@@ -61,7 +64,7 @@ def getGisLayer(layer_instance, base_id_column=None,
     return layer
 
 
-def setLayerStyle(layer, qml_file):
+def setLayerStyle(layer: QgsVectorLayer, qml_file_name: str):
     """
     setze mit einem qml-file den stil eines layers
     """
@@ -70,10 +73,9 @@ def setLayerStyle(layer, qml_file):
                    .absolute()
                    .joinpath('core')
                    .joinpath('styles')
-                   .joinpath(qml_file)) + ".qml"
+                   .joinpath(qml_file_name)) + ".qml"
     layer.loadNamedStyle(qml_path)
     layer.triggerRepaint()
-
 
 class GisLayer:
     """
@@ -96,3 +98,31 @@ class GisVectorLayer(QgsVectorLayer, GisLayer):
     """
     basis-class für einen vector-layer
     """
+
+
+class KoppelLayer(QgsVectorLayer):
+    """
+    GIS-Layer für Koppeln
+    """
+
+    def __init__(self, path: str = ...,
+                 baseName: str = ...,
+                 providerLib: str = ...,
+                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions()) -> None:
+        super().__init__(path, baseName, providerLib, options)
+
+        self.data_provider = self.dataProvider()
+
+        self.data_provider.addAttributes([QgsField("id", QVariant.Int),
+                                      QgsField("name", QVariant.String),
+                                      QgsField("bearbeiter", QVariant.String),
+                                      QgsField("aw_ha", QVariant.String),
+                                      QgsField("aw_proz", QVariant.String),
+                                      QgsField("area", QVariant.String)])
+
+        self.updateFields()
+
+        self.back = False
+        self.base = True
+        setLayerStyle(self, 'koppel_gelb')
+
