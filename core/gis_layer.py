@@ -1,9 +1,13 @@
 from pathlib import Path
 
-from qgis._core import QgsField
+from qgis._core import QgsField, QgsFeature, QgsGeometry
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsRasterLayer
 from core.config import alm_data_db_path
+from core.gis_item import GisItem
+from core.scopes.koppel.koppel_item import KoppelItem
+
+from geoalchemy2.shape import to_shape
 
 
 def getGisLayer(layer_instance, base_id_column=None,
@@ -126,3 +130,30 @@ class KoppelLayer(QgsVectorLayer):
         self.base = True
         setLayerStyle(self, 'koppel_gelb')
 
+    def appendKoppelItems(self, koppel_inst_list, komplex_itm):
+
+        for koppel in koppel_inst_list:
+            koppel_item = KoppelItem(koppel)
+
+            """erzeuge das Koppel-Feature"""
+            koppel_feat = QgsFeature(self.fields())
+            koppel_feat.setAttributes(
+                [koppel_item.data(GisItem.Instance_Role).id,
+                 koppel_item.data(GisItem.Name_Role),
+                 None,
+                 None,
+                 None,
+                 '0,123'])
+            koppel_feat.setGeometry(QgsGeometry.fromWkt(
+                to_shape(
+                    koppel_item.data(GisItem.Geometry_Role)).wkt)
+            )
+            (result,
+             # added_kop_feat) = self.koppel_dp_new.addFeatures(
+             #    [koppel_feat])
+             added_kop_feat) = self.data_provider.addFeatures(
+                [koppel_feat])
+            koppel_item.setData(added_kop_feat[0],
+                                GisItem.Feature_Role)
+
+            komplex_itm.appendRow([koppel_item, None, None, None])

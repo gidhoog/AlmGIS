@@ -168,13 +168,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.komplex_model = KomplexModel()
         self.komplex_root_item = self.komplex_model.invisibleRootItem()
 
-        """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-        self.koppel_layer_new = KoppelLayer("Polygon?crs=epsg:31259",
-                                            "Koppeln new1",
-                                            "memory"
-                                            )
-        self.guiMainGis.addLayer(self.koppel_layer_new)
-        """"""
+        # """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
+        # self.koppel_layer_new = KoppelLayer("Polygon?crs=epsg:31259",
+        #                                     "Koppeln new1",
+        #                                     "memory"
+        #                                     )
+        # self.guiMainGis.addLayer(self.koppel_layer_new)
+        # """"""
 
     def initUi(self):
         super().initUi()
@@ -278,6 +278,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 komplex_item = KomplexItem(komplex_version.rel_komplex)
                 """"""
 
+                """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
+                koppel_layer_new = KoppelLayer(
+                    "Polygon?crs=epsg:31259",
+                    "Koppeln new1",
+                    "memory"
+                )
+                self.guiMainGis.addLayer(koppel_layer_new)
+                """"""
+
                 if komplex_version.jahr not in self.komplex_years:
                     """für dieses Jahr ist noch kein Version-Knoten angelegt"""
                     version_item = KomplexVersionItem(komplex_version)
@@ -287,6 +296,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                         version_icon = QIcon(
                             ":/svg/resources/icons/triangle_right_green.svg")
                         """"""
+
                     else:
                         """diese version nicht die aktuelle version"""
                         version_item.setData(0, GisItem.Current_Role)
@@ -307,7 +317,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                     """"""
 
                     """füge alle Koppel-Items für diesen Komplex ein"""
-                    appendKoppelItems(komplex_version.rel_koppel, komplex_item)
+                    koppel_layer_new.appendKoppelItems(
+                        komplex_version.rel_koppel, komplex_item)
+                    # appendKoppelItems(komplex_version.rel_koppel, komplex_item)
                     """"""
 
                 else:
@@ -315,8 +327,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                     self.komplex_years[komplex_version.jahr].appendRow(komplex_item)
 
                     """füge alle Koppel-Items für diesen Komplex ein"""
-                    appendKoppelItems(komplex_version.rel_koppel, komplex_item)
+                    koppel_layer_new.appendKoppelItems(
+                        komplex_version.rel_koppel, komplex_item)
+                    # appendKoppelItems(komplex_version.rel_koppel, komplex_item)
                     """"""
+
+                """wichig wenn neue features eingefügt werden, da die Änderung im 
+                provider nicht an den Layer übermittelt wird"""
+                koppel_layer_new.updateExtents()
+                """"""
+
+                extent = koppel_layer_new.extent()
+                self.guiMainGis.uiCanvas.setExtent(extent)
 
             self.uiVersionTv.setModel(self.komplex_model)
 
@@ -328,14 +350,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.uiVersionTv.selectionModel().selectionChanged.connect(
             self.selectedVersionChanged)
-
-        """wichig wenn neue features eingefügt werden, da die Änderung im 
-        provider nicht an den Layer übermittelt wird"""
-        self.koppel_layer_new.updateExtents()
-        """"""
-
-        extent = self.koppel_layer_new.extent()
-        self.guiMainGis.uiCanvas.setExtent(extent)
 
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und
