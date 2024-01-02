@@ -28,8 +28,8 @@ class BAkt(Base):
 
     rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
     rel_gst_zuordnung = relationship('BGstZuordnung', back_populates='rel_akt')
-    rel_komplex = relationship('BKomplex', back_populates='rel_akt')
-    rel_komplex_version = relationship('BKomplexVersion', back_populates='rel_akt')
+    rel_komplex_name = relationship('BKomplex', back_populates='rel_akt')
+    rel_abgrenzung = relationship('BAbgrenzung', back_populates='rel_akt')
 
     def __repr__(self):
         return "<BAkt(id='%s', name='%s', az='%s')>" % (
@@ -558,12 +558,59 @@ class BKatGem(Base):
                f"pgname: {self.pgname})"
 
 
+class BAbgrenzung(Base):
+    """
+    Mapperklasse für eine Abgrenzung der Alm/Weide;
+    innerhalb eines Aktes können daher unterschiedliche Abgrenzungen angelegt
+    werden (diese können sich unterscheiden in Jahr, Bearbeiter, Status, ...)
+    """
+    __tablename__ = "a_alm_abgrenzung"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    akt_id: Mapped[int] = mapped_column(ForeignKey("a_alm_akt.id"))
+    # komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
+    jahr: Mapped[int]
+    bearbeiter: Mapped[str]
+    erfassungsart_id: Mapped[int]
+    status_id: Mapped[int]
+    anmerkung: Mapped[str]
+    inaktiv: Mapped[bool]
+
+    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_abgrenzung')
+    rel_komplex: Mapped[List["BKomplex"]] = relationship(back_populates='rel_abgrenzung')
+    # rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
+
+    def __repr__(self):
+        return f"<BAbgrenzung(id: {self.id}, " \
+               f"akt_id: {self.akt_id}, " \
+               f"jahr: {self.jahr})>"
+
+
 class BKomplex(Base):
     """
-    basisdatenebene für komplexe (= eigenständige weideobjekte);
-    je akt kann es mehrere komplexe geben
+    Mapperklasse für die Komplexe eines Aktes (entsprechend einer Abgrenzung)
     """
     __tablename__ = "a_alm_komplex"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    abgrenzung_id: Mapped[int] = mapped_column(ForeignKey("a_alm_abgrenzung.id"))
+    komplex_name_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_name.id"))
+
+    rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex')
+    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_komplex')
+    rel_komplex_name: Mapped["BKomplexName"] = relationship(back_populates='rel_komplex')
+
+    def __repr__(self):
+        return f"<BKomplex(id: {self.id}, " \
+               f"abgrenzung_id: {self.abgrenzung_id}, " \
+               f"komplex_name_id: {self.komplex_name_id})>"
+
+
+class BKomplexName(Base):
+    """
+    Mapperklasse für die Komplexnamen eines Aktes
+    """
+    __tablename__ = "a_alm_komplex_name"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     akt_id: Mapped[int] = mapped_column(ForeignKey('a_alm_akt.id'))
@@ -572,40 +619,14 @@ class BKomplex(Base):
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 
-    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplex')
-    rel_komplex_version: Mapped[List["BKomplexVersion"]] = relationship(back_populates="rel_komplex")
+    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplex_name')
+    # rel_komplex_version: Mapped[List["BKomplexVersion"]] = relationship(back_populates="rel_komplex")
+    rel_komplex: Mapped[BKomplex] = relationship(back_populates='rel_komplex_name')
 
     def __repr__(self):
-        return f"<BKomplex(id: {self.id}, " \
+        return f"<BKomplexName(id: {self.id}, " \
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
-
-
-class BKomplexVersion(Base):
-    """
-    Datenebene für unterschiedliche Versionen eines Komplexes (Jahr,
-    Planungsversion, ...)
-    """
-    __tablename__ = "a_alm_komplex_version"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    akt_id: Mapped[int] = mapped_column(ForeignKey("a_alm_akt.id"))
-    komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
-    jahr: Mapped[int]
-    bearbeiter: Mapped[str]
-    erfassungsart_id: Mapped[int]
-    status_id: Mapped[int]
-    anmerkung: Mapped[str]
-    inaktiv: Mapped[bool]
-
-    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplex_version')
-    rel_komplex: Mapped["BKomplex"] = relationship(back_populates='rel_komplex_version')
-    rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
-
-    def __repr__(self):
-        return f"<BKomplexVersion(id: {self.id}, " \
-               f"komplex_id: {self.komplex_id}, " \
-               f"jahr: {self.jahr})>"
 
 
 class BKoppel(Base):
@@ -615,7 +636,8 @@ class BKoppel(Base):
     __tablename__ = "a_alm_koppel"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    komplex_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_version.id"))
+    komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
+    # komplex_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_version.id"))
     nr: Mapped[int]
     name: Mapped[str]
     nicht_weide: Mapped[bool]
@@ -627,12 +649,12 @@ class BKoppel(Base):
     # geometry: Mapped[Geometry(geometry_type="POLYGON", srid=31259)]
     geometry = Column(Geometry(geometry_type="POLYGON", srid=31259))
 
-    rel_komplex_version: Mapped["BKomplexVersion"] = relationship(back_populates='rel_koppel')
+    rel_komplex: Mapped["BKomplex"] = relationship(back_populates='rel_koppel')
     rel_cut_koppel_gst: Mapped["BCutKoppelGstAktuell"] = relationship(back_populates='rel_koppel')
 
     def __repr__(self):
         return f"<BKoppel(id: {self.id}, " \
-               f"komplex_version_id: {self.komplex_version_id}, " \
+               f"komplex_id: {self.komplex_id}, " \
                f"nr: {self.nr})>"
 
 

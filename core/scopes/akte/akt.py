@@ -264,7 +264,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                     .order_by(desc(BKomplexVersion.jahr))
                                                     ).unique().all()
 
-            self.komplex_years = {}
+            self.komplex_years = {}  # dict fuer angelegte komplex-versionen
+            self.koppel_layers = {}  # dict fuer angelegte Koppellayer
 
             for komplex_version in komplex_version_instances:
 
@@ -278,14 +279,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 komplex_item = KomplexItem(komplex_version.rel_komplex)
                 """"""
 
-                """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-                koppel_layer_new = KoppelLayer(
-                    "Polygon?crs=epsg:31259",
-                    "Koppeln new1",
-                    "memory"
-                )
-                self.guiMainGis.addLayer(koppel_layer_new)
-                """"""
+                if komplex_version.jahr in self.koppel_layers:
+                    koppel_layer_new = self.koppel_layers[komplex_version.jahr]
+                else:
+                    """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
+                    koppel_layer_new = KoppelLayer(
+                        "Polygon?crs=epsg:31259",
+                        "Koppeln new1",
+                        "memory"
+                    )
+                    self.guiMainGis.addLayer(koppel_layer_new)
+                    self.koppel_layers[komplex_version.jahr] = koppel_layer_new
+                    """"""
 
                 if komplex_version.jahr not in self.komplex_years:
                     """für dieses Jahr ist noch kein Version-Knoten angelegt"""
