@@ -4,7 +4,7 @@ from qgis.PyQt.QtWidgets import QHeaderView
 from sqlalchemy import func
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
-    BKomplex, BAkt, BKoppel, BKomplexVersion
+    BKomplex, BAkt, BKoppel, BAbgrenzung
 from core.main_dialog import MainDialog
 from core.main_table import MainTable, MaintableColumn, \
     MainTableModel, MainTableView
@@ -181,12 +181,12 @@ class GstMaintable(MainTable):
         sub_cutarea = session.query(
             BCutKoppelGstAktuell.gst_version_id,
             func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
-            func.max(BKomplexVersion.jahr)
+            func.max(BAbgrenzung.jahr)
         )\
             .select_from(BCutKoppelGstAktuell)\
             .join(BKoppel)\
-            .join(BKomplexVersion)\
             .join(BKomplex)\
+            .join(BAbgrenzung)\
             .join(BAkt)\
             .filter(BAkt.id == self.parent.data_instance.id)\
             .group_by(BCutKoppelGstAktuell.gst_version_id)\

@@ -2,7 +2,7 @@ from core.gis_item import GisItem
 from PyQt5.QtGui import QColor
 
 
-class KomplexVersionItem(GisItem):
+class AbgrenzungItem(GisItem):
     """
     ein Koppel-Item (=QStandardItem + Gis) zur Verwendung in Models
     """
@@ -23,7 +23,7 @@ class KomplexItem(GisItem):
     def __init__(self, data_instance=None):
         super().__init__(data_instance)
 
-        self.setData(data_instance.name, GisItem.Name_Role)
+        self.setData(data_instance.rel_komplex_name.name, GisItem.Name_Role)
 
         self.setData(QColor(70, 160, 240), GisItem.Color_Role)
 

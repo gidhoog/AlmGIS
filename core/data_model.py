@@ -28,8 +28,10 @@ class BAkt(Base):
 
     rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
     rel_gst_zuordnung = relationship('BGstZuordnung', back_populates='rel_akt')
-    rel_komplex_name = relationship('BKomplex', back_populates='rel_akt')
-    rel_abgrenzung = relationship('BAbgrenzung', back_populates='rel_akt')
+    rel_komplex_name = relationship('BKomplexName', back_populates='rel_akt')
+    rel_abgrenzung = relationship('BAbgrenzung',
+                                  back_populates='rel_akt',
+                                  cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return "<BAkt(id='%s', name='%s', az='%s')>" % (
@@ -83,7 +85,7 @@ class BCutKoppelGstAktuell(Base):
     geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
                                srid=31259))
 
-    rel_koppel: Mapped["BKoppel"] = relationship(back_populates='rel_cut_koppel_gst')
+    # rel_koppel: Mapped["BKoppel"] = relationship(back_populates='rel_cut_koppel_gst')
     rel_gstversion: Mapped["BGstVersion"] = relationship(back_populates='rel_cut_koppel_gst')
 
     # id = Column(Integer, primary_key=True)
@@ -577,7 +579,8 @@ class BAbgrenzung(Base):
     inaktiv: Mapped[bool]
 
     rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_abgrenzung')
-    rel_komplex: Mapped[List["BKomplex"]] = relationship(back_populates='rel_abgrenzung')
+    rel_komplex: Mapped[List["BKomplex"]] = relationship(back_populates='rel_abgrenzung',
+                                                         cascade="all, delete, delete-orphan")
     # rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
 
     def __repr__(self):
@@ -596,7 +599,8 @@ class BKomplex(Base):
     abgrenzung_id: Mapped[int] = mapped_column(ForeignKey("a_alm_abgrenzung.id"))
     komplex_name_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_name.id"))
 
-    rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex')
+    rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex',
+                                                       cascade="all, delete, delete-orphan")
     rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_komplex')
     rel_komplex_name: Mapped["BKomplexName"] = relationship(back_populates='rel_komplex')
 
@@ -650,7 +654,7 @@ class BKoppel(Base):
     geometry = Column(Geometry(geometry_type="POLYGON", srid=31259))
 
     rel_komplex: Mapped["BKomplex"] = relationship(back_populates='rel_koppel')
-    rel_cut_koppel_gst: Mapped["BCutKoppelGstAktuell"] = relationship(back_populates='rel_koppel')
+    # rel_cut_koppel_gst: Mapped["BCutKoppelGstAktuell"] = relationship(back_populates='rel_koppel')
 
     def __repr__(self):
         return f"<BKoppel(id: {self.id}, " \

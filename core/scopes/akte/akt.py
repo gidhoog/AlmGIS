@@ -12,11 +12,12 @@ from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsLayoutExporter, QgsFeature, QgsVectorLayer, \
     QgsGeometry, edit, QgsField
-from sqlalchemy import desc, select
+from sqlalchemy import desc, select, text
+from sqlalchemy.orm import joinedload
 
 from core import entity, db_session_cm
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
-    BGisScopeLayer, BGisStyleLayerVar, BKomplexVersion
+    BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel
 from core.gis_control import GisControl
 from core.gis_item import GisItem
 from core.gis_layer import setLayerStyle, KoppelLayer
@@ -25,7 +26,7 @@ from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
 from core.scopes.akte.akt_gst_main import GstMaintable
-from core.scopes.komplex.komplex_item import KomplexItem, KomplexVersionItem
+from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
 from core.scopes.koppel.koppel_item import KoppelItem
 
 import resources_rc
@@ -217,6 +218,86 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.kk_gis_group = self.guiMainGis.layer_tree_root.addGroup(
             'sonstige Komplexe und Koppeln')
 
+    def updateKomplexe(self):
+        """
+        aktualisiere die neue Tabellenstruktur
+        :return:
+        """
+        alm_new = []
+
+        with db_session_cm() as session:
+
+            akt_instances = session.scalars(select(BAkt)
+                                            .options(joinedload(BAkt.rel_abgrenzung)
+                                                     .joinedload(BAbgrenzung.rel_komplex)
+                                                     .joinedload(BKomplex.rel_koppel))
+                                            ).unique().all()
+
+            for akt in akt_instances:
+                akt_new = BAkt(name=akt.name,
+                               alias=akt.alias,
+                               az=akt.az,
+                               bearbeitungsstatus_id=akt.bearbeitungsstatus_id,
+                               alm_bnr=akt.alm_bnr,
+                               anm=akt.anm,
+                               stz=akt.stz)
+                alm_new.append(akt_new)
+                akt_abgrenzungen_new = {}
+                for abgrenzung in akt.rel_abgrenzung:
+
+                    abgr_key = str(abgrenzung.jahr) + abgrenzung.bearbeiter + str(abgrenzung.erfassungsart_id)
+
+                    if abgr_key in akt_abgrenzungen_new:
+                        abgr_new = akt_abgrenzungen_new[abgr_key]
+                    else:
+                        abgr_new = BAbgrenzung(akt_id=abgrenzung.akt_id,
+                                               jahr=abgrenzung.jahr,
+                                               bearbeiter=abgrenzung.bearbeiter,
+                                               erfassungsart_id=abgrenzung.erfassungsart_id,
+                                               status_id=abgrenzung.status_id,
+                                               anmerkung=abgrenzung.anmerkung,
+                                               inaktiv=abgrenzung.inaktiv)
+                        akt_abgrenzungen_new[abgr_key] = abgr_new
+                        akt_new.rel_abgrenzung.append(abgr_new)
+
+                    for komplex in abgrenzung.rel_komplex:
+                        komplex_new = BKomplex(abgrenzung_id=komplex.abgrenzung_id,
+                                               komplex_name_id=komplex.komplex_name_id)
+                        abgr_new.rel_komplex.append(komplex_new)
+
+                        for koppel in komplex.rel_koppel:
+                            koppel_new =BKoppel(komplex_id=koppel.komplex_id,
+                                                nr=koppel.nr,
+                                                name=koppel.name,
+                                                nicht_weide=koppel.nicht_weide,
+                                                bearbeiter=koppel.bearbeiter,
+                                                seehoehe=koppel.seehoehe,
+                                                domes_id=koppel.domes_id,
+                                                heuertrag_ha=koppel.heuertrag_ha,
+                                                anmerkung=koppel.anmerkung,
+                                                geometry=koppel.geometry)
+                            komplex_new.rel_koppel.append(koppel_new)
+
+                session.add(akt_new)
+
+            """aktiviere foreign_key-Support in der datenbank"""
+            session.execute(text('pragma foreign_keys=ON'))
+            """"""
+
+            """delete the farmitem (version) witch will be submitted (including deleting all
+            children by using the cascaded 'delete' in the datamodel)"""
+            for akt_inst in akt_instances:
+                session.delete(akt_inst)
+            """"""
+
+            """remove the sequence of the row-id's to begin at 1 on setting
+            the new row-id """
+            session.execute(text("""delete from sqlite_sequence where name='a_alm_akt';"""))
+            """"""
+
+            session.commit()
+
+        print(f'...')
 
     def loadKKTreeNew(self):
 
@@ -257,93 +338,137 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
                 komplex_itm.appendRow([koppel_item, None, None, None])
 
+        def addKoppelFeature(koppel_item, koppel_layer):
+
+            koppel_feat = QgsFeature(koppel_layer.fields())
+            koppel_feat.setAttributes(
+                [koppel_item.data(GisItem.Instance_Role).id,
+                 koppel_item.data(GisItem.Name_Role),
+                 None,
+                 None,
+                 None,
+                 '0,123'])
+            koppel_feat.setGeometry(QgsGeometry.fromWkt(
+                to_shape(
+                    koppel_item.data(GisItem.Geometry_Role)).wkt)
+            )
+            (result,
+             added_kop_feat) = koppel_layer.data_provider.addFeatures(
+                [koppel_feat])
+            # koppel_item.setData(added_kop_feat[0],
+            #                     GisItem.Feature_Role)
+
         with (self.session):
 
-            komplex_version_instances = self.session.scalars(select(BKomplexVersion)
-                                    .where(BKomplexVersion.akt_id == self.data_instance.id)
-                                    .order_by(desc(BKomplexVersion.jahr))
+            abgrenzungs_instances = self.session.scalars(select(BAbgrenzung)
+                                    .where(BAbgrenzung.akt_id == self.data_instance.id)
+                                    .order_by(desc(BAbgrenzung.jahr))
                                                     ).unique().all()
 
-            self.komplex_years = {}  # dict fuer angelegte komplex-versionen
-            self.koppel_layers = {}  # dict fuer angelegte Koppellayer
+            # self.komplex_years = {}  # dict fuer angelegte komplex-versionen
+            # self.koppel_layers = {}  # dict fuer angelegte Koppellayer
 
-            for komplex_version in komplex_version_instances:
+            """finde alle abgrenzungen mit dem status 0 und danach 
+            das jüngste Jahr"""
+            ist_versions = [i for i in abgrenzungs_instances if
+                            i.status_id == 0]
+            max_version_year = max([y.jahr for y in ist_versions])
+            """"""
 
-                """finde alle komplex-versionen mit dem status 0 und danach 
-                das jüngste Jahr"""
-                ist_versions = [ i for i in komplex_version_instances if i.status_id == 0]
-                max_version_year = max([y.jahr for y in ist_versions])
-                """"""
+            for abgrenzung in abgrenzungs_instances:
 
-                """erzeuge ein komplex-item"""
-                komplex_item = KomplexItem(komplex_version.rel_komplex)
-                """"""
+                abgrenzung_item = AbgrenzungItem(abgrenzung)
+                self.komplex_root_item.appendRow(abgrenzung_item)
 
-                if komplex_version.jahr in self.koppel_layers:
-                    koppel_layer_new = self.koppel_layers[komplex_version.jahr]
+                """finde und markiere die aktuelle Abgrenzung"""
+                if abgrenzung.jahr == max_version_year and abgrenzung.status_id == 0:
+                    """diese version ist die aktuelle"""
+                    abgrenzung_item.setData(1, GisItem.Current_Role)
+                    version_icon = QIcon(
+                        ":/svg/resources/icons/triangle_right_green.svg")
+                    """"""
                 else:
-                    """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-                    koppel_layer_new = KoppelLayer(
-                        "Polygon?crs=epsg:31259",
-                        "Koppeln new1",
-                        "memory"
-                    )
-                    self.guiMainGis.addLayer(koppel_layer_new)
-                    self.koppel_layers[komplex_version.jahr] = koppel_layer_new
+                    """diese version nicht die aktuelle version"""
+                    abgrenzung_item.setData(0, GisItem.Current_Role)
+                    version_icon = QIcon(
+                        ":/svg/resources/icons/_leeres_icon.svg")
                     """"""
-
-                if komplex_version.jahr not in self.komplex_years:
-                    """für dieses Jahr ist noch kein Version-Knoten angelegt"""
-                    version_item = KomplexVersionItem(komplex_version)
-                    if komplex_version.jahr == max_version_year and komplex_version.status_id == 0:
-                        """diese version ist die aktuelle"""
-                        version_item.setData(1, GisItem.Current_Role)
-                        version_icon = QIcon(
-                            ":/svg/resources/icons/triangle_right_green.svg")
-                        """"""
-
-                    else:
-                        """diese version nicht die aktuelle version"""
-                        version_item.setData(0, GisItem.Current_Role)
-                        version_icon = QIcon(
-                            ":/svg/resources/icons/_leeres_icon.svg")
-                        """"""
-                    version_item.setIcon(version_icon)
-                    """"""
-
-                    """füge das Komplex-item in das Jahr-Item ein"""
-                    version_item.appendRow(komplex_item)
-                    """"""
-
-                    """füge das Jahr-Item in das 'komplex_years'-Dict und
-                    in das unsichtbare root-item ein"""
-                    self.komplex_years[komplex_version.jahr] = version_item
-                    self.komplex_root_item.appendRow(version_item)
-                    """"""
-
-                    """füge alle Koppel-Items für diesen Komplex ein"""
-                    koppel_layer_new.appendKoppelItems(
-                        komplex_version.rel_koppel, komplex_item)
-                    # appendKoppelItems(komplex_version.rel_koppel, komplex_item)
-                    """"""
-
-                else:
-                    """für dieses Jahr ist bereits ein Version-Knoten angelegt"""
-                    self.komplex_years[komplex_version.jahr].appendRow(komplex_item)
-
-                    """füge alle Koppel-Items für diesen Komplex ein"""
-                    koppel_layer_new.appendKoppelItems(
-                        komplex_version.rel_koppel, komplex_item)
-                    # appendKoppelItems(komplex_version.rel_koppel, komplex_item)
-                    """"""
-
-                """wichig wenn neue features eingefügt werden, da die Änderung im 
-                provider nicht an den Layer übermittelt wird"""
-                koppel_layer_new.updateExtents()
+                abgrenzung_item.setIcon(version_icon)
                 """"""
 
-                extent = koppel_layer_new.extent()
-                self.guiMainGis.uiCanvas.setExtent(extent)
+                """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
+                koppel_layer = KoppelLayer(
+                    "Polygon?crs=epsg:31259",
+                    "Koppeln new1",
+                    "memory"
+                )
+                self.guiMainGis.addLayer(koppel_layer)
+                """"""
+
+
+                for komplex in abgrenzung.rel_komplex:
+
+                    komplex_item = KomplexItem(komplex)
+                    abgrenzung_item.appendRow(komplex_item)
+
+                    for koppel in komplex.rel_koppel:
+
+                        koppel_item = KoppelItem(koppel)
+                        komplex_item.appendRow(koppel_item)
+                        addKoppelFeature(koppel_item, koppel_layer)
+
+
+
+        #         """erzeuge ein komplex-item"""
+        #         komplex_item = KomplexItem(abgrenzung.rel_komplex)
+        #         """"""
+        #
+        #         if abgrenzung.jahr in self.koppel_layers:
+        #             koppel_layer_new = self.koppel_layers[abgrenzung.jahr]
+        #         else:
+        #             """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
+        #             koppel_layer_new = KoppelLayer(
+        #                 "Polygon?crs=epsg:31259",
+        #                 "Koppeln new1",
+        #                 "memory"
+        #             )
+        #             self.guiMainGis.addLayer(koppel_layer_new)
+        #             self.koppel_layers[abgrenzung.jahr] = koppel_layer_new
+        #             """"""
+        #
+        #             """füge das Komplex-item in das Jahr-Item ein"""
+        #             version_item.appendRow(komplex_item)
+        #             """"""
+        #
+        #             """füge das Jahr-Item in das 'komplex_years'-Dict und
+        #             in das unsichtbare root-item ein"""
+        #             self.komplex_years[abgrenzung.jahr] = version_item
+        #             self.komplex_root_item.appendRow(version_item)
+        #             """"""
+        #
+        #             """füge alle Koppel-Items für diesen Komplex ein"""
+        #             koppel_layer_new.appendKoppelItems(
+        #                 abgrenzung.rel_koppel, komplex_item)
+        #             # appendKoppelItems(komplex_version.rel_koppel, komplex_item)
+        #             """"""
+        #
+        #         else:
+        #             """für dieses Jahr ist bereits ein Version-Knoten angelegt"""
+        #             self.komplex_years[abgrenzung.jahr].appendRow(komplex_item)
+        #
+        #             """füge alle Koppel-Items für diesen Komplex ein"""
+        #             koppel_layer_new.appendKoppelItems(
+        #                 abgrenzung.rel_koppel, komplex_item)
+        #             # appendKoppelItems(komplex_version.rel_koppel, komplex_item)
+        #             """"""
+
+            """wichig wenn neue features eingefügt werden, da die Änderung im
+            provider nicht an den Layer übermittelt wird"""
+            koppel_layer.updateExtents()
+            """"""
+
+            extent = koppel_layer.extent()
+            self.guiMainGis.uiCanvas.setExtent(extent)
 
             self.uiVersionTv.setModel(self.komplex_model)
 
@@ -475,25 +600,25 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.setKKTv(self._selected_version_index)
 
-        """lösche alle Features vom Layer Koppel"""
-        with edit(self.koppel_layer_new):
-            listOfIds = [feat.id() for feat in self.koppel_layer_new.getFeatures()]
-            self.koppel_layer_new.deleteFeatures(listOfIds)
-        """"""
-
-        for kom in range(self._selected_version_item.rowCount()):
-
-            komplex = self._selected_version_item.child(kom)
-            for ko in range(komplex.rowCount()):
-                koppel = komplex.child(ko)
-                koppel_feat = koppel.data(GisItem.Feature_Role)
-                # (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
-                #     [koppel_feat])
-                (result, added_kop_feat) = self.koppel_layer_new.data_provider.addFeatures(
-                    [koppel_feat])
-                koppel.setData(added_kop_feat[0], GisItem.Feature_Role)
-
-        self.koppel_layer_new.setName(f'Koppeln neu ')
+        # """lösche alle Features vom Layer Koppel"""
+        # with edit(self.koppel_layer_new):
+        #     listOfIds = [feat.id() for feat in self.koppel_layer_new.getFeatures()]
+        #     self.koppel_layer_new.deleteFeatures(listOfIds)
+        # """"""
+        #
+        # for kom in range(self._selected_version_item.rowCount()):
+        #
+        #     komplex = self._selected_version_item.child(kom)
+        #     for ko in range(komplex.rowCount()):
+        #         koppel = komplex.child(ko)
+        #         koppel_feat = koppel.data(GisItem.Feature_Role)
+        #         # (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
+        #         #     [koppel_feat])
+        #         (result, added_kop_feat) = self.koppel_layer_new.data_provider.addFeatures(
+        #             [koppel_feat])
+        #         koppel.setData(added_kop_feat[0], GisItem.Feature_Role)
+        #
+        # self.koppel_layer_new.setName(f'Koppeln neu ')
 
     def setKKTv(self, index):
 
@@ -692,7 +817,7 @@ class KomplexModel(QStandardItemModel):
 
             if role == Qt.DecorationRole:
 
-                if type(item) != KomplexVersionItem:
+                if type(item) != AbgrenzungItem:
 
                     return item.data(GisItem.Color_Role)
 
@@ -704,26 +829,26 @@ class KomplexModel(QStandardItemModel):
         if index.column() == 2:
             pass
 
-        if index.column() == 3:
-
-            if role == Qt.DisplayRole:
-
-                if type(first_item) == KoppelItem:
-                    k_area = to_shape(first_item.data(GisItem.Instance_Role).geometry).area
-                    k_area_rounded = '{:.4f}'.format(
-                        round(float(k_area) / 10000, 4)).replace(".", ",")
-
-                    return f'{str(k_area_rounded)} ha'
-
-                if type(first_item) == KomplexItem:
-                    komp_area = 0.00
-                    for k in range(first_item.rowCount()):
-                        kop_area = to_shape(first_item.child(k).data(GisItem.Instance_Role).geometry).area
-                        komp_area = komp_area + kop_area
-
-                    komp_area_rounded = '{:.4f}'.format(
-                        round(float(komp_area) / 10000, 4)).replace(".", ",")
-
-                    return f'{str(komp_area_rounded)} ha'
+        # if index.column() == 3:
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         if type(first_item) == KoppelItem:
+        #             k_area = to_shape(first_item.data(GisItem.Instance_Role).geometry).area
+        #             k_area_rounded = '{:.4f}'.format(
+        #                 round(float(k_area) / 10000, 4)).replace(".", ",")
+        #
+        #             return f'{str(k_area_rounded)} ha'
+        #
+        #         if type(first_item) == KomplexItem:
+        #             komp_area = 0.00
+        #             for k in range(first_item.rowCount()):
+        #                 kop_area = to_shape(first_item.child(k).data(GisItem.Instance_Role).geometry).area
+        #                 komp_area = komp_area + kop_area
+        #
+        #             komp_area_rounded = '{:.4f}'.format(
+        #                 round(float(komp_area) / 10000, 4)).replace(".", ",")
+        #
+        #             return f'{str(komp_area_rounded)} ha'
 
         return QStandardItemModel.data(self, index, role)

@@ -8,7 +8,7 @@ from sqlalchemy import func
 from core import db_session_cm
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
-    BKomplex, BAkt, BKomplexVersion, BKoppel
+    BKomplex, BAkt, BKoppel
 from core.main_table import MainTable, MaintableColumn, \
     MainTableModel, MainTableView
 import typing
