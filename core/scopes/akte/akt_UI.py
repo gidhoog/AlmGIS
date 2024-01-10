@@ -355,6 +355,13 @@ class Ui_Akt(object):
         self.statusbar = QtWidgets.QStatusBar(Akt)
         self.statusbar.setObjectName("statusbar")
         Akt.setStatusBar(self.statusbar)
+        self.uiTitleToolBar = QtWidgets.QToolBar(Akt)
+        self.uiTitleToolBar.setMovable(False)
+        self.uiTitleToolBar.setAllowedAreas(QtCore.Qt.TopToolBarArea)
+        self.uiTitleToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiTitleToolBar.setFloatable(False)
+        self.uiTitleToolBar.setObjectName("uiTitleToolBar")
+        Akt.addToolBar(QtCore.Qt.TopToolBarArea, self.uiTitleToolBar)
 
         self.retranslateUi(Akt)
         self.tabAkt.setCurrentIndex(3)
@@ -378,5 +385,6 @@ class Ui_Akt(object):
         self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiKomplexTab), _translate("Akt", "Komplexe"))
         self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiWeideeinrichtungTab), _translate("Akt", "Weideeinrichtungen"))
         self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiAmaFfGisTab), _translate("Akt", "AMA"))
+        self.uiTitleToolBar.setWindowTitle(_translate("Akt", "toolBar"))
 from core.info_button import InfoButton
 import resources_rc

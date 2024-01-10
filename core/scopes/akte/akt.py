@@ -177,6 +177,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.guiMainGis.addLayer(self.koppel_layer_new)
         # """"""
 
+        self.title_lbl = QLabel()
+        self.title_lbl.setText('ttttttttttttttttt')
+
+        self.uiTitleToolBar.addWidget(self.title_lbl)
+
     def initUi(self):
         super().initUi()
 
@@ -388,12 +393,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
                         koppel_item = KoppelItem(koppel)
                         komplex_item.appendRow(koppel_item)
-                        new_koppel = addKoppelFeature(koppel_item, koppel_layer)
+                        new_koppel_feat = addKoppelFeature(koppel_item, koppel_layer)
+
+                        koppel_item.setData(new_koppel_feat[0], GisItem.Feature_Role)
+                        koppel_item.setData(koppel_layer, GisItem.Layer_Role)
 
                         if komplex_geom == None:
-                            komplex_geom = new_koppel[0].geometry()
+                            komplex_geom = new_koppel_feat[0].geometry()
                         else:
-                            komplex_geom = komplex_geom.combine(new_koppel[0].geometry())
+                            komplex_geom = komplex_geom.combine(new_koppel_feat[0].geometry())
 
                     komplex_feat = QgsFeature(komplex_layer.fields())
                     komplex_feat.setAttributes([
@@ -405,6 +413,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                     (result,
                      added_komp_feat) = komplex_layer.data_provider.addFeatures(
                         [komplex_feat])
+
+                    komplex_item.setData(added_komp_feat[0],
+                                        GisItem.Feature_Role)
+                    komplex_item.setData(komplex_layer, GisItem.Layer_Role)
 
             """wichig wenn neue features eingefügt werden, da die Änderung im
             provider nicht an den Layer übermittelt wird"""
@@ -529,13 +541,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
         # self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
 
-        # self.kk_selection_model.selectionChanged.connect(
-        #     self.selectionChangedTreeNew)
+        self.uiKKTv.selectionModel().selectionChanged.connect(
+            self.selectionChangedTreeNew)
 
 
         # self.uiVersionTv.selectionModel().selectionChanged.connect(
         #     self.selectedVersionChanged)
 
+    def selectedKKChanged(self, selected):
+
+        pass
     def selectedVersionChanged(self, selected):
 
         self._selected_version_index = selected[0].indexes()[0]
@@ -583,15 +598,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         #
         #     print(f'{item.data(GisItem.Name_Role)}')
 
-        feature_id_list = []
+        # feature_id_list = []
         sel_item = []
 
-        for idx in self.kk_selection_model.selectedIndexes():
+        for idx in self.uiKKTv.selectionModel().selectedIndexes():
             if idx.column() == 0:  # wähle nur indexe der ersten spalte!
 
                 item = self.komplex_model.itemFromIndex(idx)
+                print(f'item.data(GisItem.Feature_Role): {item.data(GisItem.Feature_Role)}')
                 sel_item.append(item)
-                feature_id_list.append(item.data(GisItem.Feature_Role).id())
+                # feature_id_list.append(item.data(GisItem.Feature_Role).id())
 
                 # print(f':: {item.data(GisItem.Name_Role)}')
             # self.komplex_model.itemFromIndex(
@@ -603,7 +619,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             print(f'name: {ii.data(GisItem.Name_Role)}  id: {ii.data(GisItem.Feature_Role)}')
         print(f'fffffffffffffffffffffff')
 
-        self.guiMainGis.layer_tree_view.setCurrentLayer(self.koppel_layer_new)
+        # self.guiMainGis.layer_tree_view.setCurrentLayer(self.koppel_layer_new)
+        self.guiMainGis.layer_tree_view.setCurrentLayer(sel_item[0].data(GisItem.Layer_Role))
         self.selectFeaturesNew([s.data(GisItem.Feature_Role).id() for s in sel_item])
 
     def treeselectionChanged(self, tree_selection):

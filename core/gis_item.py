@@ -17,6 +17,7 @@ class GisItem(QStandardItem):
     Nr_Role = Qt.UserRole + 100
     Name_Role = Qt.UserRole + 101
 
+    Layer_Role = Qt.UserRole + 199
     Geometry_Role = Qt.UserRole + 200
 
     def __init__(self, data_instance=None):
