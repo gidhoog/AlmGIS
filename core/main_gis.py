@@ -647,21 +647,27 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
                     self.base_layer = layer
             """"""
 
-            """füge den layer ins projekt ein, einen hintergrund-layer
-            ganz unten"""
+            """füge den Layer in das Projekt ein (aber nicht sichtbar!)"""
+            self.project_instance.addMapLayer(layer, False)
+            """"""
+
+            """positioniere den Layer entsprechend der Vorgaben im Layertree"""
             if layer.back:
-                self.project_instance.addMapLayer(layer, False)
                 self.layertree_root_group.insertChildNode(
                     -1, QgsLayerTreeLayer(layer))
-            elif group is not None:
-                group.addLayer(layer)
             else:
-                self.project_instance.addMapLayer(layer)
+                if group is not None:
+                    group.addLayer(layer)
+                else:
+                    self.layertree_root_group.insertChildNode(
+                        -1,
+                        QgsLayerTreeLayer(layer))
             """"""
 
             """falls ein base-layer eingefügt wird, dann verschiebe den 
             kartenausschnitt auf diesen"""
             if layer.base:
+                print(f'base_layer: {layer.name()}')
                 extent = layer.extent()
                 self.uiCanvas.setExtent(extent)
 

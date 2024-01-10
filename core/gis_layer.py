@@ -104,6 +104,30 @@ class GisVectorLayer(QgsVectorLayer, GisLayer):
     """
 
 
+class KomplexLayer(QgsVectorLayer):
+    """
+    GIS-Layer für Komplexe
+    """
+
+    def __init__(self, path: str = ...,
+                 baseName: str = ...,
+                 providerLib: str = ...,
+                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions()) -> None:
+        super().__init__(path, baseName, providerLib, options)
+
+        self.data_provider = self.dataProvider()
+
+        self.data_provider.addAttributes([QgsField("id", QVariant.Int),
+                                      QgsField("nr", QVariant.Int),
+                                      QgsField("name", QVariant.String)])
+
+        self.updateFields()
+
+        self.back = False
+        self.base = False
+        setLayerStyle(self, 'komplex_rot')
+
+
 class KoppelLayer(QgsVectorLayer):
     """
     GIS-Layer für Koppeln
@@ -127,33 +151,33 @@ class KoppelLayer(QgsVectorLayer):
         self.updateFields()
 
         self.back = False
-        self.base = True
+        self.base = False
         setLayerStyle(self, 'koppel_gelb')
 
-    def appendKoppelItems(self, koppel_inst_list, komplex_itm):
-
-        for koppel in koppel_inst_list:
-            koppel_item = KoppelItem(koppel)
-
-            """erzeuge das Koppel-Feature"""
-            koppel_feat = QgsFeature(self.fields())
-            koppel_feat.setAttributes(
-                [koppel_item.data(GisItem.Instance_Role).id,
-                 koppel_item.data(GisItem.Name_Role),
-                 None,
-                 None,
-                 None,
-                 '0,123'])
-            koppel_feat.setGeometry(QgsGeometry.fromWkt(
-                to_shape(
-                    koppel_item.data(GisItem.Geometry_Role)).wkt)
-            )
-            (result,
-             # added_kop_feat) = self.koppel_dp_new.addFeatures(
-             #    [koppel_feat])
-             added_kop_feat) = self.data_provider.addFeatures(
-                [koppel_feat])
-            koppel_item.setData(added_kop_feat[0],
-                                GisItem.Feature_Role)
-
-            komplex_itm.appendRow([koppel_item, None, None, None])
+    # def appendKoppelItems(self, koppel_inst_list, komplex_itm):
+    #
+    #     for koppel in koppel_inst_list:
+    #         koppel_item = KoppelItem(koppel)
+    #
+    #         """erzeuge das Koppel-Feature"""
+    #         koppel_feat = QgsFeature(self.fields())
+    #         koppel_feat.setAttributes(
+    #             [koppel_item.data(GisItem.Instance_Role).id,
+    #              koppel_item.data(GisItem.Name_Role),
+    #              None,
+    #              None,
+    #              None,
+    #              '0,123'])
+    #         koppel_feat.setGeometry(QgsGeometry.fromWkt(
+    #             to_shape(
+    #                 koppel_item.data(GisItem.Geometry_Role)).wkt)
+    #         )
+    #         (result,
+    #          # added_kop_feat) = self.koppel_dp_new.addFeatures(
+    #          #    [koppel_feat])
+    #          added_kop_feat) = self.data_provider.addFeatures(
+    #             [koppel_feat])
+    #         koppel_item.setData(added_kop_feat[0],
+    #                             GisItem.Feature_Role)
+    #
+    #         komplex_itm.appendRow([koppel_item, None, None, None])
