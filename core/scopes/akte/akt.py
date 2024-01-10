@@ -301,42 +301,42 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
     def loadKKTreeNew(self):
 
-        def appendKoppelItems(koppel_inst_list, komplex_itm):
-            """
-            erzeuge aus der Liste der übergebenen Koppel-Instanzen Items und
-            füge diese in das ebenfalls übergebene Komplex-Item ein; erzeuge
-            gleichzeitig Gis-Features und füge diese in den Koppellayer ein
-
-            :param koppel_inst_list: List
-            :param komplex_item: KomplexItem
-            :return: None
-            """
-
-            for koppel in koppel_inst_list:
-                koppel_item = KoppelItem(koppel)
-
-                """erzeuge das Koppel-Feature"""
-                koppel_feat = QgsFeature(self.koppel_layer_new.fields())
-                koppel_feat.setAttributes(
-                    [koppel_item.data(GisItem.Instance_Role).id,
-                     koppel_item.data(GisItem.Name_Role),
-                     None,
-                     None,
-                     None,
-                     '0,123'])
-                koppel_feat.setGeometry(QgsGeometry.fromWkt(
-                    to_shape(
-                        koppel_item.data(GisItem.Geometry_Role)).wkt)
-                )
-                (result,
-                 # added_kop_feat) = self.koppel_dp_new.addFeatures(
-                 #    [koppel_feat])
-                 added_kop_feat) = self.koppel_layer_new.data_provider.addFeatures(
-                    [koppel_feat])
-                koppel_item.setData(added_kop_feat[0],
-                                    GisItem.Feature_Role)
-
-                komplex_itm.appendRow([koppel_item, None, None, None])
+        # def appendKoppelItems(koppel_inst_list, komplex_itm):
+        #     """
+        #     erzeuge aus der Liste der übergebenen Koppel-Instanzen Items und
+        #     füge diese in das ebenfalls übergebene Komplex-Item ein; erzeuge
+        #     gleichzeitig Gis-Features und füge diese in den Koppellayer ein
+        #
+        #     :param koppel_inst_list: List
+        #     :param komplex_item: KomplexItem
+        #     :return: None
+        #     """
+        #
+        #     for koppel in koppel_inst_list:
+        #         koppel_item = KoppelItem(koppel)
+        #
+        #         """erzeuge das Koppel-Feature"""
+        #         koppel_feat = QgsFeature(self.koppel_layer_new.fields())
+        #         koppel_feat.setAttributes(
+        #             [koppel_item.data(GisItem.Instance_Role).id,
+        #              koppel_item.data(GisItem.Name_Role),
+        #              None,
+        #              None,
+        #              None,
+        #              '0,123'])
+        #         koppel_feat.setGeometry(QgsGeometry.fromWkt(
+        #             to_shape(
+        #                 koppel_item.data(GisItem.Geometry_Role)).wkt)
+        #         )
+        #         (result,
+        #          # added_kop_feat) = self.koppel_dp_new.addFeatures(
+        #          #    [koppel_feat])
+        #          added_kop_feat) = self.koppel_layer_new.data_provider.addFeatures(
+        #             [koppel_feat])
+        #         koppel_item.setData(added_kop_feat[0],
+        #                             GisItem.Feature_Role)
+        #
+        #         komplex_itm.appendRow([koppel_item, None, None, None])
 
         def addKoppelFeature(koppel_item, koppel_layer):
 
@@ -358,9 +358,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             # koppel_item.setData(added_kop_feat[0],
             #                     GisItem.Feature_Role)
 
-        with (self.session):
+        with db_session_cm() as session:
 
-            abgrenzungs_instances = self.session.scalars(select(BAbgrenzung)
+            abgrenzungs_instances = session.scalars(select(BAbgrenzung)
                                     .where(BAbgrenzung.akt_id == self.data_instance.id)
                                     .order_by(desc(BAbgrenzung.jahr))
                                                     ).unique().all()
