@@ -18,6 +18,7 @@ from sqlalchemy.orm import joinedload
 from core import entity, db_session_cm
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel
+from core.entity_titel import EntityTitel
 from core.gis_control import GisControl
 from core.gis_item import GisItem
 from core.gis_layer import setLayerStyle, KoppelLayer, KomplexLayer
@@ -96,7 +97,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     @az.setter
     def az(self, value):
 
-        self.uicAzLbl.setText(f'AZ {str(value)}')
+        # self.uicAzLbl.setText(f'AZ {str(value)}')
         self._az = value
 
     @property  # getter
@@ -107,7 +108,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     @name.setter
     def name(self, value):
 
-        self.guiHeaderTextLbl.setText(value)
+        # self.guiHeaderTextLbl.setText(value)
+        self.uicTitleWdg.uiTitelLbl.setText(f'{value}   -   AZ {str(self.az)}')
         self._name = value
 
     @property  # getter
@@ -177,13 +179,12 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.guiMainGis.addLayer(self.koppel_layer_new)
         # """"""
 
-        self.title_lbl = QLabel()
-        self.title_lbl.setText('ttttttttttttttttt')
-
-        self.uiTitleToolBar.addWidget(self.title_lbl)
-
     def initUi(self):
         super().initUi()
+
+        """füge das Titel-Widget in die Titel-Toolbar ein"""
+        self.uicTitleWdg = EntityTitel(self)
+        self.uiTitleToolBar.addWidget(self.uicTitleWdg)
 
     def finalInit(self):
         super().finalInit()
@@ -196,8 +197,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def mapData(self):
         super().mapData()
 
-        self.name = self.data_instance.name
         self.az = self.data_instance.az
+        self.name = self.data_instance.name
         self.stz = self.data_instance.stz
 
         self.alias = self.data_instance.alias
@@ -476,7 +477,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             f'Kartenansicht {self.name} (AZ {str(self.az)})')
 
         self.tool_menu = QMenu(self)
-        self.uicEntityTools.setMenu(self.tool_menu)
+        # self.uicEntityTools.setMenu(self.tool_menu)
+        self.uicTitleWdg.uiEntityTools.setMenu(self.tool_menu)
 
         self.menu_prints = QMenu('Ausdrucke')
         self.tool_menu.addMenu(self.menu_prints)
@@ -493,24 +495,26 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.actionPrintGstList.setEnabled(False)
 
     def insertEntityHeader(self):
-        super().insertEntityHeader()
 
-        self.uicAzLbl = QLabel(self)
-        az_label_font = QFont("Verdana", 10, QFont.Bold)
-        self.uicAzLbl.setStyleSheet(self.header_label_style)
-        self.uicAzLbl.setFont(az_label_font)
-        spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-                             QtWidgets.QSizePolicy.Minimum)
-        self.uiHeaderHlay.addItem(spacer)
-        self.uiHeaderHlay.insertWidget(2, self.uicAzLbl)
-
-        self.uicEntityTools = QToolButton(self)
-        self.uicEntityTools.setIcon(
-            QIcon(':/svg/resources/icons/hamburger.svg'))
-        self.uicEntityTools.setIconSize(QSize(30, 30))
-        self.uicEntityTools.setFocusPolicy(Qt.NoFocus)
-        self.uicEntityTools.setPopupMode(QToolButton.InstantPopup)
-        self.uiHeaderMainHlay.insertWidget(1, self.uicEntityTools)
+        pass
+        # super().insertEntityHeader()
+        #
+        # self.uicAzLbl = QLabel(self)
+        # az_label_font = QFont("Verdana", 10, QFont.Bold)
+        # self.uicAzLbl.setStyleSheet(self.header_label_style)
+        # self.uicAzLbl.setFont(az_label_font)
+        # spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
+        #                      QtWidgets.QSizePolicy.Minimum)
+        # self.uiHeaderHlay.addItem(spacer)
+        # self.uiHeaderHlay.insertWidget(2, self.uicAzLbl)
+        #
+        # self.uicEntityTools = QToolButton(self)
+        # self.uicEntityTools.setIcon(
+        #     QIcon(':/svg/resources/icons/hamburger.svg'))
+        # self.uicEntityTools.setIconSize(QSize(30, 30))
+        # self.uicEntityTools.setFocusPolicy(Qt.NoFocus)
+        # self.uicEntityTools.setPopupMode(QToolButton.InstantPopup)
+        # self.uiHeaderMainHlay.insertWidget(1, self.uicEntityTools)
 
     def setStatusComboData(self):
         """
