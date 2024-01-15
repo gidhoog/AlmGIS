@@ -152,7 +152,8 @@ class KoppelLayer(QgsVectorLayer):
 
         self.back = False
         self.base = False
-        setLayerStyle(self, 'koppel_gelb')
+        # setLayerStyle(self, 'koppel_gelb')
+        setLayerStyle(self, 'koppel_test')
 
     # def appendKoppelItems(self, koppel_inst_list, komplex_itm):
     #

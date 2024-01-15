@@ -171,6 +171,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.komplex_model = KomplexModel()
         self.komplex_root_item = self.komplex_model.invisibleRootItem()
 
+        self.current_koppel_layer = None
+        self.current_komplex_layer = None
+
         # """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
         # self.koppel_layer_new = KoppelLayer("Polygon?crs=epsg:31259",
         #                                     "Koppeln new1",
