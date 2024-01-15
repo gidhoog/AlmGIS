@@ -168,7 +168,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiGstListeVlay.addWidget(self.gst_table)
         """"""
 
-        self.komplex_model = KomplexModel()
+        self.komplex_model = KomplexModel(self)
         self.komplex_root_item = self.komplex_model.invisibleRootItem()
 
         self.current_koppel_layer = None
@@ -471,7 +471,22 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.data_instance.anm = self.anm
         self.data_instance.bearbeitungsstatus_id = self.status
 
+        print('submit ...')
+
+        self.submitKK()
+
         super().submitEntity()
+
+    def submitKK(self):
+        """
+
+        :return:
+        """
+
+        rootKkItem = self.uiVersionTv.model().invisibleRootItem()
+
+        print('...')
+
 
     def post_data_set(self):
         super().post_data_set()
@@ -765,6 +780,31 @@ class KomplexModel(QStandardItemModel):
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(['Komplex/Koppel', '2', '3', 'Fläche'])
 
+    def setData(self, index: QModelIndex, value, role: int = ...):
+
+        item = self.itemFromIndex(index)
+
+        # if type(item) == TreeItemVersion and index.column() == 0:
+        #     item.setData(value, TreeItem.Code_Role)
+        #     self.dataChanged.emit(index, index)
+
+        if index.column() == 0:
+            item.setData(value, GisItem.Name_Role)
+            self.dataChanged.emit(index, index)
+
+            feat_id = item.data(GisItem.Feature_Role).id()
+            layer = item.data(GisItem.Layer_Role)
+            koppel_id = item.data(GisItem.Instance_Role).id
+
+            attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
+
+            # item.data(GisItem.Feature_Role)['name'] = value
+            layer.dataProvider().changeAttributeValues({feat_id: attrs})
+
+            self.parent.guiMainGis.uiCanvas.refresh()
+
+        return True
+
     def data(self, index: QModelIndex, role: int = ...):
 
         item = self.itemFromIndex(index)
@@ -781,6 +821,9 @@ class KomplexModel(QStandardItemModel):
         if index.column() == 0:
 
             if role == Qt.DisplayRole:
+                return item.data(GisItem.Name_Role)
+
+            if role == Qt.EditRole:
                 return item.data(GisItem.Name_Role)
 
             if role == Qt.DecorationRole:
