@@ -471,21 +471,49 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.data_instance.anm = self.anm
         self.data_instance.bearbeitungsstatus_id = self.status
 
-        print('submit ...')
+        with db_session_cm() as session:
 
-        self.submitKK()
+            session.add(self.data_instance)
 
-        super().submitEntity()
+            self.data_instance.rel_abgrenzung = self.get_abgrenzung_di()
 
-    def submitKK(self):
+        session.commit()
+
+    def get_abgrenzung_di(self):
+        """
+        erzeuge eine Liste mit den BAbgrenzung-Datenmodellen basierend auf die
+        aktuelle 'Abgrenzung/Komplex/Koppel'-Stuktur
+
+        :return: List [BAbgrenzung]
         """
 
-        :return:
-        """
+        abgrenzungen = []
 
         rootKkItem = self.uiVersionTv.model().invisibleRootItem()
 
-        print('...')
+        for a in range(rootKkItem.rowCount()):
+
+            abgr_item = rootKkItem.child(a)
+            abgr_di = BAbgrenzung()
+            abgr_item.getItemData(abgr_di)
+
+            for k in range(abgr_item.rowCount()):
+
+                komplex_item = abgr_item.child(k)
+                komplex_di = BKomplex()
+                komplex_item.getItemData(komplex_di)
+
+                for kk in range(komplex_item.rowCount()):
+
+                    koppel_item = komplex_item.child(kk)
+                    koppel_di = BKoppel()
+                    koppel_item.getItemData(koppel_di)
+
+                    komplex_di.rel_koppel.append(koppel_di)
+                abgr_di.rel_komplex.append(komplex_di)
+            abgrenzungen.append(abgr_di)
+
+        return abgrenzungen
 
 
     def post_data_set(self):
@@ -820,17 +848,23 @@ class KomplexModel(QStandardItemModel):
 
         if index.column() == 0:
 
-            if role == Qt.DisplayRole:
-                return item.data(GisItem.Name_Role)
+            if type(item) == AbgrenzungItem:
+                if role == Qt.DisplayRole:
+                    return item.data(GisItem.Jahr_Role)
 
-            if role == Qt.EditRole:
-                return item.data(GisItem.Name_Role)
+            else:
 
-            if role == Qt.DecorationRole:
+                if role == Qt.DisplayRole:
+                    return item.data(GisItem.Name_Role)
 
-                if type(item) != AbgrenzungItem:
+                if role == Qt.EditRole:
+                    return item.data(GisItem.Name_Role)
 
-                    return item.data(GisItem.Color_Role)
+                if role == Qt.DecorationRole:
+
+                    if type(item) != AbgrenzungItem:
+
+                        return item.data(GisItem.Color_Role)
 
         if index.column() == 1:
 

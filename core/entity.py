@@ -238,7 +238,7 @@ class Entity(QMainWindow):
         """
         if self.valid == True:
             self.submitEntity()
-            self.commitEntity()
+            # self.commitEntity()
             return True
         elif self.valid == False:
             self.valid = True
@@ -251,15 +251,15 @@ class Entity(QMainWindow):
         """
         pass
 
-    def commitEntity(self):
-        """
-        'commit' die daten der entity_session in die datenbank
-        """
-        with db_session_cm() as self.entity_session:
-            try:
-                self.entity_session.add(self.data_instance)
-            except:
-                print(f'cannot add {self.data_instance} to session')
+    # def commitEntity(self):
+    #     """
+    #     'commit' die daten der entity_session in die datenbank
+    #     """
+    #     with db_session_cm() as self.entity_session:
+    #         try:
+    #             self.entity_session.add(self.data_instance)
+    #         except:
+    #             print(f'cannot add {self.data_instance} to session')
 
     def rejectEntity(self):
         """
