@@ -22,24 +22,6 @@ class Abgrenzung(QWidget, abgrenzung_UI.Ui_Abgrenzung):
         
         self.item.setData(self.uiJahrSbox.value(), GisItem.Jahr_Role)
 
-    # def openDialog(self):
-    #     """
-    #     öffne einen dialog mit dem entity_widget
-    #     """
-    #
-    #     self.entity_dialog = AbgrenzungDialog(parent=self)
-    #
-    #     """setze den entity_dialog im entity_widget"""
-    #     # entity_widget.entity_dialog = self.entity_dialog
-    #     """"""
-    #
-    #     self.entity_dialog.insertWidget(self)
-    #     self.entity_dialog.resize(self.minimumSizeHint())
-    #
-    #     self.entity_dialog.show()
-    #
-    #     self.entity_dialog.rejected.connect(self.rejectEditingInDialog)
-
 
 class AbgrenzungDialog(MainDialog):
     """
@@ -52,6 +34,8 @@ class AbgrenzungDialog(MainDialog):
         self.parent = parent
         self.enableApply = True
         self.set_apply_button_text('&Speichern und Schließen')
+
+        self.setMaximumWidth(500)
 
     def accept(self):
         """

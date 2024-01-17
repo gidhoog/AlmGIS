@@ -613,10 +613,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 self.abgr_dialog.insertWidget(self.abgr)
                 self.abgr_dialog.resize(self.minimumSizeHint())
 
-                self.abgr_dialog.show()
+                self.abgr_dialog.exec()
 
                 # self.abgr_dialog.rejected.connect(self.rejectEditingInDialog)
-
 
     def selectedKKChanged(self, selected):
 
@@ -852,6 +851,18 @@ class KomplexModel(QStandardItemModel):
     #         self.parent.guiMainGis.uiCanvas.refresh()
     #
     #     return True
+
+    def flags(self, index):
+
+        # if not index.isValid():
+        #     return None
+        #
+        # if index.column() == self.col_with_checkbox:
+        #     return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
+        # else:
+        #     return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+
+        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def data(self, index: QModelIndex, role: int = ...):
 
