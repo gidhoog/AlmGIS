@@ -115,6 +115,7 @@ class BErfassungsart(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+    name_short: Mapped[str]
 
     rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_erfassungsart')
 
@@ -590,7 +591,7 @@ class BAbgrenzung(Base):
     jahr: Mapped[int]
     bearbeiter: Mapped[str]
     erfassungsart_id: Mapped[int] = mapped_column(ForeignKey("a_alm_erfassungsart.id"))
-    status_id: Mapped[int]
+    status_id: Mapped[int] = mapped_column(ForeignKey("a_alm_abgrenzung_status.id"))
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 
@@ -600,11 +601,29 @@ class BAbgrenzung(Base):
     # rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
 
     rel_erfassungsart: Mapped["BErfassungsart"] = relationship(back_populates='rel_abgrenzung')
+    rel_status: Mapped["BAbgrenzungStatus"] = relationship(back_populates='rel_abgrenzung')
 
     def __repr__(self):
         return f"<BAbgrenzung(id: {self.id}, " \
                f"akt_id: {self.akt_id}, " \
                f"jahr: {self.jahr})>"
+
+
+class BAbgrenzungStatus(Base):
+    """
+    Mapperklasse für den Status einer Abgrenzung
+    """
+    __tablename__ = "a_alm_abgrenzung_status"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+    name_short: Mapped[str]
+
+    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_status')
+
+    def __repr__(self):
+        return f"<BAbgrenzungStatus(id: {self.id}, " \
+               f"name: {self.name})>"
 
 
 class BKomplex(Base):
