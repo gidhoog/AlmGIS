@@ -120,7 +120,7 @@ class BErfassungsart(Base):
 
     def __repr__(self):
         return f"<BErfassungsart(id: {self.id}, " \
-               f"name: {self.namr})>"
+               f"name: {self.name})>"
 
 
 class BGisLayer(Base):
