@@ -26,6 +26,7 @@ from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
+from core.scopes.akte.abgrenzung import Abgrenzung, AbgrenzungDialog
 from core.scopes.akte.akt_gst_main import GstMaintable
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
 from core.scopes.koppel.koppel_item import KoppelItem
@@ -594,9 +595,28 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiKKTv.selectionModel().selectionChanged.connect(
             self.selectionChangedTreeNew)
 
+        self.uiEditVersionPbtn.clicked.connect(self.editAbgenzung)
+        self.uiVersionTv.doubleClicked.connect(self.editAbgenzung)
+
 
         # self.uiVersionTv.selectionModel().selectionChanged.connect(
         #     self.selectedVersionChanged)
+
+    def editAbgenzung(self):
+
+        for idx in self.uiVersionTv.selectionModel().selectedIndexes():
+            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+
+                item = self.komplex_model.itemFromIndex(idx)
+                self.abgr = Abgrenzung(item=item)
+                self.abgr_dialog = AbgrenzungDialog(self)
+                self.abgr_dialog.insertWidget(self.abgr)
+                self.abgr_dialog.resize(self.minimumSizeHint())
+
+                self.abgr_dialog.show()
+
+                # self.abgr_dialog.rejected.connect(self.rejectEditingInDialog)
+
 
     def selectedKKChanged(self, selected):
 
@@ -808,30 +828,30 @@ class KomplexModel(QStandardItemModel):
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(['Komplex/Koppel', '2', '3', 'Fläche'])
 
-    def setData(self, index: QModelIndex, value, role: int = ...):
-
-        item = self.itemFromIndex(index)
-
-        # if type(item) == TreeItemVersion and index.column() == 0:
-        #     item.setData(value, TreeItem.Code_Role)
-        #     self.dataChanged.emit(index, index)
-
-        if index.column() == 0:
-            item.setData(value, GisItem.Name_Role)
-            self.dataChanged.emit(index, index)
-
-            feat_id = item.data(GisItem.Feature_Role).id()
-            layer = item.data(GisItem.Layer_Role)
-            koppel_id = item.data(GisItem.Instance_Role).id
-
-            attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
-
-            # item.data(GisItem.Feature_Role)['name'] = value
-            layer.dataProvider().changeAttributeValues({feat_id: attrs})
-
-            self.parent.guiMainGis.uiCanvas.refresh()
-
-        return True
+    # def setData(self, index: QModelIndex, value, role: int = ...):
+    #
+    #     item = self.itemFromIndex(index)
+    #
+    #     # if type(item) == TreeItemVersion and index.column() == 0:
+    #     #     item.setData(value, TreeItem.Code_Role)
+    #     #     self.dataChanged.emit(index, index)
+    #
+    #     if index.column() == 0:
+    #         item.setData(value, GisItem.Name_Role)
+    #         self.dataChanged.emit(index, index)
+    #
+    #         feat_id = item.data(GisItem.Feature_Role).id()
+    #         layer = item.data(GisItem.Layer_Role)
+    #         koppel_id = item.data(GisItem.Instance_Role).id
+    #
+    #         attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
+    #
+    #         # item.data(GisItem.Feature_Role)['name'] = value
+    #         layer.dataProvider().changeAttributeValues({feat_id: attrs})
+    #
+    #         self.parent.guiMainGis.uiCanvas.refresh()
+    #
+    #     return True
 
     def data(self, index: QModelIndex, role: int = ...):
 

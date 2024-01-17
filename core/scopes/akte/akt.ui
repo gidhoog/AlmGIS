@@ -461,8 +461,14 @@
               </item>
               <item>
                <widget class="QTableView" name="uiVersionTv">
+                <property name="editTriggers">
+                 <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+                </property>
                 <property name="alternatingRowColors">
                  <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
                 </property>
                 <property name="selectionBehavior">
                  <enum>QAbstractItemView::SelectRows</enum>
@@ -558,7 +564,11 @@
                </layout>
               </item>
               <item>
-               <widget class="QTreeView" name="uiKKTv"/>
+               <widget class="QTreeView" name="uiKKTv">
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_5">
