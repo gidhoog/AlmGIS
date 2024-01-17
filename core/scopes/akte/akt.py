@@ -825,7 +825,7 @@ class KomplexModel(QStandardItemModel):
         self.parent = parent
 
         self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(['Komplex/Koppel', '2', '3', 'Fläche'])
+        self.setHorizontalHeaderLabels(['ab Jahr', 'Status', 'Erfassungsart'])
 
     # def setData(self, index: QModelIndex, value, role: int = ...):
     #
