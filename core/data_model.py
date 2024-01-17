@@ -107,6 +107,22 @@ class BCutKoppelGstAktuell(Base):
                f"gstversion_id:{self.gst_version_id})"
 
 
+class BErfassungsart(Base):
+    """
+    Mapperklasse für die Erfassungsart einer Abgrenzung
+    """
+    __tablename__ = "a_alm_erfassungsart"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+
+    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_erfassungsart')
+
+    def __repr__(self):
+        return f"<BErfassungsart(id: {self.id}, " \
+               f"name: {self.namr})>"
+
+
 class BGisLayer(Base):
     """
     Basisdatenebene für gis_layer
@@ -573,7 +589,7 @@ class BAbgrenzung(Base):
     # komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
     jahr: Mapped[int]
     bearbeiter: Mapped[str]
-    erfassungsart_id: Mapped[int]
+    erfassungsart_id: Mapped[int] = mapped_column(ForeignKey("a_alm_erfassungsart.id"))
     status_id: Mapped[int]
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
@@ -582,6 +598,8 @@ class BAbgrenzung(Base):
     rel_komplex: Mapped[List["BKomplex"]] = relationship(back_populates='rel_abgrenzung',
                                                          cascade="all, delete, delete-orphan")
     # rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
+
+    rel_erfassungsart: Mapped["BErfassungsart"] = relationship(back_populates='rel_abgrenzung')
 
     def __repr__(self):
         return f"<BAbgrenzung(id: {self.id}, " \
