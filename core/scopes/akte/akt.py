@@ -6,10 +6,12 @@ from qgis.PyQt.QtGui import (QFont, QIntValidator, QIcon, QStandardItem, QColor,
 from qgis.PyQt.QtWidgets import (QLabel, QSpacerItem, QDockWidget, QToolButton, \
     QMenu, QAction, QTreeView, QHBoxLayout, QComboBox, QAbstractItemView,
                                  QPushButton)
-from qgis.PyQt.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
+
+from qgis.PyQt.QtCore import (QSortFilterProxyModel, Qt, QSize,
+                              QAbstractItemModel, QModelIndex)
+
 from geoalchemy2.shape import to_shape
 from qgis.PyQt import QtWidgets
-from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsLayoutExporter, QgsFeature, QgsVectorLayer, \
     QgsGeometry, edit, QgsField
 from sqlalchemy import desc, select, text
@@ -369,8 +371,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 if abgrenzung.jahr == max_version_year and abgrenzung.status_id == 0:
                     """diese version ist die aktuelle"""
                     abgrenzung_item.setData(1, GisItem.Current_Role)
-                    version_icon = QIcon(
-                        ":/svg/resources/icons/triangle_right_green.svg")
                     """"""
                     komplex_layer.base = True
                     self.guiMainGis.addLayer(komplex_layer)
@@ -378,13 +378,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 else:
                     """diese version nicht die aktuelle version"""
                     abgrenzung_item.setData(0, GisItem.Current_Role)
-                    version_icon = QIcon(
-                        ":/svg/resources/icons/_leeres_icon.svg")
                     """"""
                     self.guiMainGis.addLayer(komplex_layer, self.kk_gis_group)
                     self.guiMainGis.addLayer(koppel_layer, self.kk_gis_group)
-
-                abgrenzung_item.setIcon(version_icon)
                 """"""
 
                 for komplex in abgrenzung.rel_komplex:
@@ -423,6 +419,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                         GisItem.Feature_Role)
                     komplex_item.setData(komplex_layer, GisItem.Layer_Role)
 
+            print('...')
+
+
             """wichig wenn neue features eingefügt werden, da die Änderung im
             provider nicht an den Layer übermittelt wird"""
             koppel_layer.updateExtents()
@@ -432,6 +431,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             self.guiMainGis.uiCanvas.setExtent(extent)
 
             self.uiVersionTv.setModel(self.komplex_model)
+            self.uiVersionTv.setColumnHidden(0, True)
+
+            # abgrenzung_model = AbgrenzungProxyModel()
+            # abgrenzung_model.setSourceModel(self.komplex_model)
+            #
+            # self.uiVersionTv.setModel(abgrenzung_model)
+            # # self.uiVersionTv.setRootIndex(abgrenzung_model.index(0,0))
+            # self.uiVersionTv.setRootIndex(self.komplex_model.invisibleRootItem().index())
 
             if self.komplex_root_item.rowCount() > 0:
 
@@ -608,7 +615,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             if idx.column() == 0:  # wähle nur indexe der ersten spalte!
 
                 item = self.komplex_model.itemFromIndex(idx)
-                self.abgr = Abgrenzung(item=item)
+                self.abgr = Abgrenzung(parent=self, item=item)
                 self.abgr_dialog = AbgrenzungDialog(self)
                 self.abgr_dialog.insertWidget(self.abgr)
                 self.abgr_dialog.resize(self.minimumSizeHint())
@@ -817,6 +824,21 @@ class GisDock(QDockWidget):
         self.setWindowTitle('Kartenansicht')
 
 
+# class AbgrenzungProxyModel(QSortFilterProxyModel):
+#     def __init__(self, *args, **kwargs):
+#         QSortFilterProxyModel.__init__(self, *args, **kwargs)
+#         self.labels = ['ab Jahr', 'Status', 'Erfassungsart']
+#
+#     def setHeaderLabels(self, labels):
+#         self.labels = labels
+#
+#     def headerData(self, section,orientation, role = Qt.DisplayRole):
+#         if (orientation == Qt.Horizontal and 0 <= section < self.columnCount()
+#                 and role==Qt.DisplayRole and section < len(self.labels)) :
+#             return self.labels[section]
+#         return QSortFilterProxyModel.headerData(self, section, orientation, role)
+
+
 class KomplexModel(QStandardItemModel):
 
     def __init__(self, parent=None) -> None:
@@ -825,7 +847,8 @@ class KomplexModel(QStandardItemModel):
         self.parent = parent
 
         self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(['ab Jahr', 'Status', 'Erfassungsart'])
+        self.setHorizontalHeaderLabels(['Komplex/Koppel', 'ab Jahr',
+                                        'Status', 'Erfassungsart'])
 
     # def setData(self, index: QModelIndex, value, role: int = ...):
     #
@@ -899,11 +922,28 @@ class KomplexModel(QStandardItemModel):
 
         if index.column() == 1:
 
-            if role == Qt.DisplayRole:
-                return first_item.data(GisItem.Nr_Role)
+            if type(first_item) == AbgrenzungItem:
+                if role == Qt.DisplayRole:
+                    return first_item.data(GisItem.Jahr_Role)
+                if role == Qt.DecorationRole:
+                    """zeige ein grünes Dreieck bei der aktuellen Abgrenzung"""
+                    if first_item.data(GisItem.Current_Role) == 1:
+                        return QIcon(":/svg/resources/icons/triangle_right_green.svg")
+                    if first_item.data(GisItem.Current_Role) == 0:
+                        return QIcon(":/svg/resources/icons/_leeres_icon.svg")
+                    """"""
 
-        if index.column() == 2:
-            pass
+        if index.column() == 2:  # status
+
+            if type(first_item) == AbgrenzungItem:
+                if role == Qt.DisplayRole:
+                    return first_item.data(GisItem.StatusName_Role)
+
+        if index.column() == 3:
+
+            if type(first_item) == AbgrenzungItem:
+                if role == Qt.DisplayRole:
+                    return first_item.data(GisItem.ErfassungsArtName_Role)
 
         # if index.column() == 3:
         #

@@ -10,7 +10,7 @@ class GisItem(QStandardItem):
 
     Instance_Role = Qt.UserRole + 10
     Feature_Role = Qt.UserRole + 11
-    Current_Role = Qt.UserRole + 12  # 0 für aktuelle und 1 für alte versionen
+    Current_Role = Qt.UserRole + 12  # 0 für aktuelle und 1 für alte abgrenzung
 
     Color_Role = Qt.UserRole + 20
 
@@ -20,13 +20,16 @@ class GisItem(QStandardItem):
     Jahr_Role = Qt.UserRole + 102
     Bearbeiter_Role = Qt.UserRole + 103
     ErfassungsArtId_Role = Qt.UserRole + 104
-    StatusId_Role = 105
-    Anmerkung_Role = Qt.UserRole + 106
-    Inactive_Role = Qt.UserRole + 107
+    ErfassungsArtName_Role = Qt.UserRole + 105
+    StatusId_Role = 106
+    StatusName_Role = 107
+    Anmerkung_Role = Qt.UserRole + 108
+    Inactive_Role = Qt.UserRole + 109
 
-    KomplexNameId_Role = Qt.UserRole + 108
+    KomplexNameId_Role = Qt.UserRole + 110
 
-    NichtWeide_Role = Qt.UserRole + 109
+    NichtWeide_Role = Qt.UserRole + 111
+    Bezeichnung_Role = Qt.UserRole + 112
 
     Layer_Role = Qt.UserRole + 199
     Geometry_Role = Qt.UserRole + 200

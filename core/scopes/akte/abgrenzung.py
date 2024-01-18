@@ -13,7 +13,9 @@ from sqlalchemy import select
 class Abgrenzung(QWidget, abgrenzung_UI.Ui_Abgrenzung):
 
     _erfassungsart_id = None
+    _erfassungsart_name = ''
     _status_id = None
+    _status_name = ''
 
     @property  # getter
     def erfassungsart_id(self):
@@ -30,6 +32,12 @@ class Abgrenzung(QWidget, abgrenzung_UI.Ui_Abgrenzung):
         self._erfassungsart_id = value
 
     @property  # getter
+    def erfassungsart_name(self):
+
+        self._erfassungsart_name = self.uiErfassCombo.currentText()
+        return self._erfassungsart_name
+
+    @property  # getter
     def status_id(self):
 
         self._status_id = self.uiStatusCombo.currentData(Qt.UserRole)
@@ -41,24 +49,62 @@ class Abgrenzung(QWidget, abgrenzung_UI.Ui_Abgrenzung):
         self.uiStatusCombo.setCurrentIndex(
             self.uiStatusCombo.findData(value, Qt.UserRole)
         )
+        # if value == 1:  # plan
+        #     self.uiBezeichnungLbl.setVisible(True)
+        #     self.uiBezeichnungLedit.setVisible(True)
+        #
+        # if value == 0:  # ist
+        #     self.uiBezeichnungLbl.setVisible(False)
+        #     self.uiBezeichnungLedit.setVisible(False)
+
         self._status_id = value
+
+        # self.changedStatus()
+
+    @property  # getter
+    def status_name(self):
+
+        self._status_name = self.uiStatusCombo.currentText()
+        return self._status_name
 
     def __init__(self, parent=None, item=None):
         super(__class__, self).__init__()
         self.setupUi(self)
-        
+
+        self.parent = parent
         self.item = item
+
+        self.uiAktNameLbl.setText(self.parent.name + ' (AZ '
+                                  + str(self.parent.az) + ')')
+
+        self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
 
         self.loadCombos()
 
         self.mapData()
 
     def mapData(self):
+        # self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
 
         self.uiJahrSbox.setValue(self.item.data(GisItem.Jahr_Role))
+        self.uiBearbeiterLedit.setText(self.item.data(GisItem.Bearbeiter_Role))
+        self.uiBezeichnungLedit.setText(self.item.data(GisItem.Bezeichnung_Role))
+        self.uiAnmerkungPtext.setPlainText(self.item.data(GisItem.Anmerkung_Role))
 
         self.erfassungsart_id = self.item.data(GisItem.ErfassungsArtId_Role)
         self.status_id = self.item.data(GisItem.StatusId_Role)
+
+    def changedStatus(self):
+
+        self.status_id = self.uiStatusCombo.currentData(Qt.UserRole)
+
+        if self.status_id == 1:  # plan
+            self.uiBezeichnungLbl.setVisible(True)
+            self.uiBezeichnungLedit.setVisible(True)
+
+        if self.status_id == 0:  # ist
+            self.uiBezeichnungLbl.setVisible(False)
+            self.uiBezeichnungLedit.setVisible(False)
 
     def loadCombos(self):
 
@@ -73,14 +119,27 @@ class Abgrenzung(QWidget, abgrenzung_UI.Ui_Abgrenzung):
             for erfass in erfassungsart_di:
                 self.uiErfassCombo.addItem(erfass.name, erfass.id)
             for status in status_di:
-                self.uiStatusCombo.addItem(status.name, status.id)
+                self.uiStatusCombo.addItem(status.name_short, status.id)
         
     def submitData(self):
         
         self.item.setData(self.uiJahrSbox.value(), GisItem.Jahr_Role)
 
-        self.item.setData(self.erfassungsart_id, GisItem.ErfassungsArtId_Role)
+
+        """um nach einer Änderung des Statues den richtigen Wert im 
+        Abgrenzungs-View darzustellen, muss zusätzlich zum id (=wichtig für
+        das abspeichern) auch der Text des aktuellen Elements übergeben 
+        werden"""
         self.item.setData(self.status_id, GisItem.StatusId_Role)
+        self.item.setData(self.status_name, GisItem.StatusName_Role)
+
+        self.item.setData(self.erfassungsart_id, GisItem.ErfassungsArtId_Role)
+        self.item.setData(self.erfassungsart_name, GisItem.ErfassungsArtName_Role)
+        """"""
+
+        self.item.setData(self.uiBearbeiterLedit.text(), GisItem.Bearbeiter_Role)
+        self.item.setData(self.uiBezeichnungLedit.text(), GisItem.Bezeichnung_Role)
+        self.item.setData(self.uiAnmerkungPtext.toPlainText(), GisItem.Anmerkung_Role)
 
 
 class AbgrenzungDialog(MainDialog):
@@ -95,7 +154,8 @@ class AbgrenzungDialog(MainDialog):
         self.enableApply = True
         self.set_apply_button_text('&Speichern und Schließen')
 
-        self.setMaximumWidth(500)
+        self.setMinimumWidth(500)
+        self.setMaximumWidth(800)
 
     def accept(self):
         """

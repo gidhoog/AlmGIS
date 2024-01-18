@@ -12,8 +12,12 @@ class AbgrenzungItem(GisItem):
 
         self.setData(data_instance.jahr, GisItem.Jahr_Role)
         self.setData(data_instance.bearbeiter, GisItem.Bearbeiter_Role)
+
         self.setData(data_instance.erfassungsart_id, GisItem.ErfassungsArtId_Role)
+        self.setData(data_instance.rel_erfassungsart.name, GisItem.ErfassungsArtName_Role)
         self.setData(data_instance.status_id, GisItem.StatusId_Role)
+        self.setData(data_instance.rel_status.name_short, GisItem.StatusName_Role)
+
         self.setData(data_instance.anmerkung, GisItem.Anmerkung_Role)
         self.setData(data_instance.inaktiv, GisItem.Inactive_Role)
 
