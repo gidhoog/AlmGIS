@@ -31,8 +31,12 @@ class GisItem(QStandardItem):
     NichtWeide_Role = Qt.UserRole + 111
     Bezeichnung_Role = Qt.UserRole + 112
 
-    Layer_Role = Qt.UserRole + 199
     Geometry_Role = Qt.UserRole + 200
+
+    Layer_Role = Qt.UserRole + 210
+    KomplexLayer_Role = Qt.UserRole + 211
+    KoppelLayer_Role = Qt.UserRole + 212
+
 
     def __init__(self, data_instance=None):
         super().__init__()

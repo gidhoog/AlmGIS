@@ -7,6 +7,8 @@ class AbgrenzungItem(GisItem):
     ein Koppel-Item (=QStandardItem + Gis) zur Verwendung in Models
     """
 
+
+
     def __init__(self, data_instance=None):
         super().__init__(data_instance)
 

@@ -8,7 +8,7 @@ from qgis.PyQt.QtWidgets import (QLabel, QSpacerItem, QDockWidget, QToolButton, 
                                  QPushButton)
 
 from qgis.PyQt.QtCore import (QSortFilterProxyModel, Qt, QSize,
-                              QAbstractItemModel, QModelIndex)
+                              QAbstractItemModel, QModelIndex, pyqtSlot)
 
 from geoalchemy2.shape import to_shape
 from qgis.PyQt import QtWidgets
@@ -315,6 +315,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
     def loadKKTreeNew(self):
 
+        abgrenzungs_jahre = []
+
         def addKoppelFeature(koppel_item, koppel_layer):
 
             koppel_feat = QgsFeature(koppel_layer.fields())
@@ -354,19 +356,24 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 abgrenzung_item = AbgrenzungItem(abgrenzung)
                 self.komplex_root_item.appendRow(abgrenzung_item)
 
+                abgrenzungs_jahre.append(abgrenzung.jahr)
+
                 """erzeuge Layer für die Komplexe und Koppeln"""
                 koppel_layer = KoppelLayer(
                     "Polygon?crs=epsg:31259",
                     "Koppeln " + str(abgrenzung.jahr),
                     "memory"
                 )
+                abgrenzung_item.setData(koppel_layer, GisItem.KoppelLayer_Role)
                 komplex_layer = KomplexLayer(
                     "Polygon?crs=epsg:31259",
                     "Komplexe " + str(abgrenzung.jahr),
                     "memory"
                 )
+                abgrenzung_item.setData(komplex_layer, GisItem.KomplexLayer_Role)
                 """"""
 
+                #todo: ersete folgende zuordnung durch eine nachträgliche zuordnung
                 """finde und markiere die aktuelle Abgrenzung"""
                 if abgrenzung.jahr == max_version_year and abgrenzung.status_id == 0:
                     """diese version ist die aktuelle"""
@@ -419,8 +426,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                         GisItem.Feature_Role)
                     komplex_item.setData(komplex_layer, GisItem.Layer_Role)
 
+            # todo: hole aus dem model die aktuelle Abgrenzung
             print('...')
-
+            # for a in range(self.komplex_model.rowCount()):
+            for a in range(self.komplex_root_item.rowCount()):
+                abgr = self.komplex_root_item.child(a)
+                if abgr.data(GisItem.Jahr_Role) == max(abgrenzungs_jahre) and abgr.data(GisItem.StatusId_Role) == 0:
+                    abgr.setData(1, GisItem.Current_Role)
+                else:
+                    abgr.setData(0, GisItem.Current_Role)
 
             """wichig wenn neue features eingefügt werden, da die Änderung im
             provider nicht an den Layer übermittelt wird"""
@@ -609,6 +623,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.uiVersionTv.selectionModel().selectionChanged.connect(
         #     self.selectedVersionChanged)
 
+        self.komplex_model.dataChanged.connect(self.changedKKModel)
+
     def editAbgenzung(self):
 
         for idx in self.uiVersionTv.selectionModel().selectedIndexes():
@@ -767,6 +783,32 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         else:
             self.uiGisDock.widget().uiUnfoatDock.setVisible(False)
 
+    @pyqtSlot("QModelIndex", "QModelIndex", "QVector<int>")
+    def changedKKModel(self, top_left, bottom_right, roles):
+        """
+        Slot um Änderungen im Model 'komplex_model' abzufangen und darauf zu
+        reagieren
+
+        :param top_left: QModelIndex
+        :param bottom_right: QModelIndex
+        :param roles: UserRole der Klasse GisItem
+        :return: None
+        """
+
+        """verändertes item"""
+        changed_item = self.komplex_model.itemFromIndex(top_left)
+        """"""
+
+        """das Jahr wird verändert und der Name des Layers im LayerTree wird
+        daran angepasst"""
+        if GisItem.Jahr_Role in roles:
+
+            (changed_item.data(GisItem.KomplexLayer_Role)
+             .setName(f'Komplexe {changed_item.data(GisItem.Jahr_Role)}'))
+            (changed_item.data(GisItem.KoppelLayer_Role)
+             .setName(f'Koppeln {changed_item.data(GisItem.Jahr_Role)}'))
+        """"""
+
     def createAwbPrint(self):
         """
         erzeuge einen ausdruck mit den grundstücken dieses aktes die im
@@ -891,6 +933,12 @@ class KomplexModel(QStandardItemModel):
 
         item = self.itemFromIndex(index)
 
+        """erstelle eine Liste mit den Jahren der Abgrenzungen, um später das
+        aktuelle Jahr zu markieren"""
+        year_list = []
+        for abgr_jahr in range(self.invisibleRootItem().rowCount()):
+            year_list.append(self.invisibleRootItem().child(abgr_jahr).data(GisItem.Jahr_Role))
+
         """get the item of the first column if you are in an other"""
         if index.column() != 0:
             first_index = index.sibling(index.row(), 0)
@@ -903,6 +951,8 @@ class KomplexModel(QStandardItemModel):
         if index.column() == 0:
 
             if type(item) == AbgrenzungItem:
+                year_list.append(item.GisItem.Jahr_Role)
+
                 if role == Qt.DisplayRole:
                     return item.data(GisItem.Jahr_Role)
 
@@ -927,9 +977,11 @@ class KomplexModel(QStandardItemModel):
                     return first_item.data(GisItem.Jahr_Role)
                 if role == Qt.DecorationRole:
                     """zeige ein grünes Dreieck bei der aktuellen Abgrenzung"""
-                    if first_item.data(GisItem.Current_Role) == 1:
+                    # if first_item.data(GisItem.Current_Role) == 1:  # aktuell
+                    if first_item.data(GisItem.Jahr_Role) == max(year_list):  # aktuell
                         return QIcon(":/svg/resources/icons/triangle_right_green.svg")
-                    if first_item.data(GisItem.Current_Role) == 0:
+                    # if first_item.data(GisItem.Current_Role) == 0:
+                    else:
                         return QIcon(":/svg/resources/icons/_leeres_icon.svg")
                     """"""
 
