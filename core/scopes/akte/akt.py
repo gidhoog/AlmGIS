@@ -193,6 +193,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """"""
 
         self.uiVersionTv.setColumnHidden(0, True)
+        self.uiVersionTv.setColumnHidden(5, True)
+        self.uiVersionTv.setColumnHidden(6, True)
+        self.uiVersionTv.setColumnHidden(7, True)
+        self.uiVersionTv.setColumnHidden(8, True)
+
+        self.uiKKTv.setColumnHidden(1, True)
+        self.uiKKTv.setColumnHidden(2, True)
+        self.uiKKTv.setColumnHidden(3, True)
+        self.uiKKTv.setColumnHidden(4, True)
 
     def mapData(self):
         super().mapData()
@@ -392,13 +401,25 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                                QStandardItem(),
                                                QStandardItem(),
                                                QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
                                                QStandardItem()])
                     """"""
 
                     for koppel in komplex.rel_koppel:
 
                         koppel_item = KoppelItem(koppel)
-                        komplex_item.appendRow(koppel_item)
+                        komplex_item.appendRow([koppel_item,
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem()])
                         new_koppel_feat = addKoppelFeature(koppel_item, koppel_layer)
 
                         koppel_item.setData(new_koppel_feat[0], GisItem.Feature_Role)
@@ -854,9 +875,15 @@ class KomplexModel(QStandardItemModel):
         self.parent = parent
 
         self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(['Komplex/Koppel', 'ab Jahr',
-                                        'Status', 'Erfassungsart',
-                                        'Bearbeiter'])
+        self.setHorizontalHeaderLabels(['Komplex/Koppel',  # 0
+                                        'ab Jahr',  # 1
+                                        'Status',  # 2
+                                        'Erfassungsart',  # 3
+                                        'Bearbeiter',  # 4
+                                        'Nr',  # 5
+                                        'nicht Weide',  # 6
+                                        'Komplexfläche',  # 7
+                                        'Koppelfläche'])  # 8
 
     # def setData(self, index: QModelIndex, value, role: int = ...):
     #
@@ -965,12 +992,25 @@ class KomplexModel(QStandardItemModel):
                 if role == Qt.DisplayRole:
                     return first_item.data(GisItem.ErfassungsArtName_Role)
 
-        if index.column() == 4:
+        if index.column() == 7:
 
             if type(first_item) == KomplexItem:
 
                 if role == Qt.DisplayRole:
-                    return 'XXX'
+
+                    area = first_item.data(GisItem.Feature_Role).geometry().area()
+
+                    return area / 10000
+
+        if index.column() == 8:
+
+            if type(first_item) == KoppelItem:
+
+                if role == Qt.DisplayRole:
+
+                    area = first_item.data(GisItem.Feature_Role).geometry().area()
+
+                    return area / 10000
 
         # if index.column() == 3:
         #
