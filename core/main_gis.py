@@ -627,9 +627,18 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
             self.addLayer(gis_layer)
 
-    def addLayer(self, layer, group=None):
+    def addLayer(self, layer, group=None, treeview_only=False):
         """
-        füge den layer ins projekt ein
+        füge den layer ins projekt ein;
+        Wenn 'treeview_only' True ist, wird der Layer nur im Layer-Tree-View
+        und nicht in die Projekt-Instance eingefügt. Der Layer muss in diesem
+        Fall selbstständig vorher (!!) in die Projekt-Instance eingefügt
+        werden (mit self.project_instance.addMapLayer(...))!!!
+
+        :param layer:
+        :param group:
+        :param treeview_only: bool
+        :return:
         """
 
         """falsch der layer ungültig ist, dann zeige eine wahrnung;
@@ -648,7 +657,8 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
             """"""
 
             """füge den Layer in das Projekt ein (aber nicht sichtbar!)"""
-            self.project_instance.addMapLayer(layer, False)
+            if not treeview_only:
+                self.project_instance.addMapLayer(layer, False)
             """"""
 
             """positioniere den Layer entsprechend der Vorgaben im Layertree"""

@@ -217,12 +217,12 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        self.initGis()
 
         self.gst_table.initMaintable(self.session)
 
         self.loadKKTreeNew()
 
+        self.initGis()
         self.loadGisLayer()  # lade layer die in der db definiert sind
 
     def initGis(self):
@@ -313,9 +313,21 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         print(f'...')
 
-    def loadKKTreeNew(self):
+    def currentAbgenzungJahr(self):
+        """
+        erhalte das Referenzjahr der Abgrenzung aus den Daten des Item-Trees
+        :return: Int
+        """
 
-        abgrenzungs_jahre = []
+        jahre = []
+
+        for j in range(self.komplex_root_item.rowCount()):
+            abgr_item = self.komplex_root_item.child(j)
+            jahre.append(abgr_item.data(GisItem.Jahr_Role))
+
+        return max(jahre)
+
+    def loadKKTreeNew(self):
 
         def addKoppelFeature(koppel_item, koppel_layer):
 
@@ -344,19 +356,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                     .order_by(desc(BAbgrenzung.jahr))
                                                     ).unique().all()
 
-            """finde alle abgrenzungen mit dem status 0 und danach 
-            das jüngste Jahr"""
-            ist_versions = [i for i in abgrenzungs_instances if
-                            i.status_id == 0]
-            max_version_year = max([y.jahr for y in ist_versions])
-            """"""
-
             for abgrenzung in abgrenzungs_instances:
 
                 abgrenzung_item = AbgrenzungItem(abgrenzung)
                 self.komplex_root_item.appendRow(abgrenzung_item)
-
-                abgrenzungs_jahre.append(abgrenzung.jahr)
 
                 """erzeuge Layer für die Komplexe und Koppeln"""
                 koppel_layer = KoppelLayer(
@@ -365,29 +368,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                     "memory"
                 )
                 abgrenzung_item.setData(koppel_layer, GisItem.KoppelLayer_Role)
+
                 komplex_layer = KomplexLayer(
                     "Polygon?crs=epsg:31259",
                     "Komplexe " + str(abgrenzung.jahr),
                     "memory"
                 )
                 abgrenzung_item.setData(komplex_layer, GisItem.KomplexLayer_Role)
-                """"""
-
-                #todo: ersete folgende zuordnung durch eine nachträgliche zuordnung
-                """finde und markiere die aktuelle Abgrenzung"""
-                if abgrenzung.jahr == max_version_year and abgrenzung.status_id == 0:
-                    """diese version ist die aktuelle"""
-                    abgrenzung_item.setData(1, GisItem.Current_Role)
-                    """"""
-                    komplex_layer.base = True
-                    self.guiMainGis.addLayer(komplex_layer)
-                    self.guiMainGis.addLayer(koppel_layer)
-                else:
-                    """diese version nicht die aktuelle version"""
-                    abgrenzung_item.setData(0, GisItem.Current_Role)
-                    """"""
-                    self.guiMainGis.addLayer(komplex_layer, self.kk_gis_group)
-                    self.guiMainGis.addLayer(koppel_layer, self.kk_gis_group)
                 """"""
 
                 for komplex in abgrenzung.rel_komplex:
@@ -412,12 +399,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                             komplex_geom = komplex_geom.combine(new_koppel_feat[0].geometry())
 
                     komplex_feat = QgsFeature(komplex_layer.fields())
+
                     komplex_feat.setAttributes([
                         komplex_item.data(GisItem.Instance_Role).id,
                         1,
                         komplex_item.data(GisItem.Name_Role)
                     ])
+
                     komplex_feat.setGeometry(komplex_geom)
+
                     (result,
                      added_komp_feat) = komplex_layer.data_provider.addFeatures(
                         [komplex_feat])
@@ -426,39 +416,38 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                         GisItem.Feature_Role)
                     komplex_item.setData(komplex_layer, GisItem.Layer_Role)
 
-            # todo: hole aus dem model die aktuelle Abgrenzung
-            print('...')
-            # for a in range(self.komplex_model.rowCount()):
-            for a in range(self.komplex_root_item.rowCount()):
-                abgr = self.komplex_root_item.child(a)
-                if abgr.data(GisItem.Jahr_Role) == max(abgrenzungs_jahre) and abgr.data(GisItem.StatusId_Role) == 0:
-                    abgr.setData(1, GisItem.Current_Role)
-                else:
-                    abgr.setData(0, GisItem.Current_Role)
+                    """füge die erstellten Layer in die Projekt-Instance ein
+                    um einen gültigen Layer zu erhalten; in den Layer-Tree-View
+                    wird er hier noch nicht eingefügt"""
+                    self.guiMainGis.project_instance.addMapLayer(koppel_layer,
+                                                                 False)
 
-            """wichig wenn neue features eingefügt werden, da die Änderung im
-            provider nicht an den Layer übermittelt wird"""
-            koppel_layer.updateExtents()
-            """"""
+                self.guiMainGis.project_instance.addMapLayer(komplex_layer,
+                                                             False)
+                """"""
 
-            extent = koppel_layer.extent()
-            self.guiMainGis.uiCanvas.setExtent(extent)
+        """setze die 'Current_Role' der Layerfür das erste Mal beim laden 
+        der Daten"""
+        for abgr in range(self.komplex_root_item.rowCount()):
+            abgr_item = self.komplex_root_item.child(abgr)
 
-            self.uiVersionTv.setModel(self.komplex_model)
-            self.uiVersionTv.setColumnHidden(0, True)
+            abgr_status = abgr_item.data(GisItem.StatusId_Role)
+            abgr_jahr = abgr_item.data(GisItem.Jahr_Role)
 
-            # abgrenzung_model = AbgrenzungProxyModel()
-            # abgrenzung_model.setSourceModel(self.komplex_model)
-            #
-            # self.uiVersionTv.setModel(abgrenzung_model)
-            # # self.uiVersionTv.setRootIndex(abgrenzung_model.index(0,0))
-            # self.uiVersionTv.setRootIndex(self.komplex_model.invisibleRootItem().index())
+            if abgr_status == 0 and abgr_jahr == self.currentAbgenzungJahr():
+                abgr_item.setData(1, GisItem.Current_Role)
+            else:
+                abgr_item.setData(0, GisItem.Current_Role)
+        """"""
 
-            if self.komplex_root_item.rowCount() > 0:
+        self.uiVersionTv.setModel(self.komplex_model)
+        self.uiVersionTv.setColumnHidden(0, True)
 
-                self._selected_version_item = self.komplex_root_item.child(0)
-                self.setKKTv(self._selected_version_item.index())
-                self.uiVersionTv.selectRow(0)
+        if self.komplex_root_item.rowCount() > 0:
+
+            self._selected_version_item = self.komplex_root_item.child(0)
+            self.setKKTv(self._selected_version_item.index())
+            self.uiVersionTv.selectRow(0)
 
         self.uiVersionTv.selectionModel().selectionChanged.connect(
             self.selectedVersionChanged)
@@ -466,6 +455,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und
         übergebe sie dem main_gis widget"""
+
+        """füge die Abgrenzungslayer ein (Komplex und Koppel)"""
+        self.insertKKLayerToLTV()
+        """"""
 
         """setzte den base_id für das main_gis widget"""
         self.guiMainGis.base_id = self.entity_id
@@ -485,6 +478,33 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         """lade die gis-layer"""
         self.guiMainGis.loadLayer(akt_gis_scope_layer)
+
+    def insertKKLayerToLTV(self):
+        """
+        füge die Abgrenzungslayer (Komplex und Koppel) in den LTV ein (befinden
+        sich im komplex_model)
+
+        :return: None
+        """
+        for a in range(self.komplex_root_item.rowCount()):
+            abgr_item = self.komplex_root_item.child(a)
+            komplex_layer = abgr_item.data(GisItem.KomplexLayer_Role)
+            koppel_layer = abgr_item.data(GisItem.KoppelLayer_Role)
+
+            if abgr_item.data(GisItem.Current_Role) == 1:
+                komplex_layer.base = True
+                self.guiMainGis.addLayer(komplex_layer, treeview_only=True)
+                self.guiMainGis.addLayer(koppel_layer, treeview_only=True)
+                koppel_layer.updateExtents()
+                extent = koppel_layer.extent()
+                self.guiMainGis.uiCanvas.setExtent(extent)
+            else:
+                self.guiMainGis.addLayer(komplex_layer,
+                                         self.kk_gis_group,
+                                         treeview_only=True)
+                self.guiMainGis.addLayer(koppel_layer,
+                                         self.kk_gis_group,
+                                         treeview_only=True)
 
     def submitEntity(self):
 
@@ -979,9 +999,11 @@ class KomplexModel(QStandardItemModel):
                     """zeige ein grünes Dreieck bei der aktuellen Abgrenzung"""
                     # if first_item.data(GisItem.Current_Role) == 1:  # aktuell
                     if first_item.data(GisItem.Jahr_Role) == max(year_list):  # aktuell
+                        first_item.setData(1, GisItem.Current_Role)
                         return QIcon(":/svg/resources/icons/triangle_right_green.svg")
                     # if first_item.data(GisItem.Current_Role) == 0:
                     else:
+                        first_item.setData(0, GisItem.Current_Role)
                         return QIcon(":/svg/resources/icons/_leeres_icon.svg")
                     """"""
 

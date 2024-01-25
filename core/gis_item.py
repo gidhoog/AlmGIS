@@ -33,7 +33,9 @@ class GisItem(QStandardItem):
 
     Geometry_Role = Qt.UserRole + 200
 
+    """damit ein Feature den Layer kennen (für die Selection)"""
     Layer_Role = Qt.UserRole + 210
+    """"""
     KomplexLayer_Role = Qt.UserRole + 211
     KoppelLayer_Role = Qt.UserRole + 212
 
