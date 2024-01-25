@@ -177,14 +177,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.current_koppel_layer = None
         self.current_komplex_layer = None
 
-        # """erzeuge einen Layer für die Koppeln und füge ihn ins canvas ein"""
-        # self.koppel_layer_new = KoppelLayer("Polygon?crs=epsg:31259",
-        #                                     "Koppeln new1",
-        #                                     "memory"
-        #                                     )
-        # self.guiMainGis.addLayer(self.koppel_layer_new)
-        # """"""
-
     def initUi(self):
         super().initUi()
 
@@ -200,6 +192,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.setMinimumHeight(900)
         """"""
 
+        self.uiVersionTv.setColumnHidden(0, True)
+
     def mapData(self):
         super().mapData()
 
@@ -214,13 +208,20 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.guiMainGis.entity_id = self.data_instance.id
 
+        self.uiVersionTv.setModel(self.komplex_model)
+
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-
         self.gst_table.initMaintable(self.session)
 
-        self.loadKKTreeNew()
+        """lade die Abgrenzungsdaten"""
+        self.loadKKModel()
+        self.setCurrentRoleToKK()
+        self.selectFirstAbgrenzung()
+        self.uiVersionTv.selectionModel().selectionChanged.connect(
+            self.changedSelectedAbgrenzung)
+        """"""
 
         self.initGis()
         self.loadGisLayer()  # lade layer die in der db definiert sind
@@ -233,8 +234,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
     def updateKomplexe(self):
         """
-        temporäre und nur einmal verwendete funktion für zum aktualisieren
-        der neuen Tabellenstruktur
+        temporäre und nur einmal verwendete funktion für den Import der Daten
+        zum aktualisieren der Tabellenstruktur
+
         :return:
         """
         alm_new = []
@@ -327,7 +329,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         return max(jahre)
 
-    def loadKKTreeNew(self):
+    def loadKKModel(self):
 
         def addKoppelFeature(koppel_item, koppel_layer):
 
@@ -396,7 +398,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                         if komplex_geom == None:
                             komplex_geom = new_koppel_feat[0].geometry()
                         else:
-                            komplex_geom = komplex_geom.combine(new_koppel_feat[0].geometry())
+                            komplex_geom = komplex_geom.combine(
+                                new_koppel_feat[0].geometry())
 
                     komplex_feat = QgsFeature(komplex_layer.fields())
 
@@ -426,8 +429,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                                              False)
                 """"""
 
-        """setze die 'Current_Role' der Layerfür das erste Mal beim laden 
-        der Daten"""
+    def setCurrentRoleToKK(self):
+        """
+        setze die 'Current_Role' der KK-Layerfür das erste Mal beim laden
+        der Daten
+
+        :return:
+        """
+
         for abgr in range(self.komplex_root_item.rowCount()):
             abgr_item = self.komplex_root_item.child(abgr)
 
@@ -438,19 +447,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 abgr_item.setData(1, GisItem.Current_Role)
             else:
                 abgr_item.setData(0, GisItem.Current_Role)
-        """"""
 
-        self.uiVersionTv.setModel(self.komplex_model)
-        self.uiVersionTv.setColumnHidden(0, True)
+    def selectFirstAbgrenzung(self):
+        """
+        wenn eine Abgrenzung vorhanden ist, dann zeige die erste an
+
+        :return:
+        """
 
         if self.komplex_root_item.rowCount() > 0:
 
             self._selected_version_item = self.komplex_root_item.child(0)
             self.setKKTv(self._selected_version_item.index())
             self.uiVersionTv.selectRow(0)
-
-        self.uiVersionTv.selectionModel().selectionChanged.connect(
-            self.selectedVersionChanged)
 
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und
@@ -624,28 +633,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
         self.actionPrintAWB.triggered.connect(self.createAwbPrint)
 
-        # self.uicKkJahrCombo.currentIndexChanged.connect(self.loadKKTree)
-        # self.uicKkJahrComboNew.currentIndexChanged.connect(self.changedVersion)
-
-        # self.komplexe_view.clicked.connect(self.clickedTreeElement)
-        # self.kk_selection_model.selectionChanged.connect(self.treeselectionChanged)
-
         # self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
         # self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
 
         self.uiKKTv.selectionModel().selectionChanged.connect(
-            self.selectionChangedTreeNew)
+            self.changedSelectedKK)
 
-        self.uiEditVersionPbtn.clicked.connect(self.editAbgenzung)
-        self.uiVersionTv.doubleClicked.connect(self.editAbgenzung)
-
-
-        # self.uiVersionTv.selectionModel().selectionChanged.connect(
-        #     self.selectedVersionChanged)
+        self.uiEditVersionPbtn.clicked.connect(self.editAbgrenzung)
+        self.uiVersionTv.doubleClicked.connect(self.editAbgrenzung)
 
         self.komplex_model.dataChanged.connect(self.changedKKModel)
 
-    def editAbgenzung(self):
+    def editAbgrenzung(self):
 
         for idx in self.uiVersionTv.selectionModel().selectedIndexes():
             if idx.column() == 0:  # wähle nur indexe der ersten spalte!
@@ -658,12 +657,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
                 self.abgr_dialog.exec()
 
-                # self.abgr_dialog.rejected.connect(self.rejectEditingInDialog)
-
-    def selectedKKChanged(self, selected):
-
-        pass
-    def selectedVersionChanged(self, selected):
+    def changedSelectedAbgrenzung(self, selected):
 
         self._selected_version_index = selected[0].indexes()[0]
         self._selected_version_item = self.uiVersionTv.model()\
@@ -671,121 +665,63 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.setKKTv(self._selected_version_index)
 
-        # """lösche alle Features vom Layer Koppel"""
-        # with edit(self.koppel_layer_new):
-        #     listOfIds = [feat.id() for feat in self.koppel_layer_new.getFeatures()]
-        #     self.koppel_layer_new.deleteFeatures(listOfIds)
-        # """"""
-        #
-        # for kom in range(self._selected_version_item.rowCount()):
-        #
-        #     komplex = self._selected_version_item.child(kom)
-        #     for ko in range(komplex.rowCount()):
-        #         koppel = komplex.child(ko)
-        #         koppel_feat = koppel.data(GisItem.Feature_Role)
-        #         # (result, added_kop_feat) = self.koppel_dp_new.addFeatures(
-        #         #     [koppel_feat])
-        #         (result, added_kop_feat) = self.koppel_layer_new.data_provider.addFeatures(
-        #             [koppel_feat])
-        #         koppel.setData(added_kop_feat[0], GisItem.Feature_Role)
-        #
-        # self.koppel_layer_new.setName(f'Koppeln neu ')
-
     def setKKTv(self, index):
-
-        self.uiKKTv.setModel(self.komplex_model)
-        self.uiKKTv.expandAll()
-        # self.uiKKTv.setColumnWidth(0, 200)
-
-        self.uiKKTv.setRootIndex(index)
-
-    def selectionChangedTreeNew(self, tree_selection):
-
-        print(f'kk selection changed!!')
-        print(f'index: {tree_selection}')
-
-        # for idx in tree_selection.indexes():
-        #
-        #     item = self.komplex_model.itemFromIndex(idx)
-        #
-        #     print(f'{item.data(GisItem.Name_Role)}')
-
-        # feature_id_list = []
-        sel_item = []
-
-        for idx in self.uiKKTv.selectionModel().selectedIndexes():
-            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
-
-                item = self.komplex_model.itemFromIndex(idx)
-                print(f'item.data(GisItem.Feature_Role): {item.data(GisItem.Feature_Role)}')
-                sel_item.append(item)
-                # feature_id_list.append(item.data(GisItem.Feature_Role).id())
-
-                # print(f':: {item.data(GisItem.Name_Role)}')
-            # self.komplex_model.itemFromIndex(
-            #     self.kk_selection_model.selectedIndexes()[0]).data(
-            #     GisItem.Feature_Role).id()
-
-        print(f'feature_ids:')
-        for ii in sel_item:
-            print(f'name: {ii.data(GisItem.Name_Role)}  id: {ii.data(GisItem.Feature_Role)}')
-        print(f'fffffffffffffffffffffff')
-
-        # self.guiMainGis.layer_tree_view.setCurrentLayer(self.koppel_layer_new)
-        self.guiMainGis.layer_tree_view.setCurrentLayer(sel_item[0].data(GisItem.Layer_Role))
-        self.selectFeaturesNew([s.data(GisItem.Feature_Role).id() for s in sel_item])
-
-    def treeselectionChanged(self, tree_selection):
-
-        print(f'index: {tree_selection}')
-
-        sel_ids = []
-
-        for s in self.tree_selection_model.selectedIndexes():
-            if s.column() == 0:
-                kop_id = self.komplexe_view.model().getItem(s).data_instance.id
-                print(f'koppel: {kop_id}')
-                sel_ids.append(kop_id)
-
-        self.guiMainGis.layer_tree_view.setCurrentLayer(self.koppel_layer)
-        self.setSelectFeature(sel_ids)
-
-    def selectLayer(self, layer_id, feature_ids):
-
-        for layer in self.project_instance.mapLayers().values():
-
-            if layer_id == layer.style_id:
-                self.layer_tree_view.setCurrentLayer(layer)
-                self.setSelectFeature(feature_ids)
-
-    def selectFeaturesNew(self, feat_id_list):
-
-        self.guiMainGis.removeSelectedAll()
-        curr_layer = self.guiMainGis.layer_tree_view.currentLayer()
-
-        # curr_layer.select(feat_id_list.id())
-        # curr_layer.select([f.id() for f in curr_layer.getFeatures() if
-        #                    f['id'] in feat_id_list])
-        curr_layer.select([f.id() for f in curr_layer.getFeatures() if f.id()
-                           in feat_id_list])
-
-    def setSelectFeature(self, feature_ids):
         """
-        select features
-        :param feature_ids:
+        lade die Komplexe und Koppeln entsprechend der Auswahl im
+        Abgrenzungs-View
+
+        :param index:
         :return:
         """
 
+        self.uiKKTv.setModel(self.komplex_model)
+        self.uiKKTv.expandAll()
+
+        self.uiKKTv.setRootIndex(index)
+
+    def changedSelectedKK(self):
+        """
+        die Auswahl im KK-View ändert sich; die Selection im Kartenfenster
+        wird daran angepasst
+        :return:
+        """
+
+        """erzeuge eine Liste mit den selectierten Items"""
+        sel_item = []
+        for idx in self.uiKKTv.selectionModel().selectedIndexes():
+            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+                item = self.komplex_model.itemFromIndex(idx)
+                sel_item.append(item)
+        """"""
+
+        """setze den Layer als aktiven Layer, auf dem sich die ausgewählten
+        KK-Item-Features befinden"""
+        self.guiMainGis.layer_tree_view.setCurrentLayer(
+            sel_item[0].data(GisItem.Layer_Role))
+        """"""
+
+        """Selektiere die ausgewählten KK-Item-Features auf dem eben als aktiv
+        gesetzten Layer"""
+        self.selectFeatures(
+            [s.data(GisItem.Feature_Role).id() for s in sel_item])
+        """"""
+
+    def selectFeatures(self, feat_id_list):
+        """
+        Selektiere die Features auf dem aktiven Layer mittels der mitübergebenen
+        FeatureID-Liste
+
+        :param feat_id_list:
+        :return:
+        """
+
+        """hebe eine bisherige Selektion auf"""
         self.guiMainGis.removeSelectedAll()
-
-        print(f'tuple(feature_ids): {tuple(feature_ids)}')
-
-        # self.guiMainGis.layer_tree_view.currentLayer().select([1])
-        # self.guiMainGis.layer_tree_view.currentLayer().selectByExpression(f'"id" in {tuple(feature_ids)}')
-        # self.guiMainGis.layer_tree_view.currentLayer().selectByExpression(f'"id" in (492)')
+        """"""
 
         curr_layer = self.guiMainGis.layer_tree_view.currentLayer()
-        curr_layer.select([f.id() for f in curr_layer.getFeatures() if f['id'] in feature_ids])
+        curr_layer.select([f.id() for f in curr_layer.getFeatures() if f.id()
+                           in feat_id_list])
 
     def changedGisDockLevel(self, level):
         """
@@ -971,7 +907,7 @@ class KomplexModel(QStandardItemModel):
         if index.column() == 0:
 
             if type(item) == AbgrenzungItem:
-                year_list.append(item.GisItem.Jahr_Role)
+                year_list.append(item.data(GisItem.Jahr_Role))
 
                 if role == Qt.DisplayRole:
                     return item.data(GisItem.Jahr_Role)

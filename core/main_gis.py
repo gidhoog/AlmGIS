@@ -677,7 +677,6 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
             """falls ein base-layer eingefügt wird, dann verschiebe den 
             kartenausschnitt auf diesen"""
             if layer.base:
-                print(f'base_layer: {layer.name()}')
                 extent = layer.extent()
                 self.uiCanvas.setExtent(extent)
 
