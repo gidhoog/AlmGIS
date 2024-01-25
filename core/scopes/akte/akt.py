@@ -384,7 +384,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                     komplex_geom = None
 
                     komplex_item = KomplexItem(komplex)
-                    abgrenzung_item.appendRow(komplex_item)
+
+                    """füge die items der einzelnen Spalten ein; Leerwerte als
+                    Platzhalter, in der Funktion 'data()' des Models werden
+                    dann die Werte für die Anzeige gesteuert"""
+                    abgrenzung_item.appendRow([komplex_item,
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem(),
+                                               QStandardItem()])
+                    """"""
 
                     for koppel in komplex.rel_koppel:
 
@@ -844,9 +853,10 @@ class KomplexModel(QStandardItemModel):
 
         self.parent = parent
 
-        self.setColumnCount(4)
+        self.setColumnCount(5)
         self.setHorizontalHeaderLabels(['Komplex/Koppel', 'ab Jahr',
-                                        'Status', 'Erfassungsart'])
+                                        'Status', 'Erfassungsart',
+                                        'Bearbeiter'])
 
     # def setData(self, index: QModelIndex, value, role: int = ...):
     #
@@ -954,6 +964,13 @@ class KomplexModel(QStandardItemModel):
             if type(first_item) == AbgrenzungItem:
                 if role == Qt.DisplayRole:
                     return first_item.data(GisItem.ErfassungsArtName_Role)
+
+        if index.column() == 4:
+
+            if type(first_item) == KomplexItem:
+
+                if role == Qt.DisplayRole:
+                    return 'XXX'
 
         # if index.column() == 3:
         #
