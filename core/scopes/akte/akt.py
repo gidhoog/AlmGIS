@@ -31,6 +31,7 @@ from core.scopes.akte import akt_UI
 from core.scopes.akte.abgrenzung import Abgrenzung, AbgrenzungDialog
 from core.scopes.akte.akt_gst_main import GstMaintable
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
+from core.scopes.koppel.koppel import KoppelDialog, Koppel
 from core.scopes.koppel.koppel_item import KoppelItem
 
 import resources_rc
@@ -672,6 +673,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiEditVersionPbtn.clicked.connect(self.editAbgrenzung)
         self.uiVersionTv.doubleClicked.connect(self.editAbgrenzung)
 
+        self.uiKKTv.doubleClicked.connect(self.editKoppel)
+
         self.komplex_model.dataChanged.connect(self.changedKKModel)
 
     def editAbgrenzung(self):
@@ -682,6 +685,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 item = self.komplex_model.itemFromIndex(idx)
                 self.abgr = Abgrenzung(parent=self, item=item)
                 self.abgr_dialog = AbgrenzungDialog(self)
+                self.abgr_dialog.insertWidget(self.abgr)
+                self.abgr_dialog.resize(self.minimumSizeHint())
+
+                self.abgr_dialog.exec()
+
+    def editKoppel(self):
+
+        for idx in self.uiKKTv.selectionModel().selectedIndexes():
+            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+
+                item = self.komplex_model.itemFromIndex(idx)
+                self.abgr = Koppel(parent=self, item=item)
+                self.abgr_dialog = KoppelDialog(self)
                 self.abgr_dialog.insertWidget(self.abgr)
                 self.abgr_dialog.resize(self.minimumSizeHint())
 

@@ -26,6 +26,8 @@ call pyuic5 core/scopes/gst/gst_version_eigentuemer.ui -o core/scopes/gst/gst_ve
 
 call pyuic5 core/scopes/komplex/komplex_dataform.ui -o core/scopes/komplex/komplex_dataform_UI.py
 
+call pyuic5 core/scopes/koppel/koppel.ui -o core/scopes/koppel/koppel_UI.py
+
 echo -
 echo -
 echo -
