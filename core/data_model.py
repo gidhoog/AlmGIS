@@ -681,7 +681,7 @@ class BKoppel(Base):
     # komplex_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_version.id"))
     nr: Mapped[int]
     name: Mapped[str]
-    nicht_weide: Mapped[bool]
+    nicht_weide: Mapped[int]  # 0 = False und 1 = True
     bearbeiter: Mapped[str]
     seehoehe: Mapped[int]
     domes_id: Mapped[int]

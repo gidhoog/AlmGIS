@@ -12,25 +12,28 @@ from sqlalchemy import select
 
 class Koppel(QWidget, koppel_UI.Ui_Koppel):
 
-    # _erfassungsart_id = None
+    _nicht_weide = 0
     # _erfassungsart_name = ''
     # _status_id = None
     # _status_name = ''
     #
-    # @property  # getter
-    # def erfassungsart_id(self):
-    #
-    #     self._erfassungsart_id = self.uiErfassCombo.currentData(Qt.UserRole)
-    #     return self._erfassungsart_id
-    #
-    # @erfassungsart_id.setter
-    # def erfassungsart_id(self, value):
-    #
-    #     self.uiErfassCombo.setCurrentIndex(
-    #         self.uiErfassCombo.findData(value, Qt.UserRole)
-    #     )
-    #     self._erfassungsart_id = value
-    #
+    @property  # getter
+    def nicht_weide(self):
+
+        if self.uiNichtWeideCbox.checkState() == 2:
+            self._nicht_weide = 1
+        else:
+            self._nicht_weide = 0
+        return self._nicht_weide
+
+    @nicht_weide.setter
+    def nicht_weide(self, value):
+
+        if value == 1:
+            self.uiNichtWeideCbox.setChecked(Qt.Checked)
+
+        self._nicht_weide = value
+
     # @property  # getter
     # def erfassungsart_name(self):
     #
@@ -68,6 +71,9 @@ class Koppel(QWidget, koppel_UI.Ui_Koppel):
         self.uiAktNameLbl.setText(self.parent.name + ' (AZ '
                                   + str(self.parent.az) + ')')
 
+        komplex_name = self.item.parent().data(GisItem.Name_Role)
+        self.uiKomplexNameLbl.setText(komplex_name)
+
     #     self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
     #
     #     self.loadCombos()
@@ -80,8 +86,9 @@ class Koppel(QWidget, koppel_UI.Ui_Koppel):
         self.uiNameLedit.setText(self.item.data(GisItem.Name_Role))
         if self.item.data(GisItem.Nr_Role) is not None:
             self.uiNrSbox.setValue(self.item.data(GisItem.Nr_Role))
-        # self.uiNichtWeideCbox.setText(
-        #     self.item.data(GisItem.NichtWeide_Role))
+
+        self.nicht_weide = self.item.data(GisItem.NichtWeide_Role)
+
         self.uiAnmerkungPtext.setPlainText(
             self.item.data(GisItem.Anmerkung_Role))
 
@@ -118,6 +125,14 @@ class Koppel(QWidget, koppel_UI.Ui_Koppel):
     def submitData(self):
 
         self.item.setData(self.uiNameLedit.text(), GisItem.Name_Role)
+        self.item.setData(self.uiNrSbox.value(), GisItem.Nr_Role)
+
+        self.item.setData(self.nicht_weide, GisItem.NichtWeide_Role)
+
+        self.item.setData(self.uiAnmerkungPtext.toPlainText(),
+                          GisItem.Anmerkung_Role)
+
+
 
         # """um nach einer Änderung des Statues den richtigen Wert im
         # Abgrenzungs-View darzustellen, muss zusätzlich zum id (=wichtig für

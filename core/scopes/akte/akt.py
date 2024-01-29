@@ -184,6 +184,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uicTitleWdg = EntityTitel(self)
         self.uiTitleToolBar.addWidget(self.uicTitleWdg)
 
+        """zentriere den Header-Text"""
+        self.uiKKTv.header().setDefaultAlignment(Qt.AlignHCenter|Qt.AlignVCenter)
+        """"""
+
+        """mache den Header-Text 'bold'"""
+        header_font = self.uiKKTv.header().font()
+        header_font.setBold(True)
+        self.uiKKTv.header().setFont(header_font)
+        """"""
+
     def finalInit(self):
         super().finalInit()
 
@@ -192,12 +202,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.setMinimumHeight(900)
         """"""
 
+
         self.uiVersionTv.setColumnHidden(0, True)
         self.uiVersionTv.setColumnHidden(5, True)
         self.uiVersionTv.setColumnHidden(6, True)
         self.uiVersionTv.setColumnHidden(7, True)
         self.uiVersionTv.setColumnHidden(8, True)
 
+        self.uiKKTv.setColumnWidth(0, 400)
         self.uiKKTv.setColumnHidden(1, True)
         self.uiKKTv.setColumnHidden(2, True)
         self.uiKKTv.setColumnHidden(3, True)
@@ -755,9 +767,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         """setze den Layer als aktiven Layer, auf dem sich die ausgewählten
         KK-Item-Features befinden"""
-        self.guiMainGis.layer_tree_view.setCurrentLayer(
-            sel_item[0].data(GisItem.Layer_Role))
-        """"""
+        if sel_item != []:
+            self.guiMainGis.layer_tree_view.setCurrentLayer(
+                sel_item[0].data(GisItem.Layer_Role))
+            """"""
 
         """Selektiere die ausgewählten KK-Item-Features auf dem eben als aktiv
         gesetzten Layer"""
@@ -777,10 +790,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """hebe eine bisherige Selektion auf"""
         self.guiMainGis.removeSelectedAll()
         """"""
-
-        curr_layer = self.guiMainGis.layer_tree_view.currentLayer()
-        curr_layer.select([f.id() for f in curr_layer.getFeatures() if f.id()
-                           in feat_id_list])
+        if feat_id_list != []:
+            curr_layer = self.guiMainGis.layer_tree_view.currentLayer()
+            curr_layer.select([f.id() for f in curr_layer.getFeatures() if f.id()
+                               in feat_id_list])
 
     def changedGisDockLevel(self, level):
         """
@@ -905,7 +918,7 @@ class KomplexModel(QStandardItemModel):
         self.parent = parent
 
         self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(['Komplex/Koppel',  # 0
+        self.setHorizontalHeaderLabels(['Komplex-/Koppelname',  # 0
                                         'ab Jahr',  # 1
                                         'Status',  # 2
                                         'Erfassungsart',  # 3
@@ -915,30 +928,30 @@ class KomplexModel(QStandardItemModel):
                                         'Komplexfläche',  # 7
                                         'Koppelfläche'])  # 8
 
-    def setData(self, index: QModelIndex, value, role: int = ...):
-
-        item = self.itemFromIndex(index)
-
-        # if type(item) == TreeItemVersion and index.column() == 0:
-        #     item.setData(value, TreeItem.Code_Role)
-        #     self.dataChanged.emit(index, index)
-
-        if index.column() == 0:
-            item.setData(value, GisItem.Name_Role)
-            self.dataChanged.emit(index, index)
-
-            feat_id = item.data(GisItem.Feature_Role).id()
-            layer = item.data(GisItem.Layer_Role)
-            koppel_id = item.data(GisItem.Instance_Role).id
-
-            attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
-
-            # item.data(GisItem.Feature_Role)['name'] = value
-            layer.dataProvider().changeAttributeValues({feat_id: attrs})
-
-            self.parent.guiMainGis.uiCanvas.refresh()
-
-        return True
+    # def setData(self, index: QModelIndex, value, role: int = ...):
+    #
+    #     item = self.itemFromIndex(index)
+    #
+    #     # if type(item) == TreeItemVersion and index.column() == 0:
+    #     #     item.setData(value, TreeItem.Code_Role)
+    #     #     self.dataChanged.emit(index, index)
+    #
+    #     if index.column() == 0:
+    #         item.setData(value, GisItem.Name_Role)
+    #         self.dataChanged.emit(index, index)
+    #
+    #         feat_id = item.data(GisItem.Feature_Role).id()
+    #         layer = item.data(GisItem.Layer_Role)
+    #         koppel_id = item.data(GisItem.Instance_Role).id
+    #
+    #         attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
+    #
+    #         # item.data(GisItem.Feature_Role)['name'] = value
+    #         layer.dataProvider().changeAttributeValues({feat_id: attrs})
+    #
+    #         self.parent.guiMainGis.uiCanvas.refresh()
+    #
+    #     return True
 
     def flags(self, index):
 
@@ -950,7 +963,14 @@ class KomplexModel(QStandardItemModel):
         # else:
         #     return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        first_index = index.sibling(index.row(), 0)
+        first_item = self.itemFromIndex(first_index)
+
+        if type(first_item) == KomplexItem:
+
+            return Qt.ItemIsEnabled
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def data(self, index: QModelIndex, role: int = ...):
 
@@ -1016,6 +1036,8 @@ class KomplexModel(QStandardItemModel):
             if type(first_item) == AbgrenzungItem:
                 if role == Qt.DisplayRole:
                     return first_item.data(GisItem.StatusName_Role)
+                if role == Qt.TextAlignmentRole:
+                    return Qt.AlignHCenter | Qt.AlignVCenter
 
         if index.column() == 3:
 
@@ -1023,25 +1045,51 @@ class KomplexModel(QStandardItemModel):
                 if role == Qt.DisplayRole:
                     return first_item.data(GisItem.ErfassungsArtName_Role)
 
+        if index.column() == 4:
+
+            if type(first_item) == AbgrenzungItem:
+                if role == Qt.DisplayRole:
+                    return first_item.data(GisItem.Bearbeiter_Role)
+
+        if index.column() == 5:
+
+            if type(first_item) == KoppelItem:
+                if role == Qt.DisplayRole:
+                    return first_item.data(GisItem.Nr_Role)
+                if role == Qt.TextAlignmentRole:
+                    return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 6:  # nicht Weide
+
+            if type(first_item) == KoppelItem:
+                if role == Qt.DisplayRole:
+                    nw = first_item.data(GisItem.NichtWeide_Role)
+                    if nw == 1:
+                        return 'X'
+                if role == Qt.TextAlignmentRole:
+                    return Qt.AlignHCenter | Qt.AlignVCenter
+
         if index.column() == 7:
 
             if type(first_item) == KomplexItem:
 
                 if role == Qt.DisplayRole:
-
                     area = first_item.data(GisItem.Feature_Role).geometry().area()
-
-                    return area / 10000
+                    area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(".", ",")
+                    return area_r +  ' ha'
+                if role == Qt.TextAlignmentRole:
+                    return Qt.AlignRight | Qt.AlignVCenter
 
         if index.column() == 8:
 
             if type(first_item) == KoppelItem:
 
                 if role == Qt.DisplayRole:
-
                     area = first_item.data(GisItem.Feature_Role).geometry().area()
-
-                    return area / 10000
+                    area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(".", ",")
+                    return area_r +  ' ha'
+                if role == Qt.TextAlignmentRole:
+                    return Qt.AlignRight | Qt.AlignVCenter
 
         # if index.column() == 3:
         #

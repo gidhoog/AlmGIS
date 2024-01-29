@@ -602,6 +602,12 @@
                 <property name="alternatingRowColors">
                  <bool>true</bool>
                 </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::ExtendedSelection</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>false</bool>
+                </property>
                </widget>
               </item>
              </layout>

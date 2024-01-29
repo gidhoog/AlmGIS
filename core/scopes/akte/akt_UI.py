@@ -319,6 +319,8 @@ class Ui_Akt(object):
         self.verticalLayout_8.addLayout(self.horizontalLayout_3)
         self.uiKKTv = QtWidgets.QTreeView(self.uiTreeFrm)
         self.uiKKTv.setAlternatingRowColors(True)
+        self.uiKKTv.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.uiKKTv.setSortingEnabled(False)
         self.uiKKTv.setObjectName("uiKKTv")
         self.verticalLayout_8.addWidget(self.uiKKTv)
         self.horizontalLayout_4.addWidget(self.splitter)
