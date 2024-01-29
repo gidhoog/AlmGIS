@@ -7,7 +7,7 @@ from qgis.core import QgsVectorLayer, edit, QgsFeature, \
 from core.config import alm_data_db_path
 
 
-def cut_koppel_gstversion():
+def cut_koppel_gstversion(koppel_layer):
     """
     methode zu verschneiden der layer koppel_aktuell ('v_koppel_aktuell') und der
     Grundstücke, die einem Akt zugeordnet sind ('v_alm_gst')
@@ -44,12 +44,7 @@ def cut_koppel_gstversion():
         """führe den verschnitt durch und definiere eine variable mit dem
         virtuellen verschnittlayer"""
         intersect = processing.run("native:intersection", {
-            'INPUT': QgsProcessingFeatureSourceDefinition(
-                str(alm_data_db_path.absolute()) + '|layername=v_koppel_aktuell',
-                selectedFeaturesOnly=False,
-                featureLimit=-1,
-                flags=QgsProcessingFeatureSourceDefinition.FlagOverrideDefaultGeometryCheck,
-                geometryCheck=QgsFeatureRequest.GeometryNoCheck),
+            'INPUT': koppel_layer,
             'OVERLAY': QgsProcessingFeatureSourceDefinition(
                 str(alm_data_db_path.absolute()) + '|layername=v_alm_gst',
                 selectedFeaturesOnly=False,
@@ -61,6 +56,7 @@ def cut_koppel_gstversion():
             'OVERLAY_FIELDS_PREFIX': '',
             'OUTPUT': 'TEMPORARY_OUTPUT',
             'GRID_SIZE': None})
+
         virt_intersection = intersect['OUTPUT']
         """"""
 

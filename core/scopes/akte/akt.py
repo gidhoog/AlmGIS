@@ -175,8 +175,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.komplex_model = KomplexModel(self)
         self.komplex_root_item = self.komplex_model.invisibleRootItem()
 
-        self.current_koppel_layer = None
-        self.current_komplex_layer = None
+        self.current_abgrenzung_item = None
 
     def initUi(self):
         super().initUi()
@@ -476,6 +475,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
             if abgr_status == 0 and abgr_jahr == self.currentAbgenzungJahr():
                 abgr_item.setData(1, GisItem.Current_Role)
+                self.current_abgrenzung_item = abgr_item
             else:
                 abgr_item.setData(0, GisItem.Current_Role)
 
@@ -844,7 +844,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def updateAkt(self):
 
         """führe den verschnitt komplexe und gst-version durch"""
-        cut_koppel_gstversion()
+        current_koppel_layer = self.current_abgrenzung_item.data(GisItem.KoppelLayer_Role)
+        cut_koppel_gstversion(current_koppel_layer)
         """"""
 
         """update canvas"""
@@ -989,6 +990,7 @@ class KomplexModel(QStandardItemModel):
                     # if first_item.data(GisItem.Current_Role) == 1:  # aktuell
                     if first_item.data(GisItem.Jahr_Role) == max(year_list):  # aktuell
                         first_item.setData(1, GisItem.Current_Role)
+                        self.parent.current_abgrenzung_item = first_item
                         return QIcon(":/svg/resources/icons/triangle_right_green.svg")
                     # if first_item.data(GisItem.Current_Role) == 0:
                     else:
