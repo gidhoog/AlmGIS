@@ -65,28 +65,29 @@ class Koppel(QWidget, koppel_UI.Ui_Koppel):
         self.parent = parent
         self.item = item
 
-    #     self.uiAktNameLbl.setText(self.parent.name + ' (AZ '
-    #                               + str(self.parent.az) + ')')
-    #
+        self.uiAktNameLbl.setText(self.parent.name + ' (AZ '
+                                  + str(self.parent.az) + ')')
+
     #     self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
     #
     #     self.loadCombos()
-    #
-    #     self.mapData()
-    #
-    # def mapData(self):
-    #     # self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
-    #
-    #     self.uiJahrSbox.setValue(self.item.data(GisItem.Jahr_Role))
-    #     self.uiBearbeiterLedit.setText(self.item.data(GisItem.Bearbeiter_Role))
-    #     self.uiBezeichnungLedit.setText(
-    #         self.item.data(GisItem.Bezeichnung_Role))
-    #     self.uiAnmerkungPtext.setPlainText(
-    #         self.item.data(GisItem.Anmerkung_Role))
-    #
-    #     self.erfassungsart_id = self.item.data(GisItem.ErfassungsArtId_Role)
-    #     self.status_id = self.item.data(GisItem.StatusId_Role)
-    #
+
+        self.mapData()
+
+    def mapData(self):
+        # self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
+
+        self.uiNameLedit.setText(self.item.data(GisItem.Name_Role))
+        if self.item.data(GisItem.Nr_Role) is not None:
+            self.uiNrSbox.setValue(self.item.data(GisItem.Nr_Role))
+        # self.uiNichtWeideCbox.setText(
+        #     self.item.data(GisItem.NichtWeide_Role))
+        self.uiAnmerkungPtext.setPlainText(
+            self.item.data(GisItem.Anmerkung_Role))
+
+        area = self.item.data(GisItem.Feature_Role).geometry().area()
+        self.uiAreaLbl.setText(str(area))
+
     # def changedStatus(self):
     #
     #     self.status_id = self.uiStatusCombo.currentData(Qt.UserRole)
@@ -114,28 +115,28 @@ class Koppel(QWidget, koppel_UI.Ui_Koppel):
     #         for status in status_di:
     #             self.uiStatusCombo.addItem(status.name_short, status.id)
     #
-    # def submitData(self):
-    #
-    #     self.item.setData(self.uiJahrSbox.value(), GisItem.Jahr_Role)
-    #
-    #     """um nach einer Änderung des Statues den richtigen Wert im
-    #     Abgrenzungs-View darzustellen, muss zusätzlich zum id (=wichtig für
-    #     das abspeichern) auch der Text des aktuellen Elements übergeben
-    #     werden"""
-    #     self.item.setData(self.status_id, GisItem.StatusId_Role)
-    #     self.item.setData(self.status_name, GisItem.StatusName_Role)
-    #
-    #     self.item.setData(self.erfassungsart_id, GisItem.ErfassungsArtId_Role)
-    #     self.item.setData(self.erfassungsart_name,
-    #                       GisItem.ErfassungsArtName_Role)
-    #     """"""
-    #
-    #     self.item.setData(self.uiBearbeiterLedit.text(),
-    #                       GisItem.Bearbeiter_Role)
-    #     self.item.setData(self.uiBezeichnungLedit.text(),
-    #                       GisItem.Bezeichnung_Role)
-    #     self.item.setData(self.uiAnmerkungPtext.toPlainText(),
-    #                       GisItem.Anmerkung_Role)
+    def submitData(self):
+
+        self.item.setData(self.uiNameLedit.text(), GisItem.Name_Role)
+
+        # """um nach einer Änderung des Statues den richtigen Wert im
+        # Abgrenzungs-View darzustellen, muss zusätzlich zum id (=wichtig für
+        # das abspeichern) auch der Text des aktuellen Elements übergeben
+        # werden"""
+        # self.item.setData(self.status_id, GisItem.StatusId_Role)
+        # self.item.setData(self.status_name, GisItem.StatusName_Role)
+        #
+        # self.item.setData(self.erfassungsart_id, GisItem.ErfassungsArtId_Role)
+        # self.item.setData(self.erfassungsart_name,
+        #                   GisItem.ErfassungsArtName_Role)
+        # """"""
+        #
+        # self.item.setData(self.uiBearbeiterLedit.text(),
+        #                   GisItem.Bearbeiter_Role)
+        # self.item.setData(self.uiBezeichnungLedit.text(),
+        #                   GisItem.Bezeichnung_Role)
+        # self.item.setData(self.uiAnmerkungPtext.toPlainText(),
+        #                   GisItem.Anmerkung_Role)
 
 
 class KoppelDialog(MainDialog):

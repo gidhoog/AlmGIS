@@ -701,7 +701,20 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 self.abgr_dialog.insertWidget(self.abgr)
                 self.abgr_dialog.resize(self.minimumSizeHint())
 
-                self.abgr_dialog.exec()
+                if self.abgr_dialog.exec():
+                    self.komplex_model.layoutChanged.emit()
+                    feat_id = item.data(GisItem.Feature_Role).id()
+                    layer = item.data(GisItem.Layer_Role)
+                    koppel_id = item.data(GisItem.Instance_Role).id
+                    koppel_name = item.data(GisItem.Name_Role)
+                    attrs = {0: koppel_id,
+                             1: koppel_name,
+                             2: None,
+                             3: None,
+                             4: None,
+                             5: '0,123'}
+                    layer.dataProvider().changeAttributeValues({feat_id: attrs})
+                    self.guiMainGis.uiCanvas.refresh()
 
     def changedSelectedAbgrenzung(self, selected):
 
@@ -902,30 +915,30 @@ class KomplexModel(QStandardItemModel):
                                         'Komplexfläche',  # 7
                                         'Koppelfläche'])  # 8
 
-    # def setData(self, index: QModelIndex, value, role: int = ...):
-    #
-    #     item = self.itemFromIndex(index)
-    #
-    #     # if type(item) == TreeItemVersion and index.column() == 0:
-    #     #     item.setData(value, TreeItem.Code_Role)
-    #     #     self.dataChanged.emit(index, index)
-    #
-    #     if index.column() == 0:
-    #         item.setData(value, GisItem.Name_Role)
-    #         self.dataChanged.emit(index, index)
-    #
-    #         feat_id = item.data(GisItem.Feature_Role).id()
-    #         layer = item.data(GisItem.Layer_Role)
-    #         koppel_id = item.data(GisItem.Instance_Role).id
-    #
-    #         attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
-    #
-    #         # item.data(GisItem.Feature_Role)['name'] = value
-    #         layer.dataProvider().changeAttributeValues({feat_id: attrs})
-    #
-    #         self.parent.guiMainGis.uiCanvas.refresh()
-    #
-    #     return True
+    def setData(self, index: QModelIndex, value, role: int = ...):
+
+        item = self.itemFromIndex(index)
+
+        # if type(item) == TreeItemVersion and index.column() == 0:
+        #     item.setData(value, TreeItem.Code_Role)
+        #     self.dataChanged.emit(index, index)
+
+        if index.column() == 0:
+            item.setData(value, GisItem.Name_Role)
+            self.dataChanged.emit(index, index)
+
+            feat_id = item.data(GisItem.Feature_Role).id()
+            layer = item.data(GisItem.Layer_Role)
+            koppel_id = item.data(GisItem.Instance_Role).id
+
+            attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
+
+            # item.data(GisItem.Feature_Role)['name'] = value
+            layer.dataProvider().changeAttributeValues({feat_id: attrs})
+
+            self.parent.guiMainGis.uiCanvas.refresh()
+
+        return True
 
     def flags(self, index):
 
