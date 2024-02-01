@@ -1,7 +1,10 @@
 from datetime import datetime
 from qgis.PyQt.QtWidgets import QMessageBox
+
 import processing
 from processing.core.Processing import Processing
+from processing.tools import dataobjects
+
 from qgis.core import QgsVectorLayer, edit, QgsFeature, \
     QgsProcessingFeatureSourceDefinition, QgsFeatureRequest
 from core.config import alm_data_db_path
@@ -41,6 +44,12 @@ def cut_koppel_gstversion(koppel_layer):
                 layer_intersect.deleteFeatures(listOfIds)
         """"""
 
+        """vermeide generell einen Geometrie-Check beim Verschnitt für beide (!!)
+        Layer"""
+        context = dataobjects.createContext()
+        context.setInvalidGeometryCheck(QgsFeatureRequest.GeometryNoCheck)
+        """"""
+
         """führe den verschnitt durch und definiere eine variable mit dem
         virtuellen verschnittlayer"""
         intersect = processing.run("native:intersection", {
@@ -55,7 +64,9 @@ def cut_koppel_gstversion(koppel_layer):
             'OVERLAY_FIELDS': [],
             'OVERLAY_FIELDS_PREFIX': '',
             'OUTPUT': 'TEMPORARY_OUTPUT',
-            'GRID_SIZE': None})
+            'GRID_SIZE': None},
+            context=context
+                                   )
 
         virt_intersection = intersect['OUTPUT']
         """"""
@@ -100,11 +111,12 @@ def cut_koppel_gstversion(koppel_layer):
         layer_intersect.commitChanges()
         """"""
 
-    except:
+    except Exception as e:
         """der verschnitt kann nicht durchgeführt werden"""
         msg = QMessageBox()
-        msg.setText("Der Verschnitt der aktuellen Koppeln und Grundstücken die im "
-                    "AW-Buch eingetragen sind konnte nicht "
-                    "durchgeführt werden.")
+        msg.setWindowTitle('Fehlermeldung')
+        msg.setText(f"Der Verschnitt der aktuellen Koppeln und Grundstücken die im "
+                    f"AW-Buch eingetragen sind konnte aus folgendem Grund nicht "
+                    f"durchgeführt werden: \n\n{e}")
         msg.exec_()
         """"""

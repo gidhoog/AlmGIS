@@ -301,7 +301,7 @@
         </widget>
         <widget class="QWidget" name="uiKomplexTab">
          <attribute name="title">
-          <string>Komplexe</string>
+          <string>Abgrenzung</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>

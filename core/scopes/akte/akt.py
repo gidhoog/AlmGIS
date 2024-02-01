@@ -169,6 +169,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         """definiere notwendige tabellen und füge sie ein"""
         self.gst_table = GstMaintable(self)
+
+
+
         self.uiGstListeVlay.addWidget(self.gst_table)
         """"""
 
@@ -218,6 +221,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def mapData(self):
         super().mapData()
 
+        cut_koppel_gst_list = self.data_instance.rel_abgrenzung[1].rel_komplex[0].rel_koppel[0].rel_cut_koppel_gst
+
         self.az = self.data_instance.az
         self.name = self.data_instance.name
         self.stz = self.data_instance.stz
@@ -234,7 +239,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        self.gst_table.initMaintable(self.session)
+        # self.gst_table.initMaintable(self.session)
+        self.gst_table.initMaintable(di_list=self.data_instance.rel_gst_zuordnung)
 
         """lade die Abgrenzungsdaten"""
         self.loadKKModel()
@@ -700,7 +706,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 self.abgr_dialog.insertWidget(self.abgr)
                 self.abgr_dialog.resize(self.minimumSizeHint())
 
-                self.abgr_dialog.exec()
+                if self.abgr_dialog.exec():
+
+                    self.updateAkt()
 
     def editKoppel(self):
 
@@ -1024,6 +1032,7 @@ class KomplexModel(QStandardItemModel):
                     if first_item.data(GisItem.Jahr_Role) == max(year_list):  # aktuell
                         first_item.setData(1, GisItem.Current_Role)
                         self.parent.current_abgrenzung_item = first_item
+                        print(f'--> set current layer')
                         return QIcon(":/svg/resources/icons/triangle_right_green.svg")
                     # if first_item.data(GisItem.Current_Role) == 0:
                     else:

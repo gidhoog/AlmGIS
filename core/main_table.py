@@ -29,6 +29,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
     """klasse des daten-modeles"""
     data_model_class = None
+    table_model_class = None
     """"""
 
     """titel für den main_tabel"""
@@ -588,7 +589,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         pass
 
-    def initMaintable(self, session=None):
+    def initMaintable(self, session=None, di_list=[]):
         """
         initialisiere maintable
 
@@ -597,30 +598,38 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         :return:
         """
         self.initUi()
-        self.setMaintableColumns()
 
-        self.maintable_session = session
-
-        if session:
-            # self.loadData()
-            self.loadDataBySession()
-            # self.filter_proxy.setSourceModel(self.main_table_model)
-            # self.maintable_view.setModel(self.filter_proxy)
+        if di_list:
+            self.main_table_model = self.table_model_class(self,
+                                                           di_list=di_list)
+            self.maintable_view.setModel(self.main_table_model)
+            print(f'....')
         else:
-            self.main_table_model = self.data_model_class(self, self.maintable_dataarray)
+            self.setMaintableColumns()
 
-        self.filter_proxy.setSourceModel(self.main_table_model)
-        self.maintable_view.setModel(self.filter_proxy)
+            self.maintable_session = session
 
-        self.updateFooter()
-        self.setFilter()
+            if session:
+                # self.loadData()
+                self.loadDataBySession()
+                # self.filter_proxy.setSourceModel(self.main_table_model)
+                # self.maintable_view.setModel(self.filter_proxy)
+            else:
+                self.main_table_model = self.data_model_class(
+                    self, self.maintable_dataarray)
 
-        self.setAddEntityMenu()
-        self.setMaintableLayout()
+            self.filter_proxy.setSourceModel(self.main_table_model)
+            self.maintable_view.setModel(self.filter_proxy)
 
-        self.signals()
+            self.updateFooter()
+            self.setFilter()
 
-        self.finalInit()
+            self.setAddEntityMenu()
+            self.setMaintableLayout()
+
+            self.signals()
+
+            self.finalInit()
 
     def finalInit(self):
         """

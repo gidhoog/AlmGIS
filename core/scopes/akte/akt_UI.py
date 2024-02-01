@@ -372,7 +372,7 @@ class Ui_Akt(object):
         self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiEigenuemerTab), _translate("Akt", "Eigentümer"))
         self.label_5.setText(_translate("Akt", "Abgrenzungen:"))
         self.label_6.setText(_translate("Akt", "Komplexe und Koppeln:"))
-        self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiKomplexTab), _translate("Akt", "Komplexe"))
+        self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiKomplexTab), _translate("Akt", "Abgrenzung"))
         self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiWeideeinrichtungTab), _translate("Akt", "Weideeinrichtungen"))
         self.tabAkt.setTabText(self.tabAkt.indexOf(self.uiAmaFfGisTab), _translate("Akt", "AMA"))
         self.uiTitleToolBar.setWindowTitle(_translate("Akt", "toolBar"))

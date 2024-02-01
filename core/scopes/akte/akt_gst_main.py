@@ -1,6 +1,11 @@
-from qgis.PyQt.QtCore import Qt, QModelIndex
+from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QHeaderView
+
+from qgis.core import QgsGeometry
+
+from geoalchemy2.shape import to_shape
+
 from sqlalchemy import func
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
@@ -9,6 +14,8 @@ from core.main_dialog import MainDialog
 from core.main_table import MainTable, MaintableColumn, \
     MainTableModel, MainTableView
 import typing
+
+from operator import attrgetter
 
 from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
@@ -48,6 +55,129 @@ class GstZuordnungMainDialog(MainDialog):
         self.set_reject_button_text('&Schließen')
 
 
+class GstModelNew(QAbstractTableModel):
+
+    def __init__(self, parent, di_list=None):
+        super(__class__, self).__init__()
+
+        self.di_list = di_list
+
+        self.header = ['Gst-Nr',
+                       'Ez',
+                       'KG-Nr',
+                       'KG-Name',
+                       'AWB',
+                       'Rechtsgrundlage',
+                       'beweidet (%)',
+                       'GIS-Fläche',
+                       'GB-Fläche',
+                       'Datenstand']
+
+    def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+        """
+        erzeuge ein basis-model
+        """
+        row = index.row()
+        col = index.column()
+
+        if index.column() == 0:
+            if role == Qt.DisplayRole:
+                return self.di_list[row].rel_gst.gst
+
+        if index.column() == 1:
+            if role == Qt.DisplayRole:
+
+                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                return last_gst.rel_alm_gst_ez.ez
+
+        if index.column() == 2:
+            if role == Qt.DisplayRole:
+                return self.di_list[row].rel_gst.kgnr
+
+        if index.column() == 3:
+            if role == Qt.DisplayRole:
+                return self.di_list[row].rel_gst.rel_kat_gem.kgname
+
+        if index.column() == 4:
+            if role == Qt.DisplayRole:
+                return self.di_list[row].rel_awb_status.name
+
+        if index.column() == 5:
+            if role == Qt.DisplayRole:
+                return self.di_list[row].rel_rechtsgrundlage.name
+
+        if index.column() == 7:  # gis-flaeche
+            if role == Qt.DisplayRole:
+
+                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                gst_geom = QgsGeometry.fromWkt(
+                    to_shape(last_gst.geometry).wkt
+                )
+
+                return ('{:.4f}'.format(round(float(gst_geom.area()) / 10000, 4))
+                        .replace(".", ",")) + ' ha'
+
+        if index.column() == 8:
+            if role == Qt.DisplayRole:
+
+                area = 0
+                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+                for nutz in last_gst.rel_alm_gst_nutzung:
+                    area = area + nutz.area
+
+                return ('{:.4f}'.format(round(float(area) / 10000, 4))
+                        .replace(".", ",")) + ' ha'
+
+        if index.column() == 9:
+            if role == Qt.DisplayRole:
+
+                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                return last_gst.rel_alm_gst_ez.datenstand
+
+        # return super().data(index, role)
+
+    def rowCount(self, parent: QModelIndex = ...):
+        """
+        definiere die zeilenanzahl
+        """
+
+        if self.di_list:
+            return len(self.di_list)
+        else:
+            return 0
+
+    def columnCount(self, parent: QModelIndex = ...):
+        """
+        definiere die spaltenanzahl
+        """
+        return 10
+
+    def headerData(self, column, orientation, role=None):
+        """
+        wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+        dann nehme diese
+        """
+        super().headerData(column, orientation, role)
+
+        if self.header:
+            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+
+                return self.header[column]
+        # else:
+        #     return super().headerData(column, orientation, role)
+
+
 class GstMaintable(MainTable):
     """
     grundstückstabelle im akt
@@ -59,6 +189,7 @@ class GstMaintable(MainTable):
     _entity_widget = GstZuordnungDataForm
     entity_dialog_class = GstDialog
     data_model_class = BGstZuordnung
+    table_model_class = GstModelNew
 
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
     _delete_window_title = ["Grundstück löschen", "Grundstücke löschen"]
@@ -249,6 +380,50 @@ class GstMaintable(MainTable):
 
         return GstModel(self, self.maintable_dataarray)
 
+
+# class GstModelNew(QAbstractTableModel):
+#
+#     def __init__(self, parent, di_list=None):
+#         super(__class__, self).__init__(parent)
+#
+#         self.di_list = di_list
+#
+#         self.header = ['aa', 'bb', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc']
+#
+#     def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+#         """
+#         erzeuge ein basis-model
+#         """
+#
+#     def rowCount(self, parent: QModelIndex = ...):
+#         """
+#         definiere die zeilenanzahl
+#         """
+#
+#         if self.di_list:
+#             return len(self.di_list)
+#         else:
+#             return 0
+#
+#     def columnCount(self, parent: QModelIndex = ...):
+#         """
+#         definiere die spaltenanzahl
+#         """
+#         return 10
+#
+#     def headerData(self, column, orientation, role=None):
+#         """
+#         wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+#         dann nehme diese
+#         """
+#         super().headerData(column, orientation, role)
+#
+#         if self.header:
+#             if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+#
+#                 return self.header[column]
+#         # else:
+#         #     return super().headerData(column, orientation, role)
 
 class GstModel(MainTableModel):
 
