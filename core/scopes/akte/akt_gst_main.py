@@ -1,6 +1,6 @@
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QHeaderView
+from qgis.PyQt.QtWidgets import QHeaderView, QPushButton
 
 from qgis.core import QgsGeometry
 
@@ -10,6 +10,8 @@ from sqlalchemy import func
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt, BKoppel, BAbgrenzung
+from core.gis_item import GisItem
+from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
 from core.main_table import MainTable, MaintableColumn, \
     MainTableModel, MainTableView
@@ -68,12 +70,14 @@ class GstModelNew(QAbstractTableModel):
                        'KG-Name',
                        'AWB',
                        'Rechtsgrundlage',
-                       'beweidet (%)',
-                       'GIS-Fläche',
                        'GB-Fläche',
+                       'GIS-Fläche',
+                       'davon beweidet',
+                       'beweidet (%)',
                        'Datenstand']
 
     def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+
         """
         erzeuge ein basis-model
         """
@@ -105,38 +109,92 @@ class GstModelNew(QAbstractTableModel):
             if role == Qt.DisplayRole:
                 return self.di_list[row].rel_awb_status.name
 
+            if role == Qt.EditRole:
+                return self.di_list[row].rel_awb_status.id
+
         if index.column() == 5:
             if role == Qt.DisplayRole:
                 return self.di_list[row].rel_rechtsgrundlage.name
 
-        if index.column() == 7:  # gis-flaeche
+        if index.column() == 7 or index.column() == 8 or index.column() == 9:  # davon beweidet
+
+            gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+            last_gst = max(gst_versionen_list,
+                           key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+            gst_geom = QgsGeometry.fromWkt(
+                to_shape(last_gst.geometry).wkt)
+
+            cut_area = 0.00
+            for cut in last_gst.rel_cut_koppel_gst:
+                cut_geom = QgsGeometry.fromWkt(to_shape(cut.geometry).wkt)
+                cut_area = cut_area + cut_geom.area()
+
+            if index.column() == 7:  # gis_area
+
+                if role == Qt.DisplayRole:
+                    return ('{:.4f}'.format(
+                        round(float(gst_geom.area()) / 10000, 4))
+                            .replace(".", ",")) + ' ha'
+
+            if index.column() == 8:  # davon beweidet
+
+                if role == Qt.EditRole:
+
+                    # return ('{:.0f}'.format(round(cut_area, 0)))
+                    return int(cut_area)
+
+                if role == Qt.DisplayRole:
+
+                    return ('{:.4f}'.format(round(float(cut_area) / 10000, 4))
+                            .replace(".", ",")) + ' ha'
+
+            if index.column() == 9:  # % beweidet
+
+                cut_anteil = cut_area / gst_geom.area() * 100
+
+                if role == Qt.EditRole:
+                    # return ('{:.0f}'.format(round(cut_area, 0)))
+                    return ('{:.1f}'.format(round(float(cut_anteil), 1)))
+
+                if role == Qt.DisplayRole:
+
+                    return ('{:.1f}'.format(round(float(cut_anteil), 1))
+                            .replace(".", ",")) + ' %'
+
+        # if index.column() == 7:  # gis_area
+        #     if role == Qt.DisplayRole:
+        #
+        #         gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+        #         last_gst = max(gst_versionen_list,
+        #                        key=attrgetter('rel_alm_gst_ez.datenstand'))
+        #
+        #         gst_geom = QgsGeometry.fromWkt(
+        #             to_shape(last_gst.geometry).wkt
+        #         )
+        #
+        #         return ('{:.4f}'.format(round(float(gst_geom.area()) / 10000, 4))
+        #                 .replace(".", ",")) + ' ha'
+
+        if index.column() == 6:  # gb_area
+
+            area = 0
+            gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+            last_gst = max(gst_versionen_list,
+                           key=attrgetter('rel_alm_gst_ez.datenstand'))
+            for nutz in last_gst.rel_alm_gst_nutzung:
+                area = area + nutz.area
+
+            if role == Qt.EditRole:
+
+                return area
+
             if role == Qt.DisplayRole:
-
-                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
-                last_gst = max(gst_versionen_list,
-                               key=attrgetter('rel_alm_gst_ez.datenstand'))
-
-                gst_geom = QgsGeometry.fromWkt(
-                    to_shape(last_gst.geometry).wkt
-                )
-
-                return ('{:.4f}'.format(round(float(gst_geom.area()) / 10000, 4))
-                        .replace(".", ",")) + ' ha'
-
-        if index.column() == 8:
-            if role == Qt.DisplayRole:
-
-                area = 0
-                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
-                last_gst = max(gst_versionen_list,
-                               key=attrgetter('rel_alm_gst_ez.datenstand'))
-                for nutz in last_gst.rel_alm_gst_nutzung:
-                    area = area + nutz.area
 
                 return ('{:.4f}'.format(round(float(area) / 10000, 4))
                         .replace(".", ",")) + ' ha'
 
-        if index.column() == 9:
+        if index.column() == 10: # datenstand
             if role == Qt.DisplayRole:
 
                 gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
@@ -161,7 +219,7 @@ class GstModelNew(QAbstractTableModel):
         """
         definiere die spaltenanzahl
         """
-        return 10
+        return 11
 
     def headerData(self, column, orientation, role=None):
         """
@@ -240,20 +298,33 @@ class GstMaintable(MainTable):
         self.setStretchMethod(2)
 
         self.insertFooterLine('im AWB eingetragen und beweidet:',
-                              'ha', 7, 120, 0.0001, 4, 5, '==', 'eingetragen')
+                              'ha', 8, 120, 0.0001, 4, 4, '==', 1)
         self.insertFooterLine('beweidet:',
-                              'ha', 7, 120, 0.0001, 4)
+                              'ha', 8, 120, 0.0001, 4)
         self.insertFooterLine('im AWB eingetrage Grundstücksfläche:',
-                              'ha', 9, 120, 0.0001, 4, 5, '==', 'eingetragen')
+                              'ha', 6, 120, 0.0001, 4, 4, '==', 1)
         self.insertFooterLine('zugeordnete Grundstücksgesamtfläche:',
-                              'ha', 9, 120, 0.0001, 4)
+                              'ha', 6, 120, 0.0001, 4)
 
         self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
+
+        self.test_cut_btn = QPushButton()
+        self.test_cut_btn.setText('test_cut')
+        self.uiTableFilterHLay.addWidget(self.test_cut_btn)
 
     def signals(self):
         super().signals()
 
         self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
+
+        self.test_cut_btn.clicked.connect(self.test_cut)
+
+    def test_cut(self):
+
+        print(f'...')
+
+        current_koppel_layer = self.parent.current_abgrenzung_item.data(GisItem.KoppelLayer_Role)
+        cut_koppel_gstversion(current_koppel_layer)
 
     def finalInit(self):
         super().finalInit()
@@ -277,90 +348,76 @@ class GstMaintable(MainTable):
     def setMaintableColumns(self):
         super().setMaintableColumns()
 
-        self.maintable_columns[0] = MaintableColumn(column_type='int',
-                                                    visible=False)
-        self.maintable_columns[1] = MaintableColumn(heading='Gst-Nr',
-                                                    column_type='str',
-                                                    alignment='c')
-        self.maintable_columns[2] = MaintableColumn(heading='EZ',
-                                                    column_type='str',
-                                                    alignment='c')
-        self.maintable_columns[3] = MaintableColumn(heading='KG-Nr',
-                                                    column_type='int')
-        self.maintable_columns[4] = MaintableColumn(heading='KG-Name',
-                                                    column_type='str',
-                                                    alignment='l')
-        self.maintable_columns[5] = MaintableColumn(heading='AWB',
-                                                    column_type='str')
-        self.maintable_columns[6] = MaintableColumn(heading='Rechtsgrundlage',
-                                                    column_type='str',
-                                                    alignment='l')
-        self.maintable_columns[7] = MaintableColumn(heading='beweidet (ha)',
-                                                    column_type='float')
-        self.maintable_columns[8] = MaintableColumn(heading='beweidet (%)',
-                                                    column_type='float')
-        self.maintable_columns[9] = MaintableColumn(heading='Gst-Fläche (ha)',
-                                                    column_type='str')
-        self.maintable_columns[10] = MaintableColumn(heading='Datenstand',
-                                                     column_type='str')
+        # self.maintable_columns[0] = MaintableColumn(column_type='int',
+        #                                             visible=False)
+        # self.maintable_columns[1] = MaintableColumn(heading='Gst-Nr',
+        #                                             column_type='str',
+        #                                             alignment='c')
+        # self.maintable_columns[2] = MaintableColumn(heading='EZ',
+        #                                             column_type='str',
+        #                                             alignment='c')
+        # self.maintable_columns[3] = MaintableColumn(heading='KG-Nr',
+        #                                             column_type='int')
+        # self.maintable_columns[4] = MaintableColumn(heading='KG-Name',
+        #                                             column_type='str',
+        #                                             alignment='l')
+        # self.maintable_columns[5] = MaintableColumn(heading='AWB',
+        #                                             column_type='str')
+        # self.maintable_columns[6] = MaintableColumn(heading='Rechtsgrundlage',
+        #                                             column_type='str',
+        #                                             alignment='l')
+        # self.maintable_columns[7] = MaintableColumn(heading='beweidet (ha)',
+        #                                             column_type='float')
+        # self.maintable_columns[8] = MaintableColumn(heading='beweidet (%)',
+        #                                             column_type='float')
+        # self.maintable_columns[9] = MaintableColumn(heading='Gst-Fläche (ha)',
+        #                                             column_type='str')
+        # self.maintable_columns[10] = MaintableColumn(heading='Datenstand',
+        #                                              column_type='str')
 
     def getMainQuery(self, session):
         super().getMainQuery(session)
 
-        """subquery um die flaeche des verschnittes von koppel und 
-        gst-version zu bekommen"""
-        sub_cutarea = session.query(
-            BCutKoppelGstAktuell.gst_version_id,
-            func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
-            func.max(BAbgrenzung.jahr)
-        )\
-            .select_from(BCutKoppelGstAktuell)\
-            .join(BKoppel)\
-            .join(BKomplex)\
-            .join(BAbgrenzung)\
-            .join(BAkt)\
-            .filter(BAkt.id == self.parent.data_instance.id)\
-            .group_by(BCutKoppelGstAktuell.gst_version_id)\
-            .subquery()
-        """"""
-
-        # sub_test = session.query(
+        # """subquery um die flaeche des verschnittes von koppel und
+        # gst-version zu bekommen"""
+        # sub_cutarea = session.query(
         #     BCutKoppelGstAktuell.gst_version_id,
         #     func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
-        #     func.max(BKomplexVersion.jahr)
+        #     func.max(BAbgrenzung.jahr)
         # )\
         #     .select_from(BCutKoppelGstAktuell)\
         #     .join(BKoppel)\
-        #     .join(BKomplexVersion)\
         #     .join(BKomplex)\
+        #     .join(BAbgrenzung)\
         #     .join(BAkt)\
         #     .filter(BAkt.id == self.parent.data_instance.id)\
         #     .group_by(BCutKoppelGstAktuell.gst_version_id)\
-        #     .all()
-
-        query = session.query(BGstZuordnung.id,
-                              BGst.gst,
-                              BGstEz.ez,
-                              BGst.kgnr,
-                              BKatGem.kgname,
-                              BGstAwbStatus.name,
-                              BRechtsgrundlage.name,
-                              sub_cutarea.c.bew_area,
-                              None,  # platzhalter für 'beweidet %'
-                              func.ST_Area(BGstVersion.geometry),
-                              func.max(BGstEz.datenstand)) \
-            .select_from(BGstZuordnung) \
-            .join(BGst) \
-            .join(BGstVersion) \
-            .join(BGstEz) \
-            .join(BKatGem) \
-            .join(BGstAwbStatus) \
-            .join(BRechtsgrundlage) \
-            .outerjoin(sub_cutarea, BGstVersion.id == sub_cutarea.c.gst_version_id) \
-            .filter(BGstZuordnung.akt_id == self.parent.data_instance.id) \
-            .group_by(BGstZuordnung.id)
-
-        return query
+        #     .subquery()
+        # """"""
+        #
+        # query = session.query(BGstZuordnung.id,
+        #                       BGst.gst,
+        #                       BGstEz.ez,
+        #                       BGst.kgnr,
+        #                       BKatGem.kgname,
+        #                       BGstAwbStatus.name,
+        #                       BRechtsgrundlage.name,
+        #                       sub_cutarea.c.bew_area,
+        #                       None,  # platzhalter für 'beweidet %'
+        #                       func.ST_Area(BGstVersion.geometry),
+        #                       func.max(BGstEz.datenstand)) \
+        #     .select_from(BGstZuordnung) \
+        #     .join(BGst) \
+        #     .join(BGstVersion) \
+        #     .join(BGstEz) \
+        #     .join(BKatGem) \
+        #     .join(BGstAwbStatus) \
+        #     .join(BRechtsgrundlage) \
+        #     .outerjoin(sub_cutarea, BGstVersion.id == sub_cutarea.c.gst_version_id) \
+        #     .filter(BGstZuordnung.akt_id == self.parent.data_instance.id) \
+        #     .group_by(BGstZuordnung.id)
+        #
+        # return query
 
     def updateMaintable(self):
 

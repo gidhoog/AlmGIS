@@ -179,7 +179,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
                                     if i in [x.row() for x in sel_indexes]:
                                         col_sel_sum = col_sel_sum + int(value)
                             except:
-                                pass
+                                print(f'Cannot sum footer values!')
                         else:
                             col_sum = col_sum + value
                             if sel_indexes:

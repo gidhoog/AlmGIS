@@ -602,8 +602,11 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         if di_list:
             self.main_table_model = self.table_model_class(self,
                                                            di_list=di_list)
-            self.maintable_view.setModel(self.main_table_model)
+            # self.maintable_view.setModel(self.main_table_model)
             print(f'....')
+            self.filter_proxy.setSourceModel(self.main_table_model)
+            self.maintable_view.setModel(self.filter_proxy)
+            self.updateFooter()
         else:
             self.setMaintableColumns()
 
@@ -627,9 +630,9 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
             self.setAddEntityMenu()
             self.setMaintableLayout()
 
-            self.signals()
+        self.signals()
 
-            self.finalInit()
+        self.finalInit()
 
     def finalInit(self):
         """
