@@ -573,6 +573,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         with db_session_cm() as session:
 
+            for gst in self.data_instance.rel_gst_zuordnung:
+
+                session.merge(gst.rel_awb_status)
+
             session.add(self.data_instance)
 
             self.data_instance.rel_abgrenzung = self.get_abgrenzung_di()

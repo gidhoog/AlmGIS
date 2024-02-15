@@ -382,12 +382,14 @@ class BGstEz(Base):
     #                                        cascade="all, delete-orphan")
     rel_alm_gst_eigentuemer: Mapped[List["BGstEigentuemer"]] = relationship(
         back_populates="rel_alm_gst_ez",
-        cascade="all, delete-orphan")
+        cascade="all, delete-orphan",
+        lazy='joined')
 
     # rel_kat_gem = relationship("BKatGem",
     #                            back_populates="rel_alm_gst_ez")
     rel_kat_gem: Mapped["BKatGem"] = relationship(
-        back_populates="rel_alm_gst_ez")
+        back_populates="rel_alm_gst_ez",
+        lazy='joined')
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -414,7 +416,8 @@ class BGstNutzung(Base):
         back_populates="rel_alm_gst_nutzung")
 
     rel_banu: Mapped["BBanu"] = relationship(
-        back_populates="rel_alm_gst_nutzung")
+        back_populates="rel_alm_gst_nutzung",
+        lazy='joined')
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -468,7 +471,8 @@ class BGstVersion(Base):
     # rel_alm_gst = relationship('BGst',
     #                            back_populates="rel_alm_gst_version")
     rel_alm_gst: Mapped["BGst"] = relationship(
-        back_populates="rel_alm_gst_version")
+        back_populates="rel_alm_gst_version",
+        lazy='immediate')
 
     # rel_alm_gst_ez = relationship('BGstEz',
     #                               back_populates="rel_alm_gst_version")
@@ -514,7 +518,9 @@ class BGstZuordnung(Base):
     """alle Beziehungen sind 'parent' Beziehungen"""
     # rel_akt = relationship('BAkt',
     #                        back_populates='rel_gst_zuordnung')
-    rel_akt: Mapped["BAkt"] = relationship(back_populates="rel_gst_zuordnung")
+    rel_akt: Mapped["BAkt"] = relationship(
+        back_populates="rel_gst_zuordnung",
+        lazy='immediate')
 
     # rel_gst = relationship('BGst',
     #                        back_populates='rel_gst_zuordnung')

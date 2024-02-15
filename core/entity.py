@@ -137,7 +137,7 @@ class Entity(QMainWindow):
         self.setDefaultValues()
 
     @set_data
-    def editEntity(self, data_instance, session):
+    def editEntity(self, data_instance, session=None):
         """
         instance der entity die bearbeitet werden soll
 

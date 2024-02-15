@@ -84,6 +84,16 @@ class GstModelNew(QAbstractTableModel):
         row = index.row()
         col = index.column()
 
+        if role == Qt.TextAlignmentRole:
+
+            if index.column() in [2, 6, 7, 8, 9]:
+
+                return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [1, 10]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
         if index.column() == 0:
             if role == Qt.DisplayRole:
                 return self.di_list[row].rel_gst.gst
@@ -108,9 +118,19 @@ class GstModelNew(QAbstractTableModel):
         if index.column() == 4:
             if role == Qt.DisplayRole:
                 return self.di_list[row].rel_awb_status.name
+                # return self.di_list[row].awb_status_id
 
             if role == Qt.EditRole:
                 return self.di_list[row].rel_awb_status.id
+
+            if role == Qt.BackgroundRole:
+
+                    if self.di_list[row].rel_awb_status.id == 1:
+                        return QColor(189, 239, 255)
+                    if self.di_list[row].rel_awb_status.id == 0:
+                        return QColor(234, 216, 54)
+                    if self.di_list[row].rel_awb_status.id == 2:
+                        return QColor(234, 163, 165)
 
         if index.column() == 5:
             if role == Qt.DisplayRole:
@@ -201,7 +221,7 @@ class GstModelNew(QAbstractTableModel):
                 last_gst = max(gst_versionen_list,
                                key=attrgetter('rel_alm_gst_ez.datenstand'))
 
-                return last_gst.rel_alm_gst_ez.datenstand
+                return last_gst.rel_alm_gst_ez.datenstand[:10]
 
         # return super().data(index, role)
 
@@ -248,6 +268,7 @@ class GstMaintable(MainTable):
     entity_dialog_class = GstDialog
     data_model_class = BGstZuordnung
     table_model_class = GstModelNew
+    _data_source = 'di'
 
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
     _delete_window_title = ["Grundstück löschen", "Grundstücke löschen"]
@@ -312,12 +333,25 @@ class GstMaintable(MainTable):
         self.test_cut_btn.setText('test_cut')
         self.uiTableFilterHLay.addWidget(self.test_cut_btn)
 
+        self.test_update_btn = QPushButton()
+        self.test_update_btn.setText('test_update')
+        self.uiTableFilterHLay.addWidget(self.test_update_btn)
+
     def signals(self):
         super().signals()
 
         self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
 
         self.test_cut_btn.clicked.connect(self.test_cut)
+        self.test_update_btn.clicked.connect(self.test_update)
+
+    def test_update(self):
+
+        topLeft = self.main_table_model.createIndex(0, 0)
+        bottomRight = self.main_table_model.createIndex(11, 10)
+        self.main_table_model.dataChanged.emit(topLeft, bottomRight)
+
+        print(f'...')
 
     def test_cut(self):
 
@@ -435,7 +469,7 @@ class GstMaintable(MainTable):
     def setMainTableModel(self):
         super().setMainTableModel()
 
-        return GstModel(self, self.maintable_dataarray)
+        # return GstModel(self, self.maintable_dataarray)
 
 
 # class GstModelNew(QAbstractTableModel):

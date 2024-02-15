@@ -32,6 +32,11 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
     table_model_class = None
     """"""
 
+    """daten-quelle des entities (kommen die daten direkt aus der db oder
+    ist die daten-quelle eine übergebene daten-instanz"""
+    _data_source = 'db'  # datenbank = 'db', daten-instanz = 'di'
+    """"""
+
     """titel für den main_tabel"""
     _title = ''
     """"""
@@ -812,60 +817,71 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
         return inst
 
-    def edit_row(self):
+    def edit_row(self, index):
         """
         bearbeite tabelleneinträge
         """
-
         """hole den index der ausgewählten zeile"""
         sel_rows = self.getSelectedRows()
         """"""
+        """breche ab wenn keine zeile ausgewählt ist"""
+        if not sel_rows:
+            self.no_row_selected_msg()
+            return
+        """"""
+
+        """nehme den ersten index (falls mehrere ausgewählt sind) und 
+        wandle ihn in einen proxy-index um"""
+        model_index = sel_rows[0]
+        proxy_index = self.getProxyIndex(model_index)
+        """"""
 
         if self.edit_behaviour == 'dialog':  # derzeit wird nur 'dialog' unterstützt
-            """breche ab wenn keine zeile ausgewählt ist"""
-            if not sel_rows:
-                self.no_row_selected_msg()
-                return
-            """"""
-
-            """nehme den ersten index (falls mehrere ausgewählt sind) und 
-            wandle ihn in einen proxy-index um"""
-            model_index = sel_rows[0]
-            proxy_index = self.getProxyIndex(model_index)
-            """"""
 
             """hole das entity-widget"""
             entity_widget = self.get_entity_widget(proxy_index)
             """"""
 
-            """hole die daten die bearbeitet werden sollen, um sie im
-            entity-widget bearbeiten zu können"""
-            with db_session_cm() as session:
-                session.expire_on_commit = False
+            if self._data_source == 'db':
 
-                if self.inst_column is not None:
-                    """nehme die data_model-instanz aus dem maintable und
-                    füge sie einer session hinzu um event. daten die sich in 
-                    verknüpften tabellen befinden und benötigt werden vorhanden
-                    sind"""
-                    data_instance = self.main_table_model.data(
-                        self.main_table_model.index(proxy_index.row(),
-                                                    self.inst_column),
-                        Qt.EditRole)
-                    try:
-                        session.add(data_instance)
-                        session.flush()
-                    except:
-                        print(f"Error: {sys.exc_info()}")
-                    """"""
-                else:
-                    """standardmethode um die data_model instanz zu bekommen"""
-                    data_instance = self.get_row_instance(proxy_index,
-                                                          session)
-                    """"""
+                """hole die daten die bearbeitet werden sollen, um sie im
+                entity-widget bearbeiten zu können"""
+                with db_session_cm() as session:
+                    session.expire_on_commit = False
 
-                """lade die daten in das entity-widget"""
-                entity_widget.editEntity(data_instance, session)
+                    if self.inst_column is not None:
+                        """nehme die data_model-instanz aus dem maintable und
+                        füge sie einer session hinzu um event. daten die sich in 
+                        verknüpften tabellen befinden und benötigt werden vorhanden
+                        sind"""
+                        data_instance = self.main_table_model.data(
+                            self.main_table_model.index(proxy_index.row(),
+                                                        self.inst_column),
+                            Qt.EditRole)
+                        try:
+                            session.add(data_instance)
+                            session.flush()
+                        except:
+                            print(f"Error: {sys.exc_info()}")
+                        """"""
+                    else:
+                        """standardmethode um die data_model instanz zu bekommen"""
+                        data_instance = self.get_row_instance(proxy_index,
+                                                              session)
+                        """"""
+
+                    """lade die daten in das entity-widget"""
+                    entity_widget.editEntity(data_instance, session)
+
+
+            if self._data_source == 'di':
+
+                """hole die di aus der di-liste"""
+                entity_di = self.main_table_model.di_list[proxy_index.row()]
+                """"""
+                # entity_di.rel_akt = self.parent.data_instance
+                entity_widget.editEntity(entity_di)
+                print(f'...')
 
             """open the entity_widget in a dialog"""
             self.openDialog(entity_widget)
@@ -934,7 +950,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         msg.setWindowTitle("Info")
         msg.setInformativeText(msg_text)
         msg.setStandardButtons(QMessageBox.Ok)
-        msg.centerInGivenWdg(self.maintable_view)
+        # msg.centerInGivenWdg(self.maintable_view)
         msg.exec()
 
     def delRowMain(self):
@@ -1174,7 +1190,16 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         aktualisiere den maintable;
         """
-        self.loadData()
+        # self.loadData()
+
+        topLeft = self.main_table_model.createIndex(0, 0)
+        bottomRight = self.main_table_model.createIndex(11, 10)
+        self.main_table_model.dataChanged.emit(topLeft, bottomRight)
+        # self.main_table_model.dataChanged(topLeft, bottomRight)
+        # self.main_table_model.dataChanged()
+        # self.main_table_model.layoutChanged.emit()
+
+        print(f'---')
 
 
 class MainTableModel(QAbstractTableModel):
@@ -1191,6 +1216,7 @@ class MainTableModel(QAbstractTableModel):
 
         self.parent = parent
         self.data_array = None
+        self.di_list = []
 
         if data_array:
             self.data_array = data_array

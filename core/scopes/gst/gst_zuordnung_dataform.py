@@ -72,9 +72,10 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     @awb_status.setter
     def awb_status(self, value):
 
+        # self.uiAwbStatusCombo.setCurrentIndex(
+        #     self.uiAwbStatusCombo.findData(value, Qt.UserRole))
         self.uiAwbStatusCombo.setCurrentIndex(
-            self.uiAwbStatusCombo.findData(value, Qt.UserRole)
-        )
+            self.uiAwbStatusCombo.findText(value.name))
         self._awb_status = value
 
     @property  # getter
@@ -191,7 +192,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
                 all()
 
         for item in status_items:
-            self.uiAwbStatusCombo.addItem(item.name, item.id)
+            self.uiAwbStatusCombo.addItem(item.name, item)
         for r_item in recht_items:
             self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item.id)
         """"""
@@ -213,7 +214,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.akt = self.data_instance.rel_akt.name
         self.gst_nr = self.data_instance.rel_gst.gst
         self.kg = self.data_instance.rel_gst.kgnr
-        self.awb_status = self.data_instance.awb_status_id
+        # self.awb_status = self.data_instance.awb_status_id
+        self.awb_status = self.data_instance.rel_awb_status
         self.rechtsgrundlage = self.data_instance.rechtsgrundlage_id
 
         self.anmerkung = self.data_instance.anmerkung
@@ -226,7 +228,12 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def submitEntity(self):
         super().submitEntity()
 
-        self.data_instance.awb_status_id = self.awb_status
+        # with db_session_cm() as session:
+        #
+        #     session.merge(self.awb_status)
+
+        # self.data_instance.awb_status_id = self.awb_status
+        self.data_instance.rel_awb_status = self.awb_status
         self.data_instance.rechtsgrundlage_id = self.rechtsgrundlage
 
         self.data_instance.anmerkung = self.anmerkung
@@ -235,9 +242,17 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.data_instance.gb_wrong = self.gb_wrong
         self.data_instance.awb_wrong = self.awb_wrong
 
-    def commitEntity(self):
-        super().commitEntity()
+        print(f'...')
 
-        cut_koppel_gstversion()
-        self.parent.parent.guiMainGis.uiCanvas.refresh()
-        # self.parent.parent.komplex_table.updateMaintable()
+        # with db_session_cm() as session:
+        #
+        #     session.add(self.data_instance)
+        #     session.flush()
+
+
+    # def commitEntity(self):
+    #     super().commitEntity()
+    #
+    #     cut_koppel_gstversion()
+    #     self.parent.parent.guiMainGis.uiCanvas.refresh()
+    #     # self.parent.parent.komplex_table.updateMaintable()
