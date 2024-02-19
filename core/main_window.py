@@ -69,17 +69,19 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
         """
 
         if scope == "akte_alle":
-            widget = akte_all_main.AkteAllMain(self)
+            # widget = akte_all_main.AkteAllMain(self)
+            widget = akte_all_main.AkteAllMainWidget(self)
             widget_title = "Akten"
 
         if scope == "gst_match_all":
             widget = GstAllMain(self)
             widget_title = "zugeordnete Grundstücke"
 
-        with db_session_cm() as session:
-            session.expire_on_commit = False
+        # with db_session_cm() as session:
+        #     session.expire_on_commit = False
 
-            widget.initMaintable(session=session)
+        # widget.initMaintable()
+        widget.initMainWidget()
 
         self._addMaintable(widget, widget_title)
 

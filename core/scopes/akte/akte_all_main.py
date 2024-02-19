@@ -1,5 +1,7 @@
-# from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, QModelIndex
+from qgis.PyQt.QtCore import QAbstractTableModel
 from sqlalchemy import func, select
+from sqlalchemy.orm import joinedload
 
 from core import db_session_cm
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
@@ -10,7 +12,25 @@ from core.main_widget import MainWidget
 from core.scopes.akte.akt import Akt
 
 
-class AkteAllMain(MainTable, MainWidget):
+class AkteAllMainWidget(MainWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.uiTitleLbl.setText('alle Akte')
+
+        self.akt_all_table = AkteAllMain()
+
+    def initMainWidget(self):
+        super().initMainWidget()
+
+        self.uiMainVLay.addWidget(self.akt_all_table)
+        self.akt_all_table.initMaintable()
+
+
+
+
+class AkteAllMain(MainTable):
 
     _entity_widget = Akt
 
@@ -44,7 +64,29 @@ class AkteAllMain(MainTable, MainWidget):
         #
         #     print(f'----------------------')
 
+    def initMaintable(self, session=None, di_list=[]):
+        # super().initMaintable(session, di_list)
 
+        self.initUi()
+
+        with db_session_cm() as session:
+
+            akt_all_mci = session.scalars(select(BAkt).options(joinedload(BAkt.rel_bearbeitungsstatus))).unique().all()
+
+        self.main_table_model = AktAllModel(self, akt_all_mci)
+
+        self.filter_proxy.setSourceModel(self.main_table_model)
+        self.maintable_view.setModel(self.filter_proxy)
+
+        self.updateFooter()
+        self.setFilter()
+
+        self.setAddEntityMenu()
+        self.setMaintableLayout()
+
+        self.signals()
+
+        self.finalInit()
 
     def initUi(self):
         super().initUi()
@@ -187,12 +229,51 @@ class AkteAllMain(MainTable, MainWidget):
         self.uiAddDataTbtn.clicked.connect(self.add_row)
 
 
-class AktAllModel(MainTableModel):
+# class AktAllModel(MainTableModel):
+class AktAllModel(QAbstractTableModel):
 
-    def __init__(self, parent, data_array=None):
-        super(self.__class__, self).__init__(parent, data_array)
+    def __init__(self, parent, mci_list=None):
+        super(self.__class__, self).__init__()
 
         self.parent = parent
+        self.mci_list = mci_list
+
+        self.header = ['AZ',
+                       'Name',
+                       'Status']
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        """
+        erzeuge ein basis-model
+        """
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.TextAlignmentRole:
+
+            # if index.column() in [2, 6, 7, 8, 9]:
+            #
+            #     return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [0]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 0:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].az
+
+        if index.column() == 1:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].name
+
+        if index.column() == 2:
+
+            if self.mci_list[row].rel_bearbeitungsstatus is not None:
+
+                if role == Qt.DisplayRole:
+                    return self.mci_list[row].rel_bearbeitungsstatus.name
 
     # def data(self, index, role=None):
     #
@@ -224,3 +305,33 @@ class AktAllModel(MainTableModel):
     #                     pass
     #
     #     return super().data(index, role)
+
+    def rowCount(self, parent: QModelIndex = ...):
+        """
+        definiere die zeilenanzahl
+        """
+
+        if self.mci_list:
+            return len(self.mci_list)
+        else:
+            return 0
+
+    def columnCount(self, parent: QModelIndex = ...):
+        """
+        definiere die spaltenanzahl
+        """
+        return len(self.header)
+
+    def headerData(self, column, orientation, role=None):
+        """
+        wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+        dann nehme diese
+        """
+        super().headerData(column, orientation, role)
+
+        if self.header:
+            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+
+                return self.header[column]
+        # else:
+        #     return super().headerData(column, orientation, role)

@@ -8,6 +8,7 @@ call pyuic5 core/entity_titel.ui -o core/entity_titel_UI.py
 call pyuic5 core/main_dialog.ui -o core/main_dialog_UI.py
 call pyuic5 core/footer_line.ui -o core/footer_line_UI.py
 call pyuic5 core/main_window.ui -o core/main_window_UI.py
+call pyuic5 core/main_widget.ui -o core/main_widget_UI.py
 call pyuic5 core/main_table.ui -o core/main_table_UI.py
 call pyuic5 core/main_gis.ui -o core/main_gis_UI.py
 call pyuic5 core/settings.ui -o core/settings_UI.py

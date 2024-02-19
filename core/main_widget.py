@@ -1,14 +1,27 @@
-
+from qgis.PyQt.QtWidgets import QWidget
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
+from core import main_widget_UI
 
-class MainWidget:
+
+class MainWidget(QWidget, main_widget_UI.Ui_MainWidget):
     """
     baseclass für ein widget, das direkt im 'AlmgisMainWindow' platziert ist;
     es ist in einen DisplayAreaFrame eingebettet
     """
 
     update_app = pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(__class__, self).__init__()
+        self.setupUi(self)
+
+    def initMainWidget(self):
+        """
+        methode zum initialisieren des Mainwidget's
+        :return:
+        """
+        pass
 
     def updateMainWidget(self):
         """
