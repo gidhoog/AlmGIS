@@ -27,9 +27,12 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
     """klasse des dialoges"""
     entity_dialog_class = EntityMainDialog
 
+
+
     """klasse des daten-modeles"""
-    data_model_class = None
+    # data_model_class = None
     table_model_class = None
+    _main_table_model_class = None
     """"""
 
     """daten-quelle des entities (kommen die daten direkt aus der db oder
@@ -56,6 +59,8 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
                                   "Einträge wirklich gelöscht werden?"]
     _delete_text = ["Der Eintrag", "kann nicht gelöscht werden, da er "
                                    "verwendet wird!"]
+
+    _main_table_mci = []
 
     """einige einstellungen für diese klasse"""
     _id_column = 0  # index der spalte mit dem id
@@ -110,6 +115,20 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
     def select_behaviour(self, select_behaviour):
         if select_behaviour in ['row', 'cell']:
             self._select_behaviour = select_behaviour
+
+    @property  # getter
+    def main_table_mci(self):
+        """
+        definiere hier in der 'SubMethod' die session für die Erstellung
+        der mci-liste falls gewünscht
+        :return:
+        """
+        return self._main_table_mci
+
+    @main_table_mci.setter
+    def main_table_mci(self, value):
+
+        self._main_table_mci = value
 
     @property  # getter
     def maintable_session(self):
@@ -595,7 +614,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         pass
 
-    def initMaintable(self, session=None, di_list=[]):
+    def initMaintable(self):
         """
         initialisiere maintable
 
@@ -605,36 +624,40 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         self.initUi()
 
-        if di_list:
-            self.main_table_model = self.table_model_class(self,
-                                                           di_list=di_list)
-            # self.maintable_view.setModel(self.main_table_model)
-            print(f'....')
-            self.filter_proxy.setSourceModel(self.main_table_model)
-            self.maintable_view.setModel(self.filter_proxy)
-            self.updateFooter()
-        else:
-            self.setMaintableColumns()
+        self.main_table_model = self._main_table_model_class(
+            self,
+            self.main_table_mci)
 
-            self.maintable_session = session
+        # if di_list:
+        #     self.main_table_model = self.table_model_class(self,
+        #                                                    di_list=di_list)
+        #     # self.maintable_view.setModel(self.main_table_model)
+        #     print(f'....')
+        #     self.filter_proxy.setSourceModel(self.main_table_model)
+        #     self.maintable_view.setModel(self.filter_proxy)
+        #     self.updateFooter()
+        # else:
+        #     self.setMaintableColumns()
+        #
+        #     self.maintable_session = session
+        #
+        #     if session:
+        #         # self.loadData()
+        #         self.loadDataBySession()
+        #         # self.filter_proxy.setSourceModel(self.main_table_model)
+        #         # self.maintable_view.setModel(self.filter_proxy)
+        #     else:
+        #         self.main_table_model = self.data_model_class(
+        #             self, self.maintable_dataarray)
 
-            if session:
-                # self.loadData()
-                self.loadDataBySession()
-                # self.filter_proxy.setSourceModel(self.main_table_model)
-                # self.maintable_view.setModel(self.filter_proxy)
-            else:
-                self.main_table_model = self.data_model_class(
-                    self, self.maintable_dataarray)
+        self.filter_proxy.setSourceModel(self.main_table_model)
+        self.maintable_view.setModel(self.filter_proxy)
 
-            self.filter_proxy.setSourceModel(self.main_table_model)
-            self.maintable_view.setModel(self.filter_proxy)
+        self.updateFooter()
+        self.setFilter()
 
-            self.updateFooter()
-            self.setFilter()
-
-            self.setAddEntityMenu()
-            self.setMaintableLayout()
+        self.setAddEntityMenu()
+        self.setMaintableLayout()
 
         self.signals()
 

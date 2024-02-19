@@ -28,6 +28,112 @@ class AkteAllMainWidget(MainWidget):
         self.akt_all_table.initMaintable()
 
 
+# class AktAllModel(MainTableModel):
+class AktAllModel(QAbstractTableModel):
+
+    def __init__(self, parent, mci_list=None):
+        super(self.__class__, self).__init__()
+
+        self.parent = parent
+        self.mci_list = mci_list
+
+        self.header = ['AZ',
+                       'Name',
+                       'Status']
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        """
+        erzeuge ein basis-model
+        """
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.TextAlignmentRole:
+
+            # if index.column() in [2, 6, 7, 8, 9]:
+            #
+            #     return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [0]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 0:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].az
+
+        if index.column() == 1:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].name
+
+        if index.column() == 2:
+
+            if self.mci_list[row].rel_bearbeitungsstatus is not None:
+
+                if role == Qt.DisplayRole:
+                    return self.mci_list[row].rel_bearbeitungsstatus.name
+
+    # def data(self, index, role=None):
+    #
+    #     if role == Qt.DisplayRole:
+    #
+    #         if index.column() == 7:  # purchase_value
+    #             val = self.data(index, Qt.EditRole)
+    #             if val:
+    #                 try:
+    #                     return '{:.4f}'.format(
+    #                         round(float(val) / 10000, 4)).replace(".", ",")
+    #                 except ValueError:
+    #                     pass
+    #         if index.column() == 8:  # purchase_value
+    #             val = self.data(index, Qt.EditRole)
+    #             if val:
+    #                 try:
+    #                     return '{:.4f}'.format(
+    #                         round(float(val) / 10000, 4)).replace(".", ",")
+    #                 except ValueError:
+    #                     pass
+    #         if index.column() == 9:  # purchase_value
+    #             val = self.data(index, Qt.EditRole)
+    #             if val:
+    #                 try:
+    #                     return '{:.4f}'.format(
+    #                         round(float(val) / 10000, 4)).replace(".", ",")
+    #                 except ValueError:
+    #                     pass
+    #
+    #     return super().data(index, role)
+
+    def rowCount(self, parent: QModelIndex = ...):
+        """
+        definiere die zeilenanzahl
+        """
+
+        if self.mci_list:
+            return len(self.mci_list)
+        else:
+            return 0
+
+    def columnCount(self, parent: QModelIndex = ...):
+        """
+        definiere die spaltenanzahl
+        """
+        return len(self.header)
+
+    def headerData(self, column, orientation, role=None):
+        """
+        wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+        dann nehme diese
+        """
+        super().headerData(column, orientation, role)
+
+        if self.header:
+            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+
+                return self.header[column]
+        # else:
+        #     return super().headerData(column, orientation, role)
 
 
 class AkteAllMain(MainTable):
@@ -42,6 +148,27 @@ class AkteAllMain(MainTable):
                                   "Akte wirklich gelöscht werden?"]
 
     _data_view = MainTableView
+
+    _main_table_model_class = AktAllModel
+
+    # _main_table_mci = []
+
+    @property  # getter
+    def main_table_mci(self):
+
+        with db_session_cm() as session:
+            stmt = select(BAkt).options(
+                joinedload(BAkt.rel_bearbeitungsstatus)
+            )
+
+            self._main_table_mci = session.scalars(stmt).unique().all()
+
+        return self._main_table_mci
+
+    # @main_table_mci.setter
+    # def main_table_mci(self, value):
+    #
+    #     self._main_table_mci = value
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
@@ -64,29 +191,35 @@ class AkteAllMain(MainTable):
         #
         #     print(f'----------------------')
 
-    def initMaintable(self, session=None, di_list=[]):
-        # super().initMaintable(session, di_list)
-
-        self.initUi()
-
-        with db_session_cm() as session:
-
-            akt_all_mci = session.scalars(select(BAkt).options(joinedload(BAkt.rel_bearbeitungsstatus))).unique().all()
-
-        self.main_table_model = AktAllModel(self, akt_all_mci)
-
-        self.filter_proxy.setSourceModel(self.main_table_model)
-        self.maintable_view.setModel(self.filter_proxy)
-
-        self.updateFooter()
-        self.setFilter()
-
-        self.setAddEntityMenu()
-        self.setMaintableLayout()
-
-        self.signals()
-
-        self.finalInit()
+    # def initMaintable(self, session=None, di_list=[]):
+    #     # super().initMaintable(session, di_list)
+    #
+    #     self.initUi()
+    #
+    #     # with db_session_cm() as session:
+    #     #
+    #     #     stmt = select(BAkt).options(
+    #     #         joinedload(BAkt.rel_bearbeitungsstatus)
+    #     #     )
+    #     #
+    #     #     aaa = session.scalars(stmt).unique().all()
+    #
+    #     self.main_table_model = self.main_table_model_class(
+    #         self,
+    #         self.main_table_mci)
+    #
+    #     self.filter_proxy.setSourceModel(self.main_table_model)
+    #     self.maintable_view.setModel(self.filter_proxy)
+    #
+    #     self.updateFooter()
+    #     self.setFilter()
+    #
+    #     self.setAddEntityMenu()
+    #     self.setMaintableLayout()
+    #
+    #     self.signals()
+    #
+    #     self.finalInit()
 
     def initUi(self):
         super().initUi()
@@ -229,109 +362,109 @@ class AkteAllMain(MainTable):
         self.uiAddDataTbtn.clicked.connect(self.add_row)
 
 
-# class AktAllModel(MainTableModel):
-class AktAllModel(QAbstractTableModel):
-
-    def __init__(self, parent, mci_list=None):
-        super(self.__class__, self).__init__()
-
-        self.parent = parent
-        self.mci_list = mci_list
-
-        self.header = ['AZ',
-                       'Name',
-                       'Status']
-
-    def data(self, index: QModelIndex, role: int = ...):
-
-        """
-        erzeuge ein basis-model
-        """
-        row = index.row()
-        col = index.column()
-
-        if role == Qt.TextAlignmentRole:
-
-            # if index.column() in [2, 6, 7, 8, 9]:
-            #
-            #     return Qt.AlignRight | Qt.AlignVCenter
-
-            if index.column() in [0]:
-
-                return Qt.AlignHCenter | Qt.AlignVCenter
-
-        if index.column() == 0:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].az
-
-        if index.column() == 1:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].name
-
-        if index.column() == 2:
-
-            if self.mci_list[row].rel_bearbeitungsstatus is not None:
-
-                if role == Qt.DisplayRole:
-                    return self.mci_list[row].rel_bearbeitungsstatus.name
-
-    # def data(self, index, role=None):
-    #
-    #     if role == Qt.DisplayRole:
-    #
-    #         if index.column() == 7:  # purchase_value
-    #             val = self.data(index, Qt.EditRole)
-    #             if val:
-    #                 try:
-    #                     return '{:.4f}'.format(
-    #                         round(float(val) / 10000, 4)).replace(".", ",")
-    #                 except ValueError:
-    #                     pass
-    #         if index.column() == 8:  # purchase_value
-    #             val = self.data(index, Qt.EditRole)
-    #             if val:
-    #                 try:
-    #                     return '{:.4f}'.format(
-    #                         round(float(val) / 10000, 4)).replace(".", ",")
-    #                 except ValueError:
-    #                     pass
-    #         if index.column() == 9:  # purchase_value
-    #             val = self.data(index, Qt.EditRole)
-    #             if val:
-    #                 try:
-    #                     return '{:.4f}'.format(
-    #                         round(float(val) / 10000, 4)).replace(".", ",")
-    #                 except ValueError:
-    #                     pass
-    #
-    #     return super().data(index, role)
-
-    def rowCount(self, parent: QModelIndex = ...):
-        """
-        definiere die zeilenanzahl
-        """
-
-        if self.mci_list:
-            return len(self.mci_list)
-        else:
-            return 0
-
-    def columnCount(self, parent: QModelIndex = ...):
-        """
-        definiere die spaltenanzahl
-        """
-        return len(self.header)
-
-    def headerData(self, column, orientation, role=None):
-        """
-        wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
-        dann nehme diese
-        """
-        super().headerData(column, orientation, role)
-
-        if self.header:
-            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-
-                return self.header[column]
-        # else:
-        #     return super().headerData(column, orientation, role)
+# # class AktAllModel(MainTableModel):
+# class AktAllModel(QAbstractTableModel):
+#
+#     def __init__(self, parent, mci_list=None):
+#         super(self.__class__, self).__init__()
+#
+#         self.parent = parent
+#         self.mci_list = mci_list
+#
+#         self.header = ['AZ',
+#                        'Name',
+#                        'Status']
+#
+#     def data(self, index: QModelIndex, role: int = ...):
+#
+#         """
+#         erzeuge ein basis-model
+#         """
+#         row = index.row()
+#         col = index.column()
+#
+#         if role == Qt.TextAlignmentRole:
+#
+#             # if index.column() in [2, 6, 7, 8, 9]:
+#             #
+#             #     return Qt.AlignRight | Qt.AlignVCenter
+#
+#             if index.column() in [0]:
+#
+#                 return Qt.AlignHCenter | Qt.AlignVCenter
+#
+#         if index.column() == 0:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].az
+#
+#         if index.column() == 1:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].name
+#
+#         if index.column() == 2:
+#
+#             if self.mci_list[row].rel_bearbeitungsstatus is not None:
+#
+#                 if role == Qt.DisplayRole:
+#                     return self.mci_list[row].rel_bearbeitungsstatus.name
+#
+#     # def data(self, index, role=None):
+#     #
+#     #     if role == Qt.DisplayRole:
+#     #
+#     #         if index.column() == 7:  # purchase_value
+#     #             val = self.data(index, Qt.EditRole)
+#     #             if val:
+#     #                 try:
+#     #                     return '{:.4f}'.format(
+#     #                         round(float(val) / 10000, 4)).replace(".", ",")
+#     #                 except ValueError:
+#     #                     pass
+#     #         if index.column() == 8:  # purchase_value
+#     #             val = self.data(index, Qt.EditRole)
+#     #             if val:
+#     #                 try:
+#     #                     return '{:.4f}'.format(
+#     #                         round(float(val) / 10000, 4)).replace(".", ",")
+#     #                 except ValueError:
+#     #                     pass
+#     #         if index.column() == 9:  # purchase_value
+#     #             val = self.data(index, Qt.EditRole)
+#     #             if val:
+#     #                 try:
+#     #                     return '{:.4f}'.format(
+#     #                         round(float(val) / 10000, 4)).replace(".", ",")
+#     #                 except ValueError:
+#     #                     pass
+#     #
+#     #     return super().data(index, role)
+#
+#     def rowCount(self, parent: QModelIndex = ...):
+#         """
+#         definiere die zeilenanzahl
+#         """
+#
+#         if self.mci_list:
+#             return len(self.mci_list)
+#         else:
+#             return 0
+#
+#     def columnCount(self, parent: QModelIndex = ...):
+#         """
+#         definiere die spaltenanzahl
+#         """
+#         return len(self.header)
+#
+#     def headerData(self, column, orientation, role=None):
+#         """
+#         wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+#         dann nehme diese
+#         """
+#         super().headerData(column, orientation, role)
+#
+#         if self.header:
+#             if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+#
+#                 return self.header[column]
+#         # else:
+#         #     return super().headerData(column, orientation, role)
