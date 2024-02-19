@@ -1,5 +1,5 @@
-from qgis.PyQt.QtCore import Qt, QModelIndex
-from qgis.PyQt.QtCore import QAbstractTableModel
+from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
+from qgis.PyQt.QtGui import QColor
 from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
 
@@ -39,7 +39,9 @@ class AktAllModel(QAbstractTableModel):
 
         self.header = ['AZ',
                        'Name',
-                       'Status']
+                       'Status',
+                       'Stz',
+                       'Anmerkung']
 
     def data(self, index: QModelIndex, role: int = ...):
 
@@ -55,17 +57,35 @@ class AktAllModel(QAbstractTableModel):
             #
             #     return Qt.AlignRight | Qt.AlignVCenter
 
-            if index.column() in [0]:
+            if index.column() in [0, 2, 3]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if role == Qt.BackgroundRole:
+
+            if index.column() == 2:
+
+                if self.mci_list[row].rel_bearbeitungsstatus is not None:
+
+                    color_str = self.mci_list[row].rel_bearbeitungsstatus.color
+                    color_list = color_str.split(", ")
+
+                    return QColor(int(color_list[0]),
+                                  int(color_list[1]),
+                                  int(color_list[2]))
+
 
         if index.column() == 0:
             if role == Qt.DisplayRole:
                 return self.mci_list[row].az
+            # if role == Qt.EditRole:
+            #     return self.mci_list[row].az
 
         if index.column() == 1:
             if role == Qt.DisplayRole:
                 return self.mci_list[row].name
+            # if role == Qt.EditRole:
+            #     return self.mci_list[row].name
 
         if index.column() == 2:
 
@@ -73,6 +93,14 @@ class AktAllModel(QAbstractTableModel):
 
                 if role == Qt.DisplayRole:
                     return self.mci_list[row].rel_bearbeitungsstatus.name
+
+        if index.column() == 3:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].stz
+
+        if index.column() == 4:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].anm
 
     # def data(self, index, role=None):
     #
@@ -240,121 +268,121 @@ class AkteAllMain(MainTable):
 
         self.updateMaintable()
 
-    def setMaintableColumns(self):
-        super().setMaintableColumns()
-
-        self.maintable_columns[0] = MaintableColumn(column_type='int',
-                                                    visible=False)
-        self.maintable_columns[1] = MaintableColumn(heading='AZ',
-                                                    column_type='str',
-                                                    alignment='c')
-        self.maintable_columns[2] = MaintableColumn(heading='Name',
-                                                    column_type='str',
-                                                    alignment='l')
-        self.maintable_columns[3] = MaintableColumn(heading='Alias',
-                                                    column_type='str',
-                                                    alignment='l')
-
-        # self.maintable_columns[0] = MaintableColumn(column_type='int',
-        #                                             visible=False)
-        # self.maintable_columns[1] = MaintableColumn(heading='AZ',
-        #                                             column_type='str',
-        #                                             alignment='c')
-        # self.maintable_columns[2] = MaintableColumn(heading='Name',
-        #                                             column_type='str',
-        #                                             alignment='l')
-        # self.maintable_columns[3] = MaintableColumn(heading='Alias',
-        #                                             column_type='str',
-        #                                             alignment='l')
-        # self.maintable_columns[4] = MaintableColumn(heading='Status',
-        #                                             column_type='str')
-        # self.maintable_columns[5] = MaintableColumn(heading='AlmBNR',
-        #                                             column_type='int')
-        # self.maintable_columns[6] = MaintableColumn(heading='Stammzahl',
-        #                                             column_type='str',
-        #                                             alignment='c')
-        # self.maintable_columns[7] = MaintableColumn(heading='Weidefläche (ha)',
-        #                                             column_type='float')
-        # self.maintable_columns[8] = MaintableColumn(heading='im AW-Buch (ha)',
-        #                                             column_type='float')
-        # self.maintable_columns[9] = MaintableColumn(heading='davon bew. (ha)',
-        #                                             column_type='float')
-
-    def getMainQuery(self, session=None):
-
-        query2 = session.execute(select(BAkt.id,
-                                        BAkt.az,
-                                        BAkt.name,
-                                        BAkt.alias))
-
-        # akt_inst = query2.all()
-        # print(f'###')
-
-        # """subquery to get the area for the intersected and last gst"""
-        # sub_komplex_area = session.query(
-        #                     BAkt.id,
-        #                     func.sum(func.ST_Area(BKomplex.geometry))
-        #                     .label("komplex_area"))\
-        #     .select_from(BAkt) \
-        #     .join(BKomplex) \
-        #     .group_by(BAkt.id)\
-        #     .subquery()
-        # """"""
-        #
-        # """die aktuellsten gst-versionen je akt"""
-        # sub_gst_registered = session.query(BAkt.id,
-        #                                    func.ST_Area(BGstVersion.geometry)
-        #                                    .label("gst_area"),
-        #                                    func.max(BGstEz.datenstand),
-        #                                    BGstVersion.ez_id) \
-        #     .select_from(BAkt) \
-        #     .join(BGstZuordnung) \
-        #     .join(BGst)\
-        #     .join(BGstVersion)\
-        #     .join(BGstEz) \
-        #     .filter(BGstZuordnung.awb_status_id == 1)\
-        #     .group_by(BGstVersion.gst_id)\
-        #     .subquery()
-        # """"""
-        #
-        # """die beweidete fläche je akt die im aw-buch eingetragen ist"""
-        # sub_awb_beweidet = session.query(BAkt.id,
-        #                                  func.sum(func.ST_Area(
-        #                                      BCutKoppelGstAktuell.geometry))
-        #                                  .label("bew_area")) \
-        #     .select_from(BAkt) \
-        #     .join(BGstZuordnung) \
-        #     .join(BGst)\
-        #     .join(BGstVersion)\
-        #     .join(BCutKoppelGstAktuell) \
-        #     .filter(BGstZuordnung.awb_status_id == 1) \
-        #     .group_by(BAkt.id) \
-        #     .subquery()
-        # """"""
-        #
-        # query2 = session.query(BAkt.id,
-        #                        BAkt.az,
-        #                        BAkt.name,
-        #                        BAkt.alias,
-        #                        BBearbeitungsstatus.name,
-        #                        BAkt.alm_bnr,
-        #                        BAkt.stz,
-        #                        sub_komplex_area.c.komplex_area,
-        #                        func.sum(sub_gst_registered.c.gst_area),
-        #                        sub_awb_beweidet.c.bew_area) \
-        #     .select_from(BAkt) \
-        #     .join(BBearbeitungsstatus) \
-        #     .outerjoin(sub_komplex_area, BAkt.id == sub_komplex_area.c.id) \
-        #     .outerjoin(sub_gst_registered, BAkt.id == sub_gst_registered.c.id)\
-        #     .outerjoin(sub_awb_beweidet, BAkt.id == sub_awb_beweidet.c.id)\
-        #     .group_by(BAkt.id)
-
-        return query2
-
-    def setMainTableModel(self):
-        super().setMainTableModel()
-
-        return AktAllModel(self, self.maintable_dataarray)
+    # def setMaintableColumns(self):
+    #     super().setMaintableColumns()
+    #
+    #     self.maintable_columns[0] = MaintableColumn(column_type='int',
+    #                                                 visible=False)
+    #     self.maintable_columns[1] = MaintableColumn(heading='AZ',
+    #                                                 column_type='str',
+    #                                                 alignment='c')
+    #     self.maintable_columns[2] = MaintableColumn(heading='Name',
+    #                                                 column_type='str',
+    #                                                 alignment='l')
+    #     self.maintable_columns[3] = MaintableColumn(heading='Alias',
+    #                                                 column_type='str',
+    #                                                 alignment='l')
+    #
+    #     # self.maintable_columns[0] = MaintableColumn(column_type='int',
+    #     #                                             visible=False)
+    #     # self.maintable_columns[1] = MaintableColumn(heading='AZ',
+    #     #                                             column_type='str',
+    #     #                                             alignment='c')
+    #     # self.maintable_columns[2] = MaintableColumn(heading='Name',
+    #     #                                             column_type='str',
+    #     #                                             alignment='l')
+    #     # self.maintable_columns[3] = MaintableColumn(heading='Alias',
+    #     #                                             column_type='str',
+    #     #                                             alignment='l')
+    #     # self.maintable_columns[4] = MaintableColumn(heading='Status',
+    #     #                                             column_type='str')
+    #     # self.maintable_columns[5] = MaintableColumn(heading='AlmBNR',
+    #     #                                             column_type='int')
+    #     # self.maintable_columns[6] = MaintableColumn(heading='Stammzahl',
+    #     #                                             column_type='str',
+    #     #                                             alignment='c')
+    #     # self.maintable_columns[7] = MaintableColumn(heading='Weidefläche (ha)',
+    #     #                                             column_type='float')
+    #     # self.maintable_columns[8] = MaintableColumn(heading='im AW-Buch (ha)',
+    #     #                                             column_type='float')
+    #     # self.maintable_columns[9] = MaintableColumn(heading='davon bew. (ha)',
+    #     #                                             column_type='float')
+    #
+    # def getMainQuery(self, session=None):
+    #
+    #     query2 = session.execute(select(BAkt.id,
+    #                                     BAkt.az,
+    #                                     BAkt.name,
+    #                                     BAkt.alias))
+    #
+    #     # akt_inst = query2.all()
+    #     # print(f'###')
+    #
+    #     # """subquery to get the area for the intersected and last gst"""
+    #     # sub_komplex_area = session.query(
+    #     #                     BAkt.id,
+    #     #                     func.sum(func.ST_Area(BKomplex.geometry))
+    #     #                     .label("komplex_area"))\
+    #     #     .select_from(BAkt) \
+    #     #     .join(BKomplex) \
+    #     #     .group_by(BAkt.id)\
+    #     #     .subquery()
+    #     # """"""
+    #     #
+    #     # """die aktuellsten gst-versionen je akt"""
+    #     # sub_gst_registered = session.query(BAkt.id,
+    #     #                                    func.ST_Area(BGstVersion.geometry)
+    #     #                                    .label("gst_area"),
+    #     #                                    func.max(BGstEz.datenstand),
+    #     #                                    BGstVersion.ez_id) \
+    #     #     .select_from(BAkt) \
+    #     #     .join(BGstZuordnung) \
+    #     #     .join(BGst)\
+    #     #     .join(BGstVersion)\
+    #     #     .join(BGstEz) \
+    #     #     .filter(BGstZuordnung.awb_status_id == 1)\
+    #     #     .group_by(BGstVersion.gst_id)\
+    #     #     .subquery()
+    #     # """"""
+    #     #
+    #     # """die beweidete fläche je akt die im aw-buch eingetragen ist"""
+    #     # sub_awb_beweidet = session.query(BAkt.id,
+    #     #                                  func.sum(func.ST_Area(
+    #     #                                      BCutKoppelGstAktuell.geometry))
+    #     #                                  .label("bew_area")) \
+    #     #     .select_from(BAkt) \
+    #     #     .join(BGstZuordnung) \
+    #     #     .join(BGst)\
+    #     #     .join(BGstVersion)\
+    #     #     .join(BCutKoppelGstAktuell) \
+    #     #     .filter(BGstZuordnung.awb_status_id == 1) \
+    #     #     .group_by(BAkt.id) \
+    #     #     .subquery()
+    #     # """"""
+    #     #
+    #     # query2 = session.query(BAkt.id,
+    #     #                        BAkt.az,
+    #     #                        BAkt.name,
+    #     #                        BAkt.alias,
+    #     #                        BBearbeitungsstatus.name,
+    #     #                        BAkt.alm_bnr,
+    #     #                        BAkt.stz,
+    #     #                        sub_komplex_area.c.komplex_area,
+    #     #                        func.sum(sub_gst_registered.c.gst_area),
+    #     #                        sub_awb_beweidet.c.bew_area) \
+    #     #     .select_from(BAkt) \
+    #     #     .join(BBearbeitungsstatus) \
+    #     #     .outerjoin(sub_komplex_area, BAkt.id == sub_komplex_area.c.id) \
+    #     #     .outerjoin(sub_gst_registered, BAkt.id == sub_gst_registered.c.id)\
+    #     #     .outerjoin(sub_awb_beweidet, BAkt.id == sub_awb_beweidet.c.id)\
+    #     #     .group_by(BAkt.id)
+    #
+    #     return query2
+    #
+    # def setMainTableModel(self):
+    #     super().setMainTableModel()
+    #
+    #     return AktAllModel(self, self.maintable_dataarray)
 
     def signals(self):
         super().signals()

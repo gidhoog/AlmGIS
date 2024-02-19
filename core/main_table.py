@@ -628,28 +628,6 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
             self,
             self.main_table_mci)
 
-        # if di_list:
-        #     self.main_table_model = self.table_model_class(self,
-        #                                                    di_list=di_list)
-        #     # self.maintable_view.setModel(self.main_table_model)
-        #     print(f'....')
-        #     self.filter_proxy.setSourceModel(self.main_table_model)
-        #     self.maintable_view.setModel(self.filter_proxy)
-        #     self.updateFooter()
-        # else:
-        #     self.setMaintableColumns()
-        #
-        #     self.maintable_session = session
-        #
-        #     if session:
-        #         # self.loadData()
-        #         self.loadDataBySession()
-        #         # self.filter_proxy.setSourceModel(self.main_table_model)
-        #         # self.maintable_view.setModel(self.filter_proxy)
-        #     else:
-        #         self.main_table_model = self.data_model_class(
-        #             self, self.maintable_dataarray)
-
         self.filter_proxy.setSourceModel(self.main_table_model)
         self.maintable_view.setModel(self.filter_proxy)
 
@@ -670,18 +648,18 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         pass
 
-    def loadData(self):
-        """
-        lade die daten und führe deren darstellung durch
-        """
-
-        self.loadDataBySession()
-
-        self.filter_proxy.setSourceModel(self.main_table_model)
-        self.maintable_view.setModel(self.filter_proxy)
-
-        # self.updateFooter()
-        # self.setFilter()
+    # def loadData(self):
+    #     """
+    #     lade die daten und führe deren darstellung durch
+    #     """
+    #
+    #     self.loadDataBySession()
+    #
+    #     self.filter_proxy.setSourceModel(self.main_table_model)
+    #     self.maintable_view.setModel(self.filter_proxy)
+    #
+    #     # self.updateFooter()
+    #     # self.setFilter()
 
     def updateMaintableNew(self):
         """
@@ -1406,14 +1384,23 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         if 'g' in self.parent.available_filters:
             if self.parent.guiFiltGeneralLedit.text() != '':
                 found = False
-                for col in self.parent.maintable_columns:
-                    if self.parent.maintable_columns[col].visible:
-                        all_value = self.sourceModel().data(
-                            self.sourceModel().index(source_row,
-                                                     col), Qt.DisplayRole)
-                        if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
-                                all_value).lower():
-                            found = True
+                # for col in self.parent.maintable_columns:
+                #     if self.parent.maintable_columns[col].visible:
+                #         all_value = self.sourceModel().data(
+                #             self.sourceModel().index(source_row,
+                #                                      col), Qt.DisplayRole)
+                #         if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
+                #                 all_value).lower():
+                #             found = True
+                """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
+                for col in range(len(self.parent.main_table_model.header)):
+                    col_value = self.sourceModel().data(
+                                self.sourceModel().index(source_row,
+                                                         col), Qt.DisplayRole)
+                    if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
+                            col_value).lower():
+                        found = True
+                """"""
                 if found == False:  # kein treffer in der zeile
                     return False
         """"""

@@ -70,6 +70,7 @@ class BBearbeitungsstatus(Base):
     name = Column(String)
     name_short = Column(String)
     sort = Column(Integer)
+    color = Column(String)
 
     def __repr__(self):
         return f"<BBearbeitungsstatus(id={self.id}, name='{self.name}')>"
