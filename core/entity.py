@@ -44,8 +44,8 @@ class Entity(QMainWindow):
     (z.b. ein gis-kartenfenster)
     """
 
-    data_class = None  # class des data_model für diesen entity
-    data_instance = None  # instanze der data_class
+    _entity_mc = None  # 'mapped class' des Entities (definiert in data_model.py)
+    _entity_mci = None  # Instanz der 'mapped class' des Entities
 
     valid = True
 
@@ -132,21 +132,41 @@ class Entity(QMainWindow):
         :param new_instance: instance der neuen entity
         """
 
-        self.data_instance = new_instance
+        self._entity_mci = new_instance
 
         self.setDefaultValues()
 
     @set_data
-    def editEntity(self, data_instance, session=None):
+    def editEntity(self, entity_mci=None, entity_id=None, **kwargs):
         """
         instance der entity die bearbeitet werden soll
 
-        :param data_instance: instance die bearbeitet werden soll
+        :param entity_mci: instanz der 'mapped class' dieses entities
+        :param entity_id: id dieses entities
+        :param **kwargs: z.b. mci's für die Dateneingabe (die in der gleichen
+            session wie die entity_mci erstellt werden sollten
         """
-        self.session = session
 
-        if data_instance is not None:
-            self.data_instance = data_instance
+        if entity_mci is not None:
+            self._entity_mci = entity_mci
+
+        if entity_id is not None:
+            self.entity_id = entity_id
+
+            with db_session_cm() as session:
+
+                self._entity_mci = session.get(self._entity_mc, self.entity_id)
+
+                self.getCustomEntityMci(session)
+
+    def getCustomEntityMci(self, session):
+        """
+        frage individuelle mci's ab, die für diese Entity notwendig sind (
+        z.B. mci's für die Dateneingabe)
+        :param session: sqlalchemy session
+        :return:
+        """
+
 
     def post_data_set(self):
         """
@@ -222,7 +242,7 @@ class Entity(QMainWindow):
         mappe hier die werte der date_instance mit den entity-attributen
         """
 
-        self.entity_id = self.data_instance.id
+        self.entity_id = self._entity_mci.id
 
     def acceptEntity(self):
         """
@@ -247,7 +267,7 @@ class Entity(QMainWindow):
 
     def submitEntity(self):
         """
-        schreibe die daten des entity in die data_instance
+        schreibe die daten des entity in die _entity_mci
         """
         pass
 
@@ -257,9 +277,9 @@ class Entity(QMainWindow):
     #     """
     #     with db_session_cm() as self.entity_session:
     #         try:
-    #             self.entity_session.add(self.data_instance)
+    #             self.entity_session.add(self._entity_mci)
     #         except:
-    #             print(f'cannot add {self.data_instance} to session')
+    #             print(f'cannot add {self._entity_mci} to session')
 
     def rejectEntity(self):
         """

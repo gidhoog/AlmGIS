@@ -48,7 +48,7 @@ class Gst(gst_UI.Ui_Gst, Entity):
     @kgnr.setter
     def kgnr(self, value):
 
-        kgname = self.data_instance.rel_kat_gem.kgname
+        kgname = self._entity_mci.rel_kat_gem.kgname
 
         self.uiKgLbl.setText(str(value) + ' - ' + kgname)
         self._kgnr = value
@@ -63,8 +63,8 @@ class Gst(gst_UI.Ui_Gst, Entity):
     def mapData(self):
         super().mapData()
 
-        self.gst = self.data_instance.gst
-        self.kgnr = self.data_instance.kgnr
+        self.gst = self._entity_mci.gst
+        self.kgnr = self._entity_mci.kgnr
 
     def addGstLayerCurrent(self):
         """
@@ -218,9 +218,9 @@ class Gst(gst_UI.Ui_Gst, Entity):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        self.gst_versions_sorted = sorted(self.data_instance.rel_alm_gst_version,
-                                 key=lambda x:x.rel_alm_gst_ez.datenstand,
-                                 reverse=True)
+        self.gst_versions_sorted = sorted(self._entity_mci.rel_alm_gst_version,
+                                          key=lambda x:x.rel_alm_gst_ez.datenstand,
+                                          reverse=True)
 
         """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
         self.uiGisDock = GisDock(self)

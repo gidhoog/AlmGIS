@@ -169,9 +169,9 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     @last_edit.setter
     def last_edit(self, value):
 
-        if value and self.data_instance.time_edit:
+        if value and self._entity_mci.time_edit:
             user = value
-            time = self.data_instance.time_edit[0:19]
+            time = self._entity_mci.time_edit[0:19]
             le = user + '/' + str(time)
             self.uiLastEditedLbl.setText(le)
 
@@ -201,7 +201,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         super().loadSubWidgets()
 
         self.gst_info = Gst(self)
-        self.gst_info.editEntity(self.data_instance.rel_gst, None)
+        self.gst_info.editEntity(self._entity_mci.rel_gst, None)
         self.addGstInfo()
 
     def addGstInfo(self):
@@ -211,19 +211,19 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def mapData(self):
         super().mapData()
 
-        self.akt = self.data_instance.rel_akt.name
-        self.gst_nr = self.data_instance.rel_gst.gst
-        self.kg = self.data_instance.rel_gst.kgnr
-        # self.awb_status = self.data_instance.awb_status_id
-        self.awb_status = self.data_instance.rel_awb_status
-        self.rechtsgrundlage = self.data_instance.rechtsgrundlage_id
+        self.akt = self._entity_mci.rel_akt.name
+        self.gst_nr = self._entity_mci.rel_gst.gst
+        self.kg = self._entity_mci.rel_gst.kgnr
+        # self.awb_status = self._entity_mci.awb_status_id
+        self.awb_status = self._entity_mci.rel_awb_status
+        self.rechtsgrundlage = self._entity_mci.rechtsgrundlage_id
 
-        self.anmerkung = self.data_instance.anmerkung
-        self.probleme = self.data_instance.probleme
-        self.aufgaben = self.data_instance.aufgaben
-        self.gb_wrong = self.data_instance.gb_wrong
-        self.awb_wrong = self.data_instance.awb_wrong
-        self.last_edit = self.data_instance.user_edit
+        self.anmerkung = self._entity_mci.anmerkung
+        self.probleme = self._entity_mci.probleme
+        self.aufgaben = self._entity_mci.aufgaben
+        self.gb_wrong = self._entity_mci.gb_wrong
+        self.awb_wrong = self._entity_mci.awb_wrong
+        self.last_edit = self._entity_mci.user_edit
 
     def submitEntity(self):
         super().submitEntity()
@@ -232,21 +232,21 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         #
         #     session.merge(self.awb_status)
 
-        # self.data_instance.awb_status_id = self.awb_status
-        self.data_instance.rel_awb_status = self.awb_status
-        self.data_instance.rechtsgrundlage_id = self.rechtsgrundlage
+        # self._entity_mci.awb_status_id = self.awb_status
+        self._entity_mci.rel_awb_status = self.awb_status
+        self._entity_mci.rechtsgrundlage_id = self.rechtsgrundlage
 
-        self.data_instance.anmerkung = self.anmerkung
-        self.data_instance.probleme = self.probleme
-        self.data_instance.aufgaben = self.aufgaben
-        self.data_instance.gb_wrong = self.gb_wrong
-        self.data_instance.awb_wrong = self.awb_wrong
+        self._entity_mci.anmerkung = self.anmerkung
+        self._entity_mci.probleme = self.probleme
+        self._entity_mci.aufgaben = self.aufgaben
+        self._entity_mci.gb_wrong = self.gb_wrong
+        self._entity_mci.awb_wrong = self.awb_wrong
 
         print(f'...')
 
         # with db_session_cm() as session:
         #
-        #     session.add(self.data_instance)
+        #     session.add(self._entity_mci)
         #     session.flush()
 
 

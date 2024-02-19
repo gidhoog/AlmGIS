@@ -46,7 +46,7 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
     @ezkg.setter
     def ezkg(self, value):
 
-        kgname = self.data_instance.rel_alm_gst_ez.rel_kat_gem.kgname
+        kgname = self._entity_mci.rel_alm_gst_ez.rel_kat_gem.kgname
 
         self.uiEzKgLbl.setText(str(value) + ' - ' + kgname)
         self._ezkg = value
@@ -111,10 +111,10 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
     def mapData(self):
         super().mapData()
 
-        self.ez = self.data_instance.rel_alm_gst_ez.ez
-        self.ezkg = self.data_instance.rel_alm_gst_ez.kgnr
-        self.datenstand = self.data_instance.rel_alm_gst_ez.datenstand
-        self.importzeit = self.data_instance.rel_alm_gst_ez.import_time
+        self.ez = self._entity_mci.rel_alm_gst_ez.ez
+        self.ezkg = self._entity_mci.rel_alm_gst_ez.kgnr
+        self.datenstand = self._entity_mci.rel_alm_gst_ez.datenstand
+        self.importzeit = self._entity_mci.rel_alm_gst_ez.import_time
 
-        self.area_kat = to_shape(self.data_instance.geometry).area  # float
+        self.area_kat = to_shape(self._entity_mci.geometry).area  # float
 

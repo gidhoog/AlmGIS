@@ -11,7 +11,7 @@ class KomplexDataForm(komplex_dataform_UI.Ui_KomplexDataForm, entity.Entity):
     class for a komplex-entity
     """
 
-    # data_class = BKomplexe
+    # _entity_mc = BKomplexe
 
     _nr = 0
     _name = ''
@@ -94,20 +94,20 @@ class KomplexDataForm(komplex_dataform_UI.Ui_KomplexDataForm, entity.Entity):
     def mapData(self):
         super().mapData()
 
-        self.nr = self.data_instance.nr
-        self.name = self.data_instance.name
-        self.jahr = self.data_instance.jahr
-        self.bearbeiter = self.data_instance.bearbeiter
-        self.anm = self.data_instance.anmerkung
+        self.nr = self._entity_mci.nr
+        self.name = self._entity_mci.name
+        self.jahr = self._entity_mci.jahr
+        self.bearbeiter = self._entity_mci.bearbeiter
+        self.anm = self._entity_mci.anmerkung
 
     def submitEntity(self):
         super().submitEntity()
 
-        self.data_instance.nr = self.nr
-        self.data_instance.name = self.name
-        self.data_instance.jahr = self.jahr
-        self.data_instance.bearbeiter = self.bearbeiter
-        self.data_instance.anmerkung = self.anm
+        self._entity_mci.nr = self.nr
+        self._entity_mci.name = self.name
+        self._entity_mci.jahr = self.jahr
+        self._entity_mci.bearbeiter = self.bearbeiter
+        self._entity_mci.anmerkung = self.anm
 
     def feature_attribute_list(self):
 

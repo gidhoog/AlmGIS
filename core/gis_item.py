@@ -49,8 +49,8 @@ class GisItem(QStandardItem):
 
             self.setData(data_instance.id, GisItem.Id_Role)
 
-            # self.setData(data_instance.nr, GisItem.Nr_Role)
-            # self.setData(data_instance.name, GisItem.Name_Role)
+            # self.setData(_entity_mci.nr, GisItem.Nr_Role)
+            # self.setData(_entity_mci.name, GisItem.Name_Role)
 
     def getItemData(self, data_instance):
 

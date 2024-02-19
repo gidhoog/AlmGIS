@@ -819,8 +819,8 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
             """"""
 
             """setze werte für die vordefinierten widgets"""
-            akt_name.setText(self.parent.parent().data_instance.name)
-            az.setText(str(self.parent.parent().data_instance.az))
+            akt_name.setText(self.parent.parent()._entity_mci.name)
+            az.setText(str(self.parent.parent()._entity_mci.az))
             abb_logo.setPicturePath(
                 ':/logo/resources/icons/abb_logo_ohne_schrift.svg')
             north_arrow.setPicturePath(':/logo/resources/icons/nordpfeil01.png')

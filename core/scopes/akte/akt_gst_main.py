@@ -424,7 +424,7 @@ class GstMaintable(MainTable):
         #     .join(BKomplex)\
         #     .join(BAbgrenzung)\
         #     .join(BAkt)\
-        #     .filter(BAkt.id == self.parent.data_instance.id)\
+        #     .filter(BAkt.id == self.parent._entity_mci.id)\
         #     .group_by(BCutKoppelGstAktuell.gst_version_id)\
         #     .subquery()
         # """"""
@@ -448,7 +448,7 @@ class GstMaintable(MainTable):
         #     .join(BGstAwbStatus) \
         #     .join(BRechtsgrundlage) \
         #     .outerjoin(sub_cutarea, BGstVersion.id == sub_cutarea.c.gst_version_id) \
-        #     .filter(BGstZuordnung.akt_id == self.parent.data_instance.id) \
+        #     .filter(BGstZuordnung.akt_id == self.parent._entity_mci.id) \
         #     .group_by(BGstZuordnung.id)
         #
         # return query

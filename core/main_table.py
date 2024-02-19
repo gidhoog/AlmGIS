@@ -323,7 +323,8 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
         self.uiEditDataTbtn.clicked.connect(self.edit_row)
         self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
-        self.maintable_view.doubleClicked.connect(self.edit_row)
+        # self.maintable_view.doubleClicked.connect(self.edit_row)
+        self.maintable_view.doubleClicked.connect(self.doubleClickedRow)
 
         self.maintable_view.selectionModel().selectionChanged\
             .connect(self.selectedRowsChanged)
@@ -817,23 +818,60 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
         return inst
 
-    def edit_row(self, index):
+    def doubleClickedRow(self, index):
+
+        # selected_index = self.rowSelected()
+
+        print(f'selected_index row: {index.row()}    '
+              f'col: {index.column()}')
+
+        if 0 <= index.column() <= 9999:  # für alle Spalten der Tabelle
+
+            if self.main_table_model.data(
+                    self.main_table_model.index(index.row(), 1),
+                    Qt.EditRole) == 'xy':
+                # define here a typ-handling
+                pass
+            self.edit_row(index)
+
+    def rowSelected(self):
         """
-        bearbeite tabelleneinträge
+        kontrolliere ob eine Zeile ausgewählt ist
+        :return: False wenn keine Zeile gewählt ist, den QModelIndex der ersten
+        Zeile wenn eine ausgewählt ist
         """
+
         """hole den index der ausgewählten zeile"""
         sel_rows = self.getSelectedRows()
         """"""
         """breche ab wenn keine zeile ausgewählt ist"""
         if not sel_rows:
             self.no_row_selected_msg()
-            return
+            return False
         """"""
+        return sel_rows[0]
+
+    def editEntity(self):
+
+        pass
+
+    def edit_row(self, index):
+        """
+        bearbeite tabelleneinträge
+        """
+        # """hole den index der ausgewählten zeile"""
+        # sel_rows = self.getSelectedRows()
+        # """"""
+        # """breche ab wenn keine zeile ausgewählt ist"""
+        # if not sel_rows:
+        #     self.no_row_selected_msg()
+        #     return
+        # """"""
 
         """nehme den ersten index (falls mehrere ausgewählt sind) und 
         wandle ihn in einen proxy-index um"""
-        model_index = sel_rows[0]
-        proxy_index = self.getProxyIndex(model_index)
+        # model_index = sel_rows[0]
+        proxy_index = self.getProxyIndex(index)
         """"""
 
         if self.edit_behaviour == 'dialog':  # derzeit wird nur 'dialog' unterstützt
@@ -844,34 +882,35 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
             if self._data_source == 'db':
 
-                """hole die daten die bearbeitet werden sollen, um sie im
-                entity-widget bearbeiten zu können"""
-                with db_session_cm() as session:
-                    session.expire_on_commit = False
+                # """hole die daten die bearbeitet werden sollen, um sie im
+                # entity-widget bearbeiten zu können"""
+                # with db_session_cm() as session:
+                #     session.expire_on_commit = False
+                #
+                #     if self.inst_column is not None:
+                #         """nehme die data_model-instanz aus dem maintable und
+                #         füge sie einer session hinzu um event. daten die sich in
+                #         verknüpften tabellen befinden und benötigt werden vorhanden
+                #         sind"""
+                #         data_instance = self.main_table_model.data(
+                #             self.main_table_model.index(proxy_index.row(),
+                #                                         self.inst_column),
+                #              Qt.EditRole),
+                #         try:
+                #             session.add(data_instance)
+                #             session.flush()
+                #         except:
+                #             print(f"Error: {sys.exc_info()}")
+                #         """"""
+                #     else:
+                #         """standardmethode um die data_model instanz zu bekommen"""
+                #         data_instance = self.get_row_instance(proxy_index,
+                #                                               session)
+                #         """"""
 
-                    if self.inst_column is not None:
-                        """nehme die data_model-instanz aus dem maintable und
-                        füge sie einer session hinzu um event. daten die sich in 
-                        verknüpften tabellen befinden und benötigt werden vorhanden
-                        sind"""
-                        data_instance = self.main_table_model.data(
-                            self.main_table_model.index(proxy_index.row(),
-                                                        self.inst_column),
-                            Qt.EditRole)
-                        try:
-                            session.add(data_instance)
-                            session.flush()
-                        except:
-                            print(f"Error: {sys.exc_info()}")
-                        """"""
-                    else:
-                        """standardmethode um die data_model instanz zu bekommen"""
-                        data_instance = self.get_row_instance(proxy_index,
-                                                              session)
-                        """"""
-
-                    """lade die daten in das entity-widget"""
-                    entity_widget.editEntity(data_instance, session)
+                """lade die daten in das entity-widget"""
+                # entity_widget.editEntity(entity_mci=data_instance)
+                entity_widget.editEntity(entity_id=1061)
 
 
             if self._data_source == 'di':
@@ -879,7 +918,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
                 """hole die di aus der di-liste"""
                 entity_di = self.main_table_model.di_list[proxy_index.row()]
                 """"""
-                # entity_di.rel_akt = self.parent.data_instance
+                # entity_di.rel_akt = self.parent._entity_mci
                 entity_widget.editEntity(entity_di)
                 print(f'...')
 

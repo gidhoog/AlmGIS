@@ -137,10 +137,10 @@ class KomplexMaintable(MainTable):
         super().getMainQuery(session)
 
         # query = session.scalars(select(BKomplex)
-        #                         .where(BKomplex.akt_id == self.parent.data_instance.id))
+        #                         .where(BKomplex.akt_id == self.parent._entity_mci.id))
 
         query = session.execute(select(BKomplex.id, BKomplex.name)
-                                .where(BKomplex.akt_id == self.parent.data_instance.id))
+                                .where(BKomplex.akt_id == self.parent._entity_mci.id))
 
         test_inst = query.all()
 
@@ -162,7 +162,7 @@ class KomplexMaintable(MainTable):
         #     .outerjoin(BGstZuordnung,
         #                and_((BGstZuordnung.awb_status_id == 1),
         #                     (BGst.id == BGstZuordnung.gst_id))) \
-        #     .filter(BKomplex.akt_id == self.parent.data_instance.id) \
+        #     .filter(BKomplex.akt_id == self.parent._entity_mci.id) \
         #     .group_by(BKomplex.id)
 
         return test_inst

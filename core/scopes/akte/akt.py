@@ -41,7 +41,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     baseclass für einen akt-datensatz
     """
 
-    data_class = BAkt
+    _entity_mc = BAkt
 
     _alm_bnr = 0
     _anm = ''
@@ -221,18 +221,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def mapData(self):
         super().mapData()
 
-        cut_koppel_gst_list = self.data_instance.rel_abgrenzung[1].rel_komplex[0].rel_koppel[0].rel_cut_koppel_gst
+        # cut_koppel_gst_list = self._entity_mci.rel_abgrenzung[1].rel_komplex[0].rel_koppel[0].rel_cut_koppel_gst
 
-        self.az = self.data_instance.az
-        self.name = self.data_instance.name
-        self.stz = self.data_instance.stz
+        self.az = self._entity_mci.az
+        self.name = self._entity_mci.name
+        self.stz = self._entity_mci.stz
 
-        self.alias = self.data_instance.alias
-        self.alm_bnr = self.data_instance.alm_bnr
-        self.anm = self.data_instance.anm
-        self.status = self.data_instance.bearbeitungsstatus_id
+        self.alias = self._entity_mci.alias
+        self.alm_bnr = self._entity_mci.alm_bnr
+        self.anm = self._entity_mci.anm
+        self.status = self._entity_mci.bearbeitungsstatus_id
 
-        self.guiMainGis.entity_id = self.data_instance.id
+        self.guiMainGis.entity_id = self._entity_mci.id
 
         self.uiVersionTv.setModel(self.komplex_model)
 
@@ -240,7 +240,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         super().loadSubWidgets()
 
         # self.gst_table.initMaintable(self.session)
-        self.gst_table.initMaintable(di_list=self.data_instance.rel_gst_zuordnung)
+        self.gst_table.initMaintable(di_list=self._entity_mci.rel_gst_zuordnung)
 
         """lade die Abgrenzungsdaten"""
         self.loadKKModel()
@@ -381,7 +381,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         with db_session_cm() as session:
 
             abgrenzungs_instances = session.scalars(select(BAbgrenzung)
-                                    .where(BAbgrenzung.akt_id == self.data_instance.id)
+                                    .where(BAbgrenzung.akt_id == self._entity_mci.id)
                                     .order_by(desc(BAbgrenzung.jahr))
                                                     ).unique().all()
 
@@ -566,20 +566,20 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
     def submitEntity(self):
 
-        self.data_instance.alias = self.alias
-        self.data_instance.alm_bnr = self.alm_bnr
-        self.data_instance.anm = self.anm
-        self.data_instance.bearbeitungsstatus_id = self.status
+        self._entity_mci.alias = self.alias
+        self._entity_mci.alm_bnr = self.alm_bnr
+        self._entity_mci.anm = self.anm
+        self._entity_mci.bearbeitungsstatus_id = self.status
 
         with db_session_cm() as session:
 
-            for gst in self.data_instance.rel_gst_zuordnung:
+            for gst in self._entity_mci.rel_gst_zuordnung:
 
                 session.merge(gst.rel_awb_status)
 
-            session.add(self.data_instance)
+            session.add(self._entity_mci)
 
-            self.data_instance.rel_abgrenzung = self.get_abgrenzung_di()
+            self._entity_mci.rel_abgrenzung = self.get_abgrenzung_di()
 
         session.commit()
 
@@ -857,7 +857,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """
 
 
-        awb_auszug = AwbAuszug(akt_instance=self.data_instance)
+        awb_auszug = AwbAuszug(akt_instance=self._entity_mci)
         print(f'create AWB')
 
         """erzeuge eine pdf-Datei"""
