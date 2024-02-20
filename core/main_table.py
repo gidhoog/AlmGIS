@@ -1400,6 +1400,7 @@ class SortFilterProxyModel(QSortFilterProxyModel):
                     if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
                             col_value).lower():
                         found = True
+
                 """"""
                 if found == False:  # kein treffer in der zeile
                     return False
