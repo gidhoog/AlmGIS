@@ -155,9 +155,16 @@ class Entity(QMainWindow):
 
             with db_session_cm() as session:
 
-                self._entity_mci = session.get(self._entity_mc, self.entity_id)
+                # self._entity_mci = session.get(self._entity_mc, self.entity_id)
+                self._entity_mci = self.getEntityMci(session, entity_id)
 
                 self.getCustomEntityMci(session)
+
+        print(f'...')
+
+    def getEntityMci(self, session, entity_id):
+
+        pass
 
     def getCustomEntityMci(self, session):
         """

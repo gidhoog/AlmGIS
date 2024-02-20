@@ -29,8 +29,7 @@ class BAkt(Base):
     rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
     rel_gst_zuordnung = relationship(
         'BGstZuordnung',
-        back_populates='rel_akt',
-        lazy='joined')
+        back_populates='rel_akt')
     rel_komplex_name = relationship('BKomplexName', back_populates='rel_akt')
     rel_abgrenzung = relationship('BAbgrenzung',
                                   back_populates='rel_akt',

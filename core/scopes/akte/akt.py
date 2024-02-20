@@ -236,6 +236,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.uiVersionTv.setModel(self.komplex_model)
 
+    def getEntityMci(self, session, entity_id):
+
+        mci = session.scalars(
+            select(BAkt).options(joinedload(BAkt.rel_gst_zuordnung))
+            .where(BAkt.id == entity_id)
+        ).unique().first()
+
+        return mci
+
     def loadSubWidgets(self):
         super().loadSubWidgets()
 

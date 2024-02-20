@@ -833,7 +833,29 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
                     Qt.EditRole) == 'xy':
                 # define here a typ-handling
                 pass
+
+            # proxy_index = self.getProxyIndex(index)
+            print(f'--> edit row: {self.getRowId(index)}')
             self.edit_row(index)
+
+    def getRowId(self, index):
+        """
+        liefere den id des Datensatzes mit dem übergebenen Index
+
+        :param index: QModelIndex
+        :return: int (z.B.: self._main_table_mci[self.getProxyIndex(index).row()].id)
+        """
+        return None
+
+    def getRowMci(self, index):
+        """
+        liefere die MCI (Mapped Class Instance) des Datensatzes mit dem
+        übergebenen Index
+
+        :param index: QModelIndex
+        :return: MCI-Objekt (z.B.: self._main_table_mci[self.getProxyIndex(index).row()])
+        """
+        return None
 
     def rowSelected(self):
         """
@@ -869,16 +891,16 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         #     return
         # """"""
 
-        """nehme den ersten index (falls mehrere ausgewählt sind) und 
-        wandle ihn in einen proxy-index um"""
-        # model_index = sel_rows[0]
-        proxy_index = self.getProxyIndex(index)
-        """"""
+        # """nehme den ersten index (falls mehrere ausgewählt sind) und
+        # wandle ihn in einen proxy-index um"""
+        # # model_index = sel_rows[0]
+        # proxy_index = self.getProxyIndex(index)
+        # """"""
 
         if self.edit_behaviour == 'dialog':  # derzeit wird nur 'dialog' unterstützt
 
             """hole das entity-widget"""
-            entity_widget = self.get_entity_widget(proxy_index)
+            entity_widget = self.get_entity_widget(index)
             """"""
 
             if self._data_source == 'db':
@@ -911,13 +933,14 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
                 """lade die daten in das entity-widget"""
                 # entity_widget.editEntity(entity_mci=data_instance)
-                entity_widget.editEntity(entity_id=1061)
+                # entity_widget.editEntity(entity_id=1061)
+                entity_widget.editEntity(entity_id=self.getRowId(index))
 
 
             if self._data_source == 'di':
 
                 """hole die di aus der di-liste"""
-                entity_di = self.main_table_model.di_list[proxy_index.row()]
+                entity_di = self.main_table_model.di_list[index.row()]
                 """"""
                 # entity_di.rel_akt = self.parent._entity_mci
                 entity_widget.editEntity(entity_di)
@@ -1400,7 +1423,6 @@ class SortFilterProxyModel(QSortFilterProxyModel):
                     if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
                             col_value).lower():
                         found = True
-
                 """"""
                 if found == False:  # kein treffer in der zeile
                     return False

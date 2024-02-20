@@ -264,6 +264,10 @@ class AkteAllMain(MainTable):
         self.uiAddDataTbtn.setVisible(False)
         self.uiDeleteDataTbtn.setVisible(False)
 
+    def getRowId(self, index):
+
+        return self._main_table_mci[self.getProxyIndex(index).row()].id
+
     def updateMainWidget(self):
 
         self.updateMaintable()
