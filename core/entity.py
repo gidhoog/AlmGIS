@@ -2,6 +2,8 @@ from functools import wraps
 from qgis.PyQt.QtGui import QFont
 from qgis.PyQt.QtWidgets import QLabel, QMessageBox, QMainWindow
 
+from sqlalchemy import select
+
 from core import db_session_cm
 from core.main_dialog import MainDialog
 
@@ -26,6 +28,7 @@ def set_data(func):
         """
 
         func(self, *args, **kwargs)
+        self.setPreMapData()
         self.mapData()
 
         self.post_data_set()
@@ -46,6 +49,7 @@ class Entity(QMainWindow):
 
     _entity_mc = None  # 'mapped class' des Entities (definiert in data_model.py)
     _entity_mci = None  # Instanz der 'mapped class' des Entities
+    _custom_mci = {}
 
     valid = True
 
@@ -163,8 +167,20 @@ class Entity(QMainWindow):
         print(f'...')
 
     def getEntityMci(self, session, entity_id):
+        """
+        frage hier die mci für diese Entity ab. Bei Bedarf diese Methode
+        subklassen
 
-        pass
+        :param session: session objekt
+        :param entity_id: int
+        :return: mci
+        """
+
+        mci = session.scalars(
+            select(self._entity_mc).where(self._entity_mc.id == entity_id)
+        ).unique().first()
+
+        return mci
 
     def getCustomEntityMci(self, session):
         """
@@ -173,7 +189,7 @@ class Entity(QMainWindow):
         :param session: sqlalchemy session
         :return:
         """
-
+        pass
 
     def post_data_set(self):
         """
@@ -243,6 +259,10 @@ class Entity(QMainWindow):
             self.uiHeaderHlay.addWidget(self.guiHeaderTextLbl)
 
             self.uiHeaderHlay.setContentsMargins(10, 10, 10, 10)
+
+    def setPreMapData(self):
+
+        pass
 
     def mapData(self):
         """

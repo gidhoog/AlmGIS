@@ -19,7 +19,8 @@ from sqlalchemy.orm import joinedload
 
 from core import entity, db_session_cm
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
-    BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel
+    BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
+    BGstZuordnung, BGstAwbStatus
 from core.entity_titel import EntityTitel
 from core.gis_control import GisControl
 from core.gis_item import GisItem
@@ -151,9 +152,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiAlmBnrLedit.setValidator(onlyInt)
         """"""
 
-        """lade die einträge für das status-combo"""
-        self.setStatusComboData()
-        """"""
+        # """lade die einträge für das status-combo"""
+        # self.setStatusComboData()
+        # """"""
 
         """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
         self.uiGisDock = GisDock(self)
@@ -170,8 +171,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """definiere notwendige tabellen und füge sie ein"""
         self.gst_table = GstMaintable(self)
 
-
-
         self.uiGstListeVlay.addWidget(self.gst_table)
         """"""
 
@@ -179,6 +178,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.komplex_root_item = self.komplex_model.invisibleRootItem()
 
         self.current_abgrenzung_item = None
+
+    def setPreMapData(self):
+        super().setPreMapData()
+
+        self.setStatusComboData()
 
     def initUi(self):
         super().initUi()
@@ -239,28 +243,36 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def getEntityMci(self, session, entity_id):
 
         mci = session.scalars(
-            select(BAkt).options(joinedload(BAkt.rel_gst_zuordnung))
+            select(BAkt)
+            .options(joinedload(BAkt.rel_gst_zuordnung)
+                     .joinedload(BGstZuordnung.rel_gst))
             .where(BAkt.id == entity_id)
         ).unique().first()
 
         return mci
 
+    def getCustomEntityMci(self, session):
+        # super().getCustomEntityMci(session)
+
+        gst_awb_statuse = session.scalars(select(BGstAwbStatus)).all()
+
+        self._custom_mci['gst_awb_statuse'] = gst_awb_statuse
+
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        # self.gst_table.initMaintable(self.session)
-        self.gst_table.initMaintable(di_list=self._entity_mci.rel_gst_zuordnung)
-
-        """lade die Abgrenzungsdaten"""
-        self.loadKKModel()
-        self.setCurrentRoleToKK()
-        self.selectFirstAbgrenzung()
-        self.uiVersionTv.selectionModel().selectionChanged.connect(
-            self.changedSelectedAbgrenzung)
-        """"""
-
-        self.initGis()
-        self.loadGisLayer()  # lade layer die in der db definiert sind
+        # self.gst_table.initMaintable(di_list=self._entity_mci.rel_gst_zuordnung)
+        #
+        # """lade die Abgrenzungsdaten"""
+        # self.loadKKModel()
+        # self.setCurrentRoleToKK()
+        # self.selectFirstAbgrenzung()
+        # self.uiVersionTv.selectionModel().selectionChanged.connect(
+        #     self.changedSelectedAbgrenzung)
+        # """"""
+        #
+        # self.initGis()
+        # self.loadGisLayer()  # lade layer die in der db definiert sind
 
     def initGis(self):
 
@@ -580,17 +592,21 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self._entity_mci.anm = self.anm
         self._entity_mci.bearbeitungsstatus_id = self.status
 
+        # with db_session_cm() as session:
+        #
+        #     for gst in self._entity_mci.rel_gst_zuordnung:
+        #
+        #         session.merge(gst.rel_awb_status)
+        #
+        #     session.add(self._entity_mci)
+        #
+        #     self._entity_mci.rel_abgrenzung = self.get_abgrenzung_di()
+
+        # session.commit()
+
         with db_session_cm() as session:
 
-            for gst in self._entity_mci.rel_gst_zuordnung:
-
-                session.merge(gst.rel_awb_status)
-
             session.add(self._entity_mci)
-
-            self._entity_mci.rel_abgrenzung = self.get_abgrenzung_di()
-
-        session.commit()
 
     def get_abgrenzung_di(self):
         """
@@ -680,7 +696,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         hole die daten für die status-combobox aus der datenbank und füge sie in
         die combobox ein
         """
-
+        # todo: stelle hier auf daten des _custom_mci um:
         with db_session_cm() as session:
             status_items = session.query(BBearbeitungsstatus).\
                 order_by(BBearbeitungsstatus.sort).\
@@ -698,8 +714,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
         # self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
 
-        self.uiKKTv.selectionModel().selectionChanged.connect(
-            self.changedSelectedKK)
+        # self.uiKKTv.selectionModel().selectionChanged.connect(
+        #     self.changedSelectedKK)
 
         self.uiEditVersionPbtn.clicked.connect(self.editAbgrenzung)
         self.uiVersionTv.doubleClicked.connect(self.editAbgrenzung)

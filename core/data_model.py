@@ -525,8 +525,7 @@ class BGstZuordnung(Base):
     # rel_gst = relationship('BGst',
     #                        back_populates='rel_gst_zuordnung')
     rel_gst: Mapped["BGst"] = relationship(
-        back_populates="rel_gst_zuordnung",
-        lazy='joined')
+        back_populates="rel_gst_zuordnung")
 
     # rel_awb_status = relationship('BGstAwbStatus',
     #                               back_populates='rel_gst_zuordnung')
