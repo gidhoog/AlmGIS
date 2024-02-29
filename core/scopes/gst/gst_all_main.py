@@ -9,14 +9,13 @@ from core import db_session_cm
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt, BKoppel
-from core.main_table import MainTable, MaintableColumn, \
-    MainTableModel, MainTableView
+from core.data_view import DataView, TableModel, TableView
 import typing
 
 from core.main_widget import MainWidget
 
 
-class GstAllMain(MainTable, MainWidget):
+class GstAllMain(DataView, MainWidget):
     """
     alle grundstücke die einem akt zugeordnet sind
     """
@@ -27,7 +26,7 @@ class GstAllMain(MainTable, MainWidget):
 
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
 
-    _data_view = MainTableView
+    _data_view = TableView
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
@@ -55,21 +54,21 @@ class GstAllMain(MainTable, MainWidget):
     def signals(self):
         super().signals()
 
-        self.maintable_view.doubleClicked.disconnect(self.edit_row)
+        self.data_view.doubleClicked.disconnect(self.edit_row)
 
     def finalInit(self):
         super().finalInit()
 
-        self.maintable_view.sortByColumn(1, Qt.AscendingOrder)
+        self.data_view.sortByColumn(1, Qt.AscendingOrder)
 
         """setzt bestimmte spaltenbreiten"""
-        self.maintable_view.setColumnWidth(1, 200)
-        self.maintable_view.setColumnWidth(2, 50)
-        self.maintable_view.setColumnWidth(3, 70)
-        self.maintable_view.setColumnWidth(4, 50)
-        self.maintable_view.setColumnWidth(5, 120)
-        self.maintable_view.setColumnWidth(6, 100)
-        self.maintable_view.setColumnWidth(7, 120)
+        self.data_view.setColumnWidth(1, 200)
+        self.data_view.setColumnWidth(2, 50)
+        self.data_view.setColumnWidth(3, 70)
+        self.data_view.setColumnWidth(4, 50)
+        self.data_view.setColumnWidth(5, 120)
+        self.data_view.setColumnWidth(6, 100)
+        self.data_view.setColumnWidth(7, 120)
         """"""
 
         self.updateMaintable()
@@ -223,7 +222,7 @@ class GstAllMain(MainTable, MainWidget):
 
 
 
-class GstAllModel(MainTableModel):
+class GstAllModel(TableModel):
 
     def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
 

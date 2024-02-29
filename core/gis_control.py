@@ -50,5 +50,5 @@ class GisControl:
 
             main_table = self.linked_gis_widgets[table]
 
-            main_table.maintable_view.selectionModel().selectionChanged\
+            main_table.data_view.selectionModel().selectionChanged\
                 .connect(lambda x, y, table=main_table: self.selectFeatures(table))

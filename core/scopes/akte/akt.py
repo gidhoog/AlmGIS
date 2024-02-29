@@ -254,9 +254,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def getCustomEntityMci(self, session):
         # super().getCustomEntityMci(session)
 
-        gst_awb_statuse = session.scalars(select(BGstAwbStatus)).all()
+        gst_awb_status = session.scalars(select(BGstAwbStatus)).all()
+        bearbeitungsstatus = session.scalars(select(BBearbeitungsstatus)).all()
 
-        self._custom_mci['gst_awb_statuse'] = gst_awb_statuse
+        self._custom_mci['gst_awb_status'] = gst_awb_status
+        self._custom_mci['bearbeitungsstatus'] = bearbeitungsstatus
 
     def loadSubWidgets(self):
         super().loadSubWidgets()
@@ -604,9 +606,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         # session.commit()
 
-        with db_session_cm() as session:
-
-            session.add(self._entity_mci)
+        # with db_session_cm(name='xx_test') as session:
+        #
+        #     session.add(self._entity_mci)
 
     def get_abgrenzung_di(self):
         """
@@ -697,10 +699,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         die combobox ein
         """
         # todo: stelle hier auf daten des _custom_mci um:
-        with db_session_cm() as session:
-            status_items = session.query(BBearbeitungsstatus).\
-                order_by(BBearbeitungsstatus.sort).\
-                all()
+        # with db_session_cm() as session:
+        #     status_items = session.query(BBearbeitungsstatus).\
+        #         order_by(BBearbeitungsstatus.sort).\
+        #         all()
+
+        # status_items = self._custom_mci['bearbeitungsstatus']
+        status_items = sorted(self._custom_mci['bearbeitungsstatus'],
+                              key=lambda x:x.sort)
 
         for item in status_items:
             self.uiStatusCombo.addItem(item.name, item.id)

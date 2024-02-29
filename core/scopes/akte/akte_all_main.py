@@ -1,18 +1,51 @@
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QDialog
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
 
 from core import db_session_cm
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus
-from core.main_table import MainTable, MaintableColumn, MainTableModel, \
-    MainTableView
+from core.entity import EntityDialog
+from core.data_view import DataView, TableModel, TableView
 from core.main_widget import MainWidget
 from core.scopes.akte.akt import Akt
 
 
+# class AkteAllEntityDialog(EntityDialog):
+#
+#     def __init__(self, parent=None):
+#         super(self.__class__, self).__init__(parent)
+#
+#         self.set_apply_button_text('&Speichern und Schließen_Akt')
+#
+#     def accept(self):
+#         # super().accept()
+#
+#         # todo: passe hier das update der DataView an (füge event 'setMainTableData'
+#         #  in 'initMaintable' ein
+#         if self.dialogWidget.acceptEntity():
+#
+#             self.parent.updateMaintableNew()
+#         #
+#         #     self.parent._main_table_mci.clear()
+#         #
+#         #     for inst in self.parent.getDataMci():
+#         #         self.parent._main_table_mci.append(inst)
+#         #
+#         #     self.parent.data_view.model().layoutChanged.emit()
+#
+#
+#
+#         QDialog.accept(self)
+
+
 class AkteAllMainWidget(MainWidget):
+    """
+    MainWidget für die Darstellung eines DataView's mit allen Akten
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -28,11 +61,11 @@ class AkteAllMainWidget(MainWidget):
         self.akt_all_table.initMaintable()
 
 
-# class AktAllModel(MainTableModel):
-class AktAllModel(QAbstractTableModel):
+class AktAllModel(TableModel):
+# class AktAllModel(QAbstractTableModel):
 
     def __init__(self, parent, mci_list=None):
-        super(self.__class__, self).__init__()
+        super(self.__class__, self).__init__(parent, mci_list=None)
 
         self.parent = parent
         self.mci_list = mci_list
@@ -133,38 +166,38 @@ class AktAllModel(QAbstractTableModel):
     #
     #     return super().data(index, role)
 
-    def rowCount(self, parent: QModelIndex = ...):
-        """
-        definiere die zeilenanzahl
-        """
+    # def rowCount(self, parent: QModelIndex = ...):
+    #     """
+    #     definiere die zeilenanzahl
+    #     """
+    #
+    #     if self.mci_list:
+    #         return len(self.mci_list)
+    #     else:
+    #         return 0
+    #
+    # def columnCount(self, parent: QModelIndex = ...):
+    #     """
+    #     definiere die spaltenanzahl
+    #     """
+    #     return len(self.header)
+    #
+    # def headerData(self, column, orientation, role=None):
+    #     """
+    #     wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+    #     dann nehme diese
+    #     """
+    #     super().headerData(column, orientation, role)
+    #
+    #     if self.header:
+    #         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    #
+    #             return self.header[column]
+    #     # else:
+    #     #     return super().headerData(column, orientation, role)
 
-        if self.mci_list:
-            return len(self.mci_list)
-        else:
-            return 0
 
-    def columnCount(self, parent: QModelIndex = ...):
-        """
-        definiere die spaltenanzahl
-        """
-        return len(self.header)
-
-    def headerData(self, column, orientation, role=None):
-        """
-        wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
-        dann nehme diese
-        """
-        super().headerData(column, orientation, role)
-
-        if self.header:
-            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-
-                return self.header[column]
-        # else:
-        #     return super().headerData(column, orientation, role)
-
-
-class AkteAllMain(MainTable):
+class AkteAllMain(DataView):
 
     _entity_widget = Akt
 
@@ -175,23 +208,24 @@ class AkteAllMain(MainTable):
     _delete_window_text_plural = ["Sollen die ausgewählten",
                                   "Akte wirklich gelöscht werden?"]
 
-    _data_view = MainTableView
+    _data_view = TableView
 
     _main_table_model_class = AktAllModel
+    # entity_dialog_class = AkteAllEntityDialog
 
     # _main_table_mci = []
 
-    @property  # getter
-    def main_table_mci(self):
-
-        with db_session_cm() as session:
-            stmt = select(BAkt).options(
-                joinedload(BAkt.rel_bearbeitungsstatus)
-            )
-
-            self._main_table_mci = session.scalars(stmt).unique().all()
-
-        return self._main_table_mci
+    # @property  # getter
+    # def main_table_mci(self):
+    #
+    #     with db_session_cm() as session:
+    #         stmt = select(BAkt).options(
+    #             joinedload(BAkt.rel_bearbeitungsstatus)
+    #         )
+    #
+    #         self._main_table_mci = session.scalars(stmt).unique().all()
+    #
+    #     return self._main_table_mci
 
     # @main_table_mci.setter
     # def main_table_mci(self, value):
@@ -232,18 +266,18 @@ class AkteAllMain(MainTable):
     #     #
     #     #     aaa = session.scalars(stmt).unique().all()
     #
-    #     self.main_table_model = self.main_table_model_class(
+    #     self.data_view_model = self.main_table_model_class(
     #         self,
     #         self.main_table_mci)
     #
-    #     self.filter_proxy.setSourceModel(self.main_table_model)
-    #     self.maintable_view.setModel(self.filter_proxy)
+    #     self.filter_proxy.setSourceModel(self.data_view_model)
+    #     self.data_view.setModel(self.filter_proxy)
     #
     #     self.updateFooter()
     #     self.setFilter()
     #
     #     self.setAddEntityMenu()
-    #     self.setMaintableLayout()
+    #     self.setDataViewLayout()
     #
     #     self.signals()
     #
@@ -267,6 +301,17 @@ class AkteAllMain(MainTable):
     def getRowId(self, index):
 
         return self._main_table_mci[self.getProxyIndex(index).row()].id
+
+    def getDataMci(self):
+
+        with db_session_cm() as session:
+            stmt = select(BAkt).options(
+                joinedload(BAkt.rel_bearbeitungsstatus)
+            )
+
+            mci = session.scalars(stmt).unique().all()
+
+        return mci
 
     def updateMainWidget(self):
 
@@ -394,7 +439,7 @@ class AkteAllMain(MainTable):
         self.uiAddDataTbtn.clicked.connect(self.add_row)
 
 
-# # class AktAllModel(MainTableModel):
+# # class AktAllModel(TableModel):
 # class AktAllModel(QAbstractTableModel):
 #
 #     def __init__(self, parent, mci_list=None):

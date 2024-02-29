@@ -285,7 +285,7 @@ class Entity(QMainWindow):
         """
         if self.valid == True:
             self.submitEntity()
-            # self.commitEntity()
+            self.commitEntity()
             return True
         elif self.valid == False:
             self.valid = True
@@ -298,15 +298,16 @@ class Entity(QMainWindow):
         """
         pass
 
-    # def commitEntity(self):
-    #     """
-    #     'commit' die daten der entity_session in die datenbank
-    #     """
-    #     with db_session_cm() as self.entity_session:
-    #         try:
-    #             self.entity_session.add(self._entity_mci)
-    #         except:
-    #             print(f'cannot add {self._entity_mci} to session')
+    def commitEntity(self):
+        """
+        'commit' die daten der entity_session in die datenbank
+        """
+        with db_session_cm(name='commit_entity') as session:
+
+            try:
+                session.add(self._entity_mci)
+            except:
+                print(f'cannot add {self._entity_mci} to session')
 
     def rejectEntity(self):
         """
@@ -333,13 +334,13 @@ class Entity(QMainWindow):
         msg.exec_()
 
 
-class EntityMainDialog(MainDialog):
+class EntityDialog(MainDialog):
     """
     dialog für ein entity-widget (Entity)
     """
 
     def __init__(self, parent=None):
-        super(EntityMainDialog, self).__init__(parent)
+        super(EntityDialog, self).__init__(parent)
 
         self.parent = parent
         self.enableApply = True

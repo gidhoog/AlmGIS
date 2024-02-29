@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'core/main_table.ui'
+# Form implementation generated from reading ui file 'core/data_view.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainTable(object):
-    def setupUi(self, MainTable):
-        MainTable.setObjectName("MainTable")
-        MainTable.resize(791, 374)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(MainTable)
+class Ui_DataView(object):
+    def setupUi(self, DataView):
+        DataView.setObjectName("DataView")
+        DataView.resize(791, 374)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(DataView)
         self.horizontalLayout_2.setContentsMargins(4, 4, 4, 4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiMainVlay = QtWidgets.QVBoxLayout()
@@ -29,14 +29,14 @@ class Ui_MainTable(object):
         self.uiHeaderHley.setContentsMargins(-1, 0, -1, -1)
         self.uiHeaderHley.setSpacing(3)
         self.uiHeaderHley.setObjectName("uiHeaderHley")
-        self.uiTitleLbl = QtWidgets.QLabel(MainTable)
+        self.uiTitleLbl = QtWidgets.QLabel(DataView)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.uiTitleLbl.setFont(font)
         self.uiTitleLbl.setObjectName("uiTitleLbl")
         self.uiHeaderHley.addWidget(self.uiTitleLbl)
-        self.uiSelectAllTbtn = QtWidgets.QToolButton(MainTable)
+        self.uiSelectAllTbtn = QtWidgets.QToolButton(DataView)
         self.uiSelectAllTbtn.setText("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/svg/resources/icons/mActionSelectAllRows.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -45,7 +45,7 @@ class Ui_MainTable(object):
         self.uiSelectAllTbtn.setAutoRaise(True)
         self.uiSelectAllTbtn.setObjectName("uiSelectAllTbtn")
         self.uiHeaderHley.addWidget(self.uiSelectAllTbtn)
-        self.uiClearSelectionPbtn = QtWidgets.QToolButton(MainTable)
+        self.uiClearSelectionPbtn = QtWidgets.QToolButton(DataView)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/svg/resources/icons/mActionDeselectAllRows.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiClearSelectionPbtn.setIcon(icon1)
@@ -53,7 +53,7 @@ class Ui_MainTable(object):
         self.uiClearSelectionPbtn.setAutoRaise(True)
         self.uiClearSelectionPbtn.setObjectName("uiClearSelectionPbtn")
         self.uiHeaderHley.addWidget(self.uiClearSelectionPbtn)
-        self.uiDeleteDataTbtn = QtWidgets.QToolButton(MainTable)
+        self.uiDeleteDataTbtn = QtWidgets.QToolButton(DataView)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -68,7 +68,7 @@ class Ui_MainTable(object):
         self.uiDeleteDataTbtn.setAutoRaise(True)
         self.uiDeleteDataTbtn.setObjectName("uiDeleteDataTbtn")
         self.uiHeaderHley.addWidget(self.uiDeleteDataTbtn)
-        self.uiAddDataTbtn = QtWidgets.QToolButton(MainTable)
+        self.uiAddDataTbtn = QtWidgets.QToolButton(DataView)
         self.uiAddDataTbtn.setMinimumSize(QtCore.QSize(0, 0))
         self.uiAddDataTbtn.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.uiAddDataTbtn.setText("")
@@ -79,7 +79,7 @@ class Ui_MainTable(object):
         self.uiAddDataTbtn.setAutoRaise(True)
         self.uiAddDataTbtn.setObjectName("uiAddDataTbtn")
         self.uiHeaderHley.addWidget(self.uiAddDataTbtn)
-        self.uiEditDataTbtn = QtWidgets.QToolButton(MainTable)
+        self.uiEditDataTbtn = QtWidgets.QToolButton(DataView)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -94,7 +94,7 @@ class Ui_MainTable(object):
         self.uiEditDataTbtn.setAutoRaise(True)
         self.uiEditDataTbtn.setObjectName("uiEditDataTbtn")
         self.uiHeaderHley.addWidget(self.uiEditDataTbtn)
-        self.uiToolsTbtn = QtWidgets.QToolButton(MainTable)
+        self.uiToolsTbtn = QtWidgets.QToolButton(DataView)
         self.uiToolsTbtn.setMinimumSize(QtCore.QSize(0, 0))
         self.uiToolsTbtn.setMaximumSize(QtCore.QSize(16777215, 16777215))
         icon5 = QtGui.QIcon()
@@ -123,7 +123,7 @@ class Ui_MainTable(object):
         self.uiTableFilterHLay.setObjectName("uiTableFilterHLay")
         spacerItem = QtWidgets.QSpacerItem(40, 2, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.uiTableFilterHLay.addItem(spacerItem)
-        self.uiDelFilterDetailRowPbtn = QtWidgets.QPushButton(MainTable)
+        self.uiDelFilterDetailRowPbtn = QtWidgets.QPushButton(DataView)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -137,7 +137,7 @@ class Ui_MainTable(object):
         self.uiDelFilterDetailRowPbtn.setFlat(True)
         self.uiDelFilterDetailRowPbtn.setObjectName("uiDelFilterDetailRowPbtn")
         self.uiTableFilterHLay.addWidget(self.uiDelFilterDetailRowPbtn)
-        self.uiAddFilterDetailRowPbtn = QtWidgets.QPushButton(MainTable)
+        self.uiAddFilterDetailRowPbtn = QtWidgets.QPushButton(DataView)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -151,7 +151,7 @@ class Ui_MainTable(object):
         self.uiAddFilterDetailRowPbtn.setFlat(True)
         self.uiAddFilterDetailRowPbtn.setObjectName("uiAddFilterDetailRowPbtn")
         self.uiTableFilterHLay.addWidget(self.uiAddFilterDetailRowPbtn)
-        self.uiEnableFilterDetailPbtn = QtWidgets.QPushButton(MainTable)
+        self.uiEnableFilterDetailPbtn = QtWidgets.QPushButton(DataView)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -193,10 +193,10 @@ class Ui_MainTable(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(-1, -1, 0, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.uiTableFooterTextLbl = QtWidgets.QLabel(MainTable)
+        self.uiTableFooterTextLbl = QtWidgets.QLabel(DataView)
         self.uiTableFooterTextLbl.setObjectName("uiTableFooterTextLbl")
         self.horizontalLayout.addWidget(self.uiTableFooterTextLbl)
-        self.uiTableFooterTextSelectedLbl = QtWidgets.QLabel(MainTable)
+        self.uiTableFooterTextSelectedLbl = QtWidgets.QLabel(DataView)
         self.uiTableFooterTextSelectedLbl.setText("")
         self.uiTableFooterTextSelectedLbl.setObjectName("uiTableFooterTextSelectedLbl")
         self.horizontalLayout.addWidget(self.uiTableFooterTextSelectedLbl)
@@ -217,21 +217,21 @@ class Ui_MainTable(object):
         self.uiMainVlay.addLayout(self.uiFooterHlay)
         self.horizontalLayout_2.addLayout(self.uiMainVlay)
 
-        self.retranslateUi(MainTable)
-        QtCore.QMetaObject.connectSlotsByName(MainTable)
-        MainTable.setTabOrder(self.uiAddDataTbtn, self.uiEditDataTbtn)
-        MainTable.setTabOrder(self.uiEditDataTbtn, self.uiToolsTbtn)
-        MainTable.setTabOrder(self.uiToolsTbtn, self.uiDelFilterDetailRowPbtn)
-        MainTable.setTabOrder(self.uiDelFilterDetailRowPbtn, self.uiAddFilterDetailRowPbtn)
-        MainTable.setTabOrder(self.uiAddFilterDetailRowPbtn, self.uiEnableFilterDetailPbtn)
+        self.retranslateUi(DataView)
+        QtCore.QMetaObject.connectSlotsByName(DataView)
+        DataView.setTabOrder(self.uiAddDataTbtn, self.uiEditDataTbtn)
+        DataView.setTabOrder(self.uiEditDataTbtn, self.uiToolsTbtn)
+        DataView.setTabOrder(self.uiToolsTbtn, self.uiDelFilterDetailRowPbtn)
+        DataView.setTabOrder(self.uiDelFilterDetailRowPbtn, self.uiAddFilterDetailRowPbtn)
+        DataView.setTabOrder(self.uiAddFilterDetailRowPbtn, self.uiEnableFilterDetailPbtn)
 
-    def retranslateUi(self, MainTable):
+    def retranslateUi(self, DataView):
         _translate = QtCore.QCoreApplication.translate
-        MainTable.setWindowTitle(_translate("MainTable", "Form"))
-        self.uiTitleLbl.setText(_translate("MainTable", "Tabellentitel"))
-        self.uiClearSelectionPbtn.setText(_translate("MainTable", "clear Selection"))
-        self.uiDeleteDataTbtn.setText(_translate("MainTable", "-"))
-        self.uiEditDataTbtn.setText(_translate("MainTable", "..."))
-        self.uiToolsTbtn.setText(_translate("MainTable", "..."))
-        self.uiTableFooterTextLbl.setText(_translate("MainTable", "text"))
+        DataView.setWindowTitle(_translate("DataView", "Form"))
+        self.uiTitleLbl.setText(_translate("DataView", "Tabellentitel"))
+        self.uiClearSelectionPbtn.setText(_translate("DataView", "clear Selection"))
+        self.uiDeleteDataTbtn.setText(_translate("DataView", "-"))
+        self.uiEditDataTbtn.setText(_translate("DataView", "..."))
+        self.uiToolsTbtn.setText(_translate("DataView", "..."))
+        self.uiTableFooterTextLbl.setText(_translate("DataView", "text"))
 import resources_rc

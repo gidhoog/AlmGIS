@@ -7,16 +7,69 @@ from qgis.PyQt.QtCore import QAbstractTableModel, Qt, QModelIndex, \
     QItemSelectionRange
 from qgis.PyQt.QtGui import QPalette, QColor
 from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
-    QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit
-from sqlalchemy.exc import IntegrityError
+    QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
+    QDialog
 
-from core import main_table_UI, db_session_cm
-from core.entity import EntityMainDialog
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func, select
+from sqlalchemy.orm import joinedload
+
+from core import data_view_UI, db_session_cm
+from core.data_model import BAkt
+from core.entity import EntityDialog
 from core.footer_line import FooterLine
 from core.main_widget import MainWidget
 
 
-class MainTable(QWidget, main_table_UI.Ui_MainTable):
+class TableView(QTableView):
+    """
+    baseclass für ein data_view
+    """
+
+    def __init__(self, parent):
+        super(TableView, self).__init__(parent)
+
+        self.parent = parent
+
+        self.horizontalHeader().setStretchLastSection(True)
+        self.resizeColumnsToContents()
+
+    def keyPressEvent(self, event):
+        """
+        aktionen die bei tastendruck durchgeführt werden sollen
+        """
+
+        if event.key() == Qt.Key_Delete:
+            self.parent.delRowMain()
+        # elif event.key() == Qt.Key_Insert:
+        #     self.parent.addRowMain()
+        elif event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            self.parent.edit_row()
+        else:
+            super().keyPressEvent(event)
+
+
+class DataViewEntityDialog(EntityDialog):
+    """
+    Dialog für ein Entity, dass aus einem DataView geöffnet wird
+    """
+
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
+
+        self.set_apply_button_text('&Speichern und Schließen_dv')
+
+    def accept(self):
+        super().accept()
+
+        if self.dialogWidget.acceptEntity():
+
+            self.parent.updateMaintableNew()
+
+        QDialog.accept(self)
+
+
+class DataView(QWidget, data_view_UI.Ui_DataView):
     """
     baseclass für maintables
     """
@@ -25,7 +78,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
     _entity_widget = None
     """"""
     """klasse des dialoges"""
-    entity_dialog_class = EntityMainDialog
+    entity_dialog_class = DataViewEntityDialog
 
 
 
@@ -37,7 +90,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
     """daten-quelle des entities (kommen die daten direkt aus der db oder
     ist die daten-quelle eine übergebene daten-instanz"""
-    _data_source = 'db'  # datenbank = 'db', daten-instanz = 'di'
+    _data_source = 'db'  # datenbank = 'db', daten-instanz = 'mci'
     """"""
 
     """titel für den main_tabel"""
@@ -61,20 +114,21 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
                                    "verwendet wird!"]
 
     _main_table_mci = []
+    _main_table_mc = None
 
     """einige einstellungen für diese klasse"""
-    _id_column = 0  # index der spalte mit dem id
-    _inst_column = None  # index of the column with the instance
-    _maintable_session = None  # die session für diese klasse
+    # _id_column = 0  # index der spalte mit dem id
+    # _inst_column = None  # index of the column with the instance
+    # _maintable_session = None  # die session für diese klasse
     _select_behaviour = 'row'  # standardverhalten was ausgewählt werden soll
     _edit_behaviour = 'dialog'  # standardverhalten um tabelleneinträge zu bearbeiten
     _display_vertical_header = True  # steuert die sichtbarkeit des vertical_header
-    _displayed_rows = 0  # number of rows displayed in the maintable
+    # _displayed_rows = 0  # number of rows displayed in the maintable
     _selected_rows_id = []  # liste der id's der ausgewählten zeilen
     _selected_rows_number = 0  # anzahl der ausgewählten zeilen
     _footer_line = FooterLine  # klasse des fuß-widgets
-    _linked_gis_widget = None  # main_gis das in beziehung steht
-    _data_view = None  # klasse des maintable_views
+    # _linked_gis_widget = None  # main_gis das in beziehung steht
+    data_view_class = TableView
     """"""
 
     @property  # getter
@@ -85,18 +139,18 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
     def display_vertical_header(self, value):
         self._display_vertical_header = value
 
-    @property  # getter
-    def id_column(self):
-        return self._id_column
-
-    @property  # getter
-    def inst_column(self):
-        return self._inst_column
-
-    @inst_column.setter
-    def inst_column(self, value):
-
-        self._inst_column = value
+    # @property  # getter
+    # def id_column(self):
+    #     return self._id_column
+    #
+    # @property  # getter
+    # def inst_column(self):
+    #     return self._inst_column
+    #
+    # @inst_column.setter
+    # def inst_column(self, value):
+    #
+    #     self._inst_column = value
 
     @property  # getter
     def edit_behaviour(self):
@@ -116,27 +170,27 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         if select_behaviour in ['row', 'cell']:
             self._select_behaviour = select_behaviour
 
-    @property  # getter
-    def main_table_mci(self):
-        """
-        definiere hier in der 'SubMethod' die session für die Erstellung
-        der mci-liste falls gewünscht
-        :return:
-        """
-        return self._main_table_mci
+    # @property  # getter
+    # def main_table_mci(self):
+    #     """
+    #     definiere hier in der 'SubMethod' die session für die Erstellung
+    #     der mci-liste falls gewünscht
+    #     :return:
+    #     """
+    #     return self._main_table_mci
+    #
+    # @main_table_mci.setter
+    # def main_table_mci(self, value):
+    #
+    #     self._main_table_mci = value
 
-    @main_table_mci.setter
-    def main_table_mci(self, value):
-
-        self._main_table_mci = value
-
-    @property  # getter
-    def maintable_session(self):
-        return self._maintable_session
-
-    @maintable_session.setter
-    def maintable_session(self, value):
-        self._maintable_session = value
+    # @property  # getter
+    # def maintable_session(self):
+    #     return self._maintable_session
+    #
+    # @maintable_session.setter
+    # def maintable_session(self, value):
+    #     self._maintable_session = value
 
     @property  # getter
     def entity_typ_parent_ids(self):
@@ -214,15 +268,15 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         self._selected_rows_id = []
         _selected_rows_idx = []
 
-        if self.maintable_view.selectionModel():
-            _selected_rows_idx = self.maintable_view.selectionModel().selectedRows()
+        if self.data_view.selectionModel():
+            _selected_rows_idx = self.data_view.selectionModel().selectedRows()
 
             for row_idx in _selected_rows_idx:
 
                 row = self.filter_proxy.mapToSource(row_idx).row()
                 self._selected_rows_id.append(
-                    self.main_table_model.data(
-                        self.main_table_model.index(row, self.id_column), Qt.EditRole))
+                    self.data_view_model.data(
+                        self.data_view_model.index(row, self.id_column), Qt.EditRole))
 
         return self._selected_rows_id
 
@@ -235,22 +289,22 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         :param value: liste der id's der ausgewählten zeilen
         :return:
         """
-        selection_model = self.maintable_view.selectionModel()
+        selection_model = self.data_view.selectionModel()
         selection_model.clearSelection()
 
-        self.maintable_view.setSelectionBehavior(
+        self.data_view.setSelectionBehavior(
             QAbstractItemView.SelectRows)
 
         sel_idx = QItemSelection()
 
         for data_id in value:
-            for row in range(self.main_table_model.rowCount()):
-                if data_id == self.main_table_model.data(
-                        self.main_table_model.index(row, 0),
+            for row in range(self.data_view_model.rowCount()):
+                if data_id == self.data_view_model.data(
+                        self.data_view_model.index(row, 0),
                         Qt.EditRole):
                     ix = QItemSelectionRange(
                         self.filter_proxy.mapFromSource(
-                            self.main_table_model.index(row, 0)))
+                            self.data_view_model.index(row, 0)))
                     sel_idx.append(ix)
 
         selection_model.select(sel_idx,
@@ -277,13 +331,13 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
         self._selected_rows_number = value
 
-    @property  # getter
-    def linked_gis_widget(self):
-        return self._linked_gis_widget
-
-    @linked_gis_widget.setter
-    def linked_gis_widget(self, value):
-        self._linked_gis_widget = value
+    # @property  # getter
+    # def linked_gis_widget(self):
+    #     return self._linked_gis_widget
+    #
+    # @linked_gis_widget.setter
+    # def linked_gis_widget(self, value):
+    #     self._linked_gis_widget = value
 
     @property  # getter
     def title(self):
@@ -306,18 +360,18 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         self.footer_list = []
         """"""
 
-        """main_query (erzeugt durch eine SQLAlchemy-session abfrage) von
-        dieser tabelle"""
-        self.main_query = None
-        """"""
+        # """main_query (erzeugt durch eine SQLAlchemy-session abfrage) von
+        # dieser tabelle"""
+        # self.main_query = None
+        # """"""
 
-        self.instance_list = []  # liste mit daten-model instanzen
-        self.main_table_model = None  # model für diesen maintable_view
+        # self.instance_list = []  # liste mit daten-model instanzen
+        self.data_view_model = None  # model für diesen data_view
         self.filter_proxy = SortFilterProxyModel(self)  # proxy_filter für diese tabelle
 
-        """liste mit den spalten dieser tabelle; dient nur für die darstellung"""
-        self.maintable_columns = {}
-        """"""
+        # """liste mit den spalten dieser tabelle; dient nur für die darstellung"""
+        # self.maintable_columns = {}
+        # """"""
 
         """optionales menü, das dem 'uiAddDataTbtn' übergeben werden kann wenn
         z.b. unterschiedliche typen in der gleichen tabelle dargestellt werden"""
@@ -332,20 +386,20 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         self.maintable_filter_limit = 5
         """"""
 
-        """definiere das verwendete maintable_view; funktioniert derzeit nur mit
+        """definiere das verwendete data_view; funktioniert derzeit nur mit
         einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
-        self.maintable_view = self._data_view(self)
-        self.uiTableVlay.addWidget(self.maintable_view)
+        self.data_view = self.data_view_class(self)
+        self.uiTableVlay.addWidget(self.data_view)
         """"""
 
     def signals(self):
 
         self.uiEditDataTbtn.clicked.connect(self.edit_row)
         self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
-        # self.maintable_view.doubleClicked.connect(self.edit_row)
-        self.maintable_view.doubleClicked.connect(self.doubleClickedRow)
+        # self.data_view.doubleClicked.connect(self.edit_row)
+        self.data_view.doubleClicked.connect(self.doubleClickedRow)
 
-        self.maintable_view.selectionModel().selectionChanged\
+        self.data_view.selectionModel().selectionChanged\
             .connect(self.selectedRowsChanged)
         self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
         self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
@@ -359,20 +413,20 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         :return: list of QModelIndex
         """
 
-        if self.maintable_view.selectionModel():
-            indexes = self.maintable_view.selectionModel().selectedRows()
+        if self.data_view.selectionModel():
+            indexes = self.data_view.selectionModel().selectedRows()
 
             return indexes
 
     def selectAllRows(self):
 
-        self.maintable_view.selectAll()
+        self.data_view.selectAll()
 
     def clearSelectedRows(self):
         """
         hebe die auswahl der zeilen auf
         """
-        self.maintable_view.selectionModel().clear()
+        self.data_view.selectionModel().clear()
 
     def selectedRowsChanged(self):
         """
@@ -422,10 +476,12 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
                 """hole die spaltenüberschriften"""
                 header_list = []
-                for col in self.maintable_columns:
-                    if self.maintable_columns[col].visible == True:
-                        header = self.maintable_columns[col].heading
-                        header_list.append(header)
+                for column_name in self.data_view_model.header:
+                    header_list.append(column_name)
+                # for col in self.maintable_columns:
+                #     if self.maintable_columns[col].visible == True:
+                #         header = self.maintable_columns[col].heading
+                #         header_list.append(header)
                 """"""
 
                 """schreibe die spaltenüberschriften in die datei"""
@@ -433,15 +489,15 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
                 """"""
 
                 """hole die zellenwerte"""
-                for row in range(self.maintable_view.model().rowCount()):
+                for row in range(self.data_view.model().rowCount()):
                     row_text = []
-                    for col in self.maintable_columns:
-                        if self.maintable_columns[col].visible == True:
-                            value = self.maintable_view.model().data(
-                                self.maintable_view.model().index(
-                                    row, col),
-                                Qt.DisplayRole)
-                            row_text.append(str(value))
+                    for col in range(self.data_view.model().columnCount()):
+                        # if self.maintable_columns[col].visible == True:
+                        value = self.data_view.model().data(
+                            self.data_view.model().index(
+                                row, col),
+                            Qt.DisplayRole)
+                        row_text.append(str(value))
                     writer.writerow(row_text)  # schreibe zeile in datei
                 """"""
         except:
@@ -471,12 +527,12 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         self.uiToolsTbtn.addAction(self.uiActionExportCsv)
 
         """definiere für eine alternative zeilen farbe"""
-        maintable_palette = self.maintable_view.palette()
-        # maintable_palette.setColor(QPalette.Base, QColor(255, 0, 0, 127))
-        # maintable_palette.setColor(QPalette.AlternateBase, QColor(183, 180, 25, 27))
-        maintable_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
-        self.maintable_view.setPalette(maintable_palette)
-        self.maintable_view.setAlternatingRowColors(True)
+        data_view_palette = self.data_view.palette()
+        # data_view_palette.setColor(QPalette.Base, QColor(255, 0, 0, 127))
+        # data_view_palette.setColor(QPalette.AlternateBase, QColor(183, 180, 25, 27))
+        data_view_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
+        self.data_view.setPalette(data_view_palette)
+        self.data_view.setAlternatingRowColors(True)
         """"""
 
     def setDisplayVetricalHeader(self):
@@ -485,7 +541,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
 
         if not self.display_vertical_header:
-            self.maintable_view.verticalHeader().hide()
+            self.data_view.verticalHeader().hide()
 
     def setEditBehaviour(self):
         """
@@ -494,10 +550,10 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
 
         if self.edit_behaviour == 'dialog':
-            self.maintable_view.setEditTriggers(
+            self.data_view.setEditTriggers(
                 QAbstractItemView.NoEditTriggers)
         if self.edit_behaviour == 'row':
-            self.maintable_view.setEditTriggers(
+            self.data_view.setEditTriggers(
                 QAbstractItemView.CurrentChanged)
 
     def setFilterUI(self):
@@ -540,10 +596,10 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
 
         if self.select_behaviour == 'row':
-            self.maintable_view.setSelectionBehavior(
+            self.data_view.setSelectionBehavior(
                 QAbstractItemView.SelectRows)
         if self.select_behaviour == 'cell':
-            self.maintable_view.setSelectionBehavior(
+            self.data_view.setSelectionBehavior(
                 QAbstractItemView.SelectItems)
 
     def setSorting(self):
@@ -551,7 +607,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         lege das sortierverhalten fest
         """
 
-        self.maintable_view.setSortingEnabled(True)
+        self.data_view.setSortingEnabled(True)
         """sort case insensitive"""
         self.filter_proxy.setSortCaseSensitivity(Qt.CaseInsensitive)
         """"""
@@ -624,22 +680,48 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         self.initUi()
 
-        self.main_table_model = self._main_table_model_class(
-            self,
-            self.main_table_mci)
+        self._main_table_mci = self.getDataMci()
 
-        self.filter_proxy.setSourceModel(self.main_table_model)
-        self.maintable_view.setModel(self.filter_proxy)
+        self.data_view_model = self._main_table_model_class(
+            self,
+            self._main_table_mci)
+
+        # self.setMainTableModel2()
+
+        self.filter_proxy.setSourceModel(self.data_view_model)
+        self.data_view.setModel(self.filter_proxy)
 
         self.updateFooter()
         self.setFilter()
 
         self.setAddEntityMenu()
-        self.setMaintableLayout()
+        self.setDataViewLayout()
 
         self.signals()
 
         self.finalInit()
+
+    def getDataMci(self):
+
+        with db_session_cm() as session:
+            stmt = select(self._main_table_mc)
+
+            mci = session.scalars(stmt).unique().all()
+
+        return mci
+
+    # def setMainTableModel2(self):
+    #
+    #     with db_session_cm() as session:
+    #         stmt = select(BAkt).options(
+    #             joinedload(BAkt.rel_bearbeitungsstatus)
+    #         )
+    #
+    #         self._main_table_mci = session.scalars(stmt).unique().all()
+    #
+    #     self.data_view_model = self._main_table_model_class(
+    #         self,
+    #         self._main_table_mci)
 
     def finalInit(self):
         """
@@ -655,8 +737,8 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
     #
     #     self.loadDataBySession()
     #
-    #     self.filter_proxy.setSourceModel(self.main_table_model)
-    #     self.maintable_view.setModel(self.filter_proxy)
+    #     self.filter_proxy.setSourceModel(self.data_view_model)
+    #     self.data_view.setModel(self.filter_proxy)
     #
     #     # self.updateFooter()
     #     # self.setFilter()
@@ -668,62 +750,68 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
 
         """wenn das layout der daten (z.b. die sortierung) geändert wird"""
-        self.maintable_view.model().layoutChanged.emit()
+        self._main_table_mci.clear()
+
+        for inst in self.getDataMci():
+            self._main_table_mci.append(inst)
+
+        self.data_view.model().layoutChanged.emit()
         """"""
         self.updateFooter()
 
-    def loadDataBySession(self):
-        """
-        frage die daten mittels der maintable_session aus der datenbank ab;
-        verwende dafür main_query
-        """
+    # def loadDataBySession(self):
+    #     """
+    #     frage die daten mittels der maintable_session aus der datenbank ab;
+    #     verwende dafür main_query
+    #     """
+    #
+    #     self.main_query = self.getMainQuery(self.maintable_session)
+    #
+    #     if self.main_query:
+    #         self.maintable_dataarray = self.main_query.all()
+    #
+    #     self.data_view_model = self.setMainTableModel()
 
-        self.main_query = self.getMainQuery(self.maintable_session)
+    # def setMainTableModel(self):
+    #     """
+    #     erzeuge das model für die main_tabel und 'return' es
+    #     :return: maintable_model
+    #     """
+    #     pass
 
-        if self.main_query:
-            self.maintable_dataarray = self.main_query.all()
-
-        self.main_table_model = self.setMainTableModel()
-
-    def setMainTableModel(self):
+    def setDataViewLayout(self):
         """
-        erzeuge das model für die main_tabel und 'return' es
-        :return: maintable_model
-        """
-        pass
-
-    def setMaintableLayout(self):
-        """
-        setze das maintable-layout beim initialisieren des maintables
-        :return:
-        """
-        self.setColumnsVisibility()
-
-    def setMaintableColumns(self):
-        """
-        definiere hier die spalten der maintable (als MaintableColumn objekte)
-        und füge diese in das dict 'maintable_columns' ein
+        setze das data_view-layout
         :return:
         """
         pass
+        # self.setColumnsVisibility()
 
-    def getMainQuery(self, session):
-        """
-        definiere hier die abfrage (query) für diese tabelle auf basis von
-        SQLAlchemy sessions
-        :param session:
-        :return: query
-        """
-        pass
+    # def setMaintableColumns(self):
+    #     """
+    #     definiere hier die spalten der maintable (als MaintableColumn objekte)
+    #     und füge diese in das dict 'maintable_columns' ein
+    #     :return:
+    #     """
+    #     pass
 
-    def setColumnsVisibility(self):
-        """
-        setze die sichtbarkeit der tabellen spalten
-        """
+    # def getMainQuery(self, session):
+    #     """
+    #     definiere hier die abfrage (query) für diese tabelle auf basis von
+    #     SQLAlchemy sessions
+    #     :param session:
+    #     :return: query
+    #     """
+    #     pass
 
-        for col in self.maintable_columns:
-            self.maintable_view.setColumnHidden(
-                col, not self.maintable_columns[col].visible)
+    # def setColumnsVisibility(self):
+    #     """
+    #     setze die sichtbarkeit der tabellen spalten
+    #     """
+    #
+    #     for col in self.maintable_columns:
+    #         self.data_view.setColumnHidden(
+    #             col, not self.maintable_columns[col].visible)
 
     def setStretchMethod(self, method):
         """
@@ -734,11 +822,11 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         3: alle spalen werden gleichmäßig verteilt
         """
         if method == 1:
-            self.maintable_view.resizeColumnsToContents()
+            self.data_view.resizeColumnsToContents()
         elif method == 2:
-            self.maintable_view.horizontalHeader().setStretchLastSection(True)
+            self.data_view.horizontalHeader().setStretchLastSection(True)
         elif method == 3:
-            self.maintable_view.horizontalHeader().setSectionResizeMode(
+            self.data_view.horizontalHeader().setSectionResizeMode(
                 QHeaderView.Stretch)
 
     def insertFooterLine(self, label, unit, column_calc, amount_width, factor=1,
@@ -763,7 +851,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         for line in self.footer_list:
             line.update_footer_line(self.getSelectedRows())
 
-        self.displayed_rows = self.maintable_view.model().rowCount()
+        self.displayed_rows = self.data_view.model().rowCount()
         if self.getSelectedRows():
             self.selected_rows_number = len(self.getSelectedRows())
         else:
@@ -780,9 +868,9 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         typ_column = list(self.entity_typ_column.keys())[0]
 
-        sel_type_id = self.main_table_model.data(
-            self.main_table_model.index(index.row(),
-                                        typ_column),
+        sel_type_id = self.data_view_model.data(
+            self.data_view_model.index(index.row(),
+                                       typ_column),
             Qt.DisplayRole)
 
         return sel_type_id
@@ -794,30 +882,30 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         :return: entity_id
         """
 
-        entity_id = self.main_table_model.data(
-            self.main_table_model.index(index.row(),
-                                        self.id_column),
+        entity_id = self.data_view_model.data(
+            self.data_view_model.index(index.row(),
+                                       self.id_column),
             Qt.EditRole)
 
         return entity_id
 
-    def get_row_instance(self, index, session):
-        """
-        erhalte die data_model instanz der zeile und 'return' sie
-        die instanz sollte in einer spalte des maintabels enthalten sein, wenn
-        nicht wird sie abgefragt
-
-        :return: instance
-        """
-        if self.inst_column is not None:
-            inst = self.main_table_model.data(
-                self.main_table_model.index(index.row(),
-                                            self.inst_column),
-                Qt.EditRole)
-        else:
-            inst = session.get(self.data_model_class, self.get_row_id(index))
-
-        return inst
+    # def get_row_instance(self, index, session):
+    #     """
+    #     erhalte die data_model instanz der zeile und 'return' sie
+    #     die instanz sollte in einer spalte des maintabels enthalten sein, wenn
+    #     nicht wird sie abgefragt
+    #
+    #     :return: instance
+    #     """
+    #     if self.inst_column is not None:
+    #         inst = self.data_view_model.data(
+    #             self.data_view_model.index(index.row(),
+    #                                        self.inst_column),
+    #             Qt.EditRole)
+    #     else:
+    #         inst = session.get(self.data_model_class, self.get_row_id(index))
+    #
+    #     return inst
 
     def doubleClickedRow(self, index):
 
@@ -828,8 +916,8 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
         if 0 <= index.column() <= 9999:  # für alle Spalten der Tabelle
 
-            if self.main_table_model.data(
-                    self.main_table_model.index(index.row(), 1),
+            if self.data_view_model.data(
+                    self.data_view_model.index(index.row(), 1),
                     Qt.EditRole) == 'xy':
                 # define here a typ-handling
                 pass
@@ -915,8 +1003,8 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
                 #         füge sie einer session hinzu um event. daten die sich in
                 #         verknüpften tabellen befinden und benötigt werden vorhanden
                 #         sind"""
-                #         data_instance = self.main_table_model.data(
-                #             self.main_table_model.index(proxy_index.row(),
+                #         data_instance = self.data_view_model.data(
+                #             self.data_view_model.index(proxy_index.row(),
                 #                                         self.inst_column),
                 #              Qt.EditRole),
                 #         try:
@@ -937,10 +1025,10 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
                 entity_widget.editEntity(entity_id=self.getRowId(index))
 
 
-            if self._data_source == 'di':
+            if self._data_source == 'mci':
 
-                """hole die di aus der di-liste"""
-                entity_di = self.main_table_model.di_list[index.row()]
+                """hole die di aus der mci-liste"""
+                entity_di = self.data_view_model.mci_list[index.row()]
                 """"""
                 # entity_di.rel_akt = self.parent._entity_mci
                 entity_widget.editEntity(entity_di)
@@ -1013,7 +1101,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         msg.setWindowTitle("Info")
         msg.setInformativeText(msg_text)
         msg.setStandardButtons(QMessageBox.Ok)
-        # msg.centerInGivenWdg(self.maintable_view)
+        # msg.centerInGivenWdg(self.data_view)
         msg.exec()
 
     def delRowMain(self):
@@ -1088,7 +1176,7 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         msgbox.setInformativeText(self.delete_text[0] + '\n\n' + delete_info
                                   + '\n\n' + self.delete_text[1])
         msgbox.setStandardButtons(QMessageBox.Ok)
-        msgbox.centerInGivenWdg(self.maintable_view)
+        msgbox.centerInGivenWdg(self.data_view)
         msgbox.exec()
 
     def delMsg(self, delete_number):
@@ -1188,10 +1276,10 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         durchgeführt werden sollen
         """
 
-        if self.maintable_view.selectionModel():
-            indexes = self.maintable_view.selectionModel().selectedRows()
+        if self.data_view.selectionModel():
+            indexes = self.data_view.selectionModel().selectedRows()
 
-        sel_mode = self.maintable_view.selectionMode()
+        sel_mode = self.data_view.selectionMode()
 
         self.updateOnAccept()
 
@@ -1202,14 +1290,14 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
 
         """wähle die datesätze die vorher markiert waren danach auch wieder aus"""
         try:
-            self.maintable_view.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.data_view.setSelectionMode(QAbstractItemView.MultiSelection)
             if indexes:
                 for index in indexes:
-                    self.maintable_view.selectRow(index.row())
+                    self.data_view.selectRow(index.row())
         except:
             print(f"Error: {sys.exc_info()}")
         finally:
-            self.maintable_view.setSelectionMode(sel_mode)
+            self.data_view.setSelectionMode(sel_mode)
 
     def rejectEditingInDialog(self):
         """
@@ -1255,34 +1343,35 @@ class MainTable(QWidget, main_table_UI.Ui_MainTable):
         """
         # self.loadData()
 
-        topLeft = self.main_table_model.createIndex(0, 0)
-        bottomRight = self.main_table_model.createIndex(11, 10)
-        self.main_table_model.dataChanged.emit(topLeft, bottomRight)
-        # self.main_table_model.dataChanged(topLeft, bottomRight)
-        # self.main_table_model.dataChanged()
-        # self.main_table_model.layoutChanged.emit()
+        topLeft = self.data_view_model.createIndex(0, 0)
+        bottomRight = self.data_view_model.createIndex(11, 10)
+        self.data_view_model.dataChanged.emit(topLeft, bottomRight)
+        # self.data_view_model.dataChanged(topLeft, bottomRight)
+        # self.data_view_model.dataChanged()
+        # self.data_view_model.layoutChanged.emit()
 
         print(f'---')
 
 
-class MainTableModel(QAbstractTableModel):
+class TableModel(QAbstractTableModel):
     """
-    baseclass für ein model für ein maintable_view
+    baseclass für ein model für ein data_view
 
     bei der initialisierung wird ein einfaches data_array übergeben (das z.b.
     mit einer SQLAlchemy-abfrage erzeugt wurde); aus diesem data_array wird auf
-    basis des 'QAbstractTableModel' ein 'MainTableModel' erzeugt
+    basis des 'QAbstractTableModel' ein 'TableModel' erzeugt
     """
 
-    def __init__(self, parent, data_array=None):
-        super(MainTableModel, self).__init__(parent)
+    def __init__(self, parent, mci_list=None):
+        super(TableModel, self).__init__(parent)
 
         self.parent = parent
-        self.data_array = None
-        self.di_list = []
+        # self.data_array = None
+        self.mci_list = []
+        self.header = []
 
-        if data_array:
-            self.data_array = data_array
+        # if data_array:
+        #     self.data_array = data_array
 
     def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
         """
@@ -1292,55 +1381,55 @@ class MainTableModel(QAbstractTableModel):
         if not index.isValid():
             return None
 
-        if role in [Qt.EditRole]:
-            try:
-                return self.data_array[index.row()][index.column()]
-            except:
-                pass
-
-        if role in [Qt.DisplayRole]:
-            try:
-                if type(self.data_array[index.row()][index.column()]) == float:
-                    try:
-                        dec = self.parent.maintable_columns[index.column()].decimals
-                        if dec:
-                            flo = self.data_array[index.row()][index.column()]
-                            dec_string = "{:."+str(dec)+"f}"
-                            display_flo = dec_string.format(flo).replace('.', ',')
-                            return display_flo
-                        return self.data_array[index.row()][index.column()]
-                    except:
-                        pass
-                else:
-                    try:
-                        return self.data_array[index.row()][index.column()]
-                    except IndexError:
-                        print(f"row: {index.row()}, column: {index.column()}")
-            except:
-                pass
-
-        """setze die ausrichtung der einträge in den spalen"""
-        if role == Qt.TextAlignmentRole:
-            try:
-                align = self.parent.maintable_columns[index.column()].alignment
-                if align:
-                    if align == 'l':
-                        return Qt.AlignLeft | Qt.AlignVCenter
-                    if align == 'c':
-                        return Qt.AlignHCenter | Qt.AlignVCenter
-                    if align == 'r':
-                        return Qt.AlignRight | Qt.AlignVCenter
-            except:
-                pass
-        """"""
+        # if role in [Qt.EditRole]:
+        #     try:
+        #         return self.data_array[index.row()][index.column()]
+        #     except:
+        #         pass
+        #
+        # if role in [Qt.DisplayRole]:
+        #     try:
+        #         if type(self.data_array[index.row()][index.column()]) == float:
+        #             try:
+        #                 dec = self.parent.maintable_columns[index.column()].decimals
+        #                 if dec:
+        #                     flo = self.data_array[index.row()][index.column()]
+        #                     dec_string = "{:."+str(dec)+"f}"
+        #                     display_flo = dec_string.format(flo).replace('.', ',')
+        #                     return display_flo
+        #                 return self.data_array[index.row()][index.column()]
+        #             except:
+        #                 pass
+        #         else:
+        #             try:
+        #                 return self.data_array[index.row()][index.column()]
+        #             except IndexError:
+        #                 print(f"row: {index.row()}, column: {index.column()}")
+        #     except:
+        #         pass
+        #
+        # """setze die ausrichtung der einträge in den spalen"""
+        # if role == Qt.TextAlignmentRole:
+        #     try:
+        #         align = self.parent.maintable_columns[index.column()].alignment
+        #         if align:
+        #             if align == 'l':
+        #                 return Qt.AlignLeft | Qt.AlignVCenter
+        #             if align == 'c':
+        #                 return Qt.AlignHCenter | Qt.AlignVCenter
+        #             if align == 'r':
+        #                 return Qt.AlignRight | Qt.AlignVCenter
+        #     except:
+        #         pass
+        # """"""
 
     def rowCount(self, parent: QModelIndex = ...):
         """
         definiere die zeilenanzahl
         """
 
-        if self.data_array:
-            return len(self.data_array)
+        if self.mci_list:
+            return len(self.mci_list)
         else:
             return 0
 
@@ -1349,24 +1438,22 @@ class MainTableModel(QAbstractTableModel):
         definiere die spaltenanzahl
         """
 
-        if self.parent.maintable_columns:
-            return len(self.parent.maintable_columns)
-        else:
-            return len(self.data_array[0])
+        return len(self.header)
 
     def headerData(self, column, orientation, role=None):
-        """
-        wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
-        dann nehme diese
-        """
         super().headerData(column, orientation, role)
 
-        if self.parent.maintable_columns:
+        # if self.parent.maintable_columns:
+        #     if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+        #         if self.parent.maintable_columns[column].heading:
+        #             return self.parent.maintable_columns[column].heading
+        # else:
+        #     return super().headerData(column, orientation, role)
+
+        if self.header:
             if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-                if self.parent.maintable_columns[column].heading:
-                    return self.parent.maintable_columns[column].heading
-        else:
-            return super().headerData(column, orientation, role)
+
+                return self.header[column]
 
 
 class SortFilterProxyModel(QSortFilterProxyModel):
@@ -1377,7 +1464,6 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         QSortFilterProxyModel.__init__(self, parent)
 
         self.parent = parent
-
         self.filter_rows_with_elements = {}
 
     def headerData(self, section: int, orientation: Qt.Orientation,
@@ -1416,7 +1502,7 @@ class SortFilterProxyModel(QSortFilterProxyModel):
                 #                 all_value).lower():
                 #             found = True
                 """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
-                for col in range(len(self.parent.main_table_model.header)):
+                for col in range(len(self.parent.data_view_model.header)):
                     col_value = self.sourceModel().data(
                                 self.sourceModel().index(source_row,
                                                          col), Qt.DisplayRole)
@@ -1436,42 +1522,42 @@ class SortFilterProxyModel(QSortFilterProxyModel):
 
         return True
 
-@dataclass
-class MaintableColumn:
-    """
-    baseclass für eine spalte im maintable
-    """
+# @dataclass
+# class MaintableColumn:
+#     """
+#     baseclass für eine spalte im maintable
+#     """
+#
+#     heading: str = ''
+#     visible: bool = True
+#     alignment: str = 'r'
+#     column_type: str = 'str'
+#     decimals: int = 0
 
-    heading: str = ''
-    visible: bool = True
-    alignment: str = 'r'
-    column_type: str = 'str'
-    decimals: int = 0
 
-
-class MainTableView(QTableView):
-    """
-    baseclass für ein maintable_view
-    """
-
-    def __init__(self, parent):
-        super(MainTableView, self).__init__(parent)
-
-        self.parent = parent
-
-        self.horizontalHeader().setStretchLastSection(True)
-        self.resizeColumnsToContents()
-
-    def keyPressEvent(self, event):
-        """
-        aktionen die bei tastendruck durchgeführt werden sollen
-        """
-
-        if event.key() == Qt.Key_Delete:
-            self.parent.delRowMain()
-        # elif event.key() == Qt.Key_Insert:
-        #     self.parent.addRowMain()
-        elif event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
-            self.parent.edit_row()
-        else:
-            super().keyPressEvent(event)
+# class TableView(QTableView):
+#     """
+#     baseclass für ein data_view
+#     """
+#
+#     def __init__(self, parent):
+#         super(TableView, self).__init__(parent)
+#
+#         self.parent = parent
+#
+#         self.horizontalHeader().setStretchLastSection(True)
+#         self.resizeColumnsToContents()
+#
+#     def keyPressEvent(self, event):
+#         """
+#         aktionen die bei tastendruck durchgeführt werden sollen
+#         """
+#
+#         if event.key() == Qt.Key_Delete:
+#             self.parent.delRowMain()
+#         # elif event.key() == Qt.Key_Insert:
+#         #     self.parent.addRowMain()
+#         elif event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+#             self.parent.edit_row()
+#         else:
+#             super().keyPressEvent(event)

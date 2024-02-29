@@ -6,8 +6,7 @@ from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKomplex, \
     BCutKoppelGstAktuell
 from core.main_dialog import MainDialog
-from core.main_table import MainTable, MaintableColumn, \
-    MainTableModel, MainTableView
+from core.data_view import DataView, TableModel, TableView
 
 from core.scopes.komplex.komplex_dataform import KomplexDataForm
 
@@ -29,7 +28,7 @@ class KomplexDialog(MainDialog):
             super().accept()
 
 
-class KomplexMaintable(MainTable):
+class KomplexMaintable(DataView):
     """
     tabelle mit den weidekomplexen im akt
     """
@@ -51,7 +50,7 @@ class KomplexMaintable(MainTable):
     _delete_text = ["Der Komplex", "kann nicht gelöscht werden, da er "
                                           "verwendet wird!"]
 
-    _data_view = MainTableView
+    _data_view = TableView
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
@@ -77,20 +76,20 @@ class KomplexMaintable(MainTable):
     def finalInit(self):
         super().finalInit()
 
-        self.maintable_view.sortByColumn(1, Qt.AscendingOrder)
+        self.data_view.sortByColumn(1, Qt.AscendingOrder)
 
         """setzt bestimmte spaltenbreiten"""
-        self.maintable_view.setColumnWidth(1, 70)
-        self.maintable_view.setColumnWidth(2, 150)
-        self.maintable_view.setColumnWidth(3, 70)
-        self.maintable_view.setColumnWidth(4, 120)
-        self.maintable_view.setColumnWidth(5, 90)
-        self.maintable_view.setColumnWidth(6, 90)
-        self.maintable_view.setColumnWidth(7, 90)
+        self.data_view.setColumnWidth(1, 70)
+        self.data_view.setColumnWidth(2, 150)
+        self.data_view.setColumnWidth(3, 70)
+        self.data_view.setColumnWidth(4, 120)
+        self.data_view.setColumnWidth(5, 90)
+        self.data_view.setColumnWidth(6, 90)
+        self.data_view.setColumnWidth(7, 90)
         """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
-        self.maintable_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.data_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
 
     # def getRowInstance(self, index, session):
@@ -198,7 +197,7 @@ class KomplexMaintable(MainTable):
         return KomplexModel(self, self.maintable_dataarray)
 
 
-class KomplexModel(MainTableModel):
+class KomplexModel(TableModel):
 
     def data(self, index: QModelIndex, role: int = ...):
 

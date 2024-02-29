@@ -13,8 +13,7 @@ from core.data_model import BGstZuordnung, BGst, BGstEz, \
 from core.gis_item import GisItem
 from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
-from core.main_table import MainTable, MaintableColumn, \
-    MainTableModel, MainTableView
+from core.data_view import DataView, TableModel, TableView
 import typing
 
 from operator import attrgetter
@@ -256,7 +255,7 @@ class GstModelNew(QAbstractTableModel):
         #     return super().headerData(column, orientation, role)
 
 
-class GstMaintable(MainTable):
+class GstMaintable(DataView):
     """
     grundstückstabelle im akt
     """
@@ -279,7 +278,7 @@ class GstMaintable(MainTable):
     _delete_text = ["Das Grundstück", "kann nicht gelöscht werden, da es "
                                           "verwendet wird!"]
 
-    _data_view = MainTableView
+    _data_view = TableView
 
     gst_zuordnung_wdg_class = GstZuordnung
     gst_zuordnung_dlg_class = GstZuordnungMainDialog
@@ -347,9 +346,9 @@ class GstMaintable(MainTable):
 
     def test_update(self):
 
-        topLeft = self.main_table_model.createIndex(0, 0)
-        bottomRight = self.main_table_model.createIndex(11, 10)
-        self.main_table_model.dataChanged.emit(topLeft, bottomRight)
+        topLeft = self.data_view_model.createIndex(0, 0)
+        bottomRight = self.data_view_model.createIndex(11, 10)
+        self.data_view_model.dataChanged.emit(topLeft, bottomRight)
 
         print(f'...')
 
@@ -363,20 +362,20 @@ class GstMaintable(MainTable):
     def finalInit(self):
         super().finalInit()
 
-        self.maintable_view.sortByColumn(1, Qt.AscendingOrder)
+        self.data_view.sortByColumn(1, Qt.AscendingOrder)
 
         """setzt bestimmte spaltenbreiten"""
-        self.maintable_view.setColumnWidth(1, 70)
-        self.maintable_view.setColumnWidth(2, 50)
-        self.maintable_view.setColumnWidth(3, 70)
-        self.maintable_view.setColumnWidth(4, 120)
-        self.maintable_view.setColumnWidth(5, 120)
-        self.maintable_view.setColumnWidth(6, 120)
-        self.maintable_view.setColumnWidth(7, 80)
+        self.data_view.setColumnWidth(1, 70)
+        self.data_view.setColumnWidth(2, 50)
+        self.data_view.setColumnWidth(3, 70)
+        self.data_view.setColumnWidth(4, 120)
+        self.data_view.setColumnWidth(5, 120)
+        self.data_view.setColumnWidth(6, 120)
+        self.data_view.setColumnWidth(7, 80)
         """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
-        self.maintable_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.data_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
 
     def setMaintableColumns(self):
@@ -516,7 +515,7 @@ class GstMaintable(MainTable):
 #         # else:
 #         #     return super().headerData(column, orientation, role)
 
-class GstModel(MainTableModel):
+class GstModel(TableModel):
 
     def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
 

@@ -11,8 +11,7 @@ from core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
     BGisScopeLayer
 from core.gis_control import GisControl
 from core.main_gis import MainGis
-from core.main_table import MainTable, MaintableColumn, MainTableModel, \
-    MainTableView, SortFilterProxyModel
+from core.data_view import DataView, TableModel, TableView, SortFilterProxyModel
 
 import zipfile
 from io import TextIOWrapper
@@ -68,7 +67,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         # """"""
         #
         # """setzte das model für die vorgemerkte Tabelle"""
-        # presel_model = self.guiGstTable.main_table_model
+        # presel_model = self.guiGstTable.data_view_model
         # """"""
         # """filtere die Ansicht in diesem View auf die angehackten Grundstücke;
         # das wird in der Klasse 'GstPreSelFilter' erledigt """
@@ -76,17 +75,17 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         # """"""
         #
         # """da in diesem Maintabel die 'initMaintable' Methode nicht verwendet
-        # wird muss neben dem main_table_model auch dem view direkt das
+        # wird muss neben dem data_view_model auch dem view direkt das
         # model mit den daten übergeben werden"""
-        # self.guiGstPreSelTview.maintable_view.setModel(self.presel_proxy_model)
-        # self.guiGstPreSelTview.main_table_model = self.presel_proxy_model
+        # self.guiGstPreSelTview.data_view.setModel(self.presel_proxy_model)
+        # self.guiGstPreSelTview.data_view_model = self.presel_proxy_model
         # """"""
 
         # """richte self.guiGstPreSelTview ein"""
         # self.guiGstPreSelTview.initUi()
         # self.guiGstPreSelTview.finalInit()
         # self.guiGstPreSelTview.updateMaintableNew()
-        # self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
+        # self.guiGstPreSelTview.data_view.selectionModel().selectionChanged.connect(self.selPreChanged)
         # """"""
 
         # self.presel_wid = QWidget(self)
@@ -135,10 +134,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.setPreSelModel()
 
         """da in diesem Maintabel die 'initMaintable' Methode nicht verwendet
-        wird muss neben dem main_table_model auch dem view direkt das
+        wird muss neben dem data_view_model auch dem view direkt das
         model mit den daten übergeben werden"""
-        self.guiGstPreSelTview.maintable_view.setModel(self.presel_proxy_model)
-        self.guiGstPreSelTview.main_table_model = self.presel_proxy_model
+        self.guiGstPreSelTview.data_view.setModel(self.presel_proxy_model)
+        self.guiGstPreSelTview.data_view_model = self.presel_proxy_model
         """"""
 
     def setPreSelModel(self):
@@ -146,7 +145,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         setzte das model für die vorgemerkte Tabelle
         :return:
         """
-        presel_model = self.guiGstTable.main_table_model
+        presel_model = self.guiGstTable.data_view_model
 
         """filtere die Ansicht im View 'self.guiGstPreSelTview' auf die 
         angehackten Grundstücke;
@@ -184,7 +183,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.guiGstPreSelTview.initUi()
         self.guiGstPreSelTview.finalInit()
         self.guiGstPreSelTview.updateMaintableNew()
-        self.guiGstPreSelTview.maintable_view.selectionModel().selectionChanged.connect(self.selPreChanged)
+        self.guiGstPreSelTview.data_view.selectionModel().selectionChanged.connect(self.selPreChanged)
         """"""
 
     def initWidget(self):
@@ -212,16 +211,16 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         """wenn die Auswahl im presel_view geändert wird"""
 
         """entferne die gesamte Auswahl im gst_view"""
-        self.guiGstTable.maintable_view.clearSelection()
+        self.guiGstTable.data_view.clearSelection()
         """"""
 
         """wähle die Reihen aus"""
-        for ind in self.guiGstPreSelTview.maintable_view.selectionModel().selectedIndexes():
+        for ind in self.guiGstPreSelTview.data_view.selectionModel().selectedIndexes():
             """wandle den gewählten proxy-index in den index für das 
             basis-model um"""
             basis_index = self.presel_proxy_model.mapToSource(ind)
             """"""
-            self.guiGstTable.maintable_view.selectionModel().select(
+            self.guiGstTable.data_view.selectionModel().select(
                 basis_index, QItemSelectionModel.Select | QItemSelectionModel.Rows)
         """"""
 
@@ -301,10 +300,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         """übernehme ausgewählte Grundstücke der Gst-Tabelle in die Tabelle mit
         den vorgemerkten Grundstücke"""
 
-        model = self.guiGstTable.main_table_model
+        model = self.guiGstTable.data_view_model
 
-        if self.guiGstTable.maintable_view.selectionModel():
-            _selected_rows_idx = self.guiGstTable.maintable_view.selectionModel().selectedRows()
+        if self.guiGstTable.data_view.selectionModel():
+            _selected_rows_idx = self.guiGstTable.data_view.selectionModel().selectedRows()
 
             for row_idx in _selected_rows_idx:
                 """wandle den proxy-index in den 'model-index' um"""
@@ -787,7 +786,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             session.execute(text(del_eig))
             session.execute(text(del_nutz))
 
-class GstTable(MainTable):
+class GstTable(DataView):
     """
     tabelle mit den grundstücken die zugeordnet werden können bzw. bereits
     zugeordnet sind
@@ -797,7 +796,7 @@ class GstTable(MainTable):
                     "gis_layer_style_id": 108,
                     "gis_layer_id_column": 'id'}
 
-    _data_view = MainTableView
+    _data_view = TableView
 
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
@@ -832,12 +831,12 @@ class GstTable(MainTable):
         super().finalInit()
 
         """setzt bestimmte spaltenbreiten"""
-        self.maintable_view.setColumnWidth(2, 80)
-        self.maintable_view.setColumnWidth(3, 45)
-        self.maintable_view.setColumnWidth(4, 130)
-        self.maintable_view.setColumnWidth(5, 40)
-        self.maintable_view.setColumnWidth(6, 180)
-        self.maintable_view.setColumnWidth(7, 130)
+        self.data_view.setColumnWidth(2, 80)
+        self.data_view.setColumnWidth(3, 45)
+        self.data_view.setColumnWidth(4, 130)
+        self.data_view.setColumnWidth(5, 40)
+        self.data_view.setColumnWidth(6, 180)
+        self.data_view.setColumnWidth(7, 130)
         """"""
 
     def setMaintableColumns(self):
@@ -888,7 +887,7 @@ class GstTable(MainTable):
     def setMainTableModel(self):
         super().setMainTableModel()
 
-        return GstMainModel(parent=self, data_array=self.maintable_dataarray)
+        return GstModel(parent=self, data_array=self.maintable_dataarray)
 
     def setFilterScopeUI(self):
         super().setFilterScopeUI()
@@ -1032,14 +1031,14 @@ class GstTable(MainTable):
 
         """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
         Grundstücke"""
-        if self.maintable_view.selectionModel().selectedRows():
+        if self.data_view.selectionModel().selectedRows():
             self.guiPreSelectPbtn.setEnabled(True)
         else:
             self.guiPreSelectPbtn.setEnabled(False)
         """"""
 
 
-class GstMainModel(MainTableModel):
+class GstModel(TableModel):
 
     col_with_kg_gst_value = 0
     col_with_checkbox = 2
@@ -1147,9 +1146,9 @@ class GstMainModel(MainTableModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
 
-class GstPreSelTable(MainTable):
+class GstPreSelTable(DataView):
 
-    _data_view = MainTableView
+    _data_view = TableView
 
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
@@ -1182,9 +1181,9 @@ class GstPreSelTable(MainTable):
 
         """bearbeite die Zeilen der Tabelle von oben nach unten (z.B. von 
         Zeile 10 nach 0); nur so können alle Zeilen der Tabelle gelöscht werden"""
-        for r in range(self.main_table_model.rowCount(), 0, -1):
-            self.main_table_model.setData(self.main_table_model.index(r - 1, 2),
-                                          False, Qt.CheckStateRole)
+        for r in range(self.data_view_model.rowCount(), 0, -1):
+            self.data_view_model.setData(self.data_view_model.index(r - 1, 2),
+                                         False, Qt.CheckStateRole)
         """"""
 
     def initUi(self):
@@ -1196,22 +1195,22 @@ class GstPreSelTable(MainTable):
         self.uiToolsTbtn.setVisible(False)
 
         """blende unnötige Spalten aus"""
-        self.maintable_view.setColumnHidden(0, True)
-        self.maintable_view.setColumnHidden(1, True)
-        self.maintable_view.setColumnHidden(6, True)
-        self.maintable_view.setColumnHidden(7, True)
-        self.maintable_view.setColumnHidden(8, True)
-        self.maintable_view.setColumnHidden(9, True)
+        self.data_view.setColumnHidden(0, True)
+        self.data_view.setColumnHidden(1, True)
+        self.data_view.setColumnHidden(6, True)
+        self.data_view.setColumnHidden(7, True)
+        self.data_view.setColumnHidden(8, True)
+        self.data_view.setColumnHidden(9, True)
         """"""
 
     def finalInit(self):
         super().finalInit()
 
         """setzt bestimmte spaltenbreiten"""
-        self.maintable_view.setColumnWidth(2, 80)
-        self.maintable_view.setColumnWidth(3, 45)
-        self.maintable_view.setColumnWidth(4, 150)
-        self.maintable_view.setColumnWidth(5, 40)
+        self.data_view.setColumnWidth(2, 80)
+        self.data_view.setColumnWidth(3, 45)
+        self.data_view.setColumnWidth(4, 150)
+        self.data_view.setColumnWidth(5, 40)
         """"""
 
         self.setMaximumWidth(450)
@@ -1230,7 +1229,7 @@ class GstPreSelTable(MainTable):
     # def clearSelectedRows(self):
     #     # super().clearSelectedRows()
     #
-    #     self.maintable_view.selectionModel().clear()
+    #     self.data_view.selectionModel().clear()
 
 class GstPreSelFilter(QSortFilterProxyModel):
 
