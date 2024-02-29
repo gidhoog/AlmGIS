@@ -1,6 +1,8 @@
+import sys
+
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtWidgets import QLabel, QComboBox
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
@@ -24,8 +26,6 @@ from core.scopes.akte.akt import Akt
 #     def accept(self):
 #         # super().accept()
 #
-#         # todo: passe hier das update der DataView an (füge event 'setMainTableData'
-#         #  in 'initMaintable' ein
 #         if self.dialogWidget.acceptEntity():
 #
 #             self.parent.updateMaintableNew()
@@ -213,6 +213,10 @@ class AkteAllMain(DataView):
     _main_table_model_class = AktAllModel
     # entity_dialog_class = AkteAllEntityDialog
 
+    """verfügbare filter für diese tabelle"""
+    _available_filters = 'gs'
+    """"""
+
     # _main_table_mci = []
 
     # @property  # getter
@@ -300,22 +304,89 @@ class AkteAllMain(DataView):
 
     def getRowId(self, index):
 
-        return self._main_table_mci[self.getProxyIndex(index).row()].id
+        return self._main_table_mci[index.row()].id
 
-    def getDataMci(self):
+    def getDataMci(self, session):
 
-        with db_session_cm() as session:
-            stmt = select(BAkt).options(
-                joinedload(BAkt.rel_bearbeitungsstatus)
-            )
+        # with db_session_cm() as session:
+        stmt = select(BAkt).options(
+            joinedload(BAkt.rel_bearbeitungsstatus)
+        )
 
-            mci = session.scalars(stmt).unique().all()
+        mci = session.scalars(stmt).unique().all()
 
         return mci
+
+    def getCostumMci(self, session):
+
+        status_stmt = select(BBearbeitungsstatus)
+        status_mci = session.scalars(status_stmt).all()
+
+        self._costum_mci['status'] = status_mci
 
     def updateMainWidget(self):
 
         self.updateMaintable()
+
+    def setFilterScopeUI(self):
+        super().setFilterScopeUI()
+
+        self.uicAktStatusFilterLbl = QLabel(self)
+        self.uicAktStatusFilterLbl.setText('Status:')
+
+        self.uicAktStatusFilterCombo = QComboBox(self)
+
+        self.uiTableFilterHLay.insertWidget(2, self.uicAktStatusFilterLbl)
+        self.uiTableFilterHLay.insertWidget(3, self.uicAktStatusFilterCombo)
+
+    def setFilterScope(self):
+        super().setFilterScope()
+
+        self.setFilterStatus()
+
+    def setFilterStatus(self):
+
+        # with db_session_cm() as session:
+        #     item_query = session.query(BGstAwbStatus.name).distinct()
+
+        try:
+            self.uicAktStatusFilterCombo.currentTextChanged.disconnect(
+                self.filterMaintable)
+        except:
+            pass
+        finally:
+            prev_typ = self.uicAktStatusFilterCombo.currentText()
+            self.uicAktStatusFilterCombo.clear()
+
+            self.uicAktStatusFilterCombo.addItem('- Alle -')
+
+            status_list = self._costum_mci['status']
+            status_sorted = sorted(status_list,
+                                    key=lambda x: x.sort)
+
+            for status in status_sorted:
+                self.uicAktStatusFilterCombo.addItem(str(status.name))
+
+            self.uicAktStatusFilterCombo.setCurrentText(prev_typ)
+
+            self.uicAktStatusFilterCombo.currentTextChanged.connect(
+                self.applyFilter)
+
+    def useFilterScope(self, source_row, source_parent):
+        super().useFilterScope(source_row, source_parent)
+
+        try:
+            """filter status"""
+            table_value = self.filter_proxy.sourceModel() \
+                .data(self.filter_proxy.sourceModel().index(source_row, 2),
+            Qt.DisplayRole)
+            if self.uicAktStatusFilterCombo.currentText() != "- Alle -":
+                if str(table_value) != self.uicAktStatusFilterCombo.currentText():
+                    return False
+            """"""
+        except:
+            print("Filter Error:", sys.exc_info())
+
 
     # def setMaintableColumns(self):
     #     super().setMaintableColumns()

@@ -97,6 +97,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _title = ''
     """"""
 
+    """verfügbare filter für diese tabelle"""
+    _available_filters = 'g'
+    """"""
+
     """falls vorhanden: spalte mit den typ-einträgen (key=int, value=string)"""
     entity_typ_column = {}
     """"""
@@ -115,6 +119,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     _main_table_mci = []
     _main_table_mc = None
+
+    _costum_mci = {}
 
     """einige einstellungen für diese klasse"""
     # _id_column = 0  # index der spalte mit dem id
@@ -378,9 +384,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.add_entity_menu = QMenu(self)
         """"""
 
-        """verfügbare filter für diese tabelle"""
-        self._available_filters = 'g'
-        """"""
+        # """verfügbare filter für diese tabelle"""
+        # self._available_filters = 'g'
+        # """"""
 
         """anzahl der maximal möglichen detail-filter (noch nicht fertig!)"""
         self.maintable_filter_limit = 5
@@ -394,9 +400,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def signals(self):
 
-        self.uiEditDataTbtn.clicked.connect(self.edit_row)
+        self.uiEditDataTbtn.clicked.connect(self.clickedEditRow)
         self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
-        # self.data_view.doubleClicked.connect(self.edit_row)
+
         self.data_view.doubleClicked.connect(self.doubleClickedRow)
 
         self.data_view.selectionModel().selectionChanged\
@@ -680,7 +686,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         self.initUi()
 
-        self._main_table_mci = self.getDataMci()
+        # self._main_table_mci = self.getDataMci()
+        self._main_table_mci = self.loadDataViewData()
 
         self.data_view_model = self._main_table_model_class(
             self,
@@ -701,14 +708,34 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.finalInit()
 
-    def getDataMci(self):
+    def getDataMci(self, session):
+        """
+        frage die mci für dieses DataView ab und return es
+        :param session:
+        :return: mci
+        """
+        stmt = select(self._main_table_mc)
 
-        with db_session_cm() as session:
-            stmt = select(self._main_table_mc)
-
-            mci = session.scalars(stmt).unique().all()
+        mci = session.scalars(stmt).unique().all()
 
         return mci
+    def getCostumMci(self, session):
+        """
+        lade alle Daten für dieses DataView
+        :return:
+        """
+
+    def loadDataViewData(self):
+
+        with db_session_cm() as session:
+            # stmt = select(self._main_table_mc)
+            #
+            # mci = session.scalars(stmt).unique().all()
+            data_view_mci = self.getDataMci(session)
+
+            self.getCostumMci(session)
+
+        return data_view_mci
 
     # def setMainTableModel2(self):
     #
@@ -752,7 +779,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """wenn das layout der daten (z.b. die sortierung) geändert wird"""
         self._main_table_mci.clear()
 
-        for inst in self.getDataMci():
+        mci = self.loadDataViewData()
+
+        for inst in mci:
             self._main_table_mci.append(inst)
 
         self.data_view.model().layoutChanged.emit()
@@ -931,7 +960,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         liefere den id des Datensatzes mit dem übergebenen Index
 
         :param index: QModelIndex
-        :return: int (z.B.: self._main_table_mci[self.getProxyIndex(index).row()].id)
+        :return: int (z.B.: self._main_table_mci[index.row()].id)
         """
         return None
 
@@ -941,7 +970,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         übergebenen Index
 
         :param index: QModelIndex
-        :return: MCI-Objekt (z.B.: self._main_table_mci[self.getProxyIndex(index).row()])
+        :return: MCI-Objekt (z.B.: self._main_table_mci[index.row()])
         """
         return None
 
@@ -965,6 +994,28 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def editEntity(self):
 
         pass
+
+    def clickedEditRow(self):
+        """
+        die Schaltfläche zum einfügen/anlegen eines neuen Datensatzes wird
+        geklickt
+        :return:
+        """
+
+        """hole den index der ausgewählten zeilen"""
+        sel_indexes = self.getSelectedRows()
+        """"""
+        """breche ab wenn keine zeile ausgewählt ist"""
+        if not sel_indexes:
+            self.no_row_selected_msg()
+            return
+        """"""
+        """nehme den ersten index (falls mehrere ausgewählt sind) und
+        wandle ihn in einen proxy-index um"""
+        proxy_index = self.getProxyIndex(sel_indexes[0])
+        """"""
+
+        self.edit_row(proxy_index)
 
     def edit_row(self, index):
         """
@@ -1027,11 +1078,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if self._data_source == 'mci':
 
-                """hole die di aus der mci-liste"""
-                entity_di = self.data_view_model.mci_list[index.row()]
+                """hole die mci aus der mci-liste"""
+                entity_mci = self.data_view_model.mci_list[index.row()]
                 """"""
                 # entity_di.rel_akt = self.parent._entity_mci
-                entity_widget.editEntity(entity_di)
+                entity_widget.editEntity(entity_mci)
                 print(f'...')
 
             """open the entity_widget in a dialog"""
