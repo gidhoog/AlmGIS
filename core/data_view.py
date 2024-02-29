@@ -698,7 +698,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.filter_proxy.setSourceModel(self.data_view_model)
         self.data_view.setModel(self.filter_proxy)
 
-        self.updateFooter()
         self.setFilter()
 
         self.setAddEntityMenu()
@@ -706,6 +705,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.signals()
 
+        self.updateFooter()
         self.finalInit()
 
     def getDataMci(self, session):

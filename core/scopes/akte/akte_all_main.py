@@ -1,4 +1,5 @@
 import sys
+from _operator import attrgetter
 
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
@@ -74,7 +75,8 @@ class AktAllModel(TableModel):
                        'Name',
                        'Status',
                        'Stz',
-                       'Anmerkung']
+                       'Anmerkung',
+                       'AWB-Fläche (GB)']
 
     def data(self, index: QModelIndex, role: int = ...):
 
@@ -134,6 +136,25 @@ class AktAllModel(TableModel):
         if index.column() == 4:
             if role == Qt.DisplayRole:
                 return self.mci_list[row].anm
+
+        if index.column() == 5:
+            anz = 0
+            gst_area = 0
+            for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
+                anz += 1
+                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+                # print(f'last gst: {last_gst.import_time}')
+                gst_m = 0
+                for ba in last_gst.rel_alm_gst_nutzung:
+                    gst_m = gst_m + ba.area
+                gst_area = gst_area + gst_m
+
+            if role == Qt.DisplayRole:
+                return gst_area
+            if role == Qt.EditRole:
+                return gst_area
 
     # def data(self, index, role=None):
     #
@@ -295,8 +316,9 @@ class AkteAllMain(DataView):
         self.setStretchMethod(2)
 
         # self.insertFooterLine('davon beweidet', 'ha', 9, 120, 0.0001, 4)
-        # self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
-        #                       'ha', 8, 120, 0.0001, 4)
+        self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
+                              'ha', 5, 120,
+                              0.0001, 4)
         # self.insertFooterLine('Gesamtweidefläche', 'ha', 7, 120, 0.0001, 4)
 
         self.uiAddDataTbtn.setVisible(False)
@@ -309,8 +331,22 @@ class AkteAllMain(DataView):
     def getDataMci(self, session):
 
         # with db_session_cm() as session:
-        stmt = select(BAkt).options(
+        stmt = (select(BAkt)
+        .options(
             joinedload(BAkt.rel_bearbeitungsstatus)
+        )
+        .options(
+            joinedload(BAkt.rel_gst_zuordnung)
+            .joinedload(BGstZuordnung.rel_gst)
+            .joinedload(BGst.rel_alm_gst_version)
+            .joinedload(BGstVersion.rel_alm_gst_ez)
+        )
+        .options(
+            joinedload(BAkt.rel_gst_zuordnung)
+            .joinedload(BGstZuordnung.rel_gst)
+            .joinedload(BGst.rel_alm_gst_version)
+            .joinedload(BGstVersion.rel_alm_gst_nutzung)
+        )
         )
 
         mci = session.scalars(stmt).unique().all()
