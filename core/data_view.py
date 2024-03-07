@@ -960,9 +960,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         liefere den id des Datensatzes mit dem übergebenen Index
 
         :param index: QModelIndex
-        :return: int (z.B.: self._main_table_mci[index.row()].id)
+        :return: int (z.B.: self._main_table_mci[self.getProxyIndex(index).row()].id)
         """
-        return None
+        return self._main_table_mci[self.getProxyIndex(index).row()].id
 
     def getRowMci(self, index):
         """
