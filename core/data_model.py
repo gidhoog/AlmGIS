@@ -3,9 +3,10 @@ from datetime import datetime
 from typing import List
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from geoalchemy2.shape import to_shape
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Base(DeclarativeBase):
     pass
@@ -102,6 +103,11 @@ class BCutKoppelGstAktuell(Base):
     #                            back_populates="rel_cut_komplex_gstversion")
     # rel_gstversion = relationship('BGstVersion',
     #                               back_populates="rel_cut_komplex_gstversion")
+
+    @hybrid_property
+    def cut_area(self):
+
+        return func.ST_Area(self.geometry)
 
     def __repr__(self):
         return f"{self.__class__.__name__}(" \
@@ -713,6 +719,15 @@ class BKoppel(Base):
     rel_cut_koppel_gst: Mapped[List["BCutKoppelGstAktuell"]] = relationship(
         back_populates='rel_koppel',
         cascade="all, delete, delete-orphan")
+
+    @hybrid_property
+    # @property
+    def koppel_area(self):
+
+        # aa = func.ST_Area(self.geometry)
+        aa = to_shape(self.geometry).area  # float
+
+        return aa
 
     def __repr__(self):
         return f"<BKoppel(id: {self.id}, " \

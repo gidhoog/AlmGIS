@@ -10,7 +10,7 @@ from sqlalchemy.orm import joinedload
 
 from core import db_session_cm
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
-    BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus
+    BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus, BAbgrenzung
 from core.entity import EntityDialog
 from core.data_view import DataView, TableModel, TableView
 from core.main_widget import MainWidget
@@ -76,7 +76,9 @@ class AktAllModel(TableModel):
                        'Status',
                        'Stz',
                        'Anmerkung',
-                       'AWB-Fläche (GB)']
+                       'AWB-Fläche (GB)',
+                       'davon beweidet',
+                       'Weidefläche']
 
     def data(self, index: QModelIndex, role: int = ...):
 
@@ -88,9 +90,9 @@ class AktAllModel(TableModel):
 
         if role == Qt.TextAlignmentRole:
 
-            # if index.column() in [2, 6, 7, 8, 9]:
-            #
-            #     return Qt.AlignRight | Qt.AlignVCenter
+            if index.column() in [5, 6, 7]:
+
+                return Qt.AlignRight | Qt.AlignVCenter
 
             if index.column() in [0, 2, 3]:
 
@@ -138,23 +140,82 @@ class AktAllModel(TableModel):
                 return self.mci_list[row].anm
 
         if index.column() == 5:
-            anz = 0
+            # anz = 0
             gst_area = 0
             for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
-                anz += 1
-                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-                last_gst = max(gst_versionen_list,
-                               key=attrgetter('rel_alm_gst_ez.datenstand'))
-                # print(f'last gst: {last_gst.import_time}')
-                gst_m = 0
-                for ba in last_gst.rel_alm_gst_nutzung:
-                    gst_m = gst_m + ba.area
-                gst_area = gst_area + gst_m
+                # anz += 1
+                if gst_zuord.awb_status_id == 1:
+                    gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                    last_gst = max(gst_versionen_list,
+                                   key=attrgetter('rel_alm_gst_ez.datenstand'))
+                    # print(f'last gst: {last_gst.import_time}')
+                    gst_m = 0
+                    for ba in last_gst.rel_alm_gst_nutzung:
+                        gst_m = gst_m + ba.area
+                    gst_area = gst_area + gst_m
 
             if role == Qt.DisplayRole:
-                return gst_area
+                gst_area_ha = '{:.4f}'.format(round(float(gst_area) / 10000, 4)).replace(".", ",") + ' ha'
+                return gst_area_ha
             if role == Qt.EditRole:
                 return gst_area
+
+        if index.column() == 6:
+
+            cut_area = 0
+            for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
+                # anz += 1
+                if gst_zuord.awb_status_id == 1:
+                    gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                    last_gst = max(gst_versionen_list,
+                                   key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                    for cut in last_gst.rel_cut_koppel_gst:
+                        cut_area = cut_area + last_gst.rel_cut_koppel_gst.cutarea
+                    # print(f'last gst: {last_gst.import_time}')
+                    # gst_m = 0
+                    # for ba in last_gst.rel_alm_gst_nutzung:
+                    #     gst_m = gst_m + ba.area
+                    # gst_area = gst_area + gst_m
+
+            if role == Qt.DisplayRole:
+                cut_area_ha = '{:.4f}'.format(round(float(cut_area) / 10000, 4)).replace(".", ",") + ' ha'
+                return cut_area_ha
+
+        if index.column() == 7:
+
+            if role in [Qt.DisplayRole, Qt.EditRole]:
+
+                kop_area = 0.00
+
+                # print(f'self.mci_list[row].rel_abgrenzung: {self.mci_list[row].rel_abgrenzung}')
+
+                if self.mci_list[row].rel_abgrenzung != []:
+
+                    last_abgrenzung = max(self.mci_list[row].rel_abgrenzung,
+                                      key=attrgetter('jahr'))
+
+
+                    for komplex in last_abgrenzung.rel_komplex:
+                        for koppel in komplex.rel_koppel:
+                            kop_area = kop_area + koppel.koppel_area
+
+                    if role == Qt.DisplayRole:
+                        kop_area_ha = '{:.4f}'.format(
+                            round(float(kop_area) / 10000, 4)).replace(".",
+                                                                       ",") + ' ha'
+                        return kop_area_ha
+                    if role == Qt.EditRole:
+                        return kop_area
+
+                else:
+                    if role == Qt.DisplayRole:
+                        return '---'
+                    if role == Qt.EditRole:
+                        return 0
+
+
+
 
     # def data(self, index, role=None):
     #
@@ -315,18 +376,18 @@ class AkteAllMain(DataView):
 
         self.setStretchMethod(2)
 
-        # self.insertFooterLine('davon beweidet', 'ha', 9, 120, 0.0001, 4)
+        self.insertFooterLine('Gesamtweidefläche',
+                              'ha', 7, 120,
+                              0.0001, 4)
+        self.insertFooterLine('davon beweidet',
+                              'ha', 6, 120,
+                              0.0001, 4)
         self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
                               'ha', 5, 120,
                               0.0001, 4)
-        # self.insertFooterLine('Gesamtweidefläche', 'ha', 7, 120, 0.0001, 4)
 
         self.uiAddDataTbtn.setVisible(False)
         self.uiDeleteDataTbtn.setVisible(False)
-
-    def getRowId(self, index):
-
-        return self._main_table_mci[index.row()].id
 
     def getDataMci(self, session):
 
@@ -346,6 +407,17 @@ class AkteAllMain(DataView):
             .joinedload(BGstZuordnung.rel_gst)
             .joinedload(BGst.rel_alm_gst_version)
             .joinedload(BGstVersion.rel_alm_gst_nutzung)
+        )
+        .options(
+            joinedload(BAkt.rel_gst_zuordnung)
+            .joinedload(BGstZuordnung.rel_gst)
+            .joinedload(BGst.rel_alm_gst_version)
+            .joinedload(BGstVersion.rel_cut_koppel_gst)
+        )
+        .options(
+            joinedload(BAkt.rel_abgrenzung)
+            .joinedload(BAbgrenzung.rel_komplex)
+            .joinedload(BKomplex.rel_koppel)
         )
         )
 
