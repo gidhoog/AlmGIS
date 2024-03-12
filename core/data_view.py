@@ -676,7 +676,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
-    def initMaintable(self):
+    def initMaintable(self, mci_list=[]):
         """
         initialisiere maintable
 
@@ -687,7 +687,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.initUi()
 
         # self._main_table_mci = self.getDataMci()
-        self._main_table_mci = self.loadDataViewData()
+        if mci_list == []:
+            self._main_table_mci = self.loadDataViewData()
+        else:
+            self._main_table_mci = mci_list
 
         self.data_view_model = self._main_table_model_class(
             self,
@@ -1413,24 +1416,24 @@ class TableModel(QAbstractTableModel):
     basis des 'QAbstractTableModel' ein 'TableModel' erzeugt
     """
 
-    def __init__(self, parent, mci_list=None):
+    def __init__(self, parent, mci_list=[]):
         super(TableModel, self).__init__(parent)
 
         self.parent = parent
         # self.data_array = None
-        self.mci_list = []
+        self.mci_list = mci_list
         self.header = []
 
         # if data_array:
         #     self.data_array = data_array
 
-    def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
-        """
-        erzeuge ein basis-model
-        """
-
-        if not index.isValid():
-            return None
+    # def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+    #     """
+    #     erzeuge ein basis-model
+    #     """
+    #
+    #     if not index.isValid():
+    #         return None
 
         # if role in [Qt.EditRole]:
         #     try:

@@ -65,11 +65,11 @@ class AkteAllMainWidget(MainWidget):
 class AktAllModel(TableModel):
 # class AktAllModel(QAbstractTableModel):
 
-    def __init__(self, parent, mci_list=None):
-        super(self.__class__, self).__init__(parent, mci_list=None)
+    def __init__(self, parent, mci_list=[]):
+        super(self.__class__, self).__init__(parent, mci_list=mci_list)
 
-        self.parent = parent
-        self.mci_list = mci_list
+        # self.parent = parent
+        # self.mci_list = mci_list
 
         self.header = ['AZ',
                        'Name',

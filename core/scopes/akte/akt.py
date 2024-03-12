@@ -263,8 +263,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        # self.gst_table.initMaintable(di_list=self._entity_mci.rel_gst_zuordnung)
-        #
+        self.gst_table.initMaintable(mci_list=self._entity_mci.rel_gst_zuordnung)
+
         # """lade die Abgrenzungsdaten"""
         # self.loadKKModel()
         # self.setCurrentRoleToKK()

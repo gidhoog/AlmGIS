@@ -56,12 +56,115 @@ class GstZuordnungMainDialog(MainDialog):
         self.set_reject_button_text('&Schließen')
 
 
-class GstModelNew(QAbstractTableModel):
+class GstModel(TableModel):
 
-    def __init__(self, parent, di_list=None):
-        super(__class__, self).__init__()
+    def __init__(self, parent, mci_list=[]):
+        super(self.__class__, self).__init__(parent, mci_list=mci_list)
 
-        self.di_list = di_list
+        # self.parent = parent
+        # self.mci_list = mci_list
+
+        self.header = ['Gst-Nr',
+                       'EZ',
+                       'KG-Nr',
+                       'KG-Name',
+                       'AWB',
+                       'Rechtsgrundlage',
+                       'beweidet (ha)',
+                       'beweidet (%)',
+                       'Gst-Fläche (ha)',
+                       'Datenstand']
+
+    def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+
+        row = index.row()
+        col = index.column()
+
+        # if role == Qt.TextAlignmentRole:
+        #
+        #     if index.column() in [5, 6, 7]:
+        #
+        #         return Qt.AlignRight | Qt.AlignVCenter
+        #
+        #     if index.column() in [0, 2, 3]:
+        #
+        #         return Qt.AlignHCenter | Qt.AlignVCenter
+        #
+        # if role == Qt.BackgroundRole:
+        #
+        #     if index.column() == 2:
+        #
+        #         if self.mci_list[row].rel_bearbeitungsstatus is not None:
+        #
+        #             color_str = self.mci_list[row].rel_bearbeitungsstatus.color
+        #             color_list = color_str.split(", ")
+        #
+        #             return QColor(int(color_list[0]),
+        #                           int(color_list[1]),
+        #                           int(color_list[2]))
+
+
+        if index.column() == 0:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].rel_gst.gst
+            # if role == Qt.EditRole:
+            #     return self.mci_list[row].az
+
+        # if role == Qt.BackgroundRole:
+        #     if index.column() == 5:
+        #         val_5 = self.data(self.index(index.row(), index.column()), Qt.DisplayRole)
+        #         if val_5 == 'eingetragen':
+        #             return QColor(189, 239, 255)
+        #         if val_5 == 'nicht eingetragen':
+        #             return QColor(234, 216, 54)
+        #         if val_5 == 'gelöscht':
+        #             return QColor(234, 163, 165)
+        #         if val_5 == 'historisch':
+        #             return QColor(170, 170, 170)
+        #
+        # if role == Qt.DisplayRole:
+        #
+        #     if index.column() == 7:  # beweidet ha
+        #         val = self.data(index, Qt.EditRole)
+        #         if val:
+        #             try:
+        #                 return '{:.4f}'.format(
+        #                     round(float(val) / 10000, 4)).replace(".", ",")
+        #             except ValueError:
+        #                 pass
+        #     """errechne den anteil der beweidet wird"""
+        #     if index.column() == 8:  # beweidet %
+        #         bew_val = self.data(self.index(index.row(), 7), Qt.EditRole)
+        #         total_val = self.data(self.index(index.row(), 9), Qt.EditRole)
+        #         if not bew_val:
+        #             return ''
+        #         else:
+        #             val = (bew_val / total_val) * 100
+        #             try:
+        #                 return '{:.2f}'.format(
+        #                     round(float(val), 2)).replace(".", ",")
+        #             except ValueError:
+        #                 pass
+        #     """"""
+        #
+        #     if index.column() == 9:  # Gst-Fläche
+        #         val = self.data(index, Qt.EditRole)
+        #         if val:
+        #             try:
+        #                 return '{:.4f}'.format(
+        #                     round(float(val) / 10000, 4)).replace(".", ",")
+        #             except ValueError:
+        #                 pass
+        #
+        # return super().data(index, role)
+
+
+class GstModelNew(TableModel):
+
+    def __init__(self, parent, mci_list=[]):
+        super(__class__, self).__init__(parent, mci_list=mci_list)
+
+        # self.mci_list = mci_list
 
         self.header = ['Gst-Nr',
                        'Ez',
@@ -95,12 +198,12 @@ class GstModelNew(QAbstractTableModel):
 
         if index.column() == 0:
             if role == Qt.DisplayRole:
-                return self.di_list[row].rel_gst.gst
+                return self.mci_list[row].rel_gst.gst
 
         if index.column() == 1:
             if role == Qt.DisplayRole:
 
-                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+                gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
                 last_gst = max(gst_versionen_list,
                                key=attrgetter('rel_alm_gst_ez.datenstand'))
 
@@ -108,36 +211,36 @@ class GstModelNew(QAbstractTableModel):
 
         if index.column() == 2:
             if role == Qt.DisplayRole:
-                return self.di_list[row].rel_gst.kgnr
+                return self.mci_list[row].rel_gst.kgnr
 
         if index.column() == 3:
             if role == Qt.DisplayRole:
-                return self.di_list[row].rel_gst.rel_kat_gem.kgname
+                return self.mci_list[row].rel_gst.rel_kat_gem.kgname
 
         if index.column() == 4:
             if role == Qt.DisplayRole:
-                return self.di_list[row].rel_awb_status.name
-                # return self.di_list[row].awb_status_id
+                return self.mci_list[row].rel_awb_status.name
+                # return self.mci_list[row].awb_status_id
 
             if role == Qt.EditRole:
-                return self.di_list[row].rel_awb_status.id
+                return self.mci_list[row].rel_awb_status.id
 
             if role == Qt.BackgroundRole:
 
-                    if self.di_list[row].rel_awb_status.id == 1:
+                    if self.mci_list[row].rel_awb_status.id == 1:
                         return QColor(189, 239, 255)
-                    if self.di_list[row].rel_awb_status.id == 0:
+                    if self.mci_list[row].rel_awb_status.id == 0:
                         return QColor(234, 216, 54)
-                    if self.di_list[row].rel_awb_status.id == 2:
+                    if self.mci_list[row].rel_awb_status.id == 2:
                         return QColor(234, 163, 165)
 
         if index.column() == 5:
             if role == Qt.DisplayRole:
-                return self.di_list[row].rel_rechtsgrundlage.name
+                return self.mci_list[row].rel_rechtsgrundlage.name
 
         if index.column() == 7 or index.column() == 8 or index.column() == 9:  # davon beweidet
 
-            gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+            gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
             last_gst = max(gst_versionen_list,
                            key=attrgetter('rel_alm_gst_ez.datenstand'))
 
@@ -184,7 +287,7 @@ class GstModelNew(QAbstractTableModel):
         # if index.column() == 7:  # gis_area
         #     if role == Qt.DisplayRole:
         #
-        #         gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+        #         gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
         #         last_gst = max(gst_versionen_list,
         #                        key=attrgetter('rel_alm_gst_ez.datenstand'))
         #
@@ -198,7 +301,7 @@ class GstModelNew(QAbstractTableModel):
         if index.column() == 6:  # gb_area
 
             area = 0
-            gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+            gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
             last_gst = max(gst_versionen_list,
                            key=attrgetter('rel_alm_gst_ez.datenstand'))
             for nutz in last_gst.rel_alm_gst_nutzung:
@@ -216,7 +319,7 @@ class GstModelNew(QAbstractTableModel):
         if index.column() == 10: # datenstand
             if role == Qt.DisplayRole:
 
-                gst_versionen_list = self.di_list[row].rel_gst.rel_alm_gst_version
+                gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
                 last_gst = max(gst_versionen_list,
                                key=attrgetter('rel_alm_gst_ez.datenstand'))
 
@@ -224,35 +327,35 @@ class GstModelNew(QAbstractTableModel):
 
         # return super().data(index, role)
 
-    def rowCount(self, parent: QModelIndex = ...):
-        """
-        definiere die zeilenanzahl
-        """
-
-        if self.di_list:
-            return len(self.di_list)
-        else:
-            return 0
-
-    def columnCount(self, parent: QModelIndex = ...):
-        """
-        definiere die spaltenanzahl
-        """
-        return 11
-
-    def headerData(self, column, orientation, role=None):
-        """
-        wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
-        dann nehme diese
-        """
-        super().headerData(column, orientation, role)
-
-        if self.header:
-            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-
-                return self.header[column]
-        # else:
-        #     return super().headerData(column, orientation, role)
+    # def rowCount(self, parent: QModelIndex = ...):
+    #     """
+    #     definiere die zeilenanzahl
+    #     """
+    #
+    #     if self.mci_list:
+    #         return len(self.mci_list)
+    #     else:
+    #         return 0
+    #
+    # def columnCount(self, parent: QModelIndex = ...):
+    #     """
+    #     definiere die spaltenanzahl
+    #     """
+    #     return 11
+    #
+    # def headerData(self, column, orientation, role=None):
+    #     """
+    #     wenn individuelle überschriften gesetzt sind (in 'maintable_columns')
+    #     dann nehme diese
+    #     """
+    #     super().headerData(column, orientation, role)
+    #
+    #     if self.header:
+    #         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    #
+    #             return self.header[column]
+    #     # else:
+    #     #     return super().headerData(column, orientation, role)
 
 
 class GstMaintable(DataView):
@@ -266,8 +369,10 @@ class GstMaintable(DataView):
     _entity_widget = GstZuordnungDataForm
     entity_dialog_class = GstDialog
     data_model_class = BGstZuordnung
-    table_model_class = GstModelNew
-    _data_source = 'di'
+    # table_model_class = GstModelNew
+    # _data_source = 'di'
+
+    _main_table_model_class = GstModelNew
 
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
     _delete_window_title = ["Grundstück löschen", "Grundstücke löschen"]
@@ -473,10 +578,10 @@ class GstMaintable(DataView):
 
 # class GstModelNew(QAbstractTableModel):
 #
-#     def __init__(self, parent, di_list=None):
+#     def __init__(self, parent, mci_list=None):
 #         super(__class__, self).__init__(parent)
 #
-#         self.di_list = di_list
+#         self.mci_list = mci_list
 #
 #         self.header = ['aa', 'bb', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc']
 #
@@ -490,8 +595,8 @@ class GstMaintable(DataView):
 #         definiere die zeilenanzahl
 #         """
 #
-#         if self.di_list:
-#             return len(self.di_list)
+#         if self.mci_list:
+#             return len(self.mci_list)
 #         else:
 #             return 0
 #
@@ -514,55 +619,3 @@ class GstMaintable(DataView):
 #                 return self.header[column]
 #         # else:
 #         #     return super().headerData(column, orientation, role)
-
-class GstModel(TableModel):
-
-    def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
-
-        if role == Qt.BackgroundRole:
-            if index.column() == 5:
-                val_5 = self.data(self.index(index.row(), index.column()), Qt.DisplayRole)
-                if val_5 == 'eingetragen':
-                    return QColor(189, 239, 255)
-                if val_5 == 'nicht eingetragen':
-                    return QColor(234, 216, 54)
-                if val_5 == 'gelöscht':
-                    return QColor(234, 163, 165)
-                if val_5 == 'historisch':
-                    return QColor(170, 170, 170)
-
-        if role == Qt.DisplayRole:
-
-            if index.column() == 7:  # beweidet ha
-                val = self.data(index, Qt.EditRole)
-                if val:
-                    try:
-                        return '{:.4f}'.format(
-                            round(float(val) / 10000, 4)).replace(".", ",")
-                    except ValueError:
-                        pass
-            """errechne den anteil der beweidet wird"""
-            if index.column() == 8:  # beweidet %
-                bew_val = self.data(self.index(index.row(), 7), Qt.EditRole)
-                total_val = self.data(self.index(index.row(), 9), Qt.EditRole)
-                if not bew_val:
-                    return ''
-                else:
-                    val = (bew_val / total_val) * 100
-                    try:
-                        return '{:.2f}'.format(
-                            round(float(val), 2)).replace(".", ",")
-                    except ValueError:
-                        pass
-            """"""
-
-            if index.column() == 9:  # Gst-Fläche
-                val = self.data(index, Qt.EditRole)
-                if val:
-                    try:
-                        return '{:.4f}'.format(
-                            round(float(val) / 10000, 4)).replace(".", ",")
-                    except ValueError:
-                        pass
-
-        return super().data(index, role)
