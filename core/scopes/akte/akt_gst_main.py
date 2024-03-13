@@ -469,19 +469,21 @@ class GstMaintable(DataView):
 
         self.data_view.sortByColumn(1, Qt.AscendingOrder)
 
-        """setzt bestimmte spaltenbreiten"""
-        self.data_view.setColumnWidth(1, 70)
-        self.data_view.setColumnWidth(2, 50)
-        self.data_view.setColumnWidth(3, 70)
-        self.data_view.setColumnWidth(4, 120)
-        self.data_view.setColumnWidth(5, 120)
-        self.data_view.setColumnWidth(6, 120)
-        self.data_view.setColumnWidth(7, 80)
-        """"""
+        # """setzt bestimmte spaltenbreiten"""
+        # self.data_view.setColumnWidth(1, 70)
+        # self.data_view.setColumnWidth(2, 50)
+        # self.data_view.setColumnWidth(3, 70)
+        # self.data_view.setColumnWidth(4, 120)
+        # self.data_view.setColumnWidth(5, 120)
+        # self.data_view.setColumnWidth(6, 120)
+        # self.data_view.setColumnWidth(7, 80)
+        # """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
         self.data_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
+
+        self.data_view.resizeColumnsToContents()
 
     def setMaintableColumns(self):
         super().setMaintableColumns()

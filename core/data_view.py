@@ -75,10 +75,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     """
 
     """klasse des entity_widgets"""
-    _entity_widget = None
+    entity_widget_class = None
     """"""
     """klasse des dialoges"""
     entity_dialog_class = DataViewEntityDialog
+
 
 
 
@@ -121,6 +122,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _main_table_mc = None
 
     _costum_mci = {}
+
+    _commit_entity = True
+    edit_entity_by = 'id'  # or 'mci'
 
     """einige einstellungen für diese klasse"""
     # _id_column = 0  # index der spalte mit dem id
@@ -941,24 +945,47 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def doubleClickedRow(self, index):
 
-        # selected_index = self.rowSelected()
+        if self.edit_behaviour == 'dialog':
 
-        print(f'selected_index row: {index.row()}    '
-              f'col: {index.column()}')
+            self.indexBasedRowEdit(index)
 
-        if 0 <= index.column() <= 9999:  # für alle Spalten der Tabelle
+        # # selected_index = self.rowSelected()
+        #
+        # print(f'selected_index row: {index.row()}    '
+        #       f'col: {index.column()}')
+        #
+        # if 0 <= index.column() <= 9999:  # für alle Spalten der Tabelle
+        #
+        #     if self.data_view_model.data(
+        #             self.data_view_model.index(index.row(), 1),
+        #             Qt.EditRole) == 'xy':
+        #         # define here a typ-handling
+        #         pass
+        #
+        #     # proxy_index = self.getProxyIndex(index)
+        #     print(f'--> edit row: {self.getRowId(index)}')
+        #     self.edit_row(index)
 
-            if self.data_view_model.data(
-                    self.data_view_model.index(index.row(), 1),
-                    Qt.EditRole) == 'xy':
-                # define here a typ-handling
-                pass
+    def indexBasedRowEdit(self, index):
+        """
+        define here zones of columns for different edit behaviours
 
-            # proxy_index = self.getProxyIndex(index)
-            print(f'--> edit row: {self.getRowId(index)}')
-            self.edit_row(index)
+        subclass this method to enable individual settings
+        """
 
-    def getRowId(self, index):
+        if 0 <= index.column() <= 9999:  # all columns of the model
+
+            entity_witdget_class = self.get_entity_widget_class(index)
+
+            if self.edit_entity_by == 'id':
+                self.editRow(entity_witdget_class(self),
+                             entity_id=self.getEntityId(index))
+
+            if self.edit_entity_by == 'mci':
+                self.editRow(entity_witdget_class(self),
+                             entity_mci=self.getEntityMci(index))
+
+    def getEntityId(self, index):
         """
         liefere den id des Datensatzes mit dem übergebenen Index
 
@@ -967,7 +994,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         return self._main_table_mci[self.getProxyIndex(index).row()].id
 
-    def getRowMci(self, index):
+    def getEntityMci(self, index):
         """
         liefere die MCI (Mapped Class Instance) des Datensatzes mit dem
         übergebenen Index
@@ -1020,81 +1047,108 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.edit_row(proxy_index)
 
-    def edit_row(self, index):
+    def getCustomEntityData(self):
         """
-        bearbeite tabelleneinträge
+        define or create here a list with custom data that is given in 'editRow'
+        to edit the entity (e.g. data for comboboxes)
         """
-        # """hole den index der ausgewählten zeile"""
-        # sel_rows = self.getSelectedRows()
-        # """"""
-        # """breche ab wenn keine zeile ausgewählt ist"""
-        # if not sel_rows:
-        #     self.no_row_selected_msg()
-        #     return
-        # """"""
+        return []
 
-        # """nehme den ersten index (falls mehrere ausgewählt sind) und
-        # wandle ihn in einen proxy-index um"""
-        # # model_index = sel_rows[0]
-        # proxy_index = self.getProxyIndex(index)
-        # """"""
+    def editRow(self, entity_widget, entity_id=None, entity_mci=None):
+        """
+        edit one table row;
+        you could use the table_index to get the column (e.g. to open different
+        item-widgets on different columns for editing)
 
-        if self.edit_behaviour == 'dialog':  # derzeit wird nur 'dialog' unterstützt
+        :return:
+        """
+        if entity_id:
+            entity_widget.editEntity(entity_id=entity_id,
+                                     custom_entity_data=self.getCustomEntityData())
 
-            """hole das entity-widget"""
-            entity_widget = self.get_entity_widget(index)
-            """"""
+        if entity_mci:
+            entity_widget.editEntity(entity_mci=entity_mci,
+                                     custom_entity_data=self.getCustomEntityData())
 
-            if self._data_source == 'db':
+        """open the entity_widget_class in a dialog"""
+        self.openDialog(entity_widget)
+        """"""
 
-                # """hole die daten die bearbeitet werden sollen, um sie im
-                # entity-widget bearbeiten zu können"""
-                # with db_session_cm() as session:
-                #     session.expire_on_commit = False
-                #
-                #     if self.inst_column is not None:
-                #         """nehme die data_model-instanz aus dem maintable und
-                #         füge sie einer session hinzu um event. daten die sich in
-                #         verknüpften tabellen befinden und benötigt werden vorhanden
-                #         sind"""
-                #         data_instance = self.data_view_model.data(
-                #             self.data_view_model.index(proxy_index.row(),
-                #                                         self.inst_column),
-                #              Qt.EditRole),
-                #         try:
-                #             session.add(data_instance)
-                #             session.flush()
-                #         except:
-                #             print(f"Error: {sys.exc_info()}")
-                #         """"""
-                #     else:
-                #         """standardmethode um die data_model instanz zu bekommen"""
-                #         data_instance = self.get_row_instance(proxy_index,
-                #                                               session)
-                #         """"""
-
-                """lade die daten in das entity-widget"""
-                # entity_widget.editEntity(entity_mci=data_instance)
-                # entity_widget.editEntity(entity_id=1061)
-                entity_widget.editEntity(entity_id=self.getRowId(index))
-
-
-            if self._data_source == 'mci':
-
-                """hole die mci aus der mci-liste"""
-                entity_mci = self.data_view_model.mci_list[index.row()]
-                """"""
-                # entity_di.rel_akt = self.parent._entity_mci
-                entity_widget.editEntity(entity_mci)
-                print(f'...')
-
-            """open the entity_widget in a dialog"""
-            self.openDialog(entity_widget)
-            """"""
-
-            """setze den focus auf ein vordefiniertes widget"""
-            entity_widget.focusFirst()
-            """"""
+    # def edit_row(self, index):
+    #     """
+    #     bearbeite tabelleneinträge
+    #     """
+    #     # """hole den index der ausgewählten zeile"""
+    #     # sel_rows = self.getSelectedRows()
+    #     # """"""
+    #     # """breche ab wenn keine zeile ausgewählt ist"""
+    #     # if not sel_rows:
+    #     #     self.no_row_selected_msg()
+    #     #     return
+    #     # """"""
+    #
+    #     # """nehme den ersten index (falls mehrere ausgewählt sind) und
+    #     # wandle ihn in einen proxy-index um"""
+    #     # # model_index = sel_rows[0]
+    #     # proxy_index = self.getProxyIndex(index)
+    #     # """"""
+    #
+    #     if self.edit_behaviour == 'dialog':  # derzeit wird nur 'dialog' unterstützt
+    #
+    #         """hole das entity-widget"""
+    #         entity_widget = self.get_entity_widget(index)
+    #         """"""
+    #
+    #         if self._data_source == 'db':
+    #
+    #             # """hole die daten die bearbeitet werden sollen, um sie im
+    #             # entity-widget bearbeiten zu können"""
+    #             # with db_session_cm() as session:
+    #             #     session.expire_on_commit = False
+    #             #
+    #             #     if self.inst_column is not None:
+    #             #         """nehme die data_model-instanz aus dem maintable und
+    #             #         füge sie einer session hinzu um event. daten die sich in
+    #             #         verknüpften tabellen befinden und benötigt werden vorhanden
+    #             #         sind"""
+    #             #         data_instance = self.data_view_model.data(
+    #             #             self.data_view_model.index(proxy_index.row(),
+    #             #                                         self.inst_column),
+    #             #              Qt.EditRole),
+    #             #         try:
+    #             #             session.add(data_instance)
+    #             #             session.flush()
+    #             #         except:
+    #             #             print(f"Error: {sys.exc_info()}")
+    #             #         """"""
+    #             #     else:
+    #             #         """standardmethode um die data_model instanz zu bekommen"""
+    #             #         data_instance = self.get_row_instance(proxy_index,
+    #             #                                               session)
+    #             #         """"""
+    #
+    #             """lade die daten in das entity-widget"""
+    #             # entity_widget.editEntity(entity_mci=data_instance)
+    #             # entity_widget.editEntity(entity_id=1061)
+    #             entity_widget.editEntity(entity_id=self.getRowId(index))
+    #
+    #
+    #         if self._data_source == 'mci':
+    #
+    #             """hole die mci aus der mci-liste"""
+    #             entity_mci = self.data_view_model.mci_list[index.row()]
+    #             """"""
+    #             # entity_di.rel_akt = self.parent._entity_mci
+    #             entity_widget.editEntity(entity_mci)
+    #             print(f'...')
+    #
+    #         """open the entity_widget in a dialog"""
+    #         self.openDialog(entity_widget)
+    #         """"""
+    #
+    #         """setze den focus auf ein vordefiniertes widget"""
+    #         entity_widget.focusFirst()
+    #         """"""
 
     def get_entity_widget(self, sel_index):
         """
@@ -1118,24 +1172,48 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         return entity_widget
 
-    def get_entity_widget_class(self, type_id):
-        """
-        hole den module- und class-name des übergebenen type_id
-        :param type_id:
-        :return: module, widget_class
-        """
+    def get_entity_widget_class(self, sel_index):
+        """get the entity_widget_class; consider there are different types of the
+        item"""
 
-        type_data_class = list(self.entity_typ_column.values())[0]
+        if self.entity_widget_class is not None:
 
-        with db_session_cm() as session:
-            instance = session.query(type_data_class)\
-                .filter(type_data_class.id == type_id)\
-                .first()
+            wdg_class = self.entity_widget_class
 
-            module = instance.module
-            widget_class = instance.type_class
+        elif hasattr(self.mci_list[sel_index.row()], 'rel_type'):
+            """get the module and the widget_class from the
+            type_data_instance"""
+            # module, widget_class = self.get_item_widget_class(
+            #     self.get_selected_type_id(sel_index))
+            module = self.mci_list[sel_index.row()].rel_type.module
+            widget_class = self.mci_list[sel_index.row()].rel_type.type_class
 
-        return module, widget_class
+            """import the widget_class and make a instance"""
+            item_module = __import__(module, fromlist=[widget_class])
+            wdg_class = getattr(item_module, widget_class)
+            # item_widget = wid(self)
+            """"""
+
+        return wdg_class
+
+    # def get_entity_widget_class(self, type_id):
+    #     """
+    #     hole den module- und class-name des übergebenen type_id
+    #     :param type_id:
+    #     :return: module, widget_class
+    #     """
+    #
+    #     type_data_class = list(self.entity_typ_column.values())[0]
+    #
+    #     with db_session_cm() as session:
+    #         instance = session.query(type_data_class)\
+    #             .filter(type_data_class.id == type_id)\
+    #             .first()
+    #
+    #         module = instance.module
+    #         widget_class = instance.type_class
+    #
+    #     return module, widget_class
 
     def get_type_class(self, type_instance):
         """

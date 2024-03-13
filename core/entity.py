@@ -56,6 +56,8 @@ class Entity(QMainWindow):
     _entity_id = None
     _parent_id = None
 
+    _commit_on_apply = True
+
     guiMainGis = None
 
     @property  # getter
@@ -279,13 +281,15 @@ class Entity(QMainWindow):
         self.checkValidity()
 
         """
-        überprüfe hier die gültigkeit der daten. wenn ja, dann 'commit' die daten
-        und return True. andernfalls return False und setze die eigenschaft
+        überprüfe hier die gültigkeit der daten. wenn ja, dann 'submit' die daten;
+        ggf. 'commite' die daten (wenn commit_on_apply' True ist) und return True;
+        andernfalls return False und setze die eigenschaft
         'valid' wieder auf True (für den nächsten validity-check)
         """
         if self.valid == True:
             self.submitEntity()
-            self.commitEntity()
+            if self._commit_on_apply:
+                self.commitEntity()
             return True
         elif self.valid == False:
             self.valid = True

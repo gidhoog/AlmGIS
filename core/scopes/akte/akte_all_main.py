@@ -281,7 +281,7 @@ class AktAllModel(TableModel):
 
 class AkteAllMain(DataView):
 
-    _entity_widget = Akt
+    entity_widget_class = Akt
 
     _maintable_text = ["Akt", "Akte", "kein Akt"]
     _delete_window_title = ["Akt löschen", "Akte löschen"]
