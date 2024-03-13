@@ -42,7 +42,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     baseclass für einen akt-datensatz
     """
 
-    _entity_mc = BAkt
+    # _entity_mc = BAkt
 
     _alm_bnr = 0
     _anm = ''

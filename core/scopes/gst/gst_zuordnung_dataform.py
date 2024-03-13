@@ -26,6 +26,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     _awb_wrong = False
 
     _last_edit = ''
+    _commit_on_apply = False
 
     @property  # getter
     def akt(self):
@@ -162,20 +163,20 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
         self._awb_wrong = value
 
-    @property  # getter
-    def last_edit(self):
-        return self._last_edit
-
-    @last_edit.setter
-    def last_edit(self, value):
-
-        if value and self._entity_mci.time_edit:
-            user = value
-            time = self._entity_mci.time_edit[0:19]
-            le = user + '/' + str(time)
-            self.uiLastEditedLbl.setText(le)
-
-        self._last_edit = value
+    # @property  # getter
+    # def last_edit(self):
+    #     return self._last_edit
+    #
+    # @last_edit.setter
+    # def last_edit(self, value):
+    #
+    #     if value and self._entity_mci.time_edit:
+    #         user = value
+    #         time = self._entity_mci.time_edit[0:19]
+    #         le = user + '/' + str(time)
+    #         self.uiLastEditedLbl.setText(le)
+    #
+    #     self._last_edit = value
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
@@ -200,9 +201,9 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        self.gst_info = Gst(self)
-        self.gst_info.editEntity(self._entity_mci.rel_gst, None)
-        self.addGstInfo()
+        # self.gst_info = Gst(self)
+        # self.gst_info.editEntity(self._entity_mci.rel_gst, None)
+        # self.addGstInfo()
 
     def addGstInfo(self):
 
@@ -223,7 +224,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.aufgaben = self._entity_mci.aufgaben
         self.gb_wrong = self._entity_mci.gb_wrong
         self.awb_wrong = self._entity_mci.awb_wrong
-        self.last_edit = self._entity_mci.user_edit
+        # self.last_edit = self._entity_mci.user_edit
 
     def submitEntity(self):
         super().submitEntity()

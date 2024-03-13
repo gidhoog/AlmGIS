@@ -10,6 +10,7 @@ from sqlalchemy import func
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt, BKoppel, BAbgrenzung
+from core.entity import EntityDialog
 from core.gis_item import GisItem
 from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
@@ -22,7 +23,7 @@ from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
 
 
-class GstDialog(MainDialog):
+class GstDialog(EntityDialog):
     """
     dialog für die anzeige einer grundstückszuordnung
     """
@@ -30,16 +31,16 @@ class GstDialog(MainDialog):
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
 
-        self.parent = parent
-
-        self.enableApply = True
+        # self.parent = parent
+        #
+        # self.enableApply = True
 
         self.dialog_window_title = 'Grundstückszuordnung'
-        self.set_apply_button_text('&Speichern und Schließen')
+        # self.set_apply_button_text('&Speichern und Schließen')
 
-    def accept(self):
-        if self.dialogWidget.acceptEntity():
-            super().accept()
+    # def accept(self):
+    #     if self.dialogWidget.acceptEntity():
+    #         super().accept()
 
 
 class GstZuordnungMainDialog(MainDialog):
@@ -362,13 +363,13 @@ class GstMaintable(DataView):
     """
     grundstückstabelle im akt
     """
-    gis_relation = {"gis_id_column": 0,
-                    "gis_layer_style_id": 99,
-                    "gis_layer_id_column": 'id'}
+    # gis_relation = {"gis_id_column": 0,
+    #                 "gis_layer_style_id": 99,
+    #                 "gis_layer_id_column": 'id'}
 
-    _entity_widget = GstZuordnungDataForm
+    entity_widget_class = GstZuordnungDataForm
     entity_dialog_class = GstDialog
-    data_model_class = BGstZuordnung
+    # data_model_class = BGstZuordnung
     # table_model_class = GstModelNew
     # _data_source = 'di'
 
@@ -383,17 +384,19 @@ class GstMaintable(DataView):
     _delete_text = ["Das Grundstück", "kann nicht gelöscht werden, da es "
                                           "verwendet wird!"]
 
-    _data_view = TableView
+    _commit_entity = False
+    edit_entity_by = 'mci'
+    # _data_view = TableView
 
-    gst_zuordnung_wdg_class = GstZuordnung
-    gst_zuordnung_dlg_class = GstZuordnungMainDialog
+    # gst_zuordnung_wdg_class = GstZuordnung
+    # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
-        self.parent = parent
-
-        self.linked_gis_widget = self.parent.guiMainGis
+        # self.parent = parent
+        #
+        # self.linked_gis_widget = self.parent.guiMainGis
 
     def openGstZuordnung(self):
         """

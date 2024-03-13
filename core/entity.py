@@ -47,7 +47,12 @@ class Entity(QMainWindow):
     (z.b. ein gis-kartenfenster)
     """
 
-    _entity_mc = None  # 'mapped class' des Entities (definiert in data_model.py)
+    """'mapped class' des Entities (definiert in data_model.py); eigentlich
+    nur dann notwendig, wenn die entity_mci mittels dem id von der db
+    abgefragt wird"""
+    _entity_mc = None
+    """"""
+
     _entity_mci = None  # Instanz der 'mapped class' des Entities
     _custom_mci = {}
 

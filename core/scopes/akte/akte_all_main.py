@@ -290,7 +290,7 @@ class AkteAllMain(DataView):
     _delete_window_text_plural = ["Sollen die ausgewählten",
                                   "Akte wirklich gelöscht werden?"]
 
-    _data_view = TableView
+    # _data_view = TableView
 
     _main_table_model_class = AktAllModel
     # entity_dialog_class = AkteAllEntityDialog
@@ -321,7 +321,7 @@ class AkteAllMain(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
-        self.data_model_class = BAkt
+        # self.data_model_class = BAkt
 
         # with db_session_cm() as session:
         #

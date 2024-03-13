@@ -1002,7 +1002,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :param index: QModelIndex
         :return: MCI-Objekt (z.B.: self._main_table_mci[index.row()])
         """
-        return None
+        return self._main_table_mci[self.getProxyIndex(index).row()]
 
     def rowSelected(self):
         """
