@@ -30,7 +30,7 @@ from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
 from core.scopes.akte.abgrenzung import Abgrenzung, AbgrenzungDialog
-from core.scopes.akte.akt_gst_main import GstMaintable
+from core.scopes.akte.akt_gst_main import GstAktDataView
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
 from core.scopes.koppel.koppel import KoppelDialog, Koppel
 from core.scopes.koppel.koppel_item import KoppelItem
@@ -169,7 +169,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         """"""
 
         """definiere notwendige tabellen und füge sie ein"""
-        self.gst_table = GstMaintable(self)
+        self.gst_table = GstAktDataView(self)
 
         self.uiGstListeVlay.addWidget(self.gst_table)
         """"""
@@ -594,21 +594,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self._entity_mci.anm = self.anm
         self._entity_mci.bearbeitungsstatus_id = self.status
 
-        # with db_session_cm() as session:
-        #
-        #     for gst in self._entity_mci.rel_gst_zuordnung:
-        #
-        #         session.merge(gst.rel_awb_status)
-        #
-        #     session.add(self._entity_mci)
-        #
-        #     self._entity_mci.rel_abgrenzung = self.get_abgrenzung_di()
-
-        # session.commit()
-
-        # with db_session_cm(name='xx_test') as session:
-        #
-        #     session.add(self._entity_mci)
+        # todo: es wird bei de Änderung von mehreren zuordnungen hier nur die
+        #  erste commited!!
+        self._entity_mci.rel_gst_zuordnung = self.gst_table.data_view.model().sourceModel().mci_list
 
     def get_abgrenzung_di(self):
         """

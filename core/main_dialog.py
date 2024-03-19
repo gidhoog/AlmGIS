@@ -146,13 +146,10 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
             self.reject()
 
     def accept(self) -> None:
-        """
-        überprüfe ob der dialog ein entity-widget enthält;
-        """
 
-        """if parent is a main_table, then update"""
-        if hasattr(self._parent, 'acceptEditingInDialog'):
-            self._parent.acceptEditingInDialog()
+        # """if parent is a main_table, then update"""
+        # if hasattr(self._parent, 'acceptEditingInDialog'):
+        #     self._parent.acceptEditingInDialog()
 
         QDialog.accept(self)
 

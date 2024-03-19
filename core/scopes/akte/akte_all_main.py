@@ -53,7 +53,7 @@ class AkteAllMainWidget(MainWidget):
 
         self.uiTitleLbl.setText('alle Akte')
 
-        self.akt_all_table = AkteAllMain()
+        self.akt_all_table = AkteAllMain(self)
 
     def initMainWidget(self):
         super().initMainWidget()

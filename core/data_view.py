@@ -409,7 +409,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.data_view.doubleClicked.connect(self.doubleClickedRow)
 
-        self.data_view.selectionModel().selectionChanged\
+        self.data_view.selectionModel().selectionChanged \
             .connect(self.selectedRowsChanged)
         self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
         self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
@@ -782,20 +782,27 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere das table_view
         :return:
         """
+        if self._commit_entity:
+            """wenn das layout der daten (z.b. die sortierung) geändert wird"""
+            self.data_view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-        """wenn das layout der daten (z.b. die sortierung) geändert wird"""
-        self._main_table_mci.clear()
+            self._main_table_mci.clear()
 
-        mci = self.loadDataViewData()
+            mci = self.loadDataViewData()
 
-        for inst in mci:
-            self._main_table_mci.append(inst)
+            for inst in mci:
+                self._main_table_mci.append(inst)
 
-        self.data_view.model().layoutChanged.emit()
-        """"""
+            self.data_view.model().sourceModel().layoutChanged.emit()
+            """"""
         self.updateFooter()
 
-    # def loadDataBySession(self):
+        """data_view hat als parent ein MainWidget"""
+        if issubclass(self.parent.__class__, MainWidget):
+            self.parent.updateMainWidget()
+        """"""
+
+        # def loadDataBySession(self):
     #     """
     #     frage die daten mittels der maintable_session aus der datenbank ab;
     #     verwende dafür main_query
@@ -1221,7 +1228,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
         entity_module = __import__(type_instance.module,
-                                 fromlist=[type_instance.type_class])
+                                   fromlist=[type_instance.type_class])
         return getattr(entity_module, type_instance.type_class)
 
     def no_row_selected_msg(self):
@@ -1251,7 +1258,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if msgbox.exec() == QMessageBox.Yes:
                 self.delRow()
-                self.updateOnAccept()
+                # self.updateOnAccept()
+                self.updateMaintableNew()
 
     def delRow(self):
         """eigentliche methode zum löschen von zeilen der tabelle"""
@@ -1286,16 +1294,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         return False
 
-    def updateOnAccept(self):
-        """
-        aktualisiere den maintable wenn die bearbeitung von daten mit 'accept'
-        beendet wurden
-        :return:
-        """
-        if issubclass(self.__class__, MainWidget):  # maintable ist ein 'MainWidget'
-            self.updateMainWidget()
-        else:
-            self.updateMaintable()
+    # def updateOnAccept(self):
+    #     """
+    #     aktualisiere den maintable wenn die bearbeitung von daten mit 'accept'
+    #     beendet wurden
+    #     :return:
+    #     """
+    #     if issubclass(self.__class__, MainWidget):  # maintable ist ein 'MainWidget'
+    #         self.updateMainWidget()
+    #     else:
+    #         self.updateMaintable()
 
     def can_not_delete_msg(self, delete_info):
         """
@@ -1408,28 +1416,29 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         durchgeführt werden sollen
         """
 
-        if self.data_view.selectionModel():
-            indexes = self.data_view.selectionModel().selectedRows()
+        # if self.data_view.selectionModel():
+        #     indexes = self.data_view.selectionModel().selectedRows()
 
-        sel_mode = self.data_view.selectionMode()
+        # sel_mode = self.data_view.selectionMode()
 
-        self.updateOnAccept()
+        # self.updateOnAccept()
+        self.updateMaintableNew()
 
-        """führe aus wenn das maintable-widget ein mainwidget ist"""
-        if hasattr(self, "do_update_application"):
-            self.do_update_application()
-        """"""
+        # """führe aus wenn das maintable-widget ein mainwidget ist"""
+        # if hasattr(self, "do_update_application"):
+        #     self.do_update_application()
+        # """"""
 
-        """wähle die datesätze die vorher markiert waren danach auch wieder aus"""
-        try:
-            self.data_view.setSelectionMode(QAbstractItemView.MultiSelection)
-            if indexes:
-                for index in indexes:
-                    self.data_view.selectRow(index.row())
-        except:
-            print(f"Error: {sys.exc_info()}")
-        finally:
-            self.data_view.setSelectionMode(sel_mode)
+        # """wähle die datesätze die vorher markiert waren danach auch wieder aus"""
+        # try:
+        #     self.data_view.setSelectionMode(QAbstractItemView.MultiSelection)
+        #     if indexes:
+        #         for index in indexes:
+        #             self.data_view.selectRow(index.row())
+        # except:
+        #     print(f"Error: {sys.exc_info()}")
+        # finally:
+        #     self.data_view.setSelectionMode(sel_mode)
 
     def rejectEditingInDialog(self):
         """
@@ -1456,8 +1465,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             with db_session_cm() as session:
                 session.expire_on_commit = False
                 type_class = list(self.entity_typ_column.values())[0]
-                type_list = session.query(type_class)\
-                    .filter(type_class.blank_value != 1)\
+                type_list = session.query(type_class) \
+                    .filter(type_class.blank_value != 1) \
                     .all()
 
                 for type_instance in type_list:
@@ -1475,12 +1484,15 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         # self.loadData()
 
-        topLeft = self.data_view_model.createIndex(0, 0)
-        bottomRight = self.data_view_model.createIndex(11, 10)
-        self.data_view_model.dataChanged.emit(topLeft, bottomRight)
+        # topLeft = self.data_view_model.createIndex(0, 0)
+        # bottomRight = self.data_view_model.createIndex(11, 10)
+        # self.data_view_model.dataChanged.emit(topLeft, bottomRight)
+
+
         # self.data_view_model.dataChanged(topLeft, bottomRight)
         # self.data_view_model.dataChanged()
         # self.data_view_model.layoutChanged.emit()
+        self.updateFooter()
 
         print(f'---')
 

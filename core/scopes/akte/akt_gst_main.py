@@ -1,6 +1,6 @@
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QHeaderView, QPushButton
+from qgis.PyQt.QtWidgets import QHeaderView, QPushButton, QDialog
 
 from qgis.core import QgsGeometry
 
@@ -38,9 +38,15 @@ class GstDialog(EntityDialog):
         self.dialog_window_title = 'Grundstückszuordnung'
         # self.set_apply_button_text('&Speichern und Schließen')
 
-    # def accept(self):
-    #     if self.dialogWidget.acceptEntity():
-    #         super().accept()
+
+    def accept(self):
+        super().accept()
+
+        if self.dialogWidget.acceptEntity():
+
+            self.parent.updateMaintableNew()
+
+        QDialog.accept(self)
 
 
 class GstZuordnungMainDialog(MainDialog):
@@ -57,107 +63,107 @@ class GstZuordnungMainDialog(MainDialog):
         self.set_reject_button_text('&Schließen')
 
 
-class GstModel(TableModel):
-
-    def __init__(self, parent, mci_list=[]):
-        super(self.__class__, self).__init__(parent, mci_list=mci_list)
-
-        # self.parent = parent
-        # self.mci_list = mci_list
-
-        self.header = ['Gst-Nr',
-                       'EZ',
-                       'KG-Nr',
-                       'KG-Name',
-                       'AWB',
-                       'Rechtsgrundlage',
-                       'beweidet (ha)',
-                       'beweidet (%)',
-                       'Gst-Fläche (ha)',
-                       'Datenstand']
-
-    def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
-
-        row = index.row()
-        col = index.column()
-
-        # if role == Qt.TextAlignmentRole:
-        #
-        #     if index.column() in [5, 6, 7]:
-        #
-        #         return Qt.AlignRight | Qt.AlignVCenter
-        #
-        #     if index.column() in [0, 2, 3]:
-        #
-        #         return Qt.AlignHCenter | Qt.AlignVCenter
-        #
-        # if role == Qt.BackgroundRole:
-        #
-        #     if index.column() == 2:
-        #
-        #         if self.mci_list[row].rel_bearbeitungsstatus is not None:
-        #
-        #             color_str = self.mci_list[row].rel_bearbeitungsstatus.color
-        #             color_list = color_str.split(", ")
-        #
-        #             return QColor(int(color_list[0]),
-        #                           int(color_list[1]),
-        #                           int(color_list[2]))
-
-
-        if index.column() == 0:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].rel_gst.gst
-            # if role == Qt.EditRole:
-            #     return self.mci_list[row].az
-
-        # if role == Qt.BackgroundRole:
-        #     if index.column() == 5:
-        #         val_5 = self.data(self.index(index.row(), index.column()), Qt.DisplayRole)
-        #         if val_5 == 'eingetragen':
-        #             return QColor(189, 239, 255)
-        #         if val_5 == 'nicht eingetragen':
-        #             return QColor(234, 216, 54)
-        #         if val_5 == 'gelöscht':
-        #             return QColor(234, 163, 165)
-        #         if val_5 == 'historisch':
-        #             return QColor(170, 170, 170)
-        #
-        # if role == Qt.DisplayRole:
-        #
-        #     if index.column() == 7:  # beweidet ha
-        #         val = self.data(index, Qt.EditRole)
-        #         if val:
-        #             try:
-        #                 return '{:.4f}'.format(
-        #                     round(float(val) / 10000, 4)).replace(".", ",")
-        #             except ValueError:
-        #                 pass
-        #     """errechne den anteil der beweidet wird"""
-        #     if index.column() == 8:  # beweidet %
-        #         bew_val = self.data(self.index(index.row(), 7), Qt.EditRole)
-        #         total_val = self.data(self.index(index.row(), 9), Qt.EditRole)
-        #         if not bew_val:
-        #             return ''
-        #         else:
-        #             val = (bew_val / total_val) * 100
-        #             try:
-        #                 return '{:.2f}'.format(
-        #                     round(float(val), 2)).replace(".", ",")
-        #             except ValueError:
-        #                 pass
-        #     """"""
-        #
-        #     if index.column() == 9:  # Gst-Fläche
-        #         val = self.data(index, Qt.EditRole)
-        #         if val:
-        #             try:
-        #                 return '{:.4f}'.format(
-        #                     round(float(val) / 10000, 4)).replace(".", ",")
-        #             except ValueError:
-        #                 pass
-        #
-        # return super().data(index, role)
+# class GstModel(TableModel):
+#
+#     def __init__(self, parent, mci_list=[]):
+#         super(self.__class__, self).__init__(parent, mci_list=mci_list)
+#
+#         # self.parent = parent
+#         # self.mci_list = mci_list
+#
+#         self.header = ['Gst-Nr',
+#                        'EZ',
+#                        'KG-Nr',
+#                        'KG-Name',
+#                        'AWB',
+#                        'Rechtsgrundlage',
+#                        'beweidet (ha)',
+#                        'beweidet (%)',
+#                        'Gst-Fläche (ha)',
+#                        'Datenstand']
+#
+#     def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+#
+#         row = index.row()
+#         col = index.column()
+#
+#         # if role == Qt.TextAlignmentRole:
+#         #
+#         #     if index.column() in [5, 6, 7]:
+#         #
+#         #         return Qt.AlignRight | Qt.AlignVCenter
+#         #
+#         #     if index.column() in [0, 2, 3]:
+#         #
+#         #         return Qt.AlignHCenter | Qt.AlignVCenter
+#         #
+#         # if role == Qt.BackgroundRole:
+#         #
+#         #     if index.column() == 2:
+#         #
+#         #         if self.mci_list[row].rel_bearbeitungsstatus is not None:
+#         #
+#         #             color_str = self.mci_list[row].rel_bearbeitungsstatus.color
+#         #             color_list = color_str.split(", ")
+#         #
+#         #             return QColor(int(color_list[0]),
+#         #                           int(color_list[1]),
+#         #                           int(color_list[2]))
+#
+#
+#         if index.column() == 0:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].rel_gst.gst
+#             # if role == Qt.EditRole:
+#             #     return self.mci_list[row].az
+#
+#         # if role == Qt.BackgroundRole:
+#         #     if index.column() == 5:
+#         #         val_5 = self.data(self.index(index.row(), index.column()), Qt.DisplayRole)
+#         #         if val_5 == 'eingetragen':
+#         #             return QColor(189, 239, 255)
+#         #         if val_5 == 'nicht eingetragen':
+#         #             return QColor(234, 216, 54)
+#         #         if val_5 == 'gelöscht':
+#         #             return QColor(234, 163, 165)
+#         #         if val_5 == 'historisch':
+#         #             return QColor(170, 170, 170)
+#         #
+#         # if role == Qt.DisplayRole:
+#         #
+#         #     if index.column() == 7:  # beweidet ha
+#         #         val = self.data(index, Qt.EditRole)
+#         #         if val:
+#         #             try:
+#         #                 return '{:.4f}'.format(
+#         #                     round(float(val) / 10000, 4)).replace(".", ",")
+#         #             except ValueError:
+#         #                 pass
+#         #     """errechne den anteil der beweidet wird"""
+#         #     if index.column() == 8:  # beweidet %
+#         #         bew_val = self.data(self.index(index.row(), 7), Qt.EditRole)
+#         #         total_val = self.data(self.index(index.row(), 9), Qt.EditRole)
+#         #         if not bew_val:
+#         #             return ''
+#         #         else:
+#         #             val = (bew_val / total_val) * 100
+#         #             try:
+#         #                 return '{:.2f}'.format(
+#         #                     round(float(val), 2)).replace(".", ",")
+#         #             except ValueError:
+#         #                 pass
+#         #     """"""
+#         #
+#         #     if index.column() == 9:  # Gst-Fläche
+#         #         val = self.data(index, Qt.EditRole)
+#         #         if val:
+#         #             try:
+#         #                 return '{:.4f}'.format(
+#         #                     round(float(val) / 10000, 4)).replace(".", ",")
+#         #             except ValueError:
+#         #                 pass
+#         #
+#         # return super().data(index, role)
 
 
 class GstModelNew(TableModel):
@@ -359,7 +365,7 @@ class GstModelNew(TableModel):
     #     #     return super().headerData(column, orientation, role)
 
 
-class GstMaintable(DataView):
+class GstAktDataView(DataView):
     """
     grundstückstabelle im akt
     """

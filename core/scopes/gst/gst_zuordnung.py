@@ -839,55 +839,55 @@ class GstTable(DataView):
         self.data_view.setColumnWidth(7, 130)
         """"""
 
-    def setMaintableColumns(self):
-        super().setMaintableColumns()
+    # def setMaintableColumns(self):
+    #     super().setMaintableColumns()
+    #
+    #     self.maintable_columns[0] = MaintableColumn(column_type='int',
+    #                                                 visible=False)
+    #     self.maintable_columns[1] = MaintableColumn(column_type='str',
+    #                                                 visible=False)
+    #     self.maintable_columns[2] = MaintableColumn(column_type='str',
+    #                                                 heading='Gst',
+    #                                                 alignment='l')
+    #     self.maintable_columns[3] = MaintableColumn(heading='KG-Nr',
+    #                                                 column_type='int',
+    #                                                 alignment='r')
+    #     self.maintable_columns[4] = MaintableColumn(heading='KG-Name',
+    #                                                 column_type='str',
+    #                                                 alignment='l')
+    #     self.maintable_columns[5] = MaintableColumn(heading='EZ',
+    #                                                 column_type='int',
+    #                                                 alignment='c')
+    #     self.maintable_columns[6] = MaintableColumn(heading="zugeordnet zu",
+    #                                                 column_type='str',
+    #                                                 alignment='l')
+    #     self.maintable_columns[7] = MaintableColumn(heading='Datenstand',
+    #                                                 column_type='str')
+    #     self.maintable_columns[8] = MaintableColumn(heading='Importzeit',
+    #                                                 column_type='str')
+    #     self.maintable_columns[9] = MaintableColumn(column_type='str',
+    #                                                 visible=False)
+    #
+    # def getMainQuery(self, session=None):
+    #     super().getMainQuery(session)
+    #
+    #     query = session.query(BGstZuordnungMain.id,
+    #                           BGstZuordnungMain.kg_gst,
+    #                           BGstZuordnungMain.gst,
+    #                           BGstZuordnungMain.kgnr,
+    #                           BGstZuordnungMain.kg_name,
+    #                           BGstZuordnungMain.ez,
+    #                           BGstZuordnungMain.zu_aw,
+    #                           BGstZuordnungMain.datenstand,
+    #                           BGstZuordnungMain.import_time,
+    #                           BGstZuordnungMain)
+    #
+    #     return query
 
-        self.maintable_columns[0] = MaintableColumn(column_type='int',
-                                                    visible=False)
-        self.maintable_columns[1] = MaintableColumn(column_type='str',
-                                                    visible=False)
-        self.maintable_columns[2] = MaintableColumn(column_type='str',
-                                                    heading='Gst',
-                                                    alignment='l')
-        self.maintable_columns[3] = MaintableColumn(heading='KG-Nr',
-                                                    column_type='int',
-                                                    alignment='r')
-        self.maintable_columns[4] = MaintableColumn(heading='KG-Name',
-                                                    column_type='str',
-                                                    alignment='l')
-        self.maintable_columns[5] = MaintableColumn(heading='EZ',
-                                                    column_type='int',
-                                                    alignment='c')
-        self.maintable_columns[6] = MaintableColumn(heading="zugeordnet zu",
-                                                    column_type='str',
-                                                    alignment='l')
-        self.maintable_columns[7] = MaintableColumn(heading='Datenstand',
-                                                    column_type='str')
-        self.maintable_columns[8] = MaintableColumn(heading='Importzeit',
-                                                    column_type='str')
-        self.maintable_columns[9] = MaintableColumn(column_type='str',
-                                                    visible=False)
-
-    def getMainQuery(self, session=None):
-        super().getMainQuery(session)
-
-        query = session.query(BGstZuordnungMain.id,
-                              BGstZuordnungMain.kg_gst,
-                              BGstZuordnungMain.gst,
-                              BGstZuordnungMain.kgnr,
-                              BGstZuordnungMain.kg_name,
-                              BGstZuordnungMain.ez,
-                              BGstZuordnungMain.zu_aw,
-                              BGstZuordnungMain.datenstand,
-                              BGstZuordnungMain.import_time,
-                              BGstZuordnungMain)
-
-        return query
-
-    def setMainTableModel(self):
-        super().setMainTableModel()
-
-        return GstModel(parent=self, data_array=self.maintable_dataarray)
+    # def setMainTableModel(self):
+    #     super().setMainTableModel()
+    #
+    #     return GstModel(parent=self, data_array=self.maintable_dataarray)
 
     def setFilterScopeUI(self):
         super().setFilterScopeUI()

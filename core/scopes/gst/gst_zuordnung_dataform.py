@@ -88,9 +88,11 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     @rechtsgrundlage.setter
     def rechtsgrundlage(self, value):
 
+        # self.uiRechtsgrundlageCombo.setCurrentIndex(
+        #     self.uiRechtsgrundlageCombo.findData(value, Qt.UserRole)
+        # )
         self.uiRechtsgrundlageCombo.setCurrentIndex(
-            self.uiRechtsgrundlageCombo.findData(value, Qt.UserRole)
-        )
+            self.uiRechtsgrundlageCombo.findText(value.name))
         self._rechtsgrundlage = value
 
     @property  # getter
@@ -195,7 +197,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         for item in status_items:
             self.uiAwbStatusCombo.addItem(item.name, item)
         for r_item in recht_items:
-            self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item.id)
+            self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item)
         """"""
 
     def loadSubWidgets(self):
@@ -215,9 +217,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.akt = self._entity_mci.rel_akt.name
         self.gst_nr = self._entity_mci.rel_gst.gst
         self.kg = self._entity_mci.rel_gst.kgnr
-        # self.awb_status = self._entity_mci.awb_status_id
         self.awb_status = self._entity_mci.rel_awb_status
-        self.rechtsgrundlage = self._entity_mci.rechtsgrundlage_id
+        self.rechtsgrundlage = self._entity_mci.rel_rechtsgrundlage
 
         self.anmerkung = self._entity_mci.anmerkung
         self.probleme = self._entity_mci.probleme
@@ -229,31 +230,16 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def submitEntity(self):
         super().submitEntity()
 
-        # with db_session_cm() as session:
-        #
-        #     session.merge(self.awb_status)
-
-        # self._entity_mci.awb_status_id = self.awb_status
+        """wichtig ist hier, dass sowohl der status_id als auch der
+        status selbst (als mci) an '_entity_mci' übergeben werden"""
+        self._entity_mci.awb_status_id = self.awb_status.id
         self._entity_mci.rel_awb_status = self.awb_status
-        self._entity_mci.rechtsgrundlage_id = self.rechtsgrundlage
+        """"""
+
+        self._entity_mci.rel_rechtsgrundlage = self.rechtsgrundlage
 
         self._entity_mci.anmerkung = self.anmerkung
         self._entity_mci.probleme = self.probleme
         self._entity_mci.aufgaben = self.aufgaben
         self._entity_mci.gb_wrong = self.gb_wrong
         self._entity_mci.awb_wrong = self.awb_wrong
-
-        print(f'...')
-
-        # with db_session_cm() as session:
-        #
-        #     session.add(self._entity_mci)
-        #     session.flush()
-
-
-    # def commitEntity(self):
-    #     super().commitEntity()
-    #
-    #     cut_koppel_gstversion()
-    #     self.parent.parent.guiMainGis.uiCanvas.refresh()
-    #     # self.parent.parent.komplex_table.updateMaintable()
