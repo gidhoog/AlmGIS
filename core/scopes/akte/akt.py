@@ -594,9 +594,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self._entity_mci.anm = self.anm
         self._entity_mci.bearbeitungsstatus_id = self.status
 
-        # todo: es wird bei de Änderung von mehreren zuordnungen hier nur die
+
+        print(f'...')
+
+        # todo: es wird bei der Änderung von mehreren zuordnungen hier nur die
         #  erste commited!!
-        self._entity_mci.rel_gst_zuordnung = self.gst_table.data_view.model().sourceModel().mci_list
+        # self._entity_mci.rel_gst_zuordnung.clear()
+
+        # for mci in self.gst_table.data_view.model().sourceModel().mci_list:
+        #     print(f'xxx')
+        #     self._entity_mci.rel_gst_zuordnung.append(mci)
 
     def get_abgrenzung_di(self):
         """

@@ -62,9 +62,9 @@ class DataViewEntityDialog(EntityDialog):
     def accept(self):
         super().accept()
 
-        if self.dialogWidget.acceptEntity():
+        # if self.dialogWidget.acceptEntity():
 
-            self.parent.updateMaintableNew()
+        self.parent.updateMaintableNew()
 
         QDialog.accept(self)
 

@@ -318,6 +318,8 @@ class Entity(QMainWindow):
             except:
                 print(f'cannot add {self._entity_mci} to session')
 
+        print(f'...')
+
     def rejectEntity(self):
         """
         breche ab

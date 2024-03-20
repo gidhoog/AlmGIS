@@ -243,3 +243,5 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self._entity_mci.aufgaben = self.aufgaben
         self._entity_mci.gb_wrong = self.gb_wrong
         self._entity_mci.awb_wrong = self.awb_wrong
+
+        print(f'...')
