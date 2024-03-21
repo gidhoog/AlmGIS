@@ -11,9 +11,7 @@ from qgis.PyQt.QtCore import (QSortFilterProxyModel, Qt, QSize,
                               QAbstractItemModel, QModelIndex, pyqtSlot)
 
 from geoalchemy2.shape import to_shape
-from qgis.PyQt import QtWidgets
-from qgis.core import QgsLayoutExporter, QgsFeature, QgsVectorLayer, \
-    QgsGeometry, edit, QgsField
+from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry
 from sqlalchemy import desc, select, text
 from sqlalchemy.orm import joinedload
 
@@ -24,7 +22,7 @@ from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
 from core.entity_titel import EntityTitel
 from core.gis_control import GisControl
 from core.gis_item import GisItem
-from core.gis_layer import setLayerStyle, KoppelLayer, KomplexLayer
+from core.gis_layer import KoppelLayer, KomplexLayer
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
@@ -41,8 +39,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     """
     baseclass für einen akt-datensatz
     """
-
-    # _entity_mc = BAkt
 
     _alm_bnr = 0
     _anm = ''
@@ -152,10 +148,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiAlmBnrLedit.setValidator(onlyInt)
         """"""
 
-        # """lade die einträge für das status-combo"""
-        # self.setStatusComboData()
-        # """"""
-
         """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
         self.uiGisDock = GisDock(self)
         self.guiMainGis = MainGis(self.uiGisDock, self)
@@ -225,8 +217,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def mapData(self):
         super().mapData()
 
-        # cut_koppel_gst_list = self._entity_mci.rel_abgrenzung[1].rel_komplex[0].rel_koppel[0].rel_cut_koppel_gst
-
         self.az = self._entity_mci.az
         self.name = self._entity_mci.name
         self.stz = self._entity_mci.stz
@@ -257,13 +247,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         gst_awb_status = session.scalars(select(BGstAwbStatus)).all()
         bearbeitungsstatus = session.scalars(select(BBearbeitungsstatus)).all()
 
-        self._custom_mci['gst_awb_status'] = gst_awb_status
-        self._custom_mci['bearbeitungsstatus'] = bearbeitungsstatus
+        self._custom_data['gst_awb_status'] = gst_awb_status
+        self._custom_data['bearbeitungsstatus'] = bearbeitungsstatus
 
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        self.gst_table.initMaintable(mci_list=self._entity_mci.rel_gst_zuordnung)
+        self.gst_table.setMciList(self._entity_mci.rel_gst_zuordnung)
+        self.gst_table.initDataView()
 
         # """lade die Abgrenzungsdaten"""
         # self.loadKKModel()
@@ -594,7 +585,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self._entity_mci.anm = self.anm
         self._entity_mci.bearbeitungsstatus_id = self.status
 
-
         print(f'...')
 
         # todo: es wird bei der Änderung von mehreren zuordnungen hier nur die
@@ -669,38 +659,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def insertEntityHeader(self):
 
         pass
-        # super().insertEntityHeader()
-        #
-        # self.uicAzLbl = QLabel(self)
-        # az_label_font = QFont("Verdana", 10, QFont.Bold)
-        # self.uicAzLbl.setStyleSheet(self.header_label_style)
-        # self.uicAzLbl.setFont(az_label_font)
-        # spacer = QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-        #                      QtWidgets.QSizePolicy.Minimum)
-        # self.uiHeaderHlay.addItem(spacer)
-        # self.uiHeaderHlay.insertWidget(2, self.uicAzLbl)
-        #
-        # self.uicEntityTools = QToolButton(self)
-        # self.uicEntityTools.setIcon(
-        #     QIcon(':/svg/resources/icons/hamburger.svg'))
-        # self.uicEntityTools.setIconSize(QSize(30, 30))
-        # self.uicEntityTools.setFocusPolicy(Qt.NoFocus)
-        # self.uicEntityTools.setPopupMode(QToolButton.InstantPopup)
-        # self.uiHeaderMainHlay.insertWidget(1, self.uicEntityTools)
 
     def setStatusComboData(self):
         """
         hole die daten für die status-combobox aus der datenbank und füge sie in
         die combobox ein
         """
-        # todo: stelle hier auf daten des _custom_mci um:
-        # with db_session_cm() as session:
-        #     status_items = session.query(BBearbeitungsstatus).\
-        #         order_by(BBearbeitungsstatus.sort).\
-        #         all()
-
-        # status_items = self._custom_mci['bearbeitungsstatus']
-        status_items = sorted(self._custom_mci['bearbeitungsstatus'],
+        status_items = sorted(self._custom_data['bearbeitungsstatus'],
                               key=lambda x:x.sort)
 
         for item in status_items:
@@ -965,31 +930,6 @@ class KomplexModel(QStandardItemModel):
                                         'nicht Weide',  # 6
                                         'Komplexfläche',  # 7
                                         'Koppelfläche'])  # 8
-
-    # def setData(self, index: QModelIndex, value, role: int = ...):
-    #
-    #     item = self.itemFromIndex(index)
-    #
-    #     # if type(item) == TreeItemVersion and index.column() == 0:
-    #     #     item.setData(value, TreeItem.Code_Role)
-    #     #     self.dataChanged.emit(index, index)
-    #
-    #     if index.column() == 0:
-    #         item.setData(value, GisItem.Name_Role)
-    #         self.dataChanged.emit(index, index)
-    #
-    #         feat_id = item.data(GisItem.Feature_Role).id()
-    #         layer = item.data(GisItem.Layer_Role)
-    #         koppel_id = item.data(GisItem.Instance_Role).id
-    #
-    #         attrs = {0: koppel_id, 1: value, 2: None, 3: None, 4: None, 5: '0,123'}
-    #
-    #         # item.data(GisItem.Feature_Role)['name'] = value
-    #         layer.dataProvider().changeAttributeValues({feat_id: attrs})
-    #
-    #         self.parent.guiMainGis.uiCanvas.refresh()
-    #
-    #     return True
 
     def flags(self, index):
 

@@ -168,10 +168,12 @@ class GstZuordnungMainDialog(MainDialog):
 
 class GstModelNew(TableModel):
 
-    def __init__(self, parent, mci_list=[]):
-        super(__class__, self).__init__(parent, mci_list=mci_list)
+    # def __init__(self, parent, mci_list=[]):
+    #     super(__class__, self).__init__(parent, mci_list=mci_list)
+    def __init__(self, parent):
+        super(__class__, self).__init__(parent)
 
-        # self.mci_list = mci_list
+        # self.mci_list = self.parent.parent._entity_mci.rel_gst_zuordnung
 
         self.header = ['Gst-Nr',
                        'Ez',
@@ -376,10 +378,11 @@ class GstAktDataView(DataView):
     entity_widget_class = GstZuordnungDataForm
     entity_dialog_class = GstDialog
     # data_model_class = BGstZuordnung
-    # table_model_class = GstModelNew
+    # _model_class = GstModelNew
     # _data_source = 'di'
 
-    _main_table_model_class = GstModelNew
+    # _main_table_model_class = GstModelNew
+    _model_class = GstModelNew
 
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
     _delete_window_title = ["Grundstück löschen", "Grundstücke löschen"]
@@ -460,9 +463,9 @@ class GstAktDataView(DataView):
 
     def test_update(self):
 
-        topLeft = self.data_view_model.createIndex(0, 0)
-        bottomRight = self.data_view_model.createIndex(11, 10)
-        self.data_view_model.dataChanged.emit(topLeft, bottomRight)
+        topLeft = self.model.createIndex(0, 0)
+        bottomRight = self.model.createIndex(11, 10)
+        self.model.dataChanged.emit(topLeft, bottomRight)
 
         print(f'...')
 
@@ -476,23 +479,23 @@ class GstAktDataView(DataView):
     def finalInit(self):
         super().finalInit()
 
-        self.data_view.sortByColumn(1, Qt.AscendingOrder)
+        self.view.sortByColumn(1, Qt.AscendingOrder)
 
         # """setzt bestimmte spaltenbreiten"""
-        # self.data_view.setColumnWidth(1, 70)
-        # self.data_view.setColumnWidth(2, 50)
-        # self.data_view.setColumnWidth(3, 70)
-        # self.data_view.setColumnWidth(4, 120)
-        # self.data_view.setColumnWidth(5, 120)
-        # self.data_view.setColumnWidth(6, 120)
-        # self.data_view.setColumnWidth(7, 80)
+        # self.view.setColumnWidth(1, 70)
+        # self.view.setColumnWidth(2, 50)
+        # self.view.setColumnWidth(3, 70)
+        # self.view.setColumnWidth(4, 120)
+        # self.view.setColumnWidth(5, 120)
+        # self.view.setColumnWidth(6, 120)
+        # self.view.setColumnWidth(7, 80)
         # """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
-        self.data_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
 
-        self.data_view.resizeColumnsToContents()
+        self.view.resizeColumnsToContents()
 
     def setMaintableColumns(self):
         super().setMaintableColumns()

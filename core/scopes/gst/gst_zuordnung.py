@@ -63,7 +63,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         #
         # """initialisiere die grundstückstabelle"""
         # with db_session_cm() as session:
-        #     self.guiGstTable.initMaintable(session)
+        #     self.guiGstTable.initDataView(session)
         # """"""
         #
         # """setzte das model für die vorgemerkte Tabelle"""
@@ -74,7 +74,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         # self.presel_proxy_model.setSourceModel(presel_model)
         # """"""
         #
-        # """da in diesem Maintabel die 'initMaintable' Methode nicht verwendet
+        # """da in diesem Maintabel die 'initDataView' Methode nicht verwendet
         # wird muss neben dem data_view_model auch dem view direkt das
         # model mit den daten übergeben werden"""
         # self.guiGstPreSelTview.data_view.setModel(self.presel_proxy_model)
@@ -128,12 +128,12 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         """initialisiere die grundstückstabelle"""
         with db_session_cm() as session:
-            self.guiGstTable.initMaintable(session)
+            self.guiGstTable.initDataView(session)
         """"""
 
         self.setPreSelModel()
 
-        """da in diesem Maintabel die 'initMaintable' Methode nicht verwendet
+        """da in diesem Maintabel die 'initDataView' Methode nicht verwendet
         wird muss neben dem data_view_model auch dem view direkt das
         model mit den daten übergeben werden"""
         self.guiGstPreSelTview.data_view.setModel(self.presel_proxy_model)

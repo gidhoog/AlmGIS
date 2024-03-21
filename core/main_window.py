@@ -77,10 +77,6 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             widget = GstAllMain(self)
             widget_title = "zugeordnete Grundstücke"
 
-        # with db_session_cm() as session:
-        #     session.expire_on_commit = False
-
-        # widget.initMaintable()
         widget.initMainWidget()
 
         self._addMaintable(widget, widget_title)
