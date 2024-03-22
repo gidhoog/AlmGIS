@@ -448,6 +448,7 @@ class BGstVersion(Base):
     gk: Mapped[str]
     source_id: Mapped[int]
     import_time: Mapped[str]
+    # geometry: Mapped[bytes]
     geometry: Mapped[object] = mapped_column(Geometry(geometry_type="MULTIPOLYGON",
                                srid=31259))
     """alte configuration"""

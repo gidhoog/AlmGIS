@@ -4,6 +4,7 @@ from _operator import attrgetter
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QLabel, QComboBox
+from qgis.core import QgsGeometry
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
@@ -262,8 +263,19 @@ class AkteAllMain(DataView):
             .joinedload(BKomplex.rel_koppel)
         )
         )
-
         mci = session.scalars(stmt).unique().all()
+
+        """test um direkter mit geometrien arbeiten zu können"""
+        # # ).where(BAkt.id == 1090)
+        # mci = session.scalars(stmt).unique().all()
+        # geom = mci[0].rel_gst_zuordnung[3].rel_gst.rel_alm_gst_version[0].geometry
+        # g = QgsGeometry()
+        # # wkb = geom.hex()
+        # # wkb = geom.tobytes()
+        # g.fromWkb(geom)
+        # print(g.asWkt())
+        # print(f'...')
+        """"""
 
         return mci
 

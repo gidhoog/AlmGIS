@@ -553,6 +553,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
                 """transformiere die geometrie vom quell-crs zu BMN M34"""
                 geom.transform(xform)
                 """"""
+                # todo: speichere hier die geometrie als WKB um beim abfragen
+                #  aus der db ebenfalls mit WKB arbeiten zu können
                 self.gst_geometries[kg_gst] = geom.asWkt()
 
     def loadGstCsv(self, zip_file, gst_csv):
