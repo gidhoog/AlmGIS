@@ -256,6 +256,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.gst_table.setMciList(self._entity_mci.rel_gst_zuordnung)
         self.gst_table.initDataView()
 
+        self.loadGstZuorndungLayer()
+
         # """lade die Abgrenzungsdaten"""
         # self.loadKKModel()
         # self.setCurrentRoleToKK()
@@ -369,6 +371,34 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             jahre.append(abgr_item.data(GisItem.Jahr_Role))
 
         return max(jahre)
+
+    def loadGstZuorndungLayer(self):
+
+        def addKoppelFeature(koppel_item, koppel_layer):
+
+            koppel_feat = QgsFeature(koppel_layer.fields())
+            koppel_feat.setAttributes(
+                [koppel_item.data(GisItem.Instance_Role).id,
+                 koppel_item.data(GisItem.Name_Role),
+                 None,
+                 None,
+                 None,
+                 '0,123'])
+            koppel_feat.setGeometry(QgsGeometry.fromWkt(
+                to_shape(
+                    koppel_item.data(GisItem.Geometry_Role)).wkt)
+            )
+            (result,
+             added_kop_feat) = koppel_layer.data_provider.addFeatures(
+                [koppel_feat])
+
+            return added_kop_feat
+
+        gst_zuord_list = self._entity_mci.rel_gst_zuordnung
+
+        print(f'gst_zuord_list: {gst_zuord_list}')
+
+        # todo: arbeite hier weiter!!!
 
     def loadKKModel(self):
 
