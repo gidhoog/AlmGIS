@@ -104,6 +104,35 @@ class GisVectorLayer(QgsVectorLayer, GisLayer):
     """
 
 
+class GstZuordLayer(QgsVectorLayer):
+    """
+    GIS-Layer für zugeordnete Grundstücke
+    """
+
+    def __init__(self, path: str = ...,
+                 baseName: str = ...,
+                 providerLib: str = ...,
+                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions()) -> None:
+        super().__init__(path, baseName, providerLib, options)
+
+        self.dp = self.dataProvider()
+
+        self.dp.addAttributes([QgsField("id", QVariant.Int),
+                                      QgsField("gst", QVariant.Int),
+                                      QgsField("ez", QVariant.Int),
+                                      QgsField("kgnr", QVariant.Int),
+                                      QgsField("kgname", QVariant.String),
+                                      QgsField("awb_id", QVariant.Int),
+                                      QgsField("recht_id", QVariant.Int),
+                                      QgsField("datenstand", QVariant.String)])
+
+        self.updateFields()
+
+        self.back = False
+        self.base = False
+        # setLayerStyle(self, 'komplex_rot')
+
+
 class KomplexLayer(QgsVectorLayer):
     """
     GIS-Layer für Komplexe

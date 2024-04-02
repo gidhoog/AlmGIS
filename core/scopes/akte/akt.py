@@ -11,7 +11,8 @@ from qgis.PyQt.QtCore import (QSortFilterProxyModel, Qt, QSize,
                               QAbstractItemModel, QModelIndex, pyqtSlot)
 
 from geoalchemy2.shape import to_shape
-from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry
+from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry, QgsVectorLayer, QgsField, QgsPointXY
+from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import desc, select, text
 from sqlalchemy.orm import joinedload
 
@@ -22,7 +23,7 @@ from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
 from core.entity_titel import EntityTitel
 from core.gis_control import GisControl
 from core.gis_item import GisItem
-from core.gis_layer import KoppelLayer, KomplexLayer
+from core.gis_layer import KoppelLayer, KomplexLayer, GstZuordLayer
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
@@ -160,11 +161,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.guiMainGis.scope_id = 1
         """"""
 
-        """definiere notwendige tabellen und füge sie ein"""
-        self.gst_table = GstAktDataView(self)
-
-        self.uiGstListeVlay.addWidget(self.gst_table)
-        """"""
+        # """definiere notwendige tabellen und füge sie ein"""
+        # self.gst_table = GstAktDataView(self)
+        #
+        # self.uiGstListeVlay.addWidget(self.gst_table)
+        # """"""
 
         self.komplex_model = KomplexModel(self)
         self.komplex_root_item = self.komplex_model.invisibleRootItem()
@@ -253,10 +254,77 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
+        # self.gst_table.setMciList(self._entity_mci.rel_gst_zuordnung)
+        # self.gst_table.initDataView()
+
+        # self.loadGstZuorndungLayer()
+
+        self.gst_zuord_layer = QgsVectorLayer(
+            "Point",
+            "GstZuordnungLay",
+            "memory"
+        )
+
+        self.pr = self.gst_zuord_layer.dataProvider()
+
+        self.pr.addAttributes([QgsField("id", QVariant.Int)])
+
+        # self.pr.addAttributes([QgsField("ids", QVariant.Int),
+        #                        QgsField("gst", QVariant.String),
+        #                        QgsField("ez", QVariant.Int),
+        #                        QgsField("kgnr", QVariant.Int),
+        #                        QgsField("kgname", QVariant.String),
+        #                        QgsField("awb_id", QVariant.Int),
+        #                        QgsField("recht_id", QVariant.Int),
+        #                        QgsField("datenstand", QVariant.String)])
+
+        self.gst_zuord_layer.updateFields()
+
+        for gst_zuor in self._entity_mci.rel_gst_zuordnung:
+            for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
+                feat = QgsFeature()
+                feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(10, 10)))
+                # feat.setGeometry(QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt))
+                # feat.setGeometry(gst_version.geometry)
+                feat.setAttributes([gst_version.id])
+
+                self.pr.addFeatures([feat])
+
+        self.gst_zuord_layer.updateExtents()
+
+        print(f'is valid: {self.gst_zuord_layer.isValid()}')
+
+        # show some stats
+        # pr = self.gst_zuord_layer.dataProvider()
+        # pr = self.gst_zuord_layer.dp
+
+        print("fields:", len(self.pr.fields()))
+
+        print("features:", self.pr.featureCount())
+
+        e = self.gst_zuord_layer.extent()
+
+        print("extent:", e.xMinimum(), e.yMinimum(), e.xMaximum(), e.yMaximum())
+
+        # iterate over features
+
+        features = self.gst_zuord_layer.getFeatures()
+
+        for fet in features:
+            print("F:", fet.id(), fet.attributes(), fet.geometry().asPoint())
+
+        print('...')
+
+        """definiere notwendige tabellen und füge sie ein"""
+        self.gst_table = GstAktDataView(self, self.gst_zuord_layer, self.guiMainGis.uiCanvas)
+
+        self.uiGstListeVlay.addWidget(self.gst_table)
+        """"""
+
         self.gst_table.setMciList(self._entity_mci.rel_gst_zuordnung)
         self.gst_table.initDataView()
 
-        self.loadGstZuorndungLayer()
+
 
         # """lade die Abgrenzungsdaten"""
         # self.loadKKModel()

@@ -2,7 +2,8 @@ from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QHeaderView, QPushButton, QDialog
 
-from qgis.core import QgsGeometry
+from qgis.core import QgsGeometry, QgsVectorLayerCache
+from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
 
 from geoalchemy2.shape import to_shape
 
@@ -400,12 +401,25 @@ class GstAktDataView(DataView):
     # gst_zuordnung_wdg_class = GstZuordnung
     # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, gis_layer=None, canvas=None):
         super(__class__, self).__init__(parent)
 
         # self.parent = parent
         #
         # self.linked_gis_widget = self.parent.guiMainGis
+
+        self.vector_layer_cache = QgsVectorLayerCache(gis_layer, 10000)
+        self.attribute_table_model = QgsAttributeTableModel(self.vector_layer_cache)
+        self.attribute_table_model.loadLayer()
+
+        self.attribute_table_filter_model = QgsAttributeTableFilterModel(
+            canvas,
+            self.attribute_table_model
+        )
+        self.attribute_table_view = QgsAttributeTableView()
+        self.attribute_table_view.setModel(self.attribute_table_filter_model)
+
+        self.uiTableVlay.addWidget(self.attribute_table_view)
 
     def openGstZuordnung(self):
         """
