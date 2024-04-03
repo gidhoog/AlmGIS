@@ -115,16 +115,9 @@ class GstZuordLayer(QgsVectorLayer):
                  options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions()) -> None:
         super().__init__(path, baseName, providerLib, options)
 
-        self.dp = self.dataProvider()
+        self.data_provider = self.dataProvider()
 
-        self.dp.addAttributes([QgsField("id", QVariant.Int),
-                                      QgsField("gst", QVariant.Int),
-                                      QgsField("ez", QVariant.Int),
-                                      QgsField("kgnr", QVariant.Int),
-                                      QgsField("kgname", QVariant.String),
-                                      QgsField("awb_id", QVariant.Int),
-                                      QgsField("recht_id", QVariant.Int),
-                                      QgsField("datenstand", QVariant.String)])
+        self.data_provider.addAttributes([QgsField("id", QVariant.Int)])
 
         self.updateFields()
 

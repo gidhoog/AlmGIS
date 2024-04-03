@@ -32,7 +32,7 @@ def set_data(func):
         self.mapData()
 
         self.post_data_set()
-        self.loadSubWidgets()
+        # self.loadSubWidgets()
         self.signals()
         self.finalInit()
 

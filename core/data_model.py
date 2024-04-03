@@ -715,6 +715,7 @@ class BKoppel(Base):
     anmerkung: Mapped[str]
     # geometry: Mapped[Geometry(geometry_type="POLYGON", srid=31259)]
     geometry = Column(Geometry(geometry_type="POLYGON", srid=31259))
+    # geometry: Mapped[str]
 
     rel_komplex: Mapped["BKomplex"] = relationship(back_populates='rel_koppel')
     rel_cut_koppel_gst: Mapped[List["BCutKoppelGstAktuell"]] = relationship(

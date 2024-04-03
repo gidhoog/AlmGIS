@@ -11,7 +11,8 @@ from qgis.PyQt.QtCore import (QSortFilterProxyModel, Qt, QSize,
                               QAbstractItemModel, QModelIndex, pyqtSlot)
 
 from geoalchemy2.shape import to_shape
-from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry, QgsVectorLayer, QgsField, QgsPointXY
+from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry, QgsVectorLayerCache, QgsVectorLayer, QgsField, QgsPointXY
+from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
 from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import desc, select, text
 from sqlalchemy.orm import joinedload
@@ -23,7 +24,8 @@ from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
 from core.entity_titel import EntityTitel
 from core.gis_control import GisControl
 from core.gis_item import GisItem
-from core.gis_layer import KoppelLayer, KomplexLayer, GstZuordLayer
+from core.gis_layer import KoppelLayer, KomplexLayer, GstZuordLayer, \
+    setLayerStyle
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
@@ -167,10 +169,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # self.uiGstListeVlay.addWidget(self.gst_table)
         # """"""
 
-        self.komplex_model = KomplexModel(self)
-        self.komplex_root_item = self.komplex_model.invisibleRootItem()
-
-        self.current_abgrenzung_item = None
+        # self.komplex_model = KomplexModel(self)
+        # self.komplex_root_item = self.komplex_model.invisibleRootItem()
+        #
+        # self.current_abgrenzung_item = None
 
     def setPreMapData(self):
         super().setPreMapData()
@@ -227,9 +229,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.anm = self._entity_mci.anm
         self.status = self._entity_mci.bearbeitungsstatus_id
 
-        self.guiMainGis.entity_id = self._entity_mci.id
+        # self.guiMainGis.entity_id = self._entity_mci.id
 
-        self.uiVersionTv.setModel(self.komplex_model)
+        # self.uiVersionTv.setModel(self.komplex_model)
+        self.loadSubWidgets()
 
     def getEntityMci(self, session, entity_id):
 
@@ -251,23 +254,42 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self._custom_data['gst_awb_status'] = gst_awb_status
         self._custom_data['bearbeitungsstatus'] = bearbeitungsstatus
 
+    def add_feat(self, feat_val, layer):
+        koppel_feat = QgsFeature(layer.fields())
+        koppel_feat.setAttributes([feat_val.id])
+        # geom = QgsGeometry.fromPointXY(QgsPointXY(10, 10))
+        # geom = QgsGeometry.fromPolygonXY([[QgsPointXY(1, 1),
+        #                                    QgsPointXY(2, 2),
+        #                                    QgsPointXY(2, 1)]])
+        geom_wkt = to_shape(feat_val.geometry).wkt
+        geom = QgsGeometry()
+        ggg = geom.fromWkt(geom_wkt)
+        # geom = QgsGeometry.fromPolygonXY(to_shape(feat_val.geometry))
+        koppel_feat.setGeometry(ggg)
+
+        # (result,
+        #  added_feat) = layer.data_provider.addFeatures(
+        #     [koppel_feat])
+        (result,
+         added_feat) = layer.data_provider.addFeatures(
+            [koppel_feat])
+        return added_feat
+
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        # self.gst_table.setMciList(self._entity_mci.rel_gst_zuordnung)
-        # self.gst_table.initDataView()
-
-        # self.loadGstZuorndungLayer()
-
-        self.gst_zuord_layer = QgsVectorLayer(
-            "Point",
+        self.gst_zuord_layer = GstZuordLayer(
+            "Polygon?crs=epsg:31259",
             "GstZuordnungLay",
             "memory"
         )
 
-        self.pr = self.gst_zuord_layer.dataProvider()
+        # self.gst_zuord_layer.back = False
+        # self.gst_zuord_layer.base = False
 
-        self.pr.addAttributes([QgsField("id", QVariant.Int)])
+        # self.pr = self.gst_zuord_layer.dataProvider()
+
+        # self.pr.addAttributes([QgsField("id", QVariant.Int)])
 
         # self.pr.addAttributes([QgsField("ids", QVariant.Int),
         #                        QgsField("gst", QVariant.String),
@@ -278,51 +300,55 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         #                        QgsField("recht_id", QVariant.Int),
         #                        QgsField("datenstand", QVariant.String)])
 
-        self.gst_zuord_layer.updateFields()
+        # self.gst_zuord_layer.updateFields()
 
         for gst_zuor in self._entity_mci.rel_gst_zuordnung:
+        # for gst_zuor in test_mci:
             for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
-                feat = QgsFeature()
-                feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(10, 10)))
-                # feat.setGeometry(QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt))
-                # feat.setGeometry(gst_version.geometry)
+
+                feat = QgsFeature(self.gst_zuord_layer.fields())
                 feat.setAttributes([gst_version.id])
 
-                self.pr.addFeatures([feat])
+                geom_wkt = to_shape(gst_version.geometry).wkt
+                geom = QgsGeometry()
+                ggg = geom.fromWkt(geom_wkt)
+                feat.setGeometry(ggg)
 
-        self.gst_zuord_layer.updateExtents()
+                self.gst_zuord_layer.data_provider.addFeatures([feat])
 
-        print(f'is valid: {self.gst_zuord_layer.isValid()}')
 
-        # show some stats
-        # pr = self.gst_zuord_layer.dataProvider()
-        # pr = self.gst_zuord_layer.dp
+                # self.add_feat(gst_version, self.gst_zuord_layer)
 
-        print("fields:", len(self.pr.fields()))
-
-        print("features:", self.pr.featureCount())
-
-        e = self.gst_zuord_layer.extent()
-
-        print("extent:", e.xMinimum(), e.yMinimum(), e.xMaximum(), e.yMaximum())
-
-        # iterate over features
-
-        features = self.gst_zuord_layer.getFeatures()
-
-        for fet in features:
-            print("F:", fet.id(), fet.attributes(), fet.geometry().asPoint())
-
-        print('...')
+                # feat = QgsFeature(self.gst_zuord_layer.fields())
+                # feat.setAttributes([gst_version.id])
+                # geom = QgsGeometry.fromPointXY(QgsPointXY(10, 10))
+                # # geom = QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt)
+                # feat.setGeometry(geom)
+                # # feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(int(gst_version.id/100),
+                # #                                                     int(gst_version.id/100))))
+                # # feat.setGeometry(QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt))
+                # # feat.setGeometry(gst_version.geometry)
+                #
+                # self.pr.addFeatures([feat])
 
         """definiere notwendige tabellen und füge sie ein"""
-        self.gst_table = GstAktDataView(self, self.gst_zuord_layer, self.guiMainGis.uiCanvas)
+        self.gst_table = GstAktDataView(self,
+                                        gis_layer=self.gst_zuord_layer,
+                                        canvas=self.guiMainGis.uiCanvas)
 
         self.uiGstListeVlay.addWidget(self.gst_table)
         """"""
 
-        self.gst_table.setMciList(self._entity_mci.rel_gst_zuordnung)
-        self.gst_table.initDataView()
+        self.guiMainGis.project_instance.addMapLayer(self.gst_zuord_layer)
+
+        self.gst_zuord_layer.updateExtents()
+
+        extent = self.gst_zuord_layer.extent()
+        self.guiMainGis.uiCanvas.setExtent(extent)
+
+
+
+
 
 
 
@@ -786,7 +812,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.uiKKTv.doubleClicked.connect(self.editKoppel)
 
-        self.komplex_model.dataChanged.connect(self.changedKKModel)
+        # self.komplex_model.dataChanged.connect(self.changedKKModel)
 
     def editAbgrenzung(self):
 
