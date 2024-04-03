@@ -254,27 +254,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self._custom_data['gst_awb_status'] = gst_awb_status
         self._custom_data['bearbeitungsstatus'] = bearbeitungsstatus
 
-    def add_feat(self, feat_val, layer):
-        koppel_feat = QgsFeature(layer.fields())
-        koppel_feat.setAttributes([feat_val.id])
-        # geom = QgsGeometry.fromPointXY(QgsPointXY(10, 10))
-        # geom = QgsGeometry.fromPolygonXY([[QgsPointXY(1, 1),
-        #                                    QgsPointXY(2, 2),
-        #                                    QgsPointXY(2, 1)]])
-        geom_wkt = to_shape(feat_val.geometry).wkt
-        geom = QgsGeometry()
-        ggg = geom.fromWkt(geom_wkt)
-        # geom = QgsGeometry.fromPolygonXY(to_shape(feat_val.geometry))
-        koppel_feat.setGeometry(ggg)
-
-        # (result,
-        #  added_feat) = layer.data_provider.addFeatures(
-        #     [koppel_feat])
-        (result,
-         added_feat) = layer.data_provider.addFeatures(
-            [koppel_feat])
-        return added_feat
-
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
@@ -284,30 +263,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
             "memory"
         )
 
-        # self.gst_zuord_layer.back = False
-        # self.gst_zuord_layer.base = False
-
-        # self.pr = self.gst_zuord_layer.dataProvider()
-
-        # self.pr.addAttributes([QgsField("id", QVariant.Int)])
-
-        # self.pr.addAttributes([QgsField("ids", QVariant.Int),
-        #                        QgsField("gst", QVariant.String),
-        #                        QgsField("ez", QVariant.Int),
-        #                        QgsField("kgnr", QVariant.Int),
-        #                        QgsField("kgname", QVariant.String),
-        #                        QgsField("awb_id", QVariant.Int),
-        #                        QgsField("recht_id", QVariant.Int),
-        #                        QgsField("datenstand", QVariant.String)])
-
-        # self.gst_zuord_layer.updateFields()
-
         for gst_zuor in self._entity_mci.rel_gst_zuordnung:
-        # for gst_zuor in test_mci:
+
             for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
 
                 feat = QgsFeature(self.gst_zuord_layer.fields())
-                feat.setAttributes([gst_version.id])
+                feat.setAttributes([gst_version.id,
+                                    gst_zuor.rel_gst.gst,
+                                    gst_version.rel_alm_gst_ez.ez,
+                                    gst_version.rel_alm_gst_ez.kgnr,
+                                    gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+                                    gst_zuor.awb_status_id,
+                                    gst_zuor.rechtsgrundlage_id,
+                                    gst_version.rel_alm_gst_ez.datenstand])
 
                 geom_wkt = to_shape(gst_version.geometry).wkt
                 geom = QgsGeometry()
@@ -315,21 +283,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                 feat.setGeometry(ggg)
 
                 self.gst_zuord_layer.data_provider.addFeatures([feat])
-
-
-                # self.add_feat(gst_version, self.gst_zuord_layer)
-
-                # feat = QgsFeature(self.gst_zuord_layer.fields())
-                # feat.setAttributes([gst_version.id])
-                # geom = QgsGeometry.fromPointXY(QgsPointXY(10, 10))
-                # # geom = QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt)
-                # feat.setGeometry(geom)
-                # # feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(int(gst_version.id/100),
-                # #                                                     int(gst_version.id/100))))
-                # # feat.setGeometry(QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt))
-                # # feat.setGeometry(gst_version.geometry)
-                #
-                # self.pr.addFeatures([feat])
 
         """definiere notwendige tabellen und füge sie ein"""
         self.gst_table = GstAktDataView(self,

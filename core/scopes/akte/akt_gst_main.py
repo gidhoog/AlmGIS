@@ -408,63 +408,6 @@ class GstAktDataView(DataView):
     def __init__(self, parent=None, gis_layer=None, canvas=None):
         super(__class__, self).__init__(parent)
 
-        # self.parent = parent
-        #
-        # self.linked_gis_widget = self.parent.guiMainGis
-
-        # self.m_list = m_list
-        #
-        # self.canvas = canvas
-        #
-        # self.gst_zuord_layer = QgsVectorLayer(
-        #     "MultiPolygon",
-        #     "GstZuordnungLay",
-        #     "memory"
-        # )
-        #
-        # self.gst_zuord_layer.back = False
-        # self.gst_zuord_layer.base = False
-        #
-        # self.pr = self.gst_zuord_layer.dataProvider()
-        #
-        # self.pr.addAttributes([QgsField("id", QVariant.Int)])
-        #
-        # # self.pr.addAttributes([QgsField("ids", QVariant.Int),
-        # #                        QgsField("gst", QVariant.String),
-        # #                        QgsField("ez", QVariant.Int),
-        # #                        QgsField("kgnr", QVariant.Int),
-        # #                        QgsField("kgname", QVariant.String),
-        # #                        QgsField("awb_id", QVariant.Int),
-        # #                        QgsField("recht_id", QVariant.Int),
-        # #                        QgsField("datenstand", QVariant.String)])
-        #
-        # self.gst_zuord_layer.updateFields()
-        #
-        # for gst_zuor in self.m_list:
-        #     for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
-        #         feat = QgsFeature(self.gst_zuord_layer.fields())
-        #         feat.setAttributes([gst_version.id])
-        #         # geom = QgsGeometry.fromPointXY(QgsPointXY(10, 10))
-        #         geom = QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt)
-        #         feat.setGeometry(geom)
-        #         # feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(int(gst_version.id/100),
-        #         #                                                     int(gst_version.id/100))))
-        #         # feat.setGeometry(QgsGeometry.fromWkt(to_shape(gst_version.geometry).wkt))
-        #         # feat.setGeometry(gst_version.geometry)
-        #
-        #         self.pr.addFeatures([feat])
-        #
-        #
-        #
-        # # print(f'is valid: {self.gst_zuord_layer.isValid()}')
-        # # show some stats
-        # # pr = self.gst_zuord_layer.dataProvider()
-        # # pr = self.gst_zuord_layer.dp
-        #
-        # print("fields:", len(self.pr.fields()))
-        #
-        # print("features:", self.pr.featureCount())
-        #
         self.vector_layer_cache = QgsVectorLayerCache(gis_layer, 10000)
         self.attribute_table_model = QgsAttributeTableModel(self.vector_layer_cache)
         self.attribute_table_model.loadLayer()
@@ -477,23 +420,6 @@ class GstAktDataView(DataView):
         self.attribute_table_view.setModel(self.attribute_table_filter_model)
 
         self.uiTableVlay.addWidget(self.attribute_table_view)
-        #
-        # # setLayerStyle(self.gst_zuord_layer, 'komplex_rot')
-        # # renderer = self.gst_zuord_layer.renderer()
-        #
-        # self.parent.guiMainGis.project_instance.addMapLayer(self.gst_zuord_layer)
-        # # self.parent.guiMainGis.addLayer(self.gst_zuord_layer, treeview_only=False)
-        #
-        # self.gst_zuord_layer.updateExtents()
-        #
-        # extent = self.gst_zuord_layer.extent()
-        # self.parent.guiMainGis.uiCanvas.setExtent(extent)
-        #
-        # # self.parent.guiMainGis.uiCanvas.setLayers([self.gst_zuord_layer])
-        # #
-        # # self.gst_zuord_layer.triggerRepaint()
-        #
-        # # self.parent.guiMainGis.uiCanvas.refresh()
 
     def openGstZuordnung(self):
         """
