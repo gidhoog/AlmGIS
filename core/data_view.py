@@ -8,6 +8,8 @@ from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButto
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
     QDialog
 
+from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 
@@ -15,6 +17,17 @@ from core import data_view_UI, db_session_cm
 from core.entity import EntityDialog
 from core.footer_line import FooterLine
 from core.main_widget import MainWidget
+
+
+class GisTableView(QgsAttributeTableView):
+
+    def __init__(self, parent):
+        super(GisTableView, self).__init__(parent)
+
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        self.setAlternatingRowColors(True)
 
 
 class TableView(QTableView):

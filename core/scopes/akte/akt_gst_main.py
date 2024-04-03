@@ -1,6 +1,6 @@
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QHeaderView, QPushButton, QDialog
+from qgis.PyQt.QtWidgets import QHeaderView, QPushButton, QDialog, QAbstractItemView
 
 from geoalchemy2.shape import to_shape
 from qgis.core import QgsFeature, QgsGeometry, QgsVectorLayerCache, QgsVectorLayer, QgsField, QgsPointXY
@@ -19,7 +19,7 @@ from core.gis_item import GisItem
 from core.gis_layer import setLayerStyle
 from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
-from core.data_view import DataView, TableModel, TableView
+from core.data_view import DataView, TableModel, TableView, GisTableView
 import typing
 
 from operator import attrgetter
@@ -400,7 +400,7 @@ class GstAktDataView(DataView):
 
     _commit_entity = False
     edit_entity_by = 'mci'
-    # _data_view = TableView
+    # data_view_class = GisTableView
 
     # gst_zuordnung_wdg_class = GstZuordnung
     # gst_zuordnung_dlg_class = GstZuordnungMainDialog
@@ -416,8 +416,12 @@ class GstAktDataView(DataView):
             canvas,
             self.attribute_table_model
         )
-        self.attribute_table_view = QgsAttributeTableView()
+        # self.attribute_table_view = self.data_view_class(self)
+        self.attribute_table_view = GisTableView(self)
         self.attribute_table_view.setModel(self.attribute_table_filter_model)
+
+        # self.attribute_table_view.setSelectionBehavior(
+        #     QAbstractItemView.SelectRows)
 
         self.uiTableVlay.addWidget(self.attribute_table_view)
 
