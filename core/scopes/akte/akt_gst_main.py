@@ -19,7 +19,8 @@ from core.gis_item import GisItem
 from core.gis_layer import setLayerStyle
 from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
-from core.data_view import DataView, TableModel, TableView, GisTableView
+from core.data_view import DataView, TableModel, TableView, GisTableView, \
+    GisTableModel
 import typing
 
 from operator import attrgetter
@@ -170,6 +171,38 @@ class GstZuordnungMainDialog(MainDialog):
 #         #
 #         # return super().data(index, role)
 
+class GstTableModel(GisTableModel):
+
+    def __init__(self, layerCache, parent=None):
+        super(GisTableModel, self).__init__(layerCache, parent)
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        if role == Qt.TextAlignmentRole:
+
+            if index.column() in [3, 7]:
+
+                return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [2]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 7:
+
+            area = self.layer().getFeature(index.row()+1).geometry().area()
+            # attr = self.layer().getFeature(index.row()+1).attributes()[index.column()]
+
+            if role == Qt.DisplayRole:
+
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+                                         ).replace(".", ",")
+                return area_r + ' ha'
+
+            if role == Qt.EditRole:
+                return area
+
+        return super().data(index, role)
 
 class GstModelNew(TableModel):
 
@@ -387,7 +420,7 @@ class GstAktDataView(DataView):
     # _data_source = 'di'
 
     # _main_table_model_class = GstModelNew
-    _model_class = GstModelNew
+    # _model_class = GstModelNew
 
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
     _delete_window_title = ["Grundstück löschen", "Grundstücke löschen"]
@@ -400,30 +433,32 @@ class GstAktDataView(DataView):
 
     _commit_entity = False
     edit_entity_by = 'mci'
+
+    _gis_table_model_class = GstTableModel
     # data_view_class = GisTableView
 
     # gst_zuordnung_wdg_class = GstZuordnung
     # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None, gis_layer=None, canvas=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, mci_list=None, gis_layer=None, canvas=None):
+        super(__class__, self).__init__(parent, mci_list, gis_layer, canvas)
 
-        self.vector_layer_cache = QgsVectorLayerCache(gis_layer, 10000)
-        self.attribute_table_model = QgsAttributeTableModel(self.vector_layer_cache)
-        self.attribute_table_model.loadLayer()
-
-        self.attribute_table_filter_model = QgsAttributeTableFilterModel(
-            canvas,
-            self.attribute_table_model
-        )
-        # self.attribute_table_view = self.data_view_class(self)
-        self.attribute_table_view = GisTableView(self)
-        self.attribute_table_view.setModel(self.attribute_table_filter_model)
-
-        # self.attribute_table_view.setSelectionBehavior(
-        #     QAbstractItemView.SelectRows)
-
-        self.uiTableVlay.addWidget(self.attribute_table_view)
+        # self.vector_layer_cache = QgsVectorLayerCache(gis_layer, 10000)
+        # self.attribute_table_model = QgsAttributeTableModel(self.vector_layer_cache)
+        # self.attribute_table_model.loadLayer()
+        #
+        # self.attribute_table_filter_model = QgsAttributeTableFilterModel(
+        #     canvas,
+        #     self.attribute_table_model
+        # )
+        # # self.attribute_table_view = self.data_view_class(self)
+        # self.attribute_table_view = GisTableView(self)
+        # self.attribute_table_view.setModel(self.attribute_table_filter_model)
+        #
+        # # self.attribute_table_view.setSelectionBehavior(
+        # #     QAbstractItemView.SelectRows)
+        #
+        # self.uiTableVlay.addWidget(self.attribute_table_view)
 
     def openGstZuordnung(self):
         """
@@ -452,14 +487,20 @@ class GstAktDataView(DataView):
 
         self.setStretchMethod(2)
 
-        self.insertFooterLine('im AWB eingetragen und beweidet:',
-                              'ha', 8, 120, 0.0001, 4, 4, '==', 1)
-        self.insertFooterLine('beweidet:',
-                              'ha', 8, 120, 0.0001, 4)
-        self.insertFooterLine('im AWB eingetrage Grundstücksfläche:',
-                              'ha', 6, 120, 0.0001, 4, 4, '==', 1)
+        # self.insertFooterLine('im AWB eingetragen und beweidet:',
+        #                       'ha', 8, 120,
+        #                       0.0001, 4, 4,
+        #                       '==', 1)
+        # self.insertFooterLine('beweidet:',
+        #                       'ha', 8, 120,
+        #                       0.0001, 4)
+        # self.insertFooterLine('im AWB eingetrage Grundstücksfläche:',
+        #                       'ha', 6, 120,
+        #                       0.0001, 4, 4,
+        #                       '==', 1)
         self.insertFooterLine('zugeordnete Grundstücksgesamtfläche:',
-                              'ha', 6, 120, 0.0001, 4)
+                              'ha', 7, 120,
+                              0.0001, 4)
 
         self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
 

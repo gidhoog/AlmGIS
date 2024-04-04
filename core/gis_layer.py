@@ -124,6 +124,7 @@ class GstZuordLayer(QgsVectorLayer):
                                QgsField("kgname", QVariant.String),
                                QgsField("awb_id", QVariant.Int),
                                QgsField("recht_id", QVariant.Int),
+                               QgsField("gis_area", QVariant.String),
                                QgsField("datenstand", QVariant.String)])
 
         self.updateFields()

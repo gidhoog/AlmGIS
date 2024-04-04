@@ -275,6 +275,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
                                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
                                     gst_zuor.awb_status_id,
                                     gst_zuor.rechtsgrundlage_id,
+                                    '',
                                     gst_version.rel_alm_gst_ez.datenstand])
 
                 geom_wkt = to_shape(gst_version.geometry).wkt

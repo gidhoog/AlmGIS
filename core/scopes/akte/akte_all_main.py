@@ -35,8 +35,8 @@ class AkteAllMainWidget(MainWidget):
 
         self.uiMainVLay.addWidget(self.akt_all_table)
 
-        self.akt_all_table.loadData()
-        self.akt_all_table.initDataView()
+        # self.akt_all_table.loadData()
+        # self.akt_all_table.initDataView()
 
 
 class AktAllModel(TableModel):

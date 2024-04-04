@@ -8,7 +8,9 @@ from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButto
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
     QDialog
 
-from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
+from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
+                      QgsAttributeTableFilterModel, QgsIFeatureSelectionManager)
+from qgis.core import QgsVectorLayerCache
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
@@ -24,10 +26,54 @@ class GisTableView(QgsAttributeTableView):
     def __init__(self, parent):
         super(GisTableView, self).__init__(parent)
 
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        # self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        #
+        # self.setAlternatingRowColors(True)
 
-        self.setAlternatingRowColors(True)
+
+class GisTableModel(QgsAttributeTableModel):
+
+    def __init__(self, layerCache, parent=None):
+        super(GisTableModel, self).__init__(layerCache, parent)
+
+    # def data(self, index: QModelIndex, role: int = ...):
+    #
+    #     """
+    #     erzeuge ein basis-model
+    #     """
+    #     # row = index.row()
+    #     # col = index.column()
+    #     #
+    #     # if role == Qt.TextAlignmentRole:
+    #     #
+    #     #     if index.column() in [2, 6, 7, 8, 9]:
+    #     #
+    #     #         return Qt.AlignRight | Qt.AlignVCenter
+    #     #
+    #     #     if index.column() in [1, 10]:
+    #     #
+    #     #         return Qt.AlignHCenter | Qt.AlignVCenter
+    #
+    #     if index.column() == 7:
+    #
+    #         val = self.layer().getFeature(index.row()+1).geometry().area()
+    #
+    #         if role == Qt.DisplayRole:
+    #
+    #             # attr = self.layer().getFeature(index.row()+1).attributes()[index.column()]
+    #
+    #             print(f'val: {val}')
+    #             # return self.mci_list[row].rel_gst.gst
+    #             return val
+    #
+    #         if role == Qt.DisplayRole:
+    #
+    #             return val
+    #
+    #     return super().data(index, role)
+
+
 
 
 class TableView(QTableView):
@@ -92,9 +138,13 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _model_class = None
     _main_table_model_class = None
 
+    _gis_table_model_class = GisTableModel
+
     _data_view_mc = None
 
     _mci_list = []
+    _gis_layer = None
+    _canvas = None
 
     _custom_data = {}
 
@@ -306,11 +356,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.uiTitleLbl.setText(value)
         self._title = value
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, mci_list=None, gis_layer=None, canvas=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
         self.parent = parent
+        self._mci_list = mci_list
+        self._gis_layer = gis_layer
+        self._canvas = canvas
 
         """liste mit den widgets im fußbereich der tabelle (zum anzeigen 
         verschiedener spaltensummen"""
@@ -326,19 +379,78 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.maintable_filter_limit = 5
         """"""
 
-        self.model = self._model_class(self)
-        self.filter_proxy = SortFilterProxyModel(self)
-        self.filter_proxy.setSourceModel(self.model)
+        if self._gis_layer is not None:
 
-        """definiere das verwendete view; funktioniert derzeit nur mit
-        einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
-        self.view = self.data_view_class(self)
+            self.vector_layer_cache = QgsVectorLayerCache(gis_layer,
+                                                     10000)
+            self.model = self._gis_table_model_class(
+                self.vector_layer_cache, self)
+            self.model.loadLayer()
+
+            self.filter_proxy = QgsAttributeTableFilterModel(
+                canvas,
+                self.model
+            )
+
+            # self.view = QgsAttributeTableView()
+            self.view = GisTableView(self)
+            self.view.setModel(self.filter_proxy)
+            self.initUi()
+
+            self.initDataView()
+
+        else:
+
+            self.model = self._model_class(self)
+            self.filter_proxy = SortFilterProxyModel(self)
+            # self.filter_proxy = QgsAttributeTableFilterModel(None, self.model, self)
+            self.filter_proxy.setSourceModel(self.model)
+
+            """definiere das verwendete view; funktioniert derzeit nur mit
+            einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
+            self.view = self.data_view_class(self)
+            self.view.setModel(self.filter_proxy)
+
+            self.initUi()
+            self.loadData()
+
+            self.initDataView()
+            """"""
+
         self.uiTableVlay.addWidget(self.view)
-        """"""
 
-        self.view.setModel(self.filter_proxy)
 
-        self.initUi()
+        # """liste mit den widgets im fußbereich der tabelle (zum anzeigen
+        # verschiedener spaltensummen"""
+        # self.footer_list = []
+        # """"""
+        #
+        # """optionales menü, das dem 'uiAddDataTbtn' übergeben werden kann wenn
+        # z.b. unterschiedliche typen in der gleichen tabelle dargestellt werden"""
+        # self.add_entity_menu = QMenu(self)
+        # """"""
+        #
+        # """anzahl der maximal möglichen detail-filter (noch nicht fertig!)"""
+        # self.maintable_filter_limit = 5
+        # """"""
+
+        # self.model = self._model_class(self)
+        # self.filter_proxy = SortFilterProxyModel(self)
+        # self.filter_proxy.setSourceModel(self.model)
+        #
+        # """definiere das verwendete view; funktioniert derzeit nur mit
+        # einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
+        # self.view = self.data_view_class(self)
+        # self.uiTableVlay.addWidget(self.view)
+        # """"""
+        #
+        # self.view.setModel(self.filter_proxy)
+        #
+        # self.initUi()
+
+    def test_sel(self):
+
+        print(f':::::::::selection changed ::::::::::::')
 
     def signals(self):
 
@@ -349,7 +461,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.view.selectionModel().selectionChanged \
             .connect(self.selectedRowsChanged)
+
+        if self._gis_layer is not None:
+            self._gis_layer.selectionChanged.connect(self.test_sel)
         self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+
         self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
 
         self.uiActionExportCsv.triggered.connect(self.export_csv)
@@ -380,6 +496,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         die auswahlt der zeilen hat sich geändert
         """
+        print(f'--- selection changed -----------------------')
         self.updateFooter()
 
     def getProxyIndex(self, index):
