@@ -26,6 +26,8 @@ class BAkt(Base):
     alm_bnr = Column(Integer)
     anm = Column(String)
     stz = Column(String)
+    wwp = Column(Boolean)
+    wwp_jahr = Column(Integer)
 
     rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
     rel_gst_zuordnung = relationship(

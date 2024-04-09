@@ -122,6 +122,51 @@ class DataViewEntityDialog(EntityDialog):
         QDialog.accept(self)
 
 
+class TableModel(QAbstractTableModel):
+    """
+    baseclass für ein model für ein data_view
+
+    bei der initialisierung wird ein einfaches data_array übergeben (das z.b.
+    mit einer SQLAlchemy-abfrage erzeugt wurde); aus diesem data_array wird auf
+    basis des 'QAbstractTableModel' ein 'TableModel' erzeugt
+    """
+
+    def __init__(self, parent):
+        super(TableModel, self).__init__(parent)
+
+        self.parent = parent
+        self.mci_list = []
+
+        self.header = []
+
+    def data(self, index: QModelIndex, role: int = ...): ...
+
+    def rowCount(self, parent: QModelIndex = ...):
+        """
+        definiere die zeilenanzahl
+        """
+
+        if self.mci_list:
+            return len(self.mci_list)
+        else:
+            return 0
+
+    def columnCount(self, parent: QModelIndex = ...):
+        """
+        definiere die spaltenanzahl
+        """
+
+        return len(self.header)
+
+    def headerData(self, column, orientation, role=None):
+        super().headerData(column, orientation, role)
+
+        if self.header:
+            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+
+                return self.header[column]
+
+
 class DataView(QWidget, data_view_UI.Ui_DataView):
     """
     baseclass für maintables
@@ -135,7 +180,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _type_mc = None
     _entity_mc = None
 
-    _model_class = None
+    _model_class = TableModel
     _main_table_model_class = None
 
     _gis_table_model_class = GisTableModel
@@ -1233,6 +1278,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.entity_dialog.resize(self.minimumSizeHint())
 
         self.entity_dialog.show()
+        self.entity_dialog.dialogWidget.finalSize()
 
         self.entity_dialog.rejected.connect(self.rejectEditingInDialog)
 
@@ -1286,51 +1332,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere den maintable;
         """
         self.updateFooter()
-
-
-class TableModel(QAbstractTableModel):
-    """
-    baseclass für ein model für ein data_view
-
-    bei der initialisierung wird ein einfaches data_array übergeben (das z.b.
-    mit einer SQLAlchemy-abfrage erzeugt wurde); aus diesem data_array wird auf
-    basis des 'QAbstractTableModel' ein 'TableModel' erzeugt
-    """
-
-    def __init__(self, parent):
-        super(TableModel, self).__init__(parent)
-
-        self.parent = parent
-        self.mci_list = []
-
-        self.header = []
-
-    def data(self, index: QModelIndex, role: int = ...): ...
-
-    def rowCount(self, parent: QModelIndex = ...):
-        """
-        definiere die zeilenanzahl
-        """
-
-        if self.mci_list:
-            return len(self.mci_list)
-        else:
-            return 0
-
-    def columnCount(self, parent: QModelIndex = ...):
-        """
-        definiere die spaltenanzahl
-        """
-
-        return len(self.header)
-
-    def headerData(self, column, orientation, role=None):
-        super().headerData(column, orientation, role)
-
-        if self.header:
-            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-
-                return self.header[column]
 
 
 class SortFilterProxyModel(QSortFilterProxyModel):

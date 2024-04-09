@@ -50,6 +50,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     _name = ''
     _stz = ''
     _status = 0
+    _wwp = 0
+    _wwp_jahr = 0
 
     @property  # getter
     def alm_bnr(self):
@@ -141,6 +143,41 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiStzLbl.setText(value)
         self._stz = value
 
+    @property  # getter
+    def wwp(self):
+
+        if self.uiWwpCkBox.isChecked():
+            self._wwp = 1
+        else:
+            self._wwp = 0
+
+        return self._wwp
+
+    @wwp.setter
+    def wwp(self, value):
+
+        if value == 1:
+            self.uiWwpCkBox.setCheckState(Qt.Checked)
+        else:
+            self.uiWwpCkBox.setCheckState(Qt.Unchecked)
+
+        self._wwp = value
+
+    @property  # getter
+    def wwp_jahr(self):
+
+        self._wwp_jahr = self.uiWwpJahrSBox.value()
+
+        return self._wwp_jahr
+
+    @wwp_jahr.setter
+    def wwp_jahr(self, value):
+
+        if value is not None:
+            self.uiWwpJahrSBox.setValue(value)
+
+        self._wwp_jahr = value
+
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
@@ -217,6 +254,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiKKTv.setColumnHidden(3, True)
         self.uiKKTv.setColumnHidden(4, True)
 
+    def finalSize(self):
+
+        self.uiKoppelFrm.resize(self.uiKoppelFrm.width(), 700)
+        # self.uiKoppelFrm.resize(100, 700)
+
     def mapData(self):
         super().mapData()
 
@@ -228,6 +270,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.alm_bnr = self._entity_mci.alm_bnr
         self.anm = self._entity_mci.anm
         self.status = self._entity_mci.bearbeitungsstatus_id
+
+        self.wwp = self._entity_mci.wwp
+        self.wwp_jahr = self._entity_mci.wwp_jahr
 
         # self.guiMainGis.entity_id = self._entity_mci.id
 
@@ -634,6 +679,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self._entity_mci.alm_bnr = self.alm_bnr
         self._entity_mci.anm = self.anm
         self._entity_mci.bearbeitungsstatus_id = self.status
+
+        self._entity_mci.wwp = self.wwp
+        self._entity_mci.wwp_jahr = self.wwp_jahr
 
         print(f'...')
 

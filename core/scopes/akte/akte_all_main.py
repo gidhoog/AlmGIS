@@ -49,6 +49,8 @@ class AktAllModel(TableModel):
                        'Status',
                        'Stz',
                        'Anmerkung',
+                       'WWP',
+                       'WWP-Jahr',
                        'AWB-Fläche (GB)',
                        'davon beweidet',
                        'Weidefläche']
@@ -63,11 +65,11 @@ class AktAllModel(TableModel):
 
         if role == Qt.TextAlignmentRole:
 
-            if index.column() in [5, 6, 7]:
+            if index.column() in [7, 8, 9]:
 
                 return Qt.AlignRight | Qt.AlignVCenter
 
-            if index.column() in [0, 2, 3]:
+            if index.column() in [0, 2, 3, 5, 6]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
@@ -113,6 +115,20 @@ class AktAllModel(TableModel):
                 return self.mci_list[row].anm
 
         if index.column() == 5:
+            if role == Qt.DisplayRole:
+                if self.mci_list[row].wwp == 1:
+                    return 'X'
+
+        if index.column() == 6:
+            if role == Qt.DisplayRole:
+                if self.mci_list[row].wwp == 1:
+                    if self.mci_list[row].wwp_jahr is not None:
+                        return self.mci_list[row].wwp_jahr
+                    else:
+                        return '---'
+                return ''
+
+        if index.column() == 7:
             # anz = 0
             gst_area = 0
             for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
@@ -133,7 +149,7 @@ class AktAllModel(TableModel):
             if role == Qt.EditRole:
                 return gst_area
 
-        if index.column() == 6:
+        if index.column() == 8:
 
             cut_area = 0
             for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
@@ -155,7 +171,7 @@ class AktAllModel(TableModel):
                 cut_area_ha = '{:.4f}'.format(round(float(cut_area) / 10000, 4)).replace(".", ",") + ' ha'
                 return cut_area_ha
 
-        if index.column() == 7:
+        if index.column() == 9:
 
             if role in [Qt.DisplayRole, Qt.EditRole]:
 
@@ -220,13 +236,13 @@ class AkteAllMain(DataView):
         self.setStretchMethod(2)
 
         self.insertFooterLine('Gesamtweidefläche',
-                              'ha', 7, 120,
+                              'ha', 9, 120,
                               0.0001, 4)
         self.insertFooterLine('davon beweidet',
-                              'ha', 6, 120,
+                              'ha', 8, 120,
                               0.0001, 4)
         self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
-                              'ha', 5, 120,
+                              'ha', 7, 120,
                               0.0001, 4)
 
         self.uiAddDataTbtn.setVisible(False)

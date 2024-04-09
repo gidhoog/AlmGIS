@@ -437,8 +437,8 @@ class GstAktDataView(DataView):
     _gis_table_model_class = GstTableModel
     # data_view_class = GisTableView
 
-    # gst_zuordnung_wdg_class = GstZuordnung
-    # gst_zuordnung_dlg_class = GstZuordnungMainDialog
+    gst_zuordnung_wdg_class = GstZuordnung
+    gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
     def __init__(self, parent=None, mci_list=None, gis_layer=None, canvas=None):
         super(__class__, self).__init__(parent, mci_list, gis_layer, canvas)

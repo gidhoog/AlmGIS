@@ -235,6 +235,9 @@ class Entity(QMainWindow):
         """
         pass
 
+    def finalSize(self):
+        pass
+
     def signals(self):
         """
         signale für diese entity

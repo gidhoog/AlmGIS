@@ -57,7 +57,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.guiGstTable = GstTable(self)
         self.guiGstPreSelTview = GstPreSelTable(self)
-        self.presel_proxy_model = GstPreSelFilter(self)
+        # self.presel_proxy_model = GstPreSelFilter(self)
 
         # self.getZugeordneteGst()
         #
@@ -124,21 +124,23 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
     def loadData(self):
 
-        self.getZugeordneteGst()
+        pass
 
-        """initialisiere die grundstückstabelle"""
-        with db_session_cm() as session:
-            self.guiGstTable.initDataView(session)
-        """"""
-
-        self.setPreSelModel()
-
-        """da in diesem Maintabel die 'initDataView' Methode nicht verwendet
-        wird muss neben dem data_view_model auch dem view direkt das
-        model mit den daten übergeben werden"""
-        self.guiGstPreSelTview.data_view.setModel(self.presel_proxy_model)
-        self.guiGstPreSelTview.data_view_model = self.presel_proxy_model
-        """"""
+        # self.getZugeordneteGst()
+        #
+        # """initialisiere die grundstückstabelle"""
+        # with db_session_cm() as session:
+        #     self.guiGstTable.initDataView(session)
+        # """"""
+        #
+        # self.setPreSelModel()
+        #
+        # """da in diesem Maintabel die 'initDataView' Methode nicht verwendet
+        # wird muss neben dem data_view_model auch dem view direkt das
+        # model mit den daten übergeben werden"""
+        # self.guiGstPreSelTview.data_view.setModel(self.presel_proxy_model)
+        # self.guiGstPreSelTview.data_view_model = self.presel_proxy_model
+        # """"""
 
     def setPreSelModel(self):
         """
@@ -180,10 +182,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.uiCentralLayout.addWidget(self.table_splitter)
 
         """richte self.guiGstPreSelTview ein"""
-        self.guiGstPreSelTview.initUi()
-        self.guiGstPreSelTview.finalInit()
-        self.guiGstPreSelTview.updateMaintableNew()
-        self.guiGstPreSelTview.data_view.selectionModel().selectionChanged.connect(self.selPreChanged)
+        # self.guiGstPreSelTview.initUi()
+        # self.guiGstPreSelTview.finalInit()
+        # self.guiGstPreSelTview.updateMaintableNew()
+        # self.guiGstPreSelTview.data_view.selectionModel().selectionChanged.connect(self.selPreChanged)
         """"""
 
     def initWidget(self):
@@ -196,11 +198,11 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.initUi()
 
-        self.linked_gis_widgets[108] = self.guiGstTable
-        self.activateGisControl()
+        # self.linked_gis_widgets[108] = self.guiGstTable
+        # self.activateGisControl()
 
-        self.linked_gis_widgets[108] = self.guiGstTable
-        self.activateGisControl()
+        # self.linked_gis_widgets[108] = self.guiGstTable
+        # self.activateGisControl()
         self.dialog_widget._guiApplyDbtn.setEnabled(False)
 
         self.signals()
@@ -788,6 +790,115 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
             session.execute(text(del_eig))
             session.execute(text(del_nutz))
 
+
+class GstModel(TableModel):
+
+    col_with_kg_gst_value = 0
+    col_with_checkbox = 2
+
+    def __init__(self, parent, data_array=None):
+        super(__class__, self).__init__(parent)
+
+        self.parent = parent
+        self.data_array = None
+
+        if data_array:
+            self.data_array = data_array
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        if not index.isValid():
+            return None
+
+        if role == Qt.DisplayRole or role == Qt.EditRole:
+            return self.data_array[index.row()][index.column()]
+
+        """setze eine Schriftfarbe, wenn das gst diesem Akt bereits zugeordnet ist"""
+        if role == Qt.ForegroundRole:
+            if index.column() == self.col_with_checkbox:
+                if self.data(self.index(index.row(), 0),
+                             Qt.DisplayRole) in self.parent.parent.akt_zugeordnete_gst:
+                    return QColor(15, 153, 222)
+        """"""
+
+        """setze den check-status auf spalte 2"""
+        if role == Qt.CheckStateRole:
+            if index.column() == 2:
+                return self.checkState(QModelIndex(index))
+        """"""
+
+        return super().data(index, role)
+
+    def checkState(self, index):
+        """markiere wenn das gst in der liste checked_gst ist"""
+        if self.data(self.index(index.row(), 0), Qt.DisplayRole) \
+                in [gst.id for gst in self.parent.parent.checked_gst_instances]:
+            return Qt.Checked
+        """"""
+
+        """markiere wenn das gst bereits zugeordnet ist"""
+        if self.data(self.index(index.row(), 0), Qt.DisplayRole) \
+                in self.parent.parent.akt_zugeordnete_gst:
+            return Qt.Checked
+        else:
+            return Qt.Unchecked
+        """"""
+
+    def setData(self, index, value, role=Qt.EditRole):
+
+        if not index.isValid():
+            return False
+
+        if role == Qt.CheckStateRole and index.column() == 2:
+            """durch das setzten eines Hakens wird die Liste 
+            'checked_gst_instances' modifiziert, auf dieser basierend wird
+            der Haken mit der Methode 'checkState' gesetzt. """
+
+            """entferne die kg_gst wenn sie sich in der liste der marktierten gst befindet:"""
+            if self.data(self.index(index.row(), 0), Qt.DisplayRole) \
+                    in [gst.id for gst in self.parent.parent.checked_gst_instances]:
+                self.parent.parent.checked_gst_instances.remove(
+                     self.data(self.index(index.row(), 9), Qt.DisplayRole))
+                """"""
+
+                """wenn die kg_gst nicht bereits dem akt zugeordnet ist, dann füge sie der liste der markierten gst hinzu:"""
+            elif self.data(self.index(index.row(), 0), Qt.DisplayRole)  not in self.parent.parent.akt_zugeordnete_gst:
+
+                self.parent.parent.checked_gst_instances.append(
+                    self.data(self.index(index.row(), 9), Qt.DisplayRole))
+                """"""
+
+            """aktualisiere das model am entsprechenden index
+            (siehe: https://stackoverflow.com/questions/65386552/update-object-when-checkbox-clicked-in-qtableview"""
+            self.dataChanged.emit(index, index)
+            """"""
+            """nachdem (!) das model aktualisiert wurde, aktualisiere das
+            view"""
+            self.parent.parent.guiGstPreSelTview.updateMaintableNew()
+            """"""
+
+            """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
+            Grundstücke"""
+            if self.parent.parent.checked_gst_instances:
+                self.parent.parent.guiMatchPreSelGstPbtn.setEnabled(True)
+            else:
+                self.parent.parent.guiMatchPreSelGstPbtn.setEnabled(False)
+            """"""
+
+            return True
+        return False
+
+    def flags(self, index):
+
+        if not index.isValid():
+            return None
+
+        if index.column() == self.col_with_checkbox:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+
+
 class GstTable(DataView):
     """
     tabelle mit den grundstücken die zugeordnet werden können bzw. bereits
@@ -799,6 +910,7 @@ class GstTable(DataView):
                     "gis_layer_id_column": 'id'}
 
     _data_view = TableView
+    _model_class = GstModel
 
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
@@ -832,14 +944,14 @@ class GstTable(DataView):
     def finalInit(self):
         super().finalInit()
 
-        """setzt bestimmte spaltenbreiten"""
-        self.data_view.setColumnWidth(2, 80)
-        self.data_view.setColumnWidth(3, 45)
-        self.data_view.setColumnWidth(4, 130)
-        self.data_view.setColumnWidth(5, 40)
-        self.data_view.setColumnWidth(6, 180)
-        self.data_view.setColumnWidth(7, 130)
-        """"""
+        # """setzt bestimmte spaltenbreiten"""
+        # self.data_view.setColumnWidth(2, 80)
+        # self.data_view.setColumnWidth(3, 45)
+        # self.data_view.setColumnWidth(4, 130)
+        # self.data_view.setColumnWidth(5, 40)
+        # self.data_view.setColumnWidth(6, 180)
+        # self.data_view.setColumnWidth(7, 130)
+        # """"""
 
     # def setMaintableColumns(self):
     #     super().setMaintableColumns()
@@ -1040,114 +1152,6 @@ class GstTable(DataView):
         """"""
 
 
-class GstModel(TableModel):
-
-    col_with_kg_gst_value = 0
-    col_with_checkbox = 2
-
-    def __init__(self, parent, data_array=None):
-        super(__class__, self).__init__(parent, data_array)
-
-        self.parent = parent
-        self.data_array = None
-
-        if data_array:
-            self.data_array = data_array
-
-    def data(self, index: QModelIndex, role: int = ...):
-
-        if not index.isValid():
-            return None
-
-        if role == Qt.DisplayRole or role == Qt.EditRole:
-            return self.data_array[index.row()][index.column()]
-
-        """setze eine Schriftfarbe, wenn das gst diesem Akt bereits zugeordnet ist"""
-        if role == Qt.ForegroundRole:
-            if index.column() == self.col_with_checkbox:
-                if self.data(self.index(index.row(), 0),
-                             Qt.DisplayRole) in self.parent.parent.akt_zugeordnete_gst:
-                    return QColor(15, 153, 222)
-        """"""
-
-        """setze den check-status auf spalte 2"""
-        if role == Qt.CheckStateRole:
-            if index.column() == 2:
-                return self.checkState(QModelIndex(index))
-        """"""
-
-        return super().data(index, role)
-
-    def checkState(self, index):
-        """markiere wenn das gst in der liste checked_gst ist"""
-        if self.data(self.index(index.row(), 0), Qt.DisplayRole) \
-                in [gst.id for gst in self.parent.parent.checked_gst_instances]:
-            return Qt.Checked
-        """"""
-
-        """markiere wenn das gst bereits zugeordnet ist"""
-        if self.data(self.index(index.row(), 0), Qt.DisplayRole) \
-                in self.parent.parent.akt_zugeordnete_gst:
-            return Qt.Checked
-        else:
-            return Qt.Unchecked
-        """"""
-
-    def setData(self, index, value, role=Qt.EditRole):
-
-        if not index.isValid():
-            return False
-
-        if role == Qt.CheckStateRole and index.column() == 2:
-            """durch das setzten eines Hakens wird die Liste 
-            'checked_gst_instances' modifiziert, auf dieser basierend wird
-            der Haken mit der Methode 'checkState' gesetzt. """
-
-            """entferne die kg_gst wenn sie sich in der liste der marktierten gst befindet:"""
-            if self.data(self.index(index.row(), 0), Qt.DisplayRole) \
-                    in [gst.id for gst in self.parent.parent.checked_gst_instances]:
-                self.parent.parent.checked_gst_instances.remove(
-                     self.data(self.index(index.row(), 9), Qt.DisplayRole))
-                """"""
-
-                """wenn die kg_gst nicht bereits dem akt zugeordnet ist, dann füge sie der liste der markierten gst hinzu:"""
-            elif self.data(self.index(index.row(), 0), Qt.DisplayRole)  not in self.parent.parent.akt_zugeordnete_gst:
-
-                self.parent.parent.checked_gst_instances.append(
-                    self.data(self.index(index.row(), 9), Qt.DisplayRole))
-                """"""
-
-            """aktualisiere das model am entsprechenden index
-            (siehe: https://stackoverflow.com/questions/65386552/update-object-when-checkbox-clicked-in-qtableview"""
-            self.dataChanged.emit(index, index)
-            """"""
-            """nachdem (!) das model aktualisiert wurde, aktualisiere das
-            view"""
-            self.parent.parent.guiGstPreSelTview.updateMaintableNew()
-            """"""
-
-            """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
-            Grundstücke"""
-            if self.parent.parent.checked_gst_instances:
-                self.parent.parent.guiMatchPreSelGstPbtn.setEnabled(True)
-            else:
-                self.parent.parent.guiMatchPreSelGstPbtn.setEnabled(False)
-            """"""
-
-            return True
-        return False
-
-    def flags(self, index):
-
-        if not index.isValid():
-            return None
-
-        if index.column() == self.col_with_checkbox:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
-        else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
-
-
 class GstPreSelTable(DataView):
 
     _data_view = TableView
@@ -1197,22 +1201,22 @@ class GstPreSelTable(DataView):
         self.uiToolsTbtn.setVisible(False)
 
         """blende unnötige Spalten aus"""
-        self.data_view.setColumnHidden(0, True)
-        self.data_view.setColumnHidden(1, True)
-        self.data_view.setColumnHidden(6, True)
-        self.data_view.setColumnHidden(7, True)
-        self.data_view.setColumnHidden(8, True)
-        self.data_view.setColumnHidden(9, True)
+        self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(1, True)
+        self.view.setColumnHidden(6, True)
+        self.view.setColumnHidden(7, True)
+        self.view.setColumnHidden(8, True)
+        self.view.setColumnHidden(9, True)
         """"""
 
     def finalInit(self):
         super().finalInit()
 
         """setzt bestimmte spaltenbreiten"""
-        self.data_view.setColumnWidth(2, 80)
-        self.data_view.setColumnWidth(3, 45)
-        self.data_view.setColumnWidth(4, 150)
-        self.data_view.setColumnWidth(5, 40)
+        self.view.setColumnWidth(2, 80)
+        self.view.setColumnWidth(3, 45)
+        self.view.setColumnWidth(4, 150)
+        self.view.setColumnWidth(5, 40)
         """"""
 
         self.setMaximumWidth(450)
