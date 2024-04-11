@@ -9,7 +9,7 @@ from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButto
     QDialog
 
 from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
-                      QgsAttributeTableFilterModel, QgsIFeatureSelectionManager)
+                      QgsAttributeTableFilterModel, QgsMapCanvas)
 from qgis.core import QgsVectorLayerCache
 
 from sqlalchemy.exc import IntegrityError
@@ -29,11 +29,11 @@ class GisTableView(QgsAttributeTableView):
         self.setSelectionMode(QAbstractItemView.MultiSelection)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-        self.doubleClicked.connect(self.test_click)
-
-    def test_click(self):
-
-        print(f'++++++ double clicked +++++++')
+    #     self.doubleClicked.connect(self.test_click)
+    #
+    # def test_click(self):
+    #
+    #     print(f'++++++ double clicked +++++++')
 
         # self.verticalHeader().setSectionsClickable(True)
         #
@@ -204,10 +204,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _data_view_mc = None
 
     _mci_list = []
+    _custom_data = {}
+
     _gis_layer = None
     _canvas = None
 
-    _custom_data = {}
+    _view_class = GisTableView
 
     data_view_class = TableView
 
@@ -417,14 +419,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.uiTitleLbl.setText(value)
         self._title = value
 
-    def __init__(self, parent=None, mci_list=None, gis_layer=None, canvas=None):
+    def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
         self.parent = parent
-        self._mci_list = mci_list
-        self._gis_layer = gis_layer
-        self._canvas = canvas
+        # self._mci_list = mci_list
+        # self._gis_layer = gis_layer
+        # self._canvas = canvas
 
         """liste mit den widgets im fußbereich der tabelle (zum anzeigen 
         verschiedener spaltensummen"""
@@ -436,80 +438,60 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.add_entity_menu = QMenu(self)
         """"""
 
-        """anzahl der maximal möglichen detail-filter (noch nicht fertig!)"""
-        self.maintable_filter_limit = 5
-        """"""
-
-        if self._gis_layer is not None:
-
-            self.vector_layer_cache = QgsVectorLayerCache(gis_layer,
-                                                     10000)
-            self.model = self._gis_table_model_class(
-                self.vector_layer_cache, self)
-            self.model.loadLayer()
-
-            self.filter_proxy = QgsAttributeTableFilterModel(
-                canvas,
-                self.model
-            )
-
-            # self.view = QgsAttributeTableView()
-            self.view = GisTableView(self)
-            self.view.setModel(self.filter_proxy)
-            self.initUi()
-
-            self.initDataView()
-
-        else:
-
-            self.model = self._model_class(self)
-            self.filter_proxy = SortFilterProxyModel(self)
-            # self.filter_proxy = QgsAttributeTableFilterModel(None, self.model, self)
-            self.filter_proxy.setSourceModel(self.model)
-
-            """definiere das verwendete view; funktioniert derzeit nur mit
-            einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
-            self.view = self.data_view_class(self)
-            self.view.setModel(self.filter_proxy)
-
-            self.initUi()
-            self.loadData()
-
-            self.initDataView()
-            """"""
-
+        self.view = self._view_class(self)
         self.uiTableVlay.addWidget(self.view)
 
-        self.view_gis = GisTableView(self)
-        self.uiTableVlay.addWidget(self.view_gis)
+        self.initUi()
 
-        # """liste mit den widgets im fußbereich der tabelle (zum anzeigen
-        # verschiedener spaltensummen"""
-        # self.footer_list = []
-        # """"""
+        # if self._gis_layer is not None:
         #
-        # """optionales menü, das dem 'uiAddDataTbtn' übergeben werden kann wenn
-        # z.b. unterschiedliche typen in der gleichen tabelle dargestellt werden"""
-        # self.add_entity_menu = QMenu(self)
-        # """"""
+        #     self.vector_layer_cache = QgsVectorLayerCache(gis_layer,
+        #                                              10000)
+        #     self.model = self._gis_table_model_class(
+        #         self.vector_layer_cache, self)
+        #     self.model.loadLayer()
         #
-        # """anzahl der maximal möglichen detail-filter (noch nicht fertig!)"""
-        # self.maintable_filter_limit = 5
-        # """"""
-
-        # self.model = self._model_class(self)
-        # self.filter_proxy = SortFilterProxyModel(self)
-        # self.filter_proxy.setSourceModel(self.model)
+        #     self.filter_proxy = QgsAttributeTableFilterModel(
+        #         canvas,
+        #         self.model
+        #     )
         #
-        # """definiere das verwendete view; funktioniert derzeit nur mit
-        # einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
-        # self.view = self.data_view_class(self)
+        #     # self.view = QgsAttributeTableView()
+        #     self.view = GisTableView(self)
+        #     self.view.setModel(self.filter_proxy)
+        #     self.initUi()
+        #
+        #     self.initDataView()
+        #
+        # else:
+        #
+        #     self.model = self._model_class(self)
+        #     self.filter_proxy = SortFilterProxyModel(self)
+        #     # self.filter_proxy = QgsAttributeTableFilterModel(None, self.model, self)
+        #     self.filter_proxy.setSourceModel(self.model)
+        #
+        #     """definiere das verwendete view; funktioniert derzeit nur mit
+        #     einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
+        #     self.view = self.data_view_class(self)
+        #     self.view.setModel(self.filter_proxy)
+        #
+        #     self.initUi()
+        #     self.loadData()
+        #
+        #     self.initDataView()
+        #     """"""
+        #
         # self.uiTableVlay.addWidget(self.view)
-        # """"""
         #
-        # self.view.setModel(self.filter_proxy)
-        #
-        # self.initUi()
+        # self.view_gis = GisTableView(self)
+        # self.uiTableVlay.addWidget(self.view_gis)
+
+    def setCanvas(self, canvas):
+
+        self._canvas = canvas
+    # def setLayer(self, layer):
+    #
+    #     self._gis_layer = layer
 
     def test_sel(self):
 
@@ -517,21 +499,21 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def signals(self):
 
-        self.uiEditDataTbtn.clicked.connect(self.clickedEditRow)
-        self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
+        # self.uiEditDataTbtn.clicked.connect(self.clickedEditRow)
+        # self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
 
         self.view.doubleClicked.connect(self.doubleClickedRow)
 
-        self.view.selectionModel().selectionChanged \
-            .connect(self.selectedRowsChanged)
-
-        if self._gis_layer is not None:
-            self._gis_layer.selectionChanged.connect(self.test_sel)
-        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
-
-        self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
-
-        self.uiActionExportCsv.triggered.connect(self.export_csv)
+        # self.view.selectionModel().selectionChanged \
+        #     .connect(self.selectedRowsChanged)
+        #
+        # if self._gis_layer is not None:
+        #     self._gis_layer.selectionChanged.connect(self.test_sel)
+        # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+        #
+        # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
+        #
+        # self.uiActionExportCsv.triggered.connect(self.export_csv)
 
     def getSelectedRows(self):
         """
@@ -633,28 +615,28 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
 
-        self.setSelectBehaviour()
-        self.setEditBehaviour()
-        self.setSorting()
-        self.setDisplayVetricalHeader()
-        self.setFilterUI()
-
-        """setze detail-filter buttons unsichtbar"""
-        self.uiEnableFilterDetailPbtn.setVisible(False)
-        self.uiAddFilterDetailRowPbtn.setVisible(False)
-        self.uiDelFilterDetailRowPbtn.setVisible(False)
-        """"""
-
-        self.uiActionExportCsv = QAction(self.uiToolsTbtn)
-        self.uiActionExportCsv.setText('exportiere csv-Datei')
-        self.uiToolsTbtn.addAction(self.uiActionExportCsv)
-
-        """definiere für eine alternative zeilen farbe"""
-        data_view_palette = self.view.palette()
-        data_view_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
-        self.view.setPalette(data_view_palette)
-        self.view.setAlternatingRowColors(True)
-        """"""
+        # self.setSelectBehaviour()
+        # self.setEditBehaviour()
+        # self.setSorting()
+        # self.setDisplayVetricalHeader()
+        # self.setFilterUI()
+        #
+        # """setze detail-filter buttons unsichtbar"""
+        # self.uiEnableFilterDetailPbtn.setVisible(False)
+        # self.uiAddFilterDetailRowPbtn.setVisible(False)
+        # self.uiDelFilterDetailRowPbtn.setVisible(False)
+        # """"""
+        #
+        # self.uiActionExportCsv = QAction(self.uiToolsTbtn)
+        # self.uiActionExportCsv.setText('exportiere csv-Datei')
+        # self.uiToolsTbtn.addAction(self.uiActionExportCsv)
+        #
+        # """definiere für eine alternative zeilen farbe"""
+        # data_view_palette = self.view.palette()
+        # data_view_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
+        # self.view.setPalette(data_view_palette)
+        # self.view.setAlternatingRowColors(True)
+        # """"""
 
     def setDisplayVetricalHeader(self):
         """
@@ -791,6 +773,23 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
+    def setTableView(self):
+
+        self.vector_layer_cache = QgsVectorLayerCache(self._gis_layer,
+                                                 10000)
+        self.model = self._gis_table_model_class(
+            self.vector_layer_cache, self)
+        self.model.loadLayer()
+
+        self.filter_proxy = QgsAttributeTableFilterModel(
+            QgsMapCanvas(),
+            self.model
+        )
+
+        # self.view = QgsAttributeTableView()
+        # self.view = GisTableView(self)
+        self.view.setModel(self.filter_proxy)
+
     def initDataView(self):
         """
         initialisiere maintable
@@ -837,24 +836,32 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def getCustomData(self, session):
         """
         lade alle Daten für dieses DataView
+        :return: dict with custom data
+        """
+        pass
+
+    def setLayer(self):
+        """
+        erstelle hier den gis_layer
         :return:
         """
+        pass
 
     def loadData(self):
 
         with db_session_cm() as session:
 
-            mci_list = self.getMciList(session)
-            self.getCustomData(session)
+            self._mci_list = self.getMciList(session)
+            self._custom_data = self.getCustomData(session)
 
-        self.view.model().sourceModel().layoutAboutToBeChanged.emit()
-
-        self.view.model().sourceModel().mci_list.clear()
-
-        for mci in mci_list:
-            self.view.model().sourceModel().mci_list.append(mci)
-
-        self.view.model().sourceModel().layoutChanged.emit()
+        # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+        #
+        # self.view.model().sourceModel().mci_list.clear()
+        #
+        # for mci in mci_list:
+        #     self.view.model().sourceModel().mci_list.append(mci)
+        #
+        # self.view.model().sourceModel().layoutChanged.emit()
 
     def finalInit(self):
         """
@@ -871,6 +878,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if self._commit_entity:
 
             self.loadData()
+
+            self.setLayer()
+            self.setTableView()
+            self.updateFooter()
 
         self.updateFooter()
 
@@ -921,14 +932,15 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         aktualisiere alle footer elemente (zeilenanzahl, summenelemente, ...)
         """
-        for line in self.footer_list:
-            line.update_footer_line(self.getSelectedRows())
+        # for line in self.footer_list:
+        #     line.update_footer_line(self.getSelectedRows())
 
         self.displayed_rows = self.view.model().rowCount()
-        if self.getSelectedRows():
-            self.selected_rows_number = len(self.getSelectedRows())
-        else:
-            self.selected_rows_number = 0
+
+        # if self.getSelectedRows():
+        #     self.selected_rows_number = len(self.getSelectedRows())
+        # else:
+        #     self.selected_rows_number = 0
 
     def get_selected_type_id(self, index):
         """
@@ -964,9 +976,13 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def doubleClickedRow(self, index):
 
+        print(f'doubleclicke: row: {index.row()} - col: {index.column()}')
+
         if self.edit_behaviour == 'dialog':
 
-            self.indexBasedRowEdit(index)
+            proxy_index = self.getProxyIndex(index)
+
+            self.indexBasedRowEdit(proxy_index)
 
     def indexBasedRowEdit(self, index):
         """
@@ -994,7 +1010,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :param index: QModelIndex
         :return: int (z.B.: self._mci_list[self.getProxyIndex(index).row()].id)
         """
-        return self.model.mci_list[self.getProxyIndex(index).row()].id
+        # return self.model.mci_list[self.getProxyIndex(index).row()].id
+        return self.model.data(self.model.index(index.row(), 0), Qt.EditRole)
 
     def getEntityMci(self, index):
         """

@@ -56,6 +56,8 @@ class Entity(QMainWindow):
     _entity_mci = None  # Instanz der 'mapped class' des Entities
     _custom_data = {}
 
+    _feature = None
+
     valid = True
 
     _entity_id = None

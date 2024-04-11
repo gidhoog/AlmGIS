@@ -16,7 +16,7 @@ from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BKomplex, BAkt, BKoppel, BAbgrenzung
 from core.entity import EntityDialog
 from core.gis_item import GisItem
-from core.gis_layer import setLayerStyle
+from core.gis_layer import setLayerStyle, GstZuordLayer
 from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
 from core.data_view import DataView, TableModel, TableView, GisTableView, \
@@ -440,8 +440,8 @@ class GstAktDataView(DataView):
     gst_zuordnung_wdg_class = GstZuordnung
     gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None, mci_list=None, gis_layer=None, canvas=None):
-        super(__class__, self).__init__(parent, mci_list, gis_layer, canvas)
+    def __init__(self, parent=None):
+        super(__class__, self).__init__(parent)
 
         # self.vector_layer_cache = QgsVectorLayerCache(gis_layer, 10000)
         # self.attribute_table_model = QgsAttributeTableModel(self.vector_layer_cache)
@@ -485,32 +485,64 @@ class GstAktDataView(DataView):
 
         self.title = 'zugeordnete Grundstücke'
 
-        self.setStretchMethod(2)
-
-        # self.insertFooterLine('im AWB eingetragen und beweidet:',
-        #                       'ha', 8, 120,
-        #                       0.0001, 4, 4,
-        #                       '==', 1)
-        # self.insertFooterLine('beweidet:',
-        #                       'ha', 8, 120,
+        # self.setStretchMethod(2)
+        #
+        # # self.insertFooterLine('im AWB eingetragen und beweidet:',
+        # #                       'ha', 8, 120,
+        # #                       0.0001, 4, 4,
+        # #                       '==', 1)
+        # # self.insertFooterLine('beweidet:',
+        # #                       'ha', 8, 120,
+        # #                       0.0001, 4)
+        # # self.insertFooterLine('im AWB eingetrage Grundstücksfläche:',
+        # #                       'ha', 6, 120,
+        # #                       0.0001, 4, 4,
+        # #                       '==', 1)
+        # self.insertFooterLine('zugeordnete Grundstücksgesamtfläche:',
+        #                       'ha', 7, 120,
         #                       0.0001, 4)
-        # self.insertFooterLine('im AWB eingetrage Grundstücksfläche:',
-        #                       'ha', 6, 120,
-        #                       0.0001, 4, 4,
-        #                       '==', 1)
-        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche:',
-                              'ha', 7, 120,
-                              0.0001, 4)
+        #
+        # self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
+        #
+        # self.test_cut_btn = QPushButton()
+        # self.test_cut_btn.setText('test_cut')
+        # self.uiTableFilterHLay.addWidget(self.test_cut_btn)
+        #
+        # self.test_update_btn = QPushButton()
+        # self.test_update_btn.setText('test_update')
+        # self.uiTableFilterHLay.addWidget(self.test_update_btn)
 
-        self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
+    def setLayer(self):
+        super().setLayer()
 
-        self.test_cut_btn = QPushButton()
-        self.test_cut_btn.setText('test_cut')
-        self.uiTableFilterHLay.addWidget(self.test_cut_btn)
+        self._gis_layer = GstZuordLayer(
+            "Polygon?crs=epsg:31259",
+            "GstZuordnungLay",
+            "memory"
+        )
 
-        self.test_update_btn = QPushButton()
-        self.test_update_btn.setText('test_update')
-        self.uiTableFilterHLay.addWidget(self.test_update_btn)
+        # for gst_zuor in self._entity_mci.rel_gst_zuordnung:
+        for gst_zuor in self._mci_list:
+
+            for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
+
+                feat = QgsFeature(self._gis_layer.fields())
+                feat.setAttributes([gst_version.id,
+                                    gst_zuor.rel_gst.gst,
+                                    gst_version.rel_alm_gst_ez.ez,
+                                    gst_version.rel_alm_gst_ez.kgnr,
+                                    gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+                                    gst_zuor.awb_status_id,
+                                    gst_zuor.rechtsgrundlage_id,
+                                    '',
+                                    gst_version.rel_alm_gst_ez.datenstand])
+
+                geom_wkt = to_shape(gst_version.geometry).wkt
+                geom_new = QgsGeometry()
+                geom = geom_new.fromWkt(geom_wkt)
+                feat.setGeometry(geom)
+
+                self._gis_layer.data_provider.addFeatures([feat])
 
     def signals(self):
         super().signals()

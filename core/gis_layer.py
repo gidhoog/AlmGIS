@@ -81,6 +81,17 @@ def setLayerStyle(layer: QgsVectorLayer, qml_file_name: str):
     layer.loadNamedStyle(qml_path)
     layer.triggerRepaint()
 
+
+class Feature(QgsFeature):
+
+    _mci = None
+
+    def __init__(self, fields, parent=None):
+        super().__init__(fields)
+
+        self.parent = parent
+
+
 class GisLayer:
     """
     basis-class für einen layer
@@ -102,6 +113,37 @@ class GisVectorLayer(QgsVectorLayer, GisLayer):
     """
     basis-class für einen vector-layer
     """
+
+
+class AktAllLayer(QgsVectorLayer):
+    """
+    GIS-Layer für zugeordnete Grundstücke
+    """
+
+    def __init__(self, path: str = ...,
+                 baseName: str = ...,
+                 providerLib: str = ...,
+                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions()) -> None:
+        super().__init__(path, baseName, providerLib, options)
+
+        self.data_provider = self.dataProvider()
+
+        self.data_provider.addAttributes([QgsField("akt_id", QVariant.Int),
+                               QgsField("az", QVariant.Int),
+                               QgsField("name", QVariant.String),
+                               QgsField("status_id", QVariant.Int),
+                               QgsField("status", QVariant.String),
+                               QgsField("stz", QVariant.String),
+                               QgsField("wwp", QVariant.Int),
+                               QgsField("wwp_jahr", QVariant.Int),
+                               QgsField("awb_area_gb", QVariant.Int),
+                               QgsField("awb_area_beweidet", QVariant.Int),
+                               QgsField("weide_area", QVariant.Int)])
+
+        self.updateFields()
+
+        self.back = False
+        self.base = False
 
 
 class GstZuordLayer(QgsVectorLayer):

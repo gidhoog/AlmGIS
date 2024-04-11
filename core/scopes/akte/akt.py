@@ -297,47 +297,60 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
-        self.gst_zuord_layer = GstZuordLayer(
-            "Polygon?crs=epsg:31259",
-            "GstZuordnungLay",
-            "memory"
-        )
-
-        for gst_zuor in self._entity_mci.rel_gst_zuordnung:
-
-            for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
-
-                feat = QgsFeature(self.gst_zuord_layer.fields())
-                feat.setAttributes([gst_version.id,
-                                    gst_zuor.rel_gst.gst,
-                                    gst_version.rel_alm_gst_ez.ez,
-                                    gst_version.rel_alm_gst_ez.kgnr,
-                                    gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-                                    gst_zuor.awb_status_id,
-                                    gst_zuor.rechtsgrundlage_id,
-                                    '',
-                                    gst_version.rel_alm_gst_ez.datenstand])
-
-                geom_wkt = to_shape(gst_version.geometry).wkt
-                geom_new = QgsGeometry()
-                geom = geom_new.fromWkt(geom_wkt)
-                feat.setGeometry(geom)
-
-                self.gst_zuord_layer.data_provider.addFeatures([feat])
+        # self.gst_zuord_layer = GstZuordLayer(
+        #     "Polygon?crs=epsg:31259",
+        #     "GstZuordnungLay",
+        #     "memory"
+        # )
+        #
+        # for gst_zuor in self._entity_mci.rel_gst_zuordnung:
+        #
+        #     for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
+        #
+        #         feat = QgsFeature(self.gst_zuord_layer.fields())
+        #         feat.setAttributes([gst_version.id,
+        #                             gst_zuor.rel_gst.gst,
+        #                             gst_version.rel_alm_gst_ez.ez,
+        #                             gst_version.rel_alm_gst_ez.kgnr,
+        #                             gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+        #                             gst_zuor.awb_status_id,
+        #                             gst_zuor.rechtsgrundlage_id,
+        #                             '',
+        #                             gst_version.rel_alm_gst_ez.datenstand])
+        #
+        #         geom_wkt = to_shape(gst_version.geometry).wkt
+        #         geom_new = QgsGeometry()
+        #         geom = geom_new.fromWkt(geom_wkt)
+        #         feat.setGeometry(geom)
+        #
+        #         self.gst_zuord_layer.data_provider.addFeatures([feat])
 
         """definiere notwendige tabellen und füge sie ein"""
-        self.gst_table = GstAktDataView(self,
-                                        gis_layer=self.gst_zuord_layer,
-                                        canvas=self.guiMainGis.uiCanvas)
 
+        self.gst_table = GstAktDataView(self)
         self.uiGstListeVlay.addWidget(self.gst_table)
-        """"""
+        self.gst_table.setCanvas(self.guiMainGis.uiCanvas)
 
-        self.guiMainGis.project_instance.addMapLayer(self.gst_zuord_layer)
+        self.gst_table._mci_list = self._entity_mci.rel_gst_zuordnung
 
-        self.gst_zuord_layer.updateExtents()
+        self.gst_table.setLayer()
+        self.gst_table.setTableView()
 
-        extent = self.gst_zuord_layer.extent()
+        self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
+
+
+        # self.gst_table = GstAktDataView(self,
+        #                                 gis_layer=self.gst_zuord_layer,
+        #                                 canvas=self.guiMainGis.uiCanvas)
+        #
+        # self.uiGstListeVlay.addWidget(self.gst_table)
+        # """"""
+        #
+        # self.guiMainGis.project_instance.addMapLayer(self.gst_zuord_layer)
+        #
+        self.gst_table._gis_layer.updateExtents()
+
+        extent = self.gst_table._gis_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
 
 

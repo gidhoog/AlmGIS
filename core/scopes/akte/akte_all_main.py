@@ -14,6 +14,7 @@ from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus, BAbgrenzung
 from core.entity import EntityDialog
 from core.data_view import DataView, TableModel, TableView
+from core.gis_layer import AktAllLayer, Feature
 from core.main_widget import MainWidget
 from core.scopes.akte.akt import Akt
 
@@ -228,6 +229,16 @@ class AkteAllMain(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
+        self.loadData()
+        self.setLayer()
+        self.setTableView()
+
+        self.updateFooter()
+
+        self.signals()
+
+        print(f'...')
+
     def initUi(self):
         super().initUi()
 
@@ -295,12 +306,44 @@ class AkteAllMain(DataView):
 
         return mci
 
+    def setLayer(self):
+        super().setLayer()
+
+        self._gis_layer = AktAllLayer(
+            "None",
+            "AktAllLay",
+            "memory"
+        )
+
+        for akt in self._mci_list:
+
+            feat = Feature(self._gis_layer.fields(), self)
+            feat.setAttributes([
+                akt.id,
+                akt.az,
+                akt.name,
+                0,
+                '',
+                akt.stz,
+                akt.wwp,
+                akt.wwp_jahr,
+                1,
+                2,
+                3
+            ])
+
+            self._gis_layer.data_provider.addFeatures([feat])
+
     def getCustomData(self, session):
+
+        custom_data = {}
 
         status_stmt = select(BBearbeitungsstatus)
         status_mci = session.scalars(status_stmt).all()
 
-        self._custom_data['status'] = status_mci
+        custom_data['status'] = status_mci
+
+        return custom_data
 
     def updateMainWidget(self):
 
