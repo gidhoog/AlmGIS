@@ -254,11 +254,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         self.uiKKTv.setColumnHidden(3, True)
         self.uiKKTv.setColumnHidden(4, True)
 
-    def finalSize(self):
-
-        self.uiKoppelFrm.resize(self.uiKoppelFrm.width(), 700)
-        # self.uiKoppelFrm.resize(100, 700)
-
     def mapData(self):
         super().mapData()
 

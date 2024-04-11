@@ -26,10 +26,26 @@ class GisTableView(QgsAttributeTableView):
     def __init__(self, parent):
         super(GisTableView, self).__init__(parent)
 
-        # self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        # self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        self.doubleClicked.connect(self.test_click)
+
+    def test_click(self):
+
+        print(f'++++++ double clicked +++++++')
+
+        # self.verticalHeader().setSectionsClickable(True)
         #
         # self.setAlternatingRowColors(True)
+
+    # def selectionMode(self):
+    #
+    #     return QAbstractItemView.ExtendedSelection
+    #
+    # def selectionBehavior(self):
+    #
+    #     return QAbstractItemView.SelectRows
 
 
 class GisTableModel(QgsAttributeTableModel):
@@ -464,6 +480,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.uiTableVlay.addWidget(self.view)
 
+        self.view_gis = GisTableView(self)
+        self.uiTableVlay.addWidget(self.view_gis)
 
         # """liste mit den widgets im fußbereich der tabelle (zum anzeigen
         # verschiedener spaltensummen"""
@@ -1278,7 +1296,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.entity_dialog.resize(self.minimumSizeHint())
 
         self.entity_dialog.show()
-        self.entity_dialog.dialogWidget.finalSize()
 
         self.entity_dialog.rejected.connect(self.rejectEditingInDialog)
 
