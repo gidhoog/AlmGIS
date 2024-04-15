@@ -15,6 +15,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
     """
 
     _column_calc = 0
+    _attribute = ''
     _decimal = None
     _factor = 1
     _label = ''
@@ -22,6 +23,14 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
     _value = ''
     _value_sel = ''
     _value_width = ''
+
+    @property  # getter
+    def attribute(self):
+        return self._attribute
+
+    @attribute.setter
+    def attribute(self, value):
+        self._attribute = value
 
     @property  # getter
     def column_calc(self):
@@ -93,7 +102,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         self.uiValueSelLedit.setMaximumWidth(val)
         self._value_width = val
 
-    def __init__(self, parent, label_text, unit, column_calc, value_width,
+    def __init__(self, parent, label_text, unit, attribute, value_width,
                  factor=1, decimal=None, filter_col=None, filter_operator=None,
                  filter_criterion=None):
         super(__class__, self).__init__()
@@ -101,7 +110,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
         self.parent = parent
 
-        self.column_calc = column_calc
+        self.attribute = attribute
         self.decimal = decimal
         self.factor = factor
         self.label = label_text
@@ -123,30 +132,70 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
         self.uiValueSelLedit.setVisible(False)
 
-    def update_footer_line(self, sel_indexes):
+    def update_footer_line(self):
         """
-        aktualisiere die footer_line
+        aktualisiere die Spaltensummen in den Fußzeilen
         :return:
         """
-
         value_text = ''
         value_sel_text = ''
-        if self.parent.filter_proxy:
-            footer_model = self.parent.filter_proxy
-            amount = self.calc_column(footer_model, self.column_calc, sel_indexes)
-            value_text = str(amount[0])
-            value_sel_text = str(amount[1])
 
+        field_names = [field for field in self.parent._gis_layer.fields()]
+        field_type = [f for f in field_names if self.attribute == f.name()][0].typeName()
+
+        sel_feature_ids = self.parent._gis_layer.selectedFeatureIds()
+
+        if field_type == 'integer':
+            amount = 0
+            amount_sel = 0
+        if field_type == 'double':
+            amount = 0.00
+            amount_sel = 0.00
+
+        calc_amount = self.calc_all_values(amount)
+        calc_amount_sel = self.calc_sel_values(amount_sel, sel_feature_ids)
+
+        value_text = str(self.round_value(calc_amount, self.decimal, self.factor))
+        value_sel_text = str(self.round_value(calc_amount_sel, self.decimal, self.factor))
 
         self.value = value_text
         self.value_sel = value_sel_text
 
         """steuere die Sichtbarkeit der des Wertes für ausgewählte Zeilen"""
-        if len(sel_indexes) > 1:
+        if len(sel_feature_ids) > 0:
             self.uiValueSelLedit.setVisible(True)
         else:
             self.uiValueSelLedit.setVisible(False)
         """"""
+
+    def calc_all_values(self, amount):
+
+        for ff in self.parent._gis_layer.getFeatures():
+            amount = amount + ff.attribute(self.attribute)
+
+        return amount
+
+    def calc_sel_values(self, amount_sel, sel_feature_ids):
+
+        for feat_id in sel_feature_ids:
+
+            feat = self.parent._gis_layer.getFeature(feat_id)
+            amount_sel = amount_sel + feat.attribute(self.attribute)
+
+        return amount_sel
+
+    def round_value(self, value, decimal, factor):
+
+        if decimal:
+
+            decimal_string = '{:.' + str(decimal) + 'f}'
+            result = decimal_string.format(
+                round(float(value * factor),
+                      decimal)).replace(".", ",")
+
+            return result
+
+        return value
 
     def calc_column(self, model, col, sel_indexes=None):
         """

@@ -26,8 +26,8 @@ class GisTableView(QgsAttributeTableView):
     def __init__(self, parent):
         super(GisTableView, self).__init__(parent)
 
-        self.setSelectionMode(QAbstractItemView.MultiSelection)
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # self.setSelectionMode(QAbstractItemView.MultiSelection)
+        # self.setSelectionBehavior(QAbstractItemView.SelectRows)
 
     #     self.doubleClicked.connect(self.test_click)
     #
@@ -493,9 +493,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     #
     #     self._gis_layer = layer
 
-    def test_sel(self):
+    def test_sel(self, selected):
 
-        print(f':::::::::selection changed ::::::::::::')
+        print(f':::::::::selection changed :::::::::::: {selected}')
+
+        print(f'selected feature-ids: {self._gis_layer.selectedFeatureIds()}')
 
     def signals(self):
 
@@ -507,11 +509,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # self.view.selectionModel().selectionChanged \
         #     .connect(self.selectedRowsChanged)
         #
-        # if self._gis_layer is not None:
-        #     self._gis_layer.selectionChanged.connect(self.test_sel)
-        # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
-        #
-        # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
+        if self._gis_layer is not None:
+            self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
+
+        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+        self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
         #
         # self.uiActionExportCsv.triggered.connect(self.export_csv)
 
@@ -529,13 +531,19 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def selectAllRows(self):
 
-        self.view.selectAll()
+        self._gis_layer.selectAll()
+
+        self.view.setFocus()
 
     def clearSelectedRows(self):
         """
         hebe die auswahl der zeilen auf
         """
-        self.view.selectionModel().clear()
+        # self.view.selectionModel().clear()
+
+        self._gis_layer.removeSelection()
+
+        self.view.setFocus()
 
     def selectedRowsChanged(self):
         """
@@ -913,7 +921,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.view.horizontalHeader().setSectionResizeMode(
                 QHeaderView.Stretch)
 
-    def insertFooterLine(self, label, unit, column_calc, amount_width, factor=1,
+    def insertFooterLine(self, label, unit, attribute, amount_width, factor=1,
                          decimal=None, filter_col=None, filter_operator=None,
                          filter_criterion=None):
         """
@@ -921,7 +929,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         in das layout 'uiFooterLinesVlay' ein
         """
 
-        footer_line = self._footer_line(self, label, unit, column_calc, amount_width,
+        footer_line = self._footer_line(self, label, unit, attribute, amount_width,
                                         factor, decimal, filter_col, filter_operator,
                                         filter_criterion)
 
@@ -932,10 +940,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         aktualisiere alle footer elemente (zeilenanzahl, summenelemente, ...)
         """
-        # for line in self.footer_list:
-        #     line.update_footer_line(self.getSelectedRows())
+        for line in self.footer_list:
+            line.update_footer_line(self.getSelectedRows())
 
         self.displayed_rows = self.view.model().rowCount()
+        self.selected_rows_number = len(self._gis_layer.selectedFeatureIds())
 
         # if self.getSelectedRows():
         #     self.selected_rows_number = len(self.getSelectedRows())

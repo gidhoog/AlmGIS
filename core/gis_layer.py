@@ -138,7 +138,7 @@ class AktAllLayer(QgsVectorLayer):
                                QgsField("wwp_jahr", QVariant.Int),
                                QgsField("awb_area_gb", QVariant.Int),
                                QgsField("awb_area_beweidet", QVariant.Int),
-                               QgsField("weide_area", QVariant.Int)])
+                               QgsField("weide_area", QVariant.Double)])
 
         self.updateFields()
 

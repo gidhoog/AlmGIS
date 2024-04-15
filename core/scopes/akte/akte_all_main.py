@@ -247,13 +247,13 @@ class AkteAllMain(DataView):
         self.setStretchMethod(2)
 
         self.insertFooterLine('Gesamtweidefläche',
-                              'ha', 9, 120,
-                              0.0001, 4)
+                              'ha', 'weide_area', 120,
+                              1, 4)
         self.insertFooterLine('davon beweidet',
-                              'ha', 8, 120,
+                              'ha', 'awb_area_beweidet', 120,
                               0.0001, 4)
         self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
-                              'ha', 7, 120,
+                              'ha', 'awb_area_gb', 120,
                               0.0001, 4)
 
         self.uiAddDataTbtn.setVisible(False)
@@ -329,7 +329,7 @@ class AkteAllMain(DataView):
                 akt.wwp_jahr,
                 1,
                 2,
-                3
+                3.3
             ])
 
             self._gis_layer.data_provider.addFeatures([feat])
