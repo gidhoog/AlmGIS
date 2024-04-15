@@ -209,6 +209,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _gis_layer = None
     _canvas = None
 
+    current_feature = None
+
     _view_class = GisTableView
 
     data_view_class = TableView
@@ -878,18 +880,39 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
-    def updateMaintableNew(self):
+    def updateCurrentFeatureAttributes(self, *args):
+        """
+        aktualisiere die attribute des current_feature
+        :param args:
+        :return:
+        """
+
+        pass
+
+    def updateMaintableNew(self, *args):
         """
         aktualisiere das table_view
         :return:
         """
-        if self._commit_entity:
+        # if self._commit_entity:
+        #
+        #     self.loadData()
+        #
+        #     self.setLayer()
+        #     self.setTableView()
+        #     self.updateFooter()
 
-            self.loadData()
+        if self.current_feature is not None:
 
-            self.setLayer()
-            self.setTableView()
-            self.updateFooter()
+            self.updateCurrentFeatureAttributes(args)
+
+            self._gis_layer.startEditing()
+            self._gis_layer.updateFeature(self.current_feature)
+            self._gis_layer.commitChanges()
+
+        self.view.model().sourceModel().modelChanged.emit()
+
+        # self.vector_layer_cache.attributeValueChanged.emit()
 
         self.updateFooter()
 
@@ -941,7 +964,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere alle footer elemente (zeilenanzahl, summenelemente, ...)
         """
         for line in self.footer_list:
-            line.update_footer_line(self.getSelectedRows())
+            line.update_footer_line()
 
         self.displayed_rows = self.view.model().rowCount()
         self.selected_rows_number = len(self._gis_layer.selectedFeatureIds())
@@ -1003,10 +1026,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if 0 <= index.column() <= 9999:  # all columns of the model
 
             entity_witdget_class = self.get_entity_widget_class(index)
+            self.current_feature = self.model.feature(index)
 
             if self.edit_entity_by == 'id':
                 self.editRow(entity_witdget_class(self),
-                             entity_id=self.getEntityId(index))
+                             entity_id=self.getEntityId(index),
+                             feature=self.current_feature)
 
             if self.edit_entity_by == 'mci':
                 self.editRow(entity_witdget_class(self),
@@ -1082,7 +1107,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         return []
 
-    def editRow(self, entity_widget, entity_id=None, entity_mci=None):
+    def editRow(self, entity_widget, entity_id=None, entity_mci=None, feature=None):
         """
         edit one table row;
         you could use the table_index to get the column (e.g. to open different
@@ -1092,7 +1117,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         if entity_id:
             entity_widget.editEntity(entity_id=entity_id,
-                                     custom_entity_data=self.getCustomEntityData())
+                                     custom_entity_data=self.getCustomEntityData(),
+                                     feature=feature)
 
         if entity_mci:
             entity_widget.editEntity(entity_mci=entity_mci,
@@ -1132,18 +1158,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             wdg_class = self.entity_widget_class
 
-        elif hasattr(self.mci_list[sel_index.row()], 'rel_type'):
+        elif hasattr(self._mci_list[sel_index.row()], 'rel_type'):
             """get the module and the widget_class from the
             type_data_instance"""
-            # module, widget_class = self.get_item_widget_class(
-            #     self.get_selected_type_id(sel_index))
-            module = self.mci_list[sel_index.row()].rel_type.module
-            widget_class = self.mci_list[sel_index.row()].rel_type.type_class
+
+            module = self._mci_list[sel_index.row()].rel_type.module
+            widget_class = self._mci_list[sel_index.row()].rel_type.type_class
 
             """import the widget_class and make a instance"""
             item_module = __import__(module, fromlist=[widget_class])
             wdg_class = getattr(item_module, widget_class)
-            # item_widget = wid(self)
             """"""
 
         return wdg_class

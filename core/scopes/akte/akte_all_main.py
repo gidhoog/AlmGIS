@@ -3,7 +3,7 @@ from _operator import attrgetter
 
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QLabel, QComboBox
+from qgis.PyQt.QtWidgets import QLabel, QComboBox, QDialog
 from qgis.core import QgsGeometry
 
 from sqlalchemy import func, select
@@ -18,6 +18,33 @@ from core.gis_layer import AktAllLayer, Feature
 from core.main_widget import MainWidget
 from core.scopes.akte.akt import Akt
 
+
+class AktDialog(EntityDialog):
+    """
+    dialog für die anzeige einer grundstückszuordnung
+    """
+
+    def __init__(self, parent):
+        super(__class__, self).__init__(parent)
+
+        # self.parent = parent
+        #
+        # self.enableApply = True
+
+        self.dialog_window_title = 'Alm- und Weidebuchakt'
+        # self.set_apply_button_text('&Speichern und Schließen')
+
+
+    def accept(self):
+        super().accept()
+
+        if self.dialogWidget.acceptEntity() is not None:
+
+            new_mci = self.dialogWidget.acceptEntity()
+
+            self.parent.updateMaintableNew(new_mci)
+
+        QDialog.accept(self)
 
 class AkteAllMainWidget(MainWidget):
     """
@@ -185,7 +212,6 @@ class AktAllModel(TableModel):
                     last_abgrenzung = max(self.mci_list[row].rel_abgrenzung,
                                       key=attrgetter('jahr'))
 
-
                     for komplex in last_abgrenzung.rel_komplex:
                         for koppel in komplex.rel_koppel:
                             kop_area = kop_area + koppel.koppel_area
@@ -209,6 +235,8 @@ class AkteAllMain(DataView):
 
     entity_widget_class = Akt
     _entity_mc = BAkt
+
+    entity_dialog_class = AktDialog
 
     _model_class = AktAllModel
 
@@ -248,7 +276,7 @@ class AkteAllMain(DataView):
 
         self.insertFooterLine('Gesamtweidefläche',
                               'ha', 'weide_area', 120,
-                              1, 4)
+                              0.0001, 4)
         self.insertFooterLine('davon beweidet',
                               'ha', 'awb_area_beweidet', 120,
                               0.0001, 4)
@@ -318,6 +346,17 @@ class AkteAllMain(DataView):
         for akt in self._mci_list:
 
             feat = Feature(self._gis_layer.fields(), self)
+
+            kop_area = 0.00
+            if akt.rel_abgrenzung != []:
+
+                last_abgrenzung = max(akt.rel_abgrenzung,
+                                      key=attrgetter('jahr'))
+
+                for komplex in last_abgrenzung.rel_komplex:
+                    for koppel in komplex.rel_koppel:
+                        kop_area = kop_area + koppel.koppel_area
+
             feat.setAttributes([
                 akt.id,
                 akt.az,
@@ -329,10 +368,33 @@ class AkteAllMain(DataView):
                 akt.wwp_jahr,
                 1,
                 2,
-                3.3
+                kop_area
             ])
 
             self._gis_layer.data_provider.addFeatures([feat])
+
+    def updateCurrentFeatureAttributes(self, *args):
+        super().updateCurrentFeatureAttributes(args)
+
+        new_mci = args[0][0]
+
+        with db_session_cm() as session:
+
+            session.add(new_mci)
+
+            # self._gis_layer.startEditing()
+            self.current_feature['az'] = new_mci.az
+            self.current_feature['name'] = new_mci.name
+            self.current_feature['status_id'] = new_mci.bearbeitungsstatus_id
+            self.current_feature['status'] = new_mci.rel_bearbeitungsstatus.name
+            self.current_feature['stz'] = new_mci.stz
+            self.current_feature['wwp'] = new_mci.wwp
+            self.current_feature['wwp_jahr'] = new_mci.wwp_jahr
+            self.current_feature['awb_area_gb'] = 1
+            self.current_feature['awb_area_beweidet'] = 2
+            self.current_feature['weide_area'] = 3.3
+            # self._gis_layer.updateFeature(self.current_feature)
+            # self._gis_layer.commitChanges()
 
     def getCustomData(self, session):
 

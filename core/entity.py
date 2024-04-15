@@ -56,7 +56,7 @@ class Entity(QMainWindow):
     _entity_mci = None  # Instanz der 'mapped class' des Entities
     _custom_data = {}
 
-    _feature = None
+    feature = None
 
     valid = True
 
@@ -150,7 +150,7 @@ class Entity(QMainWindow):
         self.setDefaultValues()
 
     @set_data
-    def editEntity(self, entity_mci=None, entity_id=None, **kwargs):
+    def editEntity(self, entity_mci=None, entity_id=None, feature=None, **kwargs):
         """
         instance der entity die bearbeitet werden soll
 
@@ -159,6 +159,7 @@ class Entity(QMainWindow):
         :param **kwargs: z.b. mci's für die Dateneingabe (die in der gleichen
             session wie die entity_mci erstellt werden sollten
         """
+        self.feature = feature
 
         if entity_mci is not None:
             self._entity_mci = entity_mci
@@ -297,7 +298,8 @@ class Entity(QMainWindow):
             self.submitEntity()
             if self._commit_on_apply:
                 self.commitEntity()
-            return True
+            # return True
+            return self._entity_mci
         elif self.valid == False:
             self.valid = True
             return False
@@ -320,7 +322,15 @@ class Entity(QMainWindow):
             except:
                 print(f'cannot add {self._entity_mci} to session')
 
-        print(f'...')
+        # print('aa')
+        #
+        # self.parent._gis_layer.startEditing()
+        # self.feature['wwp_jahr'] = self.wwp_jahr
+        # self.parent._gis_layer.updateFeature(self.feature)
+        # # self.parent.vector_layer_cache.attributeValueChanged(self._feature.id, 0, 444)
+        # self.parent._gis_layer.commitChanges()
+        #
+        # print(f'bb')
 
     def rejectEntity(self):
         """
