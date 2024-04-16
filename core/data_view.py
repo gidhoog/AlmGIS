@@ -901,13 +901,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere das table_view
         :return:
         """
-        # if self._commit_entity:
-        #
-        #     self.loadData()
-        #
-        #     self.setLayer()
-        #     self.setTableView()
-        #     self.updateFooter()
 
         if self.current_feature is not None:
 
@@ -918,8 +911,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self._gis_layer.commitChanges()
 
         self.view.model().sourceModel().modelChanged.emit()
-
-        # self.vector_layer_cache.attributeValueChanged.emit()
 
         self.updateFooter()
 
@@ -1016,6 +1007,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def doubleClickedRow(self, index):
 
         print(f'doubleclicke: row: {index.row()} - col: {index.column()}')
+
+        self.model_index = index
 
         if self.edit_behaviour == 'dialog':
 
