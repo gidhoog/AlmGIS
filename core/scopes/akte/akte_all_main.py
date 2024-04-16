@@ -347,34 +347,63 @@ class AkteAllMain(DataView):
 
             feat = Feature(self._gis_layer.fields(), self)
 
-            kop_area = 0.00
-            if akt.rel_abgrenzung != []:
+            self.setFeatureAttributes(feat, akt)
 
-                last_abgrenzung = max(akt.rel_abgrenzung,
-                                      key=attrgetter('jahr'))
+            # kop_area = 0.00
+            # if akt.rel_abgrenzung != []:
+            #
+            #     last_abgrenzung = max(akt.rel_abgrenzung,
+            #                           key=attrgetter('jahr'))
+            #
+            #     for komplex in last_abgrenzung.rel_komplex:
+            #         for koppel in komplex.rel_koppel:
+            #             kop_area = kop_area + koppel.koppel_area
 
-                for komplex in last_abgrenzung.rel_komplex:
-                    for koppel in komplex.rel_koppel:
-                        kop_area = kop_area + koppel.koppel_area
 
-            feat.setAttributes([
-                akt.id,
-                akt.az,
-                akt.name,
-                0,
-                '',
-                akt.stz,
-                akt.wwp,
-                akt.wwp_jahr,
-                1,
-                2,
-                kop_area
-            ])
+
+            # feat.setAttributes([
+            #     akt.id,
+            #     akt.az,
+            #     akt.name,
+            #     0,
+            #     '',
+            #     akt.stz,
+            #     akt.wwp,
+            #     akt.wwp_jahr,
+            #     1,
+            #     2,
+            #     kop_area
+            # ])
 
             self._gis_layer.data_provider.addFeatures([feat])
 
-    def updateCurrentFeatureAttributes(self, *args):
-        super().updateCurrentFeatureAttributes(args)
+    def setFeatureAttributes(self, feature, mci):
+        super().setFeatureAttributes(feature, mci)
+
+        kop_area = 0.00
+        if mci.rel_abgrenzung != []:
+
+            last_abgrenzung = max(mci.rel_abgrenzung,
+                                  key=attrgetter('jahr'))
+
+            for komplex in last_abgrenzung.rel_komplex:
+                for koppel in komplex.rel_koppel:
+                    kop_area = kop_area + koppel.koppel_area
+
+        feature['akt_id'] = mci.id
+        feature['az'] = mci.az
+        feature['name'] = mci.name
+        feature['status_id'] = mci.bearbeitungsstatus_id
+        feature['status'] = mci.rel_bearbeitungsstatus.name
+        feature['stz'] = mci.stz
+        feature['wwp'] = mci.wwp
+        feature['wwp_jahr'] = mci.wwp_jahr
+        feature['awb_area_gb'] = 1
+        feature['awb_area_beweidet'] = 2
+        feature['weide_area'] = kop_area
+
+    def updateFeatureAttributes(self, *args):
+        super().updateFeatureAttributes(args)
 
         new_mci = args[0][0]
 
@@ -382,17 +411,10 @@ class AkteAllMain(DataView):
 
             session.add(new_mci)
 
+            self.setFeatureAttributes(self.current_feature, new_mci)
+
             # self._gis_layer.startEditing()
-            self.current_feature['az'] = new_mci.az
-            self.current_feature['name'] = new_mci.name
-            self.current_feature['status_id'] = new_mci.bearbeitungsstatus_id
-            self.current_feature['status'] = new_mci.rel_bearbeitungsstatus.name
-            self.current_feature['stz'] = new_mci.stz
-            self.current_feature['wwp'] = new_mci.wwp
-            self.current_feature['wwp_jahr'] = new_mci.wwp_jahr
-            self.current_feature['awb_area_gb'] = 1
-            self.current_feature['awb_area_beweidet'] = 2
-            self.current_feature['weide_area'] = 3.3
+
             # self._gis_layer.updateFeature(self.current_feature)
             # self._gis_layer.commitChanges()
 

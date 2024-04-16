@@ -880,14 +880,21 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
-    def updateCurrentFeatureAttributes(self, *args):
+    def setFeatureAttributes(self, feature, mci):
         """
-        aktualisiere die attribute des current_feature
+        setze die attribute eines features
         :param args:
         :return:
         """
 
         pass
+
+    def updateFeatureAttributes(self, *args):
+        """
+        aktualisiere die attribute des current_feature
+        :param args:
+        :return:
+        """
 
     def updateMaintableNew(self, *args):
         """
@@ -904,7 +911,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         if self.current_feature is not None:
 
-            self.updateCurrentFeatureAttributes(args)
+            self.updateFeatureAttributes(args)
 
             self._gis_layer.startEditing()
             self._gis_layer.updateFeature(self.current_feature)
