@@ -50,8 +50,18 @@ class GisTableView(QgsAttributeTableView):
 
 class GisTableModel(QgsAttributeTableModel):
 
+    header = []
+
     def __init__(self, layerCache, parent=None):
         super(GisTableModel, self).__init__(layerCache, parent)
+
+    def headerData(self, column, orientation, role=None):
+        super().headerData(column, orientation, role)
+
+        if self.header:
+            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+
+                return self.header[column]
 
     # def data(self, index: QModelIndex, role: int = ...):
     #
@@ -796,8 +806,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.model
         )
 
-        # self.view = QgsAttributeTableView()
-        # self.view = GisTableView(self)
         self.view.setModel(self.filter_proxy)
 
     def initDataView(self):
@@ -856,6 +864,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
         pass
+
+    def setColumnVisibility(self, layer, columnName, visible):
+        config = layer.attributeTableConfig()
+        columns = config.columns()
+        for column in columns:
+            if column.name == columnName:
+                column.hidden = not visible
+                break
+        config.setColumns(columns)
+        layer.setAttributeTableConfig(config)
 
     def loadData(self):
 

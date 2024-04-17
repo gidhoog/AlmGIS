@@ -133,6 +133,7 @@ class AktAllLayer(QgsVectorLayer):
                                QgsField("name", QVariant.String),
                                QgsField("status_id", QVariant.Int),
                                QgsField("status", QVariant.String),
+                               QgsField("status_color", QVariant.String),
                                QgsField("stz", QVariant.String),
                                QgsField("wwp", QVariant.Int),
                                QgsField("wwp_jahr", QVariant.Int),

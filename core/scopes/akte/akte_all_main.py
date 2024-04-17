@@ -49,6 +49,20 @@ class AktDialog(EntityDialog):
 
 class AkteAllMainTableModel(GisTableModel):
 
+    header = ['id',
+              'AZ',
+              'Akt',
+              'status_id',
+              'Bearbeitung',
+              'status_color',
+              'Stz',
+              'WWP',
+              'WWP gültig',
+              'AWB Fläche',
+              'AWB beweidet',
+              'Weidefläche',
+              ]
+
     def __init__(self, layerCache, parent=None):
         super(__class__, self).__init__(layerCache, parent)
 
@@ -66,11 +80,30 @@ class AkteAllMainTableModel(GisTableModel):
             #
             #     return Qt.AlignRight | Qt.AlignVCenter
 
-            if index.column() in [1, 5, 6, 7]:
+            if index.column() in [1, 6, 7, 8]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
-        if index.column() == 6:
+        if role == Qt.BackgroundRole:
+            if index.column() == 4:
+
+                color_str = self.feature(index).attribute('status_color')
+                color_list = color_str.split(", ")
+
+                return QColor(int(color_list[0]),
+                              int(color_list[1]),
+                              int(color_list[2]))
+                # status_id = self.feature('status_id')
+                # if status_id == 'eingetragen':
+                #     return QColor(189, 239, 255)
+                # if status_id == 'nicht eingetragen':
+                #     return QColor(234, 216, 54)
+                # if status_id == 'gelöscht':
+                #     return QColor(234, 163, 165)
+                # if status_id == 'historisch':
+                #     return QColor(170, 170, 170)
+
+        if index.column() == 7:
 
             if role == Qt.DisplayRole:
 
@@ -80,6 +113,39 @@ class AkteAllMainTableModel(GisTableModel):
 
                 else:
                     return ''
+
+        if index.column() == 8:
+
+            if role == Qt.DisplayRole:
+
+                return str(self.feature(index).attribute('wwp_jahr'))
+
+        if index.column() == 9:
+
+            if role == Qt.DisplayRole:
+
+                area = self.feature(index).attribute('awb_area_gb')
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(
+                    ".", ",")
+                return area_r + ' ha'
+
+        if index.column() == 10:
+
+            if role == Qt.DisplayRole:
+
+                area = self.feature(index).attribute('awb_area_beweidet')
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(
+                    ".", ",")
+                return area_r + ' ha'
+
+        if index.column() == 11:
+
+            if role == Qt.DisplayRole:
+
+                area = self.feature(index).attribute('weide_area')
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(
+                    ".", ",")
+                return area_r + ' ha'
 
         # if index.column() == 7:
         #
@@ -316,6 +382,8 @@ class AkteAllMain(DataView):
         self.setLayer()
         self.setTableView()
 
+        self.finalInit()
+
         self.updateFooter()
 
         self.signals()
@@ -404,58 +472,67 @@ class AkteAllMain(DataView):
 
             self.setFeatureAttributes(feat, akt)
 
-            # kop_area = 0.00
-            # if akt.rel_abgrenzung != []:
-            #
-            #     last_abgrenzung = max(akt.rel_abgrenzung,
-            #                           key=attrgetter('jahr'))
-            #
-            #     for komplex in last_abgrenzung.rel_komplex:
-            #         for koppel in komplex.rel_koppel:
-            #             kop_area = kop_area + koppel.koppel_area
-
-
-
-            # feat.setAttributes([
-            #     akt.id,
-            #     akt.az,
-            #     akt.name,
-            #     0,
-            #     '',
-            #     akt.stz,
-            #     akt.wwp,
-            #     akt.wwp_jahr,
-            #     1,
-            #     2,
-            #     kop_area
-            # ])
-
             self._gis_layer.data_provider.addFeatures([feat])
+
+    def finalInit(self):
+
+        self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(3, True)
+        self.view.setColumnHidden(5, True)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
 
-        kop_area = 0.00
+        """weide_area"""
+        weide_area = 0.00
         if mci.rel_abgrenzung != []:
-
             last_abgrenzung = max(mci.rel_abgrenzung,
                                   key=attrgetter('jahr'))
-
             for komplex in last_abgrenzung.rel_komplex:
                 for koppel in komplex.rel_koppel:
-                    kop_area = kop_area + koppel.koppel_area
+                    weide_area = weide_area + koppel.koppel_area
+        """weide_area"""
+
+        """awb area"""
+        gst_area = 0
+        for gst_zuord in mci.rel_gst_zuordnung:
+
+            if gst_zuord.awb_status_id == 1:
+                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                gst_nutz_area = 0
+                for ba in last_gst.rel_alm_gst_nutzung:
+                    gst_nutz_area = gst_nutz_area + ba.area
+                gst_area = gst_area + gst_nutz_area
+        """"""
+
+        """awb beweidet"""
+        cut_area = 0
+        for gst_zuord in mci.rel_gst_zuordnung:
+
+            if gst_zuord.awb_status_id == 1:
+                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                for cut in last_gst.rel_cut_koppel_gst:
+                    cut_area = cut_area + cut.cutarea
+        """"""
 
         feature['akt_id'] = mci.id
         feature['az'] = mci.az
         feature['name'] = mci.name
         feature['status_id'] = mci.bearbeitungsstatus_id
         feature['status'] = mci.rel_bearbeitungsstatus.name
+        feature['status_color'] = mci.rel_bearbeitungsstatus.color
         feature['stz'] = mci.stz
         feature['wwp'] = mci.wwp
         feature['wwp_jahr'] = mci.wwp_jahr
-        feature['awb_area_gb'] = 1
-        feature['awb_area_beweidet'] = 2
-        feature['weide_area'] = kop_area
+        feature['awb_area_gb'] = gst_area
+        feature['awb_area_beweidet'] = cut_area
+        feature['weide_area'] = weide_area
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
