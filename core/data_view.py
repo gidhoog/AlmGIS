@@ -689,25 +689,33 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         setze das layout für die filter
         :return:
         """
-        if 'g' in self.available_filters:
-            self.setFilterGeneralUI()
+        pass
 
-        if 's' in self.available_filters:
-            self.setFilterScopeUI()
 
-    def setFilterGeneralUI(self):
-        """
-        setze das layout für den generellen filter
-        :return:
-        """
-        self.guiFiltGeneralLbl = QLabel("Suche:")
-        self.guiFiltGeneralLedit = QLineEdit(self)
-        self.guiFiltGeneralLedit.setClearButtonEnabled(True)
+        # if 'g' in self.available_filters:
+        #     self.setFilterGeneralUI()
+        #
+        # if 's' in self.available_filters:
+        #     self.setFilterScopeUI()
 
-        self.uiTableFilterHLay.insertWidget(0, self.guiFiltGeneralLbl)
-        self.uiTableFilterHLay.insertWidget(1, self.guiFiltGeneralLedit)
+    # def setFilterGeneralUI(self):
+    #     """
+    #     setze das layout für den generellen filter
+    #     :return:
+    #     """
+    #     self.guiFiltGeneralLbl = QLabel("Suche:")
+    #     self.guiFiltGeneralLedit = QLineEdit(self)
+    #     self.guiFiltGeneralLedit.setClearButtonEnabled(True)
+    #
+    #     self.uiTableFilterHLay.insertWidget(0, self.guiFiltGeneralLbl)
+    #     self.uiTableFilterHLay.insertWidget(1, self.guiFiltGeneralLedit)
+    #
+    #     self.guiFiltGeneralLedit.textChanged.connect(self.applyFilter)
 
-        self.guiFiltGeneralLedit.textChanged.connect(self.applyFilter)
+    def testGeneralFilter(self):
+
+        expression = '"status_id"=2'
+        self._gis_layer.setSubsetString(expression)
 
     def setFilterScopeUI(self):
         """
@@ -806,9 +814,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.vector_layer_cache, self)
         self.model.loadLayer()
 
-        self.filter_proxy = QgsAttributeTableFilterModel(
+        self.filter_proxy = GisSortFilterProxyModel(
             QgsMapCanvas(),
-            self.model
+            self.model,
+            self
         )
 
         self.view.setModel(self.filter_proxy)
@@ -1430,6 +1439,52 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere den maintable;
         """
         self.updateFooter()
+
+
+class GisSortFilterProxyModel(QgsAttributeTableFilterModel):
+
+    def __init__(self, canvas, sourceModel, parent=None):
+        super().__init__(canvas, sourceModel, parent)
+
+        self.parent = parent
+
+    # def filterAcceptsRow(self, source_row, source_parent):
+    #     """
+    #     diese methode überwacht ob ein filtereintrag mit einem datensatzeintrag
+    #     übereinstimmt
+    #
+    #     return True to display the row
+    #     return False to hide the row
+    #
+    #     :param source_row:
+    #     :param source_parent:
+    #     :return:
+    #     """
+    #     """filter general"""
+    #     if 'g' in self.parent.available_filters:
+    #         if self.parent.guiFiltGeneralLedit.text() != '':
+    #             found = False
+    #             """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
+    #             for col in range(len(self.parent.feature_fields)):
+    #                 col_value = self.sourceModel().data(
+    #                             self.sourceModel().index(source_row,
+    #                                                      col), Qt.DisplayRole)
+    #                 if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
+    #                         col_value).lower():
+    #                     found = True
+    #             """"""
+    #             if found == False:  # kein treffer in der zeile
+    #                 return False
+    #     """"""
+    #
+    #     """filter scope"""
+    #     if 's' in self.parent.available_filters:
+    #         if self.parent.useFilterScope(source_row, source_parent) == False:
+    #             return False
+    #     """"""
+    #
+    #     return True
+
 
 
 class SortFilterProxyModel(QSortFilterProxyModel):

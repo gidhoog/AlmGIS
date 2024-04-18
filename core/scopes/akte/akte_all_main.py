@@ -3,7 +3,7 @@ from _operator import attrgetter
 
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel, QVariant
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QLabel, QComboBox, QDialog
+from qgis.PyQt.QtWidgets import QLabel, QComboBox, QDialog, QLineEdit
 from qgis.core import QgsGeometry, QgsField
 
 from sqlalchemy import func, select
@@ -14,6 +14,7 @@ from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus, BAbgrenzung
 from core.entity import EntityDialog
 from core.data_view import DataView, TableModel, TableView, GisTableModel
+from core.filter_element import FilterElement
 from core.gis_layer import AktAllLayer, Feature
 from core.main_widget import MainWidget
 from core.scopes.akte.akt import Akt
@@ -365,12 +366,17 @@ class AkteAllMain(DataView):
         super(__class__, self).__init__(parent)
 
         self.setFeatureFields()
+        self.setFilterUI()
 
         self.loadData()
         self.setLayer()
         self.setTableView()
 
+
         self.finalInit()
+
+        # self.testGeneralFilter()
+        # self.setFilter()
 
         self.updateFooter()
 
@@ -614,61 +620,92 @@ class AkteAllMain(DataView):
 
         self.updateMaintable()
 
-    def setFilterScopeUI(self):
-        super().setFilterScopeUI()
+    def setFilterUI(self):
+        """
+        setze das layout für die filter
+        :return:
+        """
+        filter_name = FilterElement(self)
+        filter_name.uiLabelLbl.setText('Name:')
 
-        self.uicAktStatusFilterLbl = QLabel(self)
-        self.uicAktStatusFilterLbl.setText('Status:')
+        filter_name_input_wdg = QLineEdit(filter_name)
+        filter_name_input_wdg.setClearButtonEnabled(True)
+        filter_name.uiFilterElementLay.addWidget(filter_name_input_wdg)
 
-        self.uicAktStatusFilterCombo = QComboBox(self)
+        filter_name_input_wdg.textChanged.connect(self.filterName)
 
-        self.uiTableFilterHLay.insertWidget(2, self.uicAktStatusFilterLbl)
-        self.uiTableFilterHLay.insertWidget(3, self.uicAktStatusFilterCombo)
+        self.uiFilterVLay.addWidget(filter_name)
 
-    def setFilterScope(self):
-        super().setFilterScope()
+    def filterName(self, text):
 
-        self.setFilterStatus()
+        if text == '':
+            self._gis_layer.setSubsetString('')
 
-    def setFilterStatus(self):
+        else:
 
-        try:
-            self.uicAktStatusFilterCombo.currentTextChanged.disconnect(
-                self.filterMaintable)
-        except:
-            pass
-        finally:
-            prev_typ = self.uicAktStatusFilterCombo.currentText()
-            self.uicAktStatusFilterCombo.clear()
+            expression = f"lower(\"name\") LIKE '%{text}%'"
+            self._gis_layer.setSubsetString(expression)
 
-            self.uicAktStatusFilterCombo.addItem('- Alle -')
+        self.updateFooter()
 
-            status_list = self._custom_data['status']
-            status_sorted = sorted(status_list,
-                                    key=lambda x: x.sort)
+        print(f'************ filter name ************: {text}')
 
-            for status in status_sorted:
-                self.uicAktStatusFilterCombo.addItem(str(status.name))
 
-            self.uicAktStatusFilterCombo.setCurrentText(prev_typ)
-
-            self.uicAktStatusFilterCombo.currentTextChanged.connect(
-                self.applyFilter)
-
-    def useFilterScope(self, source_row, source_parent):
-        super().useFilterScope(source_row, source_parent)
-
-        try:
-            """filter status"""
-            table_value = self.filter_proxy.sourceModel() \
-                .data(self.filter_proxy.sourceModel().index(source_row, 2),
-            Qt.DisplayRole)
-            if self.uicAktStatusFilterCombo.currentText() != "- Alle -":
-                if str(table_value) != self.uicAktStatusFilterCombo.currentText():
-                    return False
-            """"""
-        except:
-            print("Filter Error:", sys.exc_info())
+    # def setFilterScopeUI(self):
+    #     super().setFilterScopeUI()
+    #
+    #     self.uicAktStatusFilterLbl = QLabel(self)
+    #     self.uicAktStatusFilterLbl.setText('Status:')
+    #
+    #     self.uicAktStatusFilterCombo = QComboBox(self)
+    #
+    #     self.uiTableFilterHLay.insertWidget(2, self.uicAktStatusFilterLbl)
+    #     self.uiTableFilterHLay.insertWidget(3, self.uicAktStatusFilterCombo)
+    #
+    # def setFilterScope(self):
+    #     super().setFilterScope()
+    #
+    #     self.setFilterStatus()
+    #
+    # def setFilterStatus(self):
+    #
+    #     try:
+    #         self.uicAktStatusFilterCombo.currentTextChanged.disconnect(
+    #             self.filterMaintable)
+    #     except:
+    #         pass
+    #     finally:
+    #         prev_typ = self.uicAktStatusFilterCombo.currentText()
+    #         self.uicAktStatusFilterCombo.clear()
+    #
+    #         self.uicAktStatusFilterCombo.addItem('- Alle -')
+    #
+    #         status_list = self._custom_data['status']
+    #         status_sorted = sorted(status_list,
+    #                                 key=lambda x: x.sort)
+    #
+    #         for status in status_sorted:
+    #             self.uicAktStatusFilterCombo.addItem(str(status.name))
+    #
+    #         self.uicAktStatusFilterCombo.setCurrentText(prev_typ)
+    #
+    #         self.uicAktStatusFilterCombo.currentTextChanged.connect(
+    #             self.applyFilter)
+    #
+    # def useFilterScope(self, source_row, source_parent):
+    #     super().useFilterScope(source_row, source_parent)
+    #
+    #     try:
+    #         """filter status"""
+    #         table_value = self.filter_proxy.sourceModel() \
+    #             .data(self.filter_proxy.sourceModel().index(source_row, 2),
+    #         Qt.DisplayRole)
+    #         if self.uicAktStatusFilterCombo.currentText() != "- Alle -":
+    #             if str(table_value) != self.uicAktStatusFilterCombo.currentText():
+    #                 return False
+    #         """"""
+    #     except:
+    #         print("Filter Error:", sys.exc_info())
 
     def signals(self):
         super().signals()
