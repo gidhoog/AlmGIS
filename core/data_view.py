@@ -426,15 +426,15 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self._selected_rows_number = value
 
-    @property  # getter
-    def title(self):
-        return self._title
-
-    @title.setter
-    def title(self, value):
-
-        self.uiTitleLbl.setText(value)
-        self._title = value
+    # @property  # getter
+    # def title(self):
+    #     return self._title
+    #
+    # @title.setter
+    # def title(self, value):
+    #
+    #     self.uiTitleLbl.setText(value)
+    #     self._title = value
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)

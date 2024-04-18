@@ -3,7 +3,8 @@ from _operator import attrgetter
 
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel, QVariant
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QLabel, QComboBox, QDialog, QLineEdit
+from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QDialog, QLineEdit,
+                                 QSpacerItem, QSizePolicy, QHBoxLayout)
 from qgis.core import QgsGeometry, QgsField
 
 from sqlalchemy import func, select
@@ -387,7 +388,7 @@ class AkteAllMain(DataView):
     def initUi(self):
         super().initUi()
 
-        self.title = 'alle Akte'
+        # self.title = 'alle Akte'
 
         self.setStretchMethod(2)
 
@@ -625,30 +626,82 @@ class AkteAllMain(DataView):
         setze das layout für die filter
         :return:
         """
-        filter_name = FilterElement(self)
-        filter_name.uiLabelLbl.setText('Name:')
 
-        filter_name_input_wdg = QLineEdit(filter_name)
-        filter_name_input_wdg.setClearButtonEnabled(True)
-        filter_name.uiFilterElementLay.addWidget(filter_name_input_wdg)
+        filter_lay = QHBoxLayout(self)
 
-        filter_name_input_wdg.textChanged.connect(self.filterName)
+        """filter name"""
+        # filter_name = FilterElement(self)
+        # filter_name.uiLabelLbl.setText('Name:')
+        filter_name_lbl = QLabel(self)
+        filter_name_lbl.setText('Name:')
 
-        self.uiFilterVLay.addWidget(filter_name)
+        self.filter_name_input_wdg = QLineEdit(self)
+        self.filter_name_input_wdg.setClearButtonEnabled(True)
+        self.filter_name_input_wdg.setMaximumWidth(200)
+        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
 
-    def filterName(self, text):
+        self.filter_name_input_wdg.textChanged.connect(self.useFilter)
 
-        if text == '':
+        # filter_lay.addWidget(filter_name)
+        """"""
+
+        """filter az"""
+        # filter_az = FilterElement(self)
+        # filter_az.uiLabelLbl.setText('AZ:')
+
+        filter_az_lbl = QLabel(self)
+        filter_az_lbl.setText('AZ:')
+
+        self.filter_az_input_wdg = QLineEdit(self)
+        self.filter_az_input_wdg.setClearButtonEnabled(True)
+        self.filter_az_input_wdg.setMaximumWidth(50)
+        # filter_az.uiFilterElementLay.insertWidget(1, self.filter_az_input_wdg)
+
+        self.filter_az_input_wdg.textChanged.connect(self.useFilter)
+
+        spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
+                                 QSizePolicy.Minimum)
+        filter_lay.addItem(spacerItem1)
+
+        filter_lay.addWidget(filter_name_lbl)
+        filter_lay.addWidget(self.filter_name_input_wdg)
+        filter_lay.addWidget(filter_az_lbl)
+        filter_lay.addWidget(self.filter_az_input_wdg)
+        """"""
+
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        filter_lay.addItem(spacerItem)
+
+        self.uiFilterGLay.addLayout(filter_lay, 0, 1)
+
+        # spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # self.uiFilterGLay.addItem(spacerItem2, 0, 2)
+
+    def useFilter(self):
+
+        name_text = self.filter_name_input_wdg.text()
+        az_text = self.filter_az_input_wdg.text()
+
+        name_expr = f"lower(\"name\") LIKE '%{name_text}%'"
+        az_expr = f"to_string(\"az\") LIKE '%{az_text}%'"
+
+        expr_list = []
+
+        if name_text != '':
+            expr_list.append(name_expr)
+
+        if az_text != '':
+            expr_list.append(az_expr)
+
+        if expr_list == []:
             self._gis_layer.setSubsetString('')
-
         else:
 
-            expression = f"lower(\"name\") LIKE '%{text}%'"
-            self._gis_layer.setSubsetString(expression)
+            expr_string = " and ".join(expr for expr in expr_list)
+            print(f'expression string: {expr_string}')
+            self._gis_layer.setSubsetString(expr_string)
 
         self.updateFooter()
-
-        print(f'************ filter name ************: {text}')
 
 
     # def setFilterScopeUI(self):
