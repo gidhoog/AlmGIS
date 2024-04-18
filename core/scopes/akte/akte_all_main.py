@@ -1,10 +1,10 @@
 import sys
 from _operator import attrgetter
 
-from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
+from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel, QVariant
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QLabel, QComboBox, QDialog
-from qgis.core import QgsGeometry
+from qgis.core import QgsGeometry, QgsField
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
@@ -48,20 +48,6 @@ class AktDialog(EntityDialog):
 
 
 class AkteAllMainTableModel(GisTableModel):
-
-    header = ['id',
-              'AZ',
-              'Akt',
-              'status_id',
-              'Bearbeitung',
-              'status_color',
-              'Stz',
-              'WWP',
-              'WWP gültig',
-              'AWB Fläche',
-              'AWB beweidet',
-              'Weidefläche',
-              ]
 
     def __init__(self, layerCache, parent=None):
         super(__class__, self).__init__(layerCache, parent)
@@ -378,6 +364,8 @@ class AkteAllMain(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
+        self.setFeatureFields()
+
         self.loadData()
         self.setLayer()
         self.setTableView()
@@ -463,7 +451,8 @@ class AkteAllMain(DataView):
         self._gis_layer = AktAllLayer(
             "None",
             "AktAllLay",
-            "memory"
+            "memory",
+            feature_fields=self.feature_fields
         )
 
         for akt in self._mci_list:
@@ -479,6 +468,66 @@ class AkteAllMain(DataView):
         self.view.setColumnHidden(0, True)
         self.view.setColumnHidden(3, True)
         self.view.setColumnHidden(5, True)
+
+        self.view.setColumnWidth(1, 40)
+        self.view.setColumnWidth(2, 200)
+        self.view.setColumnWidth(4, 100)
+        self.view.setColumnWidth(6, 60)
+        self.view.setColumnWidth(7, 40)
+        self.view.setColumnWidth(8, 80)
+        self.view.setColumnWidth(9, 150)
+        self.view.setColumnWidth(10, 150)
+
+        self.view.sortByColumn(2, Qt.AscendingOrder)
+
+    def setFeatureFields(self):
+        super().setFeatureFields()
+
+        akt_id_fld = QgsField("akt_id", QVariant.Int)
+
+        az_fld = QgsField("az", QVariant.Int)
+        az_fld.setAlias('AZ')
+
+        name_fld = QgsField("name", QVariant.String)
+        name_fld.setAlias('Akt')
+
+        status_id_fld = QgsField("status_id", QVariant.Int)
+
+        status_fld = QgsField("status", QVariant.String)
+        status_fld.setAlias('Bearbeitung')
+
+        status_color_fld = QgsField("status_color", QVariant.String)
+
+        stz_fld = QgsField("stz", QVariant.String)
+        stz_fld.setAlias('Stz')
+
+        wwp_fld = QgsField("wwp", QVariant.Int)
+        wwp_fld.setAlias('WWP')
+
+        wwp_jahr_fld = QgsField("wwp_jahr", QVariant.Int)
+        wwp_jahr_fld.setAlias('WWP gültig')
+
+        awb_area_gb_fld = QgsField("awb_area_gb", QVariant.Int)
+        awb_area_gb_fld.setAlias('AWB Fläche (lt. GB)')
+
+        awb_area_beweidet_fld = QgsField("awb_area_beweidet", QVariant.Int)
+        awb_area_beweidet_fld.setAlias('AWB Fläche beweidet')
+
+        weide_area_fld = QgsField("weide_area", QVariant.Double)
+        weide_area_fld.setAlias('Weidefläche')
+
+        self.feature_fields.append(akt_id_fld)
+        self.feature_fields.append(az_fld)
+        self.feature_fields.append(name_fld)
+        self.feature_fields.append(status_id_fld)
+        self.feature_fields.append(status_fld)
+        self.feature_fields.append(status_color_fld)
+        self.feature_fields.append(stz_fld)
+        self.feature_fields.append(wwp_fld)
+        self.feature_fields.append(wwp_jahr_fld)
+        self.feature_fields.append(awb_area_gb_fld)
+        self.feature_fields.append(awb_area_beweidet_fld)
+        self.feature_fields.append(weide_area_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)

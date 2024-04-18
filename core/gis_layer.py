@@ -123,23 +123,26 @@ class AktAllLayer(QgsVectorLayer):
     def __init__(self, path: str = ...,
                  baseName: str = ...,
                  providerLib: str = ...,
-                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions()) -> None:
+                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions(),
+                 feature_fields=None) -> None:
         super().__init__(path, baseName, providerLib, options)
 
         self.data_provider = self.dataProvider()
 
-        self.data_provider.addAttributes([QgsField("akt_id", QVariant.Int),
-                               QgsField("az", QVariant.Int),
-                               QgsField("name", QVariant.String),
-                               QgsField("status_id", QVariant.Int),
-                               QgsField("status", QVariant.String),
-                               QgsField("status_color", QVariant.String),
-                               QgsField("stz", QVariant.String),
-                               QgsField("wwp", QVariant.Int),
-                               QgsField("wwp_jahr", QVariant.Int),
-                               QgsField("awb_area_gb", QVariant.Int),
-                               QgsField("awb_area_beweidet", QVariant.Int),
-                               QgsField("weide_area", QVariant.Double)])
+        self.data_provider.addAttributes(feature_fields)
+
+        # self.data_provider.addAttributes([QgsField("akt_id", QVariant.Int),
+        #                        QgsField("az", QVariant.Int),
+        #                        QgsField("name", QVariant.String),
+        #                        QgsField("status_id", QVariant.Int),
+        #                        QgsField("status", QVariant.String),
+        #                        QgsField("status_color", QVariant.String),
+        #                        QgsField("stz", QVariant.String),
+        #                        QgsField("wwp", QVariant.Int),
+        #                        QgsField("wwp_jahr", QVariant.Int),
+        #                        QgsField("awb_area_gb", QVariant.Int),
+        #                        QgsField("awb_area_beweidet", QVariant.Int),
+        #                        QgsField("weide_area", QVariant.Double)])
 
         self.updateFields()
 

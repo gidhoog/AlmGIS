@@ -50,18 +50,21 @@ class GisTableView(QgsAttributeTableView):
 
 class GisTableModel(QgsAttributeTableModel):
 
-    header = []
-
     def __init__(self, layerCache, parent=None):
         super(GisTableModel, self).__init__(layerCache, parent)
 
     def headerData(self, column, orientation, role=None):
         super().headerData(column, orientation, role)
 
-        if self.header:
-            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
 
-                return self.header[column]
+            header_name = self.parent()._gis_layer.fields().field(column).name()
+            header_alias = self.parent()._gis_layer.fields().field(column).alias()
+
+            if header_alias == '':
+                return header_name
+            else:
+                return header_alias
 
     # def data(self, index: QModelIndex, role: int = ...):
     #
@@ -218,6 +221,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     _gis_layer = None
     _canvas = None
+
+    feature_fields = []
 
     current_feature = None
 
@@ -895,6 +900,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         dinge die direkt nach dem initialisieren durchgeführt werden sollen
         :return:
+        """
+        pass
+
+    def setFeatureFields(self):
+        """
+        definiere die QgsField's eines Features inklusive aller zusätzlichen
+        Attribute (z.B. alias) und füge sie in die Liste 'feature_fields' ein
+        :return: List (feature_fields)
         """
         pass
 
