@@ -103,7 +103,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         self._value_width = val
 
     def __init__(self, parent, label_text, unit, attribute, value_width,
-                 factor=1, decimal=None, filter_col=None, filter_operator=None,
+                 factor=1, decimal=None, filter_attribute='', filter_operator=None,
                  filter_criterion=None):
         super(__class__, self).__init__()
         self.setupUi(self)
@@ -117,7 +117,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         self.unit = unit
         self.value_width = value_width
 
-        self.filter_col = filter_col
+        self.filter_attribute = filter_attribute
         self.filter_operator = filter_operator
         self.filter_criterion = filter_criterion
 
@@ -170,8 +170,13 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
     def calc_all_values(self, amount):
 
-        for ff in self.parent._gis_layer.getFeatures():
-            amount = amount + ff.attribute(self.attribute)
+        for feat in self.parent._gis_layer.getFeatures():
+
+            if self.filter_attribute == '':
+                amount = amount + feat.attribute(self.attribute)
+            else:
+                if feat.attribute(self.filter_attribute) == self.filter_criterion:
+                    amount = amount + feat.attribute(self.attribute)
 
         return amount
 
@@ -180,7 +185,12 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         for feat_id in sel_feature_ids:
 
             feat = self.parent._gis_layer.getFeature(feat_id)
-            amount_sel = amount_sel + feat.attribute(self.attribute)
+
+            if self.filter_attribute == '':
+                amount_sel = amount_sel + feat.attribute(self.attribute)
+            else:
+                if feat.attribute(self.filter_attribute) == self.filter_criterion:
+                    amount_sel = amount_sel + feat.attribute(self.attribute)
 
         return amount_sel
 
@@ -197,56 +207,56 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
         return value
 
-    def calc_column(self, model, col, sel_indexes=None):
-        """
-        summiere die werte der angegebenen spalte (col)
-
-        :param model: table_model
-        :param col: int
-        :param sel_indexes: list
-        :return: result, result_sel
-        """
-        try:
-            col_sel_sum = 0
-            col_sum = 0
-            for i in range(model.rowCount()):
-                value = model.data(model.index(i, col), Qt.EditRole)
-                if value:
-                    if self.filter_col:
-                        filter_compare = model.data(
-                            model.index(i, self.filter_col), Qt.EditRole)
-                        if filter_compare == self.filter_criterion:
-                            col_sum = col_sum + value
-                            if sel_indexes:
-                                if i in [x.row() for x in sel_indexes]:
-                                    col_sel_sum = col_sel_sum + value
-                    else:
-                        if type(value) == str:
-                            try:
-                                col_sum = col_sum + int(value)
-                                if sel_indexes:
-                                    if i in [x.row() for x in sel_indexes]:
-                                        col_sel_sum = col_sel_sum + int(value)
-                            except:
-                                print(f'Cannot sum footer values!')
-                        else:
-                            col_sum = col_sum + value
-                            if sel_indexes:
-                                if i in [x.row() for x in sel_indexes]:
-                                    col_sel_sum = col_sel_sum + value
-
-            if self.decimal:
-                decimal_string = '{:.' + str(self.decimal) + 'f}'
-                result = decimal_string.format(
-                    round(float(col_sum * self.factor),
-                          self.decimal)).replace(".", ",")
-                result_sel = decimal_string.format(
-                    round(float(col_sel_sum * self.factor),
-                          self.decimal)).replace(".", ",")
-            else:
-                result = col_sum * self.factor
-                result_sel = col_sel_sum * self.factor
-            return result, result_sel
-
-        except:
-            print(f'Cannot calculate footer value!')
+    # def calc_column(self, model, col, sel_indexes=None):
+    #     """
+    #     summiere die werte der angegebenen spalte (col)
+    #
+    #     :param model: table_model
+    #     :param col: int
+    #     :param sel_indexes: list
+    #     :return: result, result_sel
+    #     """
+    #     try:
+    #         col_sel_sum = 0
+    #         col_sum = 0
+    #         for i in range(model.rowCount()):
+    #             value = model.data(model.index(i, col), Qt.EditRole)
+    #             if value:
+    #                 if self.filter_col:
+    #                     filter_compare = model.data(
+    #                         model.index(i, self.filter_col), Qt.EditRole)
+    #                     if filter_compare == self.filter_criterion:
+    #                         col_sum = col_sum + value
+    #                         if sel_indexes:
+    #                             if i in [x.row() for x in sel_indexes]:
+    #                                 col_sel_sum = col_sel_sum + value
+    #                 else:
+    #                     if type(value) == str:
+    #                         try:
+    #                             col_sum = col_sum + int(value)
+    #                             if sel_indexes:
+    #                                 if i in [x.row() for x in sel_indexes]:
+    #                                     col_sel_sum = col_sel_sum + int(value)
+    #                         except:
+    #                             print(f'Cannot sum footer values!')
+    #                     else:
+    #                         col_sum = col_sum + value
+    #                         if sel_indexes:
+    #                             if i in [x.row() for x in sel_indexes]:
+    #                                 col_sel_sum = col_sel_sum + value
+    #
+    #         if self.decimal:
+    #             decimal_string = '{:.' + str(self.decimal) + 'f}'
+    #             result = decimal_string.format(
+    #                 round(float(col_sum * self.factor),
+    #                       self.decimal)).replace(".", ",")
+    #             result_sel = decimal_string.format(
+    #                 round(float(col_sel_sum * self.factor),
+    #                       self.decimal)).replace(".", ",")
+    #         else:
+    #             result = col_sum * self.factor
+    #             result_sel = col_sel_sum * self.factor
+    #         return result, result_sel
+    #
+    #     except:
+    #         print(f'Cannot calculate footer value!')

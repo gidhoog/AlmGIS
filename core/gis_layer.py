@@ -145,20 +145,23 @@ class GstZuordLayer(QgsVectorLayer):
     def __init__(self, path: str = ...,
                  baseName: str = ...,
                  providerLib: str = ...,
-                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions()) -> None:
+                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions(),
+                 feature_fields=None) -> None:
         super().__init__(path, baseName, providerLib, options)
 
         self.data_provider = self.dataProvider()
 
-        self.data_provider.addAttributes([QgsField("gst_version_id", QVariant.Int),
-                               QgsField("gst", QVariant.String),
-                               QgsField("ez", QVariant.Int),
-                               QgsField("kgnr", QVariant.Int),
-                               QgsField("kgname", QVariant.String),
-                               QgsField("awb_id", QVariant.Int),
-                               QgsField("recht_id", QVariant.Int),
-                               QgsField("gis_area", QVariant.String),
-                               QgsField("datenstand", QVariant.String)])
+        self.data_provider.addAttributes(feature_fields)
+
+        # self.data_provider.addAttributes([QgsField("gst_version_id", QVariant.Int),
+        #                        QgsField("gst", QVariant.String),
+        #                        QgsField("ez", QVariant.Int),
+        #                        QgsField("kgnr", QVariant.Int),
+        #                        QgsField("kgname", QVariant.String),
+        #                        QgsField("awb_id", QVariant.Int),
+        #                        QgsField("recht_id", QVariant.Int),
+        #                        QgsField("gis_area", QVariant.String),
+        #                        QgsField("datenstand", QVariant.String)])
 
         self.updateFields()
 

@@ -10,7 +10,7 @@ from qgis.core import QgsGeometry, QgsField
 from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
 
-from core import db_session_cm
+from core import db_session_cm, config
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus, BAbgrenzung
 from core.entity import EntityDialog
@@ -357,7 +357,7 @@ class AkteAllMain(DataView):
 
 
     # _main_table_model_class = AktAllModel
-    _gis_table_model_class = AkteAllMainTableModel
+    # _gis_table_model_class = AkteAllMainTableModel
 
     """verfügbare filter für diese tabelle"""
     _available_filters = 'gs'
@@ -365,6 +365,8 @@ class AkteAllMain(DataView):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
+
+        self._gis_table_model_class = AkteAllMainTableModel
 
         self.setFeatureFields()
         self.setFilterUI()
@@ -632,10 +634,23 @@ class AkteAllMain(DataView):
         """filter name"""
         # filter_name = FilterElement(self)
         # filter_name.uiLabelLbl.setText('Name:')
-        filter_name_lbl = QLabel(self)
-        filter_name_lbl.setText('Name:')
+        self.filter_name_lbl = QLabel(self)
+
+        name_lbl_font = self.filter_name_lbl.font()
+        name_lbl_font.setFamily(config.font_family)
+        self.filter_name_lbl.setFont(name_lbl_font)
+
+        self.filter_name_lbl.setText('Name:')
+        self.filter_name_lbl.setVisible(False)
 
         self.filter_name_input_wdg = QLineEdit(self)
+
+        name_input_wdg_font = self.filter_name_input_wdg.font()
+        name_input_wdg_font.setPointSize(11)
+        name_input_wdg_font.setFamily(config.font_family)
+        self.filter_name_input_wdg.setFont(name_input_wdg_font)
+
+        self.filter_name_input_wdg.setPlaceholderText('Aktenname')
         self.filter_name_input_wdg.setClearButtonEnabled(True)
         self.filter_name_input_wdg.setMaximumWidth(200)
         # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
@@ -649,12 +664,23 @@ class AkteAllMain(DataView):
         # filter_az = FilterElement(self)
         # filter_az.uiLabelLbl.setText('AZ:')
 
-        filter_az_lbl = QLabel(self)
-        filter_az_lbl.setText('AZ:')
+        self.filter_az_lbl = QLabel(self)
+
+        az_lbl_font = self.filter_az_lbl.font()
+        az_lbl_font.setFamily(config.font_family)
+        self.filter_az_lbl.setFont(az_lbl_font)
+
+        self.filter_az_lbl.setText('AZ:')
+        self.filter_az_lbl.setVisible(False)
 
         self.filter_az_input_wdg = QLineEdit(self)
+        self.filter_az_input_wdg.setPlaceholderText('AZ')
+        az_input_wdg_font = self.filter_az_input_wdg.font()
+        az_input_wdg_font.setPointSize(11)
+        az_input_wdg_font.setFamily(config.font_family)
+        self.filter_az_input_wdg.setFont(az_input_wdg_font)
         self.filter_az_input_wdg.setClearButtonEnabled(True)
-        self.filter_az_input_wdg.setMaximumWidth(50)
+        self.filter_az_input_wdg.setMaximumWidth(80)
         # filter_az.uiFilterElementLay.insertWidget(1, self.filter_az_input_wdg)
 
         self.filter_az_input_wdg.textChanged.connect(self.useFilter)
@@ -663,16 +689,16 @@ class AkteAllMain(DataView):
                                  QSizePolicy.Minimum)
         filter_lay.addItem(spacerItem1)
 
-        filter_lay.addWidget(filter_name_lbl)
-        filter_lay.addWidget(self.filter_name_input_wdg)
-        filter_lay.addWidget(filter_az_lbl)
+        filter_lay.addWidget(self.filter_az_lbl)
         filter_lay.addWidget(self.filter_az_input_wdg)
+        filter_lay.addWidget(self.filter_name_lbl)
+        filter_lay.addWidget(self.filter_name_input_wdg)
         """"""
 
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         filter_lay.addItem(spacerItem)
 
-        self.uiFilterGLay.addLayout(filter_lay, 0, 1)
+        self.uiHeaderHley.insertLayout(1, filter_lay)
 
         # spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         # self.uiFilterGLay.addItem(spacerItem2, 0, 2)
@@ -688,10 +714,16 @@ class AkteAllMain(DataView):
         expr_list = []
 
         if name_text != '':
+            self.filter_name_lbl.setVisible(True)
             expr_list.append(name_expr)
+        else:
+            self.filter_name_lbl.setVisible(False)
 
         if az_text != '':
+            self.filter_az_lbl.setVisible(True)
             expr_list.append(az_expr)
+        else:
+            self.filter_az_lbl.setVisible(False)
 
         if expr_list == []:
             self._gis_layer.setSubsetString('')

@@ -490,6 +490,14 @@ class BGstVersion(Base):
         lazy='joined')
     """"""
 
+    @hybrid_property
+    # @property
+    def gst_gis_area(self):
+
+        # aa = func.ST_Area(self.geometry)
+        aa = to_shape(self.geometry).area  # float
+
+        return aa
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id}, " \

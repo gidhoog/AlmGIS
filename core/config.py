@@ -8,3 +8,5 @@ alm_data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/alm_daten.db')
 
 mod_spatialite_dll = Path().absolute().joinpath('dll', 'mod_spatialite.dll')
 """"""
+
+font_family = 'Calibri'

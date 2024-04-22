@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
     <number>4</number>
    </property>
@@ -26,6 +26,13 @@
    <property name="bottomMargin">
     <number>4</number>
    </property>
+   <item>
+    <widget class="QLabel" name="uiTitleLbl">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QVBoxLayout" name="uiMainVlay">
      <property name="spacing">
@@ -45,6 +52,32 @@
        <property name="topMargin">
         <number>0</number>
        </property>
+       <item>
+        <widget class="QLabel" name="uiFilterLbl">
+         <property name="font">
+          <font>
+           <family>Calibri</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Filter:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item>
         <widget class="QToolButton" name="uiSelectAllTbtn">
          <property name="text">
@@ -82,6 +115,13 @@
          </property>
          <property name="autoRaise">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -194,17 +234,11 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <widget class="Line" name="line">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="uiToolsTbtn">
@@ -271,25 +305,6 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item>
-          <layout class="QGridLayout" name="uiFilterGLay">
-           <item row="0" column="0">
-            <widget class="QLabel" name="uiFilterLbl">
-             <property name="font">
-              <font>
-               <family>Calibri</family>
-               <pointsize>11</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Filter</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
         </layout>
        </item>
       </layout>
@@ -329,6 +344,12 @@
            </property>
            <item>
             <widget class="QLabel" name="uiTableFooterTextLbl">
+             <property name="font">
+              <font>
+               <family>Calibri</family>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>text</string>
              </property>

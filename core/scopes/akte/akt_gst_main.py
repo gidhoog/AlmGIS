@@ -16,7 +16,7 @@ from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BKomplex, BAkt, BKoppel, BAbgrenzung
 from core.entity import EntityDialog
 from core.gis_item import GisItem
-from core.gis_layer import setLayerStyle, GstZuordLayer
+from core.gis_layer import setLayerStyle, GstZuordLayer, Feature
 from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
 from core.data_view import DataView, TableModel, TableView, GisTableView, \
@@ -171,165 +171,132 @@ class GstZuordnungMainDialog(MainDialog):
 #         #
 #         # return super().data(index, role)
 
-class GstTableModel(GisTableModel):
-
-    def __init__(self, layerCache, parent=None):
-        super(GisTableModel, self).__init__(layerCache, parent)
-
-    def data(self, index: QModelIndex, role: int = ...):
-
-        if role == Qt.TextAlignmentRole:
-
-            if index.column() in [3, 7]:
-
-                return Qt.AlignRight | Qt.AlignVCenter
-
-            if index.column() in [2]:
-
-                return Qt.AlignHCenter | Qt.AlignVCenter
-
-        if index.column() == 7:
-
-            area = self.layer().getFeature(index.row()+1).geometry().area()
-            # attr = self.layer().getFeature(index.row()+1).attributes()[index.column()]
-
-            if role == Qt.DisplayRole:
-
-                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
-                                         ).replace(".", ",")
-                return area_r + ' ha'
-
-            if role == Qt.EditRole:
-                return area
-
-        return super().data(index, role)
-
-class GstModelNew(TableModel):
-
-    # def __init__(self, parent, mci_list=[]):
-    #     super(__class__, self).__init__(parent, mci_list=mci_list)
-    def __init__(self, parent):
-        super(__class__, self).__init__(parent)
-
-        # self.mci_list = self.parent.parent._entity_mci.rel_gst_zuordnung
-
-        self.header = ['Gst-Nr',
-                       'Ez',
-                       'KG-Nr',
-                       'KG-Name',
-                       'AWB',
-                       'Rechtsgrundlage',
-                       'GB-Fläche',
-                       'GIS-Fläche',
-                       'davon beweidet',
-                       'beweidet (%)',
-                       'Datenstand']
-
-    def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
-
-        """
-        erzeuge ein basis-model
-        """
-        row = index.row()
-        col = index.column()
-
-        if role == Qt.TextAlignmentRole:
-
-            if index.column() in [2, 6, 7, 8, 9]:
-
-                return Qt.AlignRight | Qt.AlignVCenter
-
-            if index.column() in [1, 10]:
-
-                return Qt.AlignHCenter | Qt.AlignVCenter
-
-        if index.column() == 0:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].rel_gst.gst
-
-        if index.column() == 1:
-            if role == Qt.DisplayRole:
-
-                gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
-                last_gst = max(gst_versionen_list,
-                               key=attrgetter('rel_alm_gst_ez.datenstand'))
-
-                return last_gst.rel_alm_gst_ez.ez
-
-        if index.column() == 2:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].rel_gst.kgnr
-
-        if index.column() == 3:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].rel_gst.rel_kat_gem.kgname
-
-        if index.column() == 4:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].rel_awb_status.name
-                # return self.mci_list[row].awb_status_id
-
-            if role == Qt.EditRole:
-                return self.mci_list[row].rel_awb_status.id
-
-            if role == Qt.BackgroundRole:
-
-                    if self.mci_list[row].rel_awb_status.id == 1:
-                        return QColor(189, 239, 255)
-                    if self.mci_list[row].rel_awb_status.id == 0:
-                        return QColor(234, 216, 54)
-                    if self.mci_list[row].rel_awb_status.id == 2:
-                        return QColor(234, 163, 165)
-
-        if index.column() == 5:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].rel_rechtsgrundlage.name
-
-        if index.column() == 7 or index.column() == 8 or index.column() == 9:  # davon beweidet
-
-            gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
-            last_gst = max(gst_versionen_list,
-                           key=attrgetter('rel_alm_gst_ez.datenstand'))
-
-            gst_geom = QgsGeometry.fromWkt(
-                to_shape(last_gst.geometry).wkt)
-
-            cut_area = 0.00
-            for cut in last_gst.rel_cut_koppel_gst:
-                cut_geom = QgsGeometry.fromWkt(to_shape(cut.geometry).wkt)
-                cut_area = cut_area + cut_geom.area()
-
-            if index.column() == 7:  # gis_area
-
-                if role == Qt.DisplayRole:
-                    return ('{:.4f}'.format(
-                        round(float(gst_geom.area()) / 10000, 4))
-                            .replace(".", ",")) + ' ha'
-
-            if index.column() == 8:  # davon beweidet
-
-                if role == Qt.EditRole:
-
-                    # return ('{:.0f}'.format(round(cut_area, 0)))
-                    return int(cut_area)
-
-                if role == Qt.DisplayRole:
-
-                    return ('{:.4f}'.format(round(float(cut_area) / 10000, 4))
-                            .replace(".", ",")) + ' ha'
-
-            if index.column() == 9:  # % beweidet
-
-                cut_anteil = cut_area / gst_geom.area() * 100
-
-                if role == Qt.EditRole:
-                    # return ('{:.0f}'.format(round(cut_area, 0)))
-                    return ('{:.1f}'.format(round(float(cut_anteil), 1)))
-
-                if role == Qt.DisplayRole:
-
-                    return ('{:.1f}'.format(round(float(cut_anteil), 1))
-                            .replace(".", ",")) + ' %'
+# class GstModelNew(TableModel):
+#
+#     # def __init__(self, parent, mci_list=[]):
+#     #     super(__class__, self).__init__(parent, mci_list=mci_list)
+#     def __init__(self, parent):
+#         super(__class__, self).__init__(parent)
+#
+#         # self.mci_list = self.parent.parent._entity_mci.rel_gst_zuordnung
+#
+#         self.header = ['Gst-Nr',
+#                        'Ez',
+#                        'KG-Nr',
+#                        'KG-Name',
+#                        'AWB',
+#                        'Rechtsgrundlage',
+#                        'GB-Fläche',
+#                        'GIS-Fläche',
+#                        'davon beweidet',
+#                        'beweidet (%)',
+#                        'Datenstand']
+#
+#     def data(self, index: QModelIndex, role: int = ...) -> typing.Any:
+#
+#         """
+#         erzeuge ein basis-model
+#         """
+#         row = index.row()
+#         col = index.column()
+#
+#         if role == Qt.TextAlignmentRole:
+#
+#             if index.column() in [2, 6, 7, 8, 9]:
+#
+#                 return Qt.AlignRight | Qt.AlignVCenter
+#
+#             if index.column() in [1, 10]:
+#
+#                 return Qt.AlignHCenter | Qt.AlignVCenter
+#
+#         if index.column() == 0:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].rel_gst.gst
+#
+#         if index.column() == 1:
+#             if role == Qt.DisplayRole:
+#
+#                 gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
+#                 last_gst = max(gst_versionen_list,
+#                                key=attrgetter('rel_alm_gst_ez.datenstand'))
+#
+#                 return last_gst.rel_alm_gst_ez.ez
+#
+#         if index.column() == 2:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].rel_gst.kgnr
+#
+#         if index.column() == 3:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].rel_gst.rel_kat_gem.kgname
+#
+#         if index.column() == 4:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].rel_awb_status.name
+#                 # return self.mci_list[row].awb_status_id
+#
+#             if role == Qt.EditRole:
+#                 return self.mci_list[row].rel_awb_status.id
+#
+#             if role == Qt.BackgroundRole:
+#
+#                     if self.mci_list[row].rel_awb_status.id == 1:
+#                         return QColor(189, 239, 255)
+#                     if self.mci_list[row].rel_awb_status.id == 0:
+#                         return QColor(234, 216, 54)
+#                     if self.mci_list[row].rel_awb_status.id == 2:
+#                         return QColor(234, 163, 165)
+#
+#         if index.column() == 5:
+#             if role == Qt.DisplayRole:
+#                 return self.mci_list[row].rel_rechtsgrundlage.name
+#
+#         if index.column() == 7 or index.column() == 8 or index.column() == 9:  # davon beweidet
+#
+#             gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
+#             last_gst = max(gst_versionen_list,
+#                            key=attrgetter('rel_alm_gst_ez.datenstand'))
+#
+#             gst_geom = QgsGeometry.fromWkt(
+#                 to_shape(last_gst.geometry).wkt)
+#
+#             cut_area = 0.00
+#             for cut in last_gst.rel_cut_koppel_gst:
+#                 cut_geom = QgsGeometry.fromWkt(to_shape(cut.geometry).wkt)
+#                 cut_area = cut_area + cut_geom.area()
+#
+#             if index.column() == 7:  # gis_area
+#
+#                 if role == Qt.DisplayRole:
+#                     return ('{:.4f}'.format(
+#                         round(float(gst_geom.area()) / 10000, 4))
+#                             .replace(".", ",")) + ' ha'
+#
+#             if index.column() == 8:  # davon beweidet
+#
+#                 if role == Qt.EditRole:
+#
+#                     # return ('{:.0f}'.format(round(cut_area, 0)))
+#                     return int(cut_area)
+#
+#                 if role == Qt.DisplayRole:
+#
+#                     return ('{:.4f}'.format(round(float(cut_area) / 10000, 4))
+#                             .replace(".", ",")) + ' ha'
+#
+#             if index.column() == 9:  # % beweidet
+#
+#                 cut_anteil = cut_area / gst_geom.area() * 100
+#
+#                 if role == Qt.EditRole:
+#                     # return ('{:.0f}'.format(round(cut_area, 0)))
+#                     return ('{:.1f}'.format(round(float(cut_anteil), 1)))
+#
+#                 if role == Qt.DisplayRole:
+#
+#                     return ('{:.1f}'.format(round(float(cut_anteil), 1))
+#                             .replace(".", ",")) + ' %'
 
         # if index.column() == 7:  # gis_area
         #     if role == Qt.DisplayRole:
@@ -345,32 +312,32 @@ class GstModelNew(TableModel):
         #         return ('{:.4f}'.format(round(float(gst_geom.area()) / 10000, 4))
         #                 .replace(".", ",")) + ' ha'
 
-        if index.column() == 6:  # gb_area
-
-            area = 0
-            gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
-            last_gst = max(gst_versionen_list,
-                           key=attrgetter('rel_alm_gst_ez.datenstand'))
-            for nutz in last_gst.rel_alm_gst_nutzung:
-                area = area + nutz.area
-
-            if role == Qt.EditRole:
-
-                return area
-
-            if role == Qt.DisplayRole:
-
-                return ('{:.4f}'.format(round(float(area) / 10000, 4))
-                        .replace(".", ",")) + ' ha'
-
-        if index.column() == 10: # datenstand
-            if role == Qt.DisplayRole:
-
-                gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
-                last_gst = max(gst_versionen_list,
-                               key=attrgetter('rel_alm_gst_ez.datenstand'))
-
-                return last_gst.rel_alm_gst_ez.datenstand[:10]
+        # if index.column() == 6:  # gb_area
+        #
+        #     area = 0
+        #     gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
+        #     last_gst = max(gst_versionen_list,
+        #                    key=attrgetter('rel_alm_gst_ez.datenstand'))
+        #     for nutz in last_gst.rel_alm_gst_nutzung:
+        #         area = area + nutz.area
+        #
+        #     if role == Qt.EditRole:
+        #
+        #         return area
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         return ('{:.4f}'.format(round(float(area) / 10000, 4))
+        #                 .replace(".", ",")) + ' ha'
+        #
+        # if index.column() == 10: # datenstand
+        #     if role == Qt.DisplayRole:
+        #
+        #         gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
+        #         last_gst = max(gst_versionen_list,
+        #                        key=attrgetter('rel_alm_gst_ez.datenstand'))
+        #
+        #         return last_gst.rel_alm_gst_ez.datenstand[:10]
 
         # return super().data(index, role)
 
@@ -405,6 +372,58 @@ class GstModelNew(TableModel):
     #     #     return super().headerData(column, orientation, role)
 
 
+class GstTableModel(GisTableModel):
+
+    def __init__(self, layerCache, parent=None):
+        super(GisTableModel, self).__init__(layerCache, parent)
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        # feat = self.feature(index)
+
+        if role == Qt.TextAlignmentRole:
+
+            if index.column() in [3]:
+
+                return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [1, 2]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 3:
+
+            if role == Qt.DisplayRole:
+
+                return str(self.feature(index).attribute('kgnr'))
+
+        if index.column() == 7:  # gis_area
+
+            if role == Qt.DisplayRole:
+
+                area = self.feature(index).attribute('gis_area')
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+                                         ).replace(".", ",")
+                return area_r + ' ha'
+
+            # if role == Qt.EditRole:
+            #     return area
+
+        if index.column() == 8:  # gb_area
+
+            if role == Qt.DisplayRole:
+
+                area = self.feature(index).attribute('gb_area')
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+                                         ).replace(".", ",")
+                return area_r + ' ha'
+
+            # if role == Qt.EditRole:
+            #     return area
+
+        return super().data(index, role)
+
+
 class GstAktDataView(DataView):
     """
     grundstückstabelle im akt
@@ -415,7 +434,7 @@ class GstAktDataView(DataView):
 
     entity_widget_class = GstZuordnungDataForm
     entity_dialog_class = GstDialog
-    # data_model_class = BGstZuordnung
+    _entity_mc = BGstZuordnung
     # _model_class = GstModelNew
     # _data_source = 'di'
 
@@ -434,7 +453,7 @@ class GstAktDataView(DataView):
     _commit_entity = False
     edit_entity_by = 'mci'
 
-    _gis_table_model_class = GstTableModel
+    # _gis_table_model_class = GstTableModel
     # data_view_class = GisTableView
 
     gst_zuordnung_wdg_class = GstZuordnung
@@ -442,6 +461,22 @@ class GstAktDataView(DataView):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
+
+        self._gis_table_model_class = GstTableModel
+
+        self.setFeatureFields()
+        self.setFilterUI()
+
+        self.loadData()
+        self.setLayer()
+        self.setTableView()
+
+        self.finalInit()
+
+        self.updateFooter()
+
+        self.signals()
+
 
         # self.vector_layer_cache = QgsVectorLayerCache(gis_layer, 10000)
         # self.attribute_table_model = QgsAttributeTableModel(self.vector_layer_cache)
@@ -483,24 +518,29 @@ class GstAktDataView(DataView):
     def initUi(self):
         super().initUi()
 
-        self.title = 'zugeordnete Grundstücke'
+        self.uiTitleLbl.setVisible(True)
+
+        self.uiTitleLbl.setText('zugeordnete Grundstücke')
 
         # self.setStretchMethod(2)
-        #
-        # # self.insertFooterLine('im AWB eingetragen und beweidet:',
-        # #                       'ha', 8, 120,
-        # #                       0.0001, 4, 4,
-        # #                       '==', 1)
+
+        # self.insertFooterLine('im AWB eingetragen und beweidet:',
+        #                       'ha', 8, 120,
+        #                       0.0001, 4, 4,
+        #                       '==', 1)
         # # self.insertFooterLine('beweidet:',
         # #                       'ha', 8, 120,
         # #                       0.0001, 4)
-        # # self.insertFooterLine('im AWB eingetrage Grundstücksfläche:',
-        # #                       'ha', 6, 120,
-        # #                       0.0001, 4, 4,
-        # #                       '==', 1)
-        # self.insertFooterLine('zugeordnete Grundstücksgesamtfläche:',
-        #                       'ha', 7, 120,
-        #                       0.0001, 4)
+        self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
+                              'ha', 'gb_area', 120,
+                              0.0001, 4, 'awb_id',
+                              '==', 1)
+        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
+                              'ha', 'gis_area', 120,
+                              0.0001, 4)
+        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GB):',
+                              'ha', 'gb_area', 120,
+                              0.0001, 4)
         #
         # self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
         #
@@ -512,13 +552,18 @@ class GstAktDataView(DataView):
         # self.test_update_btn.setText('test_update')
         # self.uiTableFilterHLay.addWidget(self.test_update_btn)
 
+    def loadData(self):
+
+        self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
+
     def setLayer(self):
         super().setLayer()
 
         self._gis_layer = GstZuordLayer(
             "Polygon?crs=epsg:31259",
             "GstZuordnungLay",
-            "memory"
+            "memory",
+            feature_fields=self.feature_fields
         )
 
         # for gst_zuor in self._entity_mci.rel_gst_zuordnung:
@@ -526,31 +571,142 @@ class GstAktDataView(DataView):
 
             for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
 
-                feat = QgsFeature(self._gis_layer.fields())
-                feat.setAttributes([gst_version.id,
-                                    gst_zuor.rel_gst.gst,
-                                    gst_version.rel_alm_gst_ez.ez,
-                                    gst_version.rel_alm_gst_ez.kgnr,
-                                    gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-                                    gst_zuor.awb_status_id,
-                                    gst_zuor.rechtsgrundlage_id,
-                                    '',
-                                    gst_version.rel_alm_gst_ez.datenstand])
+                feat = Feature(self._gis_layer.fields(), self)
+
+                self.setFeatureAttributes(feat, gst_zuor)
+
+                # feat.setAttributes([gst_version.id,
+                #                     gst_zuor.rel_gst.gst,
+                #                     gst_version.rel_alm_gst_ez.ez,
+                #                     gst_version.rel_alm_gst_ez.kgnr,
+                #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+                #                     gst_zuor.awb_status_id,
+                #                     gst_zuor.rechtsgrundlage_id,
+                #                     '',
+                #                     gst_version.rel_alm_gst_ez.datenstand])
 
                 geom_wkt = to_shape(gst_version.geometry).wkt
                 geom_new = QgsGeometry()
                 geom = geom_new.fromWkt(geom_wkt)
+
                 feat.setGeometry(geom)
 
                 self._gis_layer.data_provider.addFeatures([feat])
+
+    def setFeatureFields(self):
+        # super().setFeatureFields()
+
+        gst_version_id_fld = QgsField("gst_version_id", QVariant.Int)
+
+        gst_fld = QgsField("gst", QVariant.String)
+        gst_fld.setAlias('Gst')
+
+        ez_fld = QgsField("ez", QVariant.Int)
+        ez_fld.setAlias('EZ')
+
+        kgnr_fld = QgsField("kgnr", QVariant.Int)
+        kgnr_fld.setAlias('KG-Nr')
+
+        kgname_fld = QgsField("kgname", QVariant.String)
+        kgname_fld.setAlias('KG-Name')
+
+        awb_id_fld = QgsField("awb_id", QVariant.Int)
+
+        recht_id_fld = QgsField("recht_id", QVariant.Int)
+
+        gis_area_fld = QgsField("gis_area", QVariant.Double)
+        gis_area_fld.setAlias('GIS-Fläche')
+
+        gb_area_fld = QgsField("gb_area", QVariant.Double)
+        gb_area_fld.setAlias('GB-Fläche')
+
+        datenstand_fld = QgsField("datenstand", QVariant.String)
+        datenstand_fld.setAlias('Datenstand')
+
+        self.feature_fields.append(gst_version_id_fld)
+        self.feature_fields.append(gst_fld)
+        self.feature_fields.append(ez_fld)
+        self.feature_fields.append(kgnr_fld)
+        self.feature_fields.append(kgname_fld)
+        self.feature_fields.append(awb_id_fld)
+        self.feature_fields.append(recht_id_fld)
+        self.feature_fields.append(gis_area_fld)
+        self.feature_fields.append(gb_area_fld)
+        self.feature_fields.append(datenstand_fld)
+
+    def setFeatureAttributes(self, feature, mci):
+        super().setFeatureAttributes(feature, mci)
+
+        # """weide_area"""
+        # weide_area = 0.00
+        # if mci.rel_abgrenzung != []:
+        #     last_abgrenzung = max(mci.rel_abgrenzung,
+        #                           key=attrgetter('jahr'))
+        #     for komplex in last_abgrenzung.rel_komplex:
+        #         for koppel in komplex.rel_koppel:
+        #             weide_area = weide_area + koppel.koppel_area
+        # """weide_area"""
+        #
+        # """awb area"""
+        # gst_area = 0
+        # for gst_zuord in mci.rel_gst_zuordnung:
+        #
+        #     if gst_zuord.awb_status_id == 1:
+        #         gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+        #         last_gst = max(gst_versionen_list,
+        #                        key=attrgetter('rel_alm_gst_ez.datenstand'))
+        #
+        #         gst_nutz_area = 0
+        #         for ba in last_gst.rel_alm_gst_nutzung:
+        #             gst_nutz_area = gst_nutz_area + ba.area
+        #         gst_area = gst_area + gst_nutz_area
+        # """"""
+        #
+        # """awb beweidet"""
+        # cut_area = 0
+        # for gst_zuord in mci.rel_gst_zuordnung:
+        #
+        #     if gst_zuord.awb_status_id == 1:
+        #         gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+        #         last_gst = max(gst_versionen_list,
+        #                        key=attrgetter('rel_alm_gst_ez.datenstand'))
+        #
+        #         for cut in last_gst.rel_cut_koppel_gst:
+        #             cut_area = cut_area + cut.cutarea
+        # """"""
+        """last_gst"""
+        gst_versionen_list = mci.rel_gst.rel_alm_gst_version
+        last_gst = max(gst_versionen_list,
+                       key=attrgetter('rel_alm_gst_ez.datenstand'))
+        """"""
+
+        """gb_area"""
+        gb_area = 0
+        # gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
+        # last_gst = max(gst_versionen_list,
+        #                key=attrgetter('rel_alm_gst_ez.datenstand'))
+        for nutz in last_gst.rel_alm_gst_nutzung:
+            gb_area = gb_area + nutz.area
+        """"""
+
+        feature['gst_version_id'] = mci.id
+        feature['gst'] = mci.rel_gst.gst
+        feature['ez'] = last_gst.rel_alm_gst_ez.ez
+        feature['kgnr'] = mci.rel_gst.kgnr
+        feature['kgname'] = mci.rel_gst.rel_kat_gem.kgname
+        feature['awb_id'] = mci.awb_status_id
+        feature['recht_id'] = mci.rechtsgrundlage_id
+        feature['gis_area'] = last_gst.gst_gis_area
+        feature['gb_area'] = gb_area
+        feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
 
     def signals(self):
         super().signals()
 
         self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
 
-        self.test_cut_btn.clicked.connect(self.test_cut)
-        self.test_update_btn.clicked.connect(self.test_update)
+        # self.test_cut_btn.clicked.connect(self.test_cut)
+        # self.test_update_btn.clicked.connect(self.test_update)
 
     def test_update(self):
 
@@ -570,6 +726,8 @@ class GstAktDataView(DataView):
     def finalInit(self):
         super().finalInit()
 
+        self.view.setColumnHidden(0, True)
+
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
         # """setzt bestimmte spaltenbreiten"""
@@ -583,13 +741,13 @@ class GstAktDataView(DataView):
         # """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
-        self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
 
-        self.view.resizeColumnsToContents()
+        # self.view.resizeColumnsToContents()
 
-    def setMaintableColumns(self):
-        super().setMaintableColumns()
+    # def setMaintableColumns(self):
+    #     super().setMaintableColumns()
 
         # self.maintable_columns[0] = MaintableColumn(column_type='int',
         #                                             visible=False)
@@ -618,8 +776,8 @@ class GstAktDataView(DataView):
         # self.maintable_columns[10] = MaintableColumn(heading='Datenstand',
         #                                              column_type='str')
 
-    def getMainQuery(self, session):
-        super().getMainQuery(session)
+    # def getMainQuery(self, session):
+    #     super().getMainQuery(session)
 
         # """subquery um die flaeche des verschnittes von koppel und
         # gst-version zu bekommen"""
@@ -675,8 +833,8 @@ class GstAktDataView(DataView):
 
         return del_info
 
-    def setMainTableModel(self):
-        super().setMainTableModel()
+    # def setMainTableModel(self):
+    #     super().setMainTableModel()
 
         # return GstModel(self, self.maintable_dataarray)
 

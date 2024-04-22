@@ -209,10 +209,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _type_mc = None
     _entity_mc = None
 
-    _model_class = TableModel
+    # _model_class = TableModel
     _main_table_model_class = None
 
-    _gis_table_model_class = GisTableModel
+    # _gis_table_model_class = GisTableModel
 
     _data_view_mc = None
 
@@ -221,8 +221,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     _gis_layer = None
     _canvas = None
-
-    feature_fields = []
 
     current_feature = None
 
@@ -445,6 +443,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # self._gis_layer = gis_layer
         # self._canvas = canvas
 
+        self.feature_fields = []
+        self._gis_table_model_class = GisTableModel
+        self._model_class = TableModel
+
         """liste mit den widgets im fußbereich der tabelle (zum anzeigen 
         verschiedener spaltensummen"""
         self.footer_list = []
@@ -457,6 +459,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.view = self._view_class(self)
         self.uiTableVlay.addWidget(self.view)
+
+        self.uiTitleLbl.setVisible(False)
 
         self.initUi()
 
@@ -983,7 +987,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 QHeaderView.Stretch)
 
     def insertFooterLine(self, label, unit, attribute, amount_width, factor=1,
-                         decimal=None, filter_col=None, filter_operator=None,
+                         decimal=None, filter_attribute='', filter_operator=None,
                          filter_criterion=None):
         """
         füge ein footer-elemet (=widget am fuß der tabelle) auf position 0
@@ -991,7 +995,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
 
         footer_line = self._footer_line(self, label, unit, attribute, amount_width,
-                                        factor, decimal, filter_col, filter_operator,
+                                        factor, decimal, filter_attribute, filter_operator,
                                         filter_criterion)
 
         self.uiFooterLinesVlay.insertWidget(0, footer_line)
