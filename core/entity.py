@@ -50,7 +50,7 @@ class Entity(QMainWindow):
     """'mapped class' des Entities (definiert in data_model.py); eigentlich
     nur dann notwendig, wenn die entity_mci mittels dem id von der db
     abgefragt wird"""
-    _entity_mc = None
+    # _entity_mc = None
     """"""
 
     _entity_mci = None  # Instanz der 'mapped class' des Entities
@@ -96,6 +96,10 @@ class Entity(QMainWindow):
         super(Entity, self).__init__(parent)
 
         self.parent = parent
+
+        """"""
+        self._entity_mc = None
+        """"""
 
         self.invalid_data_text = "Die Angaben sind ungültig"
 

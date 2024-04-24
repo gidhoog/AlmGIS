@@ -341,10 +341,10 @@ class AkteAllMainWidget(MainWidget):
 
 class AkteAllMain(DataView):
 
-    entity_widget_class = Akt
-    _entity_mc = BAkt
+    # entity_widget_class = Akt
+    # _entity_mc = BAkt
 
-    entity_dialog_class = AktDialog
+    # entity_dialog_class = AktDialog
 
     # _model_class = AktAllModel
 
@@ -359,13 +359,16 @@ class AkteAllMain(DataView):
     # _main_table_model_class = AktAllModel
     # _gis_table_model_class = AkteAllMainTableModel
 
-    """verfügbare filter für diese tabelle"""
-    _available_filters = 'gs'
-    """"""
+    # """verfügbare filter für diese tabelle"""
+    # _available_filters = 'gs'
+    # """"""
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
+        self.entity_dialog_class = AktDialog
+        self.entity_widget_class = Akt
+        self._entity_mc = BAkt
         self._gis_table_model_class = AkteAllMainTableModel
 
         self.setFeatureFields()

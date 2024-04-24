@@ -918,7 +918,7 @@ class GstTable(DataView):
         self.parent = parent
         self.title = 'Grundstücke die zugeordnet werden können:'
 
-        self.available_filters = 'gs'
+        # self.available_filters = 'gs'
 
         self.maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
 
@@ -1003,142 +1003,142 @@ class GstTable(DataView):
     #
     #     return GstModel(parent=self, data_array=self.maintable_dataarray)
 
-    def setFilterScopeUI(self):
-        super().setFilterScopeUI()
+    # def setFilterScopeUI(self):
+    #     super().setFilterScopeUI()
+    #
+    #     """filter ez"""
+    #     self.guiFilterEzLbl = QLabel("Ez:")
+    #     self.guiFilterEzCombo = QComboBox(self)
+    #
+    #     self.uiTableFilterHLay.insertWidget(2, self.guiFilterEzLbl)
+    #     self.uiTableFilterHLay.insertWidget(3, self.guiFilterEzCombo)
+    #     """"""
+    #
+    #     """filter kg name"""
+    #     self.guiFilterKgNameLbl = QLabel("Kg-Name:")
+    #     self.guiFilterKgNameCombo = QComboBox(self)
+    #
+    #     self.uiTableFilterHLay.insertWidget(2, self.guiFilterKgNameLbl)
+    #     self.uiTableFilterHLay.insertWidget(3, self.guiFilterKgNameCombo)
+    #     """"""
+    #
+    #     """filter kgnr"""
+    #     self.guiFilterKgLbl = QLabel("Kg-Nr:")
+    #     self.guiFilterKgCombo = QComboBox(self)
+    #
+    #     # self.uiFilterScopeHLay.insertWidget(0, self.guiFiltRechtsverhLbl)
+    #     self.uiTableFilterHLay.insertWidget(2, self.guiFilterKgLbl)
+    #     self.uiTableFilterHLay.insertWidget(3, self.guiFilterKgCombo)
+    #     """"""
 
-        """filter ez"""
-        self.guiFilterEzLbl = QLabel("Ez:")
-        self.guiFilterEzCombo = QComboBox(self)
+    # def setFilterScope(self):
+    #     super().setFilterScope()
+    #
+    #     self.setFilterKgnr()
+    #     self.setFilterKgName()
+    #     self.setFilterEz()
 
-        self.uiTableFilterHLay.insertWidget(2, self.guiFilterEzLbl)
-        self.uiTableFilterHLay.insertWidget(3, self.guiFilterEzCombo)
-        """"""
+    # def setFilterKgnr(self):
+    #
+    #     with db_session_cm() as session:
+    #         item_query = session.query(BGstEz.kgnr).distinct()
+    #
+    #     try:
+    #         self.guiFilterKgCombo.currentTextChanged.disconnect(
+    #             self.filterMaintable)
+    #     except:
+    #         pass
+    #     finally:
+    #         prev_typ = self.guiFilterKgCombo.currentText()
+    #         self.guiFilterKgCombo.clear()
+    #
+    #         self.guiFilterKgCombo.addItem('- Alle -')
+    #         for item in sorted(item_query):
+    #             self.guiFilterKgCombo.addItem(str(item[0]))
+    #
+    #         self.guiFilterKgCombo.setCurrentText(prev_typ)
+    #
+    #         self.guiFilterKgCombo.currentTextChanged.connect(
+    #             self.applyFilter)
 
-        """filter kg name"""
-        self.guiFilterKgNameLbl = QLabel("Kg-Name:")
-        self.guiFilterKgNameCombo = QComboBox(self)
+    # def setFilterKgName(self):
+    #
+    #     with db_session_cm() as session:
+    #         item_query = session.query(BKatGem.kgname).join(BGstEz).distinct()
+    #
+    #     try:
+    #         self.guiFilterKgNameCombo.currentTextChanged.disconnect(
+    #             self.filterMaintable)
+    #     except:
+    #         pass
+    #     finally:
+    #         prev_typ = self.guiFilterKgNameCombo.currentText()
+    #         self.guiFilterKgNameCombo.clear()
+    #
+    #         self.guiFilterKgNameCombo.addItem('- Alle -')
+    #         for item in sorted(item_query):
+    #             self.guiFilterKgNameCombo.addItem(str(item[0]))
+    #
+    #         self.guiFilterKgNameCombo.setCurrentText(prev_typ)
+    #
+    #         self.guiFilterKgNameCombo.currentTextChanged.connect(
+    #             self.applyFilter)
 
-        self.uiTableFilterHLay.insertWidget(2, self.guiFilterKgNameLbl)
-        self.uiTableFilterHLay.insertWidget(3, self.guiFilterKgNameCombo)
-        """"""
+    # def setFilterEz(self):
+    #
+    #     with db_session_cm() as session:
+    #         item_query = session.query(BGstEz.ez).distinct()
+    #
+    #     try:
+    #         self.guiFilterEzCombo.currentTextChanged.disconnect(
+    #             self.filterMaintable)
+    #     except:
+    #         pass
+    #     finally:
+    #         prev_typ = self.guiFilterEzCombo.currentText()
+    #         self.guiFilterEzCombo.clear()
+    #
+    #         self.guiFilterEzCombo.addItem('- Alle -')
+    #         for item in sorted(item_query):
+    #             self.guiFilterEzCombo.addItem(str(item[0]))
+    #
+    #         self.guiFilterEzCombo.setCurrentText(prev_typ)
+    #
+    #         self.guiFilterEzCombo.currentTextChanged.connect(
+    #             self.applyFilter)
 
-        """filter kgnr"""
-        self.guiFilterKgLbl = QLabel("Kg-Nr:")
-        self.guiFilterKgCombo = QComboBox(self)
-
-        # self.uiFilterScopeHLay.insertWidget(0, self.guiFiltRechtsverhLbl)
-        self.uiTableFilterHLay.insertWidget(2, self.guiFilterKgLbl)
-        self.uiTableFilterHLay.insertWidget(3, self.guiFilterKgCombo)
-        """"""
-
-    def setFilterScope(self):
-        super().setFilterScope()
-
-        self.setFilterKgnr()
-        self.setFilterKgName()
-        self.setFilterEz()
-
-    def setFilterKgnr(self):
-
-        with db_session_cm() as session:
-            item_query = session.query(BGstEz.kgnr).distinct()
-
-        try:
-            self.guiFilterKgCombo.currentTextChanged.disconnect(
-                self.filterMaintable)
-        except:
-            pass
-        finally:
-            prev_typ = self.guiFilterKgCombo.currentText()
-            self.guiFilterKgCombo.clear()
-
-            self.guiFilterKgCombo.addItem('- Alle -')
-            for item in sorted(item_query):
-                self.guiFilterKgCombo.addItem(str(item[0]))
-
-            self.guiFilterKgCombo.setCurrentText(prev_typ)
-
-            self.guiFilterKgCombo.currentTextChanged.connect(
-                self.applyFilter)
-
-    def setFilterKgName(self):
-
-        with db_session_cm() as session:
-            item_query = session.query(BKatGem.kgname).join(BGstEz).distinct()
-
-        try:
-            self.guiFilterKgNameCombo.currentTextChanged.disconnect(
-                self.filterMaintable)
-        except:
-            pass
-        finally:
-            prev_typ = self.guiFilterKgNameCombo.currentText()
-            self.guiFilterKgNameCombo.clear()
-
-            self.guiFilterKgNameCombo.addItem('- Alle -')
-            for item in sorted(item_query):
-                self.guiFilterKgNameCombo.addItem(str(item[0]))
-
-            self.guiFilterKgNameCombo.setCurrentText(prev_typ)
-
-            self.guiFilterKgNameCombo.currentTextChanged.connect(
-                self.applyFilter)
-
-    def setFilterEz(self):
-
-        with db_session_cm() as session:
-            item_query = session.query(BGstEz.ez).distinct()
-
-        try:
-            self.guiFilterEzCombo.currentTextChanged.disconnect(
-                self.filterMaintable)
-        except:
-            pass
-        finally:
-            prev_typ = self.guiFilterEzCombo.currentText()
-            self.guiFilterEzCombo.clear()
-
-            self.guiFilterEzCombo.addItem('- Alle -')
-            for item in sorted(item_query):
-                self.guiFilterEzCombo.addItem(str(item[0]))
-
-            self.guiFilterEzCombo.setCurrentText(prev_typ)
-
-            self.guiFilterEzCombo.currentTextChanged.connect(
-                self.applyFilter)
-
-    def useFilterScope(self, source_row, source_parent):
-        super().useFilterScope(source_row, source_parent)
-
-        try:
-            """filter KgNr"""
-            table_value = self.filter_proxy.sourceModel() \
-                .data(self.filter_proxy.sourceModel().index(source_row, 3),
-            Qt.DisplayRole)
-            if self.guiFilterKgCombo.currentText() != "- Alle -":
-                if str(table_value) != self.guiFilterKgCombo.currentText():
-                    return False
-            """"""
-
-            """filter KgName"""
-            table_value = self.filter_proxy.sourceModel() \
-                .data(self.filter_proxy.sourceModel().index(source_row, 4),
-            Qt.DisplayRole)
-            if self.guiFilterKgNameCombo.currentText() != "- Alle -":
-                if str(table_value) != self.guiFilterKgNameCombo.currentText():
-                    return False
-            """"""
-
-            """filter Ez"""
-            table_value = self.filter_proxy.sourceModel() \
-                .data(self.filter_proxy.sourceModel().index(source_row, 5),
-            Qt.DisplayRole)
-            if self.guiFilterEzCombo.currentText() != "- Alle -":
-                if str(table_value) != self.guiFilterEzCombo.currentText():
-                    return False
-            """"""
-        except:
-            print("Filter Error:", sys.exc_info())
+    # def useFilterScope(self, source_row, source_parent):
+    #     super().useFilterScope(source_row, source_parent)
+    #
+    #     try:
+    #         """filter KgNr"""
+    #         table_value = self.filter_proxy.sourceModel() \
+    #             .data(self.filter_proxy.sourceModel().index(source_row, 3),
+    #         Qt.DisplayRole)
+    #         if self.guiFilterKgCombo.currentText() != "- Alle -":
+    #             if str(table_value) != self.guiFilterKgCombo.currentText():
+    #                 return False
+    #         """"""
+    #
+    #         """filter KgName"""
+    #         table_value = self.filter_proxy.sourceModel() \
+    #             .data(self.filter_proxy.sourceModel().index(source_row, 4),
+    #         Qt.DisplayRole)
+    #         if self.guiFilterKgNameCombo.currentText() != "- Alle -":
+    #             if str(table_value) != self.guiFilterKgNameCombo.currentText():
+    #                 return False
+    #         """"""
+    #
+    #         """filter Ez"""
+    #         table_value = self.filter_proxy.sourceModel() \
+    #             .data(self.filter_proxy.sourceModel().index(source_row, 5),
+    #         Qt.DisplayRole)
+    #         if self.guiFilterEzCombo.currentText() != "- Alle -":
+    #             if str(table_value) != self.guiFilterEzCombo.currentText():
+    #                 return False
+    #         """"""
+    #     except:
+    #         print("Filter Error:", sys.exc_info())
 
     def selectedRowsChanged(self):
         super().selectedRowsChanged()
@@ -1161,7 +1161,7 @@ class GstPreSelTable(DataView):
 
         self.parent = parent
 
-        self.available_filters = ''
+        # self.available_filters = ''
         self.title = 'vorgemerkte Grundstücke:'
 
         self.maintable_text = ["vorgemerktesGrundstück",

@@ -22,7 +22,7 @@ class GstAllMain(DataView, MainWidget):
 
     data_model_class = BGstZuordnung
 
-    available_filters = 'gs'
+    # available_filters = 'gs'
 
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
 
@@ -162,59 +162,59 @@ class GstAllMain(DataView, MainWidget):
 
         return GstAllModel(self, self.maintable_dataarray)
 
-    def setFilterScopeUI(self):
-        super().setFilterScopeUI()
+    # def setFilterScopeUI(self):
+    #     super().setFilterScopeUI()
+    #
+    #     """ilter awb"""
+    #     self.guiFilterAwbLbl = QLabel("AW-Buch:")
+    #     self.guiFilterAwbCombo = QComboBox(self)
+    #
+    #     self.uiTableFilterHLay.insertWidget(2, self.guiFilterAwbLbl)
+    #     self.uiTableFilterHLay.insertWidget(3, self.guiFilterAwbCombo)
+    #     """"""
 
-        """ilter awb"""
-        self.guiFilterAwbLbl = QLabel("AW-Buch:")
-        self.guiFilterAwbCombo = QComboBox(self)
+    # def setFilterScope(self):
+    #     super().setFilterScope()
+    #
+    #     self.setFilterAwb()
 
-        self.uiTableFilterHLay.insertWidget(2, self.guiFilterAwbLbl)
-        self.uiTableFilterHLay.insertWidget(3, self.guiFilterAwbCombo)
-        """"""
+    # def setFilterAwb(self):
+    #
+    #     with db_session_cm() as session:
+    #         item_query = session.query(BGstAwbStatus.name).distinct()
+    #
+    #     try:
+    #         self.guiFilterAwbCombo.currentTextChanged.disconnect(
+    #             self.filterMaintable)
+    #     except:
+    #         pass
+    #     finally:
+    #         prev_typ = self.guiFilterAwbCombo.currentText()
+    #         self.guiFilterAwbCombo.clear()
+    #
+    #         self.guiFilterAwbCombo.addItem('- Alle -')
+    #         for item in sorted(item_query):
+    #             self.guiFilterAwbCombo.addItem(str(item[0]))
+    #
+    #         self.guiFilterAwbCombo.setCurrentText(prev_typ)
+    #
+    #         self.guiFilterAwbCombo.currentTextChanged.connect(
+    #             self.applyFilter)
 
-    def setFilterScope(self):
-        super().setFilterScope()
-
-        self.setFilterAwb()
-
-    def setFilterAwb(self):
-
-        with db_session_cm() as session:
-            item_query = session.query(BGstAwbStatus.name).distinct()
-
-        try:
-            self.guiFilterAwbCombo.currentTextChanged.disconnect(
-                self.filterMaintable)
-        except:
-            pass
-        finally:
-            prev_typ = self.guiFilterAwbCombo.currentText()
-            self.guiFilterAwbCombo.clear()
-
-            self.guiFilterAwbCombo.addItem('- Alle -')
-            for item in sorted(item_query):
-                self.guiFilterAwbCombo.addItem(str(item[0]))
-
-            self.guiFilterAwbCombo.setCurrentText(prev_typ)
-
-            self.guiFilterAwbCombo.currentTextChanged.connect(
-                self.applyFilter)
-
-    def useFilterScope(self, source_row, source_parent):
-        super().useFilterScope(source_row, source_parent)
-
-        try:
-            """filter awb"""
-            table_value = self.filter_proxy.sourceModel() \
-                .data(self.filter_proxy.sourceModel().index(source_row, 6),
-            Qt.DisplayRole)
-            if self.guiFilterAwbCombo.currentText() != "- Alle -":
-                if str(table_value) != self.guiFilterAwbCombo.currentText():
-                    return False
-            """"""
-        except:
-            print("Filter Error:", sys.exc_info())
+    # def useFilterScope(self, source_row, source_parent):
+    #     super().useFilterScope(source_row, source_parent)
+    #
+    #     try:
+    #         """filter awb"""
+    #         table_value = self.filter_proxy.sourceModel() \
+    #             .data(self.filter_proxy.sourceModel().index(source_row, 6),
+    #         Qt.DisplayRole)
+    #         if self.guiFilterAwbCombo.currentText() != "- Alle -":
+    #             if str(table_value) != self.guiFilterAwbCombo.currentText():
+    #                 return False
+    #         """"""
+    #     except:
+    #         print("Filter Error:", sys.exc_info())
 
     def updateMainWidget(self):
 

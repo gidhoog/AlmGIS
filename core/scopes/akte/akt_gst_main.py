@@ -432,9 +432,9 @@ class GstAktDataView(DataView):
     #                 "gis_layer_style_id": 99,
     #                 "gis_layer_id_column": 'id'}
 
-    entity_widget_class = GstZuordnungDataForm
-    entity_dialog_class = GstDialog
-    _entity_mc = BGstZuordnung
+    # entity_widget_class = GstZuordnungDataForm
+    # entity_dialog_class = GstDialog
+    # _entity_mc = BGstZuordnung
     # _model_class = GstModelNew
     # _data_source = 'di'
 
@@ -462,6 +462,9 @@ class GstAktDataView(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
+        self.entity_dialog_class = GstDialog
+        self.entity_widget_class = GstZuordnungDataForm
+        self._entity_mc = BGstZuordnung
         self._gis_table_model_class = GstTableModel
         self._commit_entity = False
 

@@ -203,12 +203,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     instance_list = []
 
     """klasse des entity_widgets"""
-    entity_widget_class = None
+    # entity_widget_class = None
     """"""
     """klasse des dialoges"""
-    entity_dialog_class = DataViewEntityDialog
+    # entity_dialog_class = DataViewEntityDialog
     _type_mc = None
-    _entity_mc = None
+    # _entity_mc = None
 
     # _model_class = TableModel
     _main_table_model_class = None
@@ -229,9 +229,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     data_view_class = TableView
 
-    """verfügbare filter für diese tabelle"""
-    _available_filters = 'g'
-    """"""
+    # """verfügbare filter für diese tabelle"""
+    # _available_filters = 'g'
+    # """"""
 
     """standardeinstellung für den filter"""
     filter_activated = False
@@ -306,30 +306,30 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self._entity_widget = entity_widget
 
-    @property  # getter
-    def available_filters(self):
-        return self._available_filters
+    # @property  # getter
+    # def available_filters(self):
+    #     return self._available_filters
 
-    @available_filters.setter
-    def available_filters(self, available_filters):
-        """
-        definiere die verfügbaren filtertypen
-        (derzeit ist nur der 'g' und 's' filter verfügbar)
-
-        possible options:
-        g = general (ein suchfeld filter alle spalten in der tabelle)
-        s = scope   (ein oder mehrere filter-widgets filter definierte spalten;
-                     die filter-widget müssen speziell angelegt werden)
-        d = detail  (ein spezieller filter mit dem individuell ein oder mehrere
-                     spalten nach 'and' oder 'or' gefiltert weden können)
-        c = custom  (ein vordefinieter und komplexer filter der aktiviert oder
-                     deaktiviert werden kann)
-
-        es können auch mehrere filtertypen verwendet werden
-        z.b.: 'gs' or 'gc' or 'gsd'
-        """
-
-        self._available_filters = available_filters
+    # @available_filters.setter
+    # def available_filters(self, available_filters):
+    #     """
+    #     definiere die verfügbaren filtertypen
+    #     (derzeit ist nur der 'g' und 's' filter verfügbar)
+    #
+    #     possible options:
+    #     g = general (ein suchfeld filter alle spalten in der tabelle)
+    #     s = scope   (ein oder mehrere filter-widgets filter definierte spalten;
+    #                  die filter-widget müssen speziell angelegt werden)
+    #     d = detail  (ein spezieller filter mit dem individuell ein oder mehrere
+    #                  spalten nach 'and' oder 'or' gefiltert weden können)
+    #     c = custom  (ein vordefinieter und komplexer filter der aktiviert oder
+    #                  deaktiviert werden kann)
+    #
+    #     es können auch mehrere filtertypen verwendet werden
+    #     z.b.: 'gs' or 'gc' or 'gsd'
+    #     """
+    #
+    #     self._available_filters = available_filters
 
     @property  # getter
     def displayed_rows(self):
@@ -440,6 +440,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.setupUi(self)
 
         DataView.instance_list.append(self)
+
+        """"""
+        self.entity_dialog_class = DataViewEntityDialog
+        self.entity_widget_class = None
+        self._entity_mc = None
+        """"""
 
         self.parent = parent
         # self._mci_list = mci_list
@@ -725,13 +731,13 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         expression = '"status_id"=2'
         self._gis_layer.setSubsetString(expression)
 
-    def setFilterScopeUI(self):
-        """
-        setze das layout für den scope-filter;
-        subclass in child-widgets falls der scope-filter verwendet wird
-        :return:
-        """
-        pass
+    # def setFilterScopeUI(self):
+    #     """
+    #     setze das layout für den scope-filter;
+    #     subclass in child-widgets falls der scope-filter verwendet wird
+    #     :return:
+    #     """
+    #     pass
 
     def setSelectBehaviour(self):
         """
@@ -756,26 +762,26 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.filter_proxy.setSortCaseSensitivity(Qt.CaseInsensitive)
         """"""
 
-    def setFilter(self):
-        """
-        aktiviere die vorgesehenen filter
-        """
+    # def setFilter(self):
+    #     """
+    #     aktiviere die vorgesehenen filter
+    #     """
+    #
+    #     if 's' in self.available_filters:
+    #         self.setFilterScope()
+    #
+    #     if self.filter_activated is False:
+    #         self.filter_proxy.invalidateFilter()
+    #         self.filter_activated = True
 
-        if 's' in self.available_filters:
-            self.setFilterScope()
-
-        if self.filter_activated is False:
-            self.filter_proxy.invalidateFilter()
-            self.filter_activated = True
-
-    def setFilterScope(self):
-        """
-        aktiviere den scope-filter;
-        subclass in child-widget falls verwendet
-        (z.b. core.scopes.gst.gst_zuordnung.GstTable)
-        :return:
-        """
-        pass
+    # def setFilterScope(self):
+    #     """
+    #     aktiviere den scope-filter;
+    #     subclass in child-widget falls verwendet
+    #     (z.b. core.scopes.gst.gst_zuordnung.GstTable)
+    #     :return:
+    #     """
+    #     pass
 
     def applyFilter(self):
         """
@@ -786,25 +792,25 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.filter_proxy.invalidateFilter()
         self.updateFooter()
 
-    def useFilterScope(self, source_row, source_parent):
-        """
-        teil der methode 'filterAcceptsRow' um die werte des scope-filters
-        und dem tableview zu vergleichen
+    # def useFilterScope(self, source_row, source_parent):
+    #     """
+    #     teil der methode 'filterAcceptsRow' um die werte des scope-filters
+    #     und dem tableview zu vergleichen
+    #
+    #     :param source_row:
+    #     :param source_parent:
+    #     :return: False wenn die werte nicht übereinstimmen
+    #     """
+    #     pass
 
-        :param source_row:
-        :param source_parent:
-        :return: False wenn die werte nicht übereinstimmen
-        """
-        pass
-
-    def updateFilterElements(self):
-        """
-        aktualisiere die filter-elemete
-        :return:
-        """
-
-        if 's' in self.available_filters:
-            self.updateFilterElementsScope()
+    # def updateFilterElements(self):
+    #     """
+    #     aktualisiere die filter-elemete
+    #     :return:
+    #     """
+    #
+    #     if 's' in self.available_filters:
+    #         self.updateFilterElementsScope()
 
     def updateFilterElementsScope(self):
         """
@@ -830,23 +836,23 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.view.setModel(self.filter_proxy)
 
-    def initDataView(self):
-        """
-        initialisiere maintable
-
-        :param parent_id:
-        :param
-        :return:
-        """
-        self.setFilter()
-
-        # self.setAddEntityMenu()
-        self.setDataViewLayout()
-
-        self.signals()
-
-        self.updateFooter()
-        self.finalInit()
+    # def initDataView(self):
+    #     """
+    #     initialisiere maintable
+    #
+    #     :param parent_id:
+    #     :param
+    #     :return:
+    #     """
+    #     self.setFilter()
+    #
+    #     # self.setAddEntityMenu()
+    #     self.setDataViewLayout()
+    #
+    #     self.signals()
+    #
+    #     self.updateFooter()
+    #     self.finalInit()
 
     def setMciList(self, mci_list):
 
@@ -1554,39 +1560,39 @@ class SortFilterProxyModel(QSortFilterProxyModel):
                                                             orientation,
                                                             role)
 
-    def filterAcceptsRow(self, source_row, source_parent):
-        """
-        diese methode überwacht ob ein filtereintrag mit einem datensatzeintrag
-        übereinstimmt
-
-        return True to display the row
-        return False to hide the row
-
-        :param source_row:
-        :param source_parent:
-        :return:
-        """
-        """filter general"""
-        if 'g' in self.parent.available_filters:
-            if self.parent.guiFiltGeneralLedit.text() != '':
-                found = False
-                """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
-                for col in range(len(self.parent.model.header)):
-                    col_value = self.sourceModel().data(
-                                self.sourceModel().index(source_row,
-                                                         col), Qt.DisplayRole)
-                    if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
-                            col_value).lower():
-                        found = True
-                """"""
-                if found == False:  # kein treffer in der zeile
-                    return False
-        """"""
-
-        """filter scope"""
-        if 's' in self.parent.available_filters:
-            if self.parent.useFilterScope(source_row, source_parent) == False:
-                return False
-        """"""
-
-        return True
+    # def filterAcceptsRow(self, source_row, source_parent):
+    #     """
+    #     diese methode überwacht ob ein filtereintrag mit einem datensatzeintrag
+    #     übereinstimmt
+    #
+    #     return True to display the row
+    #     return False to hide the row
+    #
+    #     :param source_row:
+    #     :param source_parent:
+    #     :return:
+    #     """
+    #     """filter general"""
+    #     if 'g' in self.parent.available_filters:
+    #         if self.parent.guiFiltGeneralLedit.text() != '':
+    #             found = False
+    #             """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
+    #             for col in range(len(self.parent.model.header)):
+    #                 col_value = self.sourceModel().data(
+    #                             self.sourceModel().index(source_row,
+    #                                                      col), Qt.DisplayRole)
+    #                 if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
+    #                         col_value).lower():
+    #                     found = True
+    #             """"""
+    #             if found == False:  # kein treffer in der zeile
+    #                 return False
+    #     """"""
+    #
+    #     """filter scope"""
+    #     if 's' in self.parent.available_filters:
+    #         if self.parent.useFilterScope(source_row, source_parent) == False:
+    #             return False
+    #     """"""
+    #
+    #     return True

@@ -37,7 +37,7 @@ class KomplexMaintable(DataView):
                     "gis_layer_id_column": 'id'}
 
     _entity_widget = KomplexDataForm
-    entity_dialog_class = KomplexDialog
+    # entity_dialog_class = KomplexDialog
     data_model_class = BKomplex
 
 
@@ -56,6 +56,8 @@ class KomplexMaintable(DataView):
         super(__class__, self).__init__(parent)
 
         self.parent = parent
+
+        self.entity_dialog_class = KomplexDialog
 
         self.linked_gis_widget = self.parent.guiMainGis
 
