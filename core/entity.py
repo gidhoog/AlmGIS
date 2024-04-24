@@ -54,7 +54,7 @@ class Entity(QMainWindow):
     """"""
 
     _entity_mci = None  # Instanz der 'mapped class' des Entities
-    _custom_data = {}
+    # _custom_entity_data = {}
 
     feature = None
 
@@ -99,6 +99,7 @@ class Entity(QMainWindow):
 
         """"""
         self._entity_mc = None
+        self._custom_entity_data = {}
         """"""
 
         self.invalid_data_text = "Die Angaben sind ungültig"
@@ -163,6 +164,7 @@ class Entity(QMainWindow):
         :param **kwargs: z.b. mci's für die Dateneingabe (die in der gleichen
             session wie die entity_mci erstellt werden sollten
         """
+        self.cccc = kwargs
         self.feature = feature
 
         if entity_mci is not None:

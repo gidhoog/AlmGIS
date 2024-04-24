@@ -185,19 +185,19 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.setupUi(self)
 
         """lade die listenelemente für die comboboxen"""
-        with db_session_cm() as session:
+        # with db_session_cm() as session:
+        #
+        #     status_items = session.query(BGstAwbStatus).\
+        #         order_by(BGstAwbStatus.sort).\
+        #         all()
+        #     recht_items = session.query(BRechtsgrundlage).\
+        #         order_by(BRechtsgrundlage.sort).\
+        #         all()
 
-            status_items = session.query(BGstAwbStatus).\
-                order_by(BGstAwbStatus.sort).\
-                all()
-            recht_items = session.query(BRechtsgrundlage).\
-                order_by(BRechtsgrundlage.sort).\
-                all()
-
-        for item in status_items:
-            self.uiAwbStatusCombo.addItem(item.name, item)
-        for r_item in recht_items:
-            self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item)
+        # for item in status_items:
+        #     self.uiAwbStatusCombo.addItem(item.name, item)
+        # for r_item in recht_items:
+        #     self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item)
         """"""
 
     def loadSubWidgets(self):
@@ -213,6 +213,9 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
     def mapData(self):
         super().mapData()
+
+        for item in self.cccc['custom_entity_data']:
+            self.uiAwbStatusCombo.addItem(item.name, item)
 
         self.akt = self._entity_mci.rel_akt.name
         self.gst_nr = self._entity_mci.rel_gst.gst
@@ -230,13 +233,15 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def submitEntity(self):
         super().submitEntity()
 
+
+
         """wichtig ist hier, dass sowohl der status_id als auch der
         status selbst (als mci) an '_entity_mci' übergeben werden"""
         self._entity_mci.awb_status_id = self.awb_status.id
         self._entity_mci.rel_awb_status = self.awb_status
         """"""
-
-        self._entity_mci.rel_rechtsgrundlage = self.rechtsgrundlage
+        # self._entity_mci.awb_status_id = self.awb_status.id
+        # self._entity_mci.rel_rechtsgrundlage = self.rechtsgrundlage
 
         self._entity_mci.anmerkung = self.anmerkung
         self._entity_mci.probleme = self.probleme

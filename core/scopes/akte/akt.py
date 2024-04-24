@@ -291,8 +291,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         gst_awb_status = session.scalars(select(BGstAwbStatus)).all()
         bearbeitungsstatus = session.scalars(select(BBearbeitungsstatus)).all()
 
-        self._custom_data['gst_awb_status'] = gst_awb_status
-        self._custom_data['bearbeitungsstatus'] = bearbeitungsstatus
+        self._custom_entity_data['gst_awb_status'] = gst_awb_status
+        self._custom_entity_data['bearbeitungsstatus'] = bearbeitungsstatus
 
     def loadSubWidgets(self):
         super().loadSubWidgets()
@@ -301,7 +301,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.gst_table = GstAktDataView(self)
         self.uiGstListeVlay.addWidget(self.gst_table)
-        self.gst_table.setCanvas(self.guiMainGis.uiCanvas)
+        # self.gst_table.setCanvas(self.guiMainGis.uiCanvas)
 
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
 
@@ -728,7 +728,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         hole die daten für die status-combobox aus der datenbank und füge sie in
         die combobox ein
         """
-        status_items = sorted(self._custom_data['bearbeitungsstatus'],
+        status_items = sorted(self._custom_entity_data['bearbeitungsstatus'],
                               key=lambda x:x.sort)
 
         for item in status_items:

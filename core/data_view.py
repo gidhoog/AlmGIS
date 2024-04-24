@@ -218,10 +218,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _data_view_mc = None
 
     _mci_list = []
-    _custom_data = {}
+    # _custom_dataview_data = {}
 
     _gis_layer = None
-    _canvas = None
+    # _canvas = None
 
     current_feature = None
 
@@ -249,11 +249,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                                    "verwendet wird!"]
 
     # _commit_entity = True
-    edit_entity_by = 'id'  # or 'mci'
+    # edit_entity_by = 'id'  # or 'mci'
 
     """einige einstellungen für diese klasse"""
     _select_behaviour = 'row'  # standardverhalten was ausgewählt werden soll
-    _edit_behaviour = 'dialog'  # standardverhalten um tabelleneinträge zu bearbeiten
+    # _edit_behaviour = 'dialog'  # standardverhalten um tabelleneinträge zu bearbeiten
     _display_vertical_header = True  # steuert die sichtbarkeit des vertical_header
     _selected_rows_id = []  # liste der id's der ausgewählten zeilen
     _selected_rows_number = 0  # anzahl der ausgewählten zeilen
@@ -445,6 +445,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.entity_dialog_class = DataViewEntityDialog
         self.entity_widget_class = None
         self._entity_mc = None
+        self.edit_entity_by = 'id'  # or 'mci'
+
+        self._edit_behaviour = 'dialog'  # standardverhalten um tabelleneinträge zu bearbeiten
+        self._custom_dataview_data = {}
         """"""
 
         self.parent = parent
@@ -517,9 +521,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # self.view_gis = GisTableView(self)
         # self.uiTableVlay.addWidget(self.view_gis)
 
-    def setCanvas(self, canvas):
-
-        self._canvas = canvas
+    # def setCanvas(self, canvas):
+    #
+    #     self._canvas = canvas
     # def setFeaturesFromMci(self, layer):
     #
     #     self._gis_layer = layer
@@ -917,7 +921,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         with db_session_cm() as session:
 
             self._mci_list = self.getMciList(session)
-            self._custom_data = self.getCustomData(session)
+            self._custom_dataview_data = self.getCustomData(session)
 
         # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
         #
@@ -1104,9 +1108,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         if self.edit_behaviour == 'dialog':
 
-            proxy_index = self.getProxyIndex(index)
-
-            self.indexBasedRowEdit(proxy_index)
+            # self.indexBasedRowEdit(proxy_index)
+            self.indexBasedRowEdit(index)
 
     def indexBasedRowEdit(self, index):
         """
@@ -1117,17 +1120,20 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         if 0 <= index.column() <= 9999:  # all columns of the model
 
+            proxy_index = self.getProxyIndex(index)
+
             entity_witdget_class = self.get_entity_widget_class(index)
-            self.current_feature = self.model.feature(index)
+            self.current_feature = self.model.feature(proxy_index)
 
             if self.edit_entity_by == 'id':
                 self.editRow(entity_witdget_class(self),
-                             entity_id=self.getEntityId(index),
+                             entity_id=self.getEntityId(proxy_index),
                              feature=self.current_feature)
 
             if self.edit_entity_by == 'mci':
                 self.editRow(entity_witdget_class(self),
-                             entity_mci=self.getEntityMci(index))
+                             entity_mci=self.getEntityMci(index),
+                             feature=self.current_feature)
 
     def getEntityId(self, index):
         """
@@ -1147,7 +1153,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :param index: QModelIndex
         :return: MCI-Objekt (z.B.: self._mci_list[index.row()])
         """
-        return self.model.mci_list[self.getProxyIndex(index).row()]
+        # return self.model.mci_list[self.getProxyIndex(index).row()]
+        return self._mci_list[self.getProxyIndex(index).row()]
 
     def rowSelected(self):
         """

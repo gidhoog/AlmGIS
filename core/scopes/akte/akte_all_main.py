@@ -12,7 +12,8 @@ from sqlalchemy.orm import joinedload
 
 from core import db_session_cm, config
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
-    BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus, BAbgrenzung
+    BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus, BAbgrenzung, \
+    BGstAwbStatus
 from core.entity import EntityDialog
 from core.data_view import DataView, TableModel, TableView, GisTableModel
 from core.filter_element import FilterElement
@@ -368,9 +369,11 @@ class AkteAllMain(DataView):
 
         self.entity_dialog_class = AktDialog
         self.entity_widget_class = Akt
+
         self._entity_mc = BAkt
         self._gis_table_model_class = AkteAllMainTableModel
 
+        """"""
         self.setFeatureFields()
         self.setFilterUI()
 
@@ -379,7 +382,6 @@ class AkteAllMain(DataView):
         self.loadData()
         self.setFeaturesFromMci()
         self.setTableView()
-
 
         self.finalInit()
 
@@ -418,6 +420,14 @@ class AkteAllMain(DataView):
         stmt = (select(BAkt)
         .options(
             joinedload(BAkt.rel_bearbeitungsstatus)
+        )
+        # .options(
+        #     joinedload(BAkt.rel_gst_zuordnung)
+        #     .joinedload(BGstZuordnung.rel_awb_status)
+        # )
+        .options(
+            joinedload(BAkt.rel_gst_zuordnung)
+            .joinedload(BGstZuordnung.rel_rechtsgrundlage)
         )
         .options(
             joinedload(BAkt.rel_gst_zuordnung)
@@ -623,9 +633,17 @@ class AkteAllMain(DataView):
         status_stmt = select(BBearbeitungsstatus)
         status_mci = session.scalars(status_stmt).all()
 
+        # awb_status_stmt = select(BGstAwbStatus)
+        # awb_status_mci = session.scalars(awb_status_stmt).all()
+
         custom_data['status'] = status_mci
+        # custom_data['awb_status'] = awb_status_mci
 
         return custom_data
+
+    # def getCustomEntityData(self):
+    #
+    #     return [self._custom_entity_data['awb_status']]
 
     def updateMainWidget(self):
 
@@ -773,7 +791,7 @@ class AkteAllMain(DataView):
     #
     #         self.uicAktStatusFilterCombo.addItem('- Alle -')
     #
-    #         status_list = self._custom_data['status']
+    #         status_list = self._custom_entity_data['status']
     #         status_sorted = sorted(status_list,
     #                                 key=lambda x: x.sort)
     #

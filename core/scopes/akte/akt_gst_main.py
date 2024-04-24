@@ -48,9 +48,11 @@ class GstDialog(EntityDialog):
     def accept(self):
         super().accept()
 
-        if self.dialogWidget.acceptEntity():
+        if self.dialogWidget.acceptEntity() is not None:
 
-            self.parent.updateMaintableNew()
+            new_mci = self.dialogWidget.acceptEntity()
+
+            self.parent.updateMaintableNew(new_mci)
 
         QDialog.accept(self)
 
@@ -397,7 +399,7 @@ class GstTableModel(GisTableModel):
 
                 return str(self.feature(index).attribute('kgnr'))
 
-        if index.column() == 7:  # gis_area
+        if index.column() == 8:  # gis_area
 
             if role == Qt.DisplayRole:
 
@@ -409,7 +411,7 @@ class GstTableModel(GisTableModel):
             # if role == Qt.EditRole:
             #     return area
 
-        if index.column() == 8:  # gb_area
+        if index.column() == 9:  # gb_area
 
             if role == Qt.DisplayRole:
 
@@ -451,7 +453,7 @@ class GstAktDataView(DataView):
                                           "verwendet wird!"]
 
     # _commit_entity = False
-    edit_entity_by = 'mci'
+    # edit_entity_by = 'mci'
 
     # _gis_table_model_class = GstTableModel
     # data_view_class = GisTableView
@@ -464,12 +466,18 @@ class GstAktDataView(DataView):
 
         self.entity_dialog_class = GstDialog
         self.entity_widget_class = GstZuordnungDataForm
+
         self._entity_mc = BGstZuordnung
         self._gis_table_model_class = GstTableModel
-        self._commit_entity = False
 
+        self._commit_entity = False
+        self.edit_entity_by = 'mci'
+
+        """"""
         self.setFeatureFields()
         self.setFilterUI()
+
+        self._gis_layer = self.setLayer()
 
         self.loadData()
         self.setFeaturesFromMci()
@@ -560,17 +568,25 @@ class GstAktDataView(DataView):
 
         self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
-    def setFeaturesFromMci(self):
-        super().setFeaturesFromMci()
+    def setLayer(self):
 
-        self._gis_layer = GstZuordLayer(
+        layer = GstZuordLayer(
             "Polygon?crs=epsg:31259",
             "GstZuordnungLay",
             "memory",
             feature_fields=self.feature_fields
         )
+        return layer
 
-        # for gst_zuor in self._entity_mci.rel_gst_zuordnung:
+    def getCustomEntityData(self):
+
+        print(f'...')
+
+        return self.parent._custom_entity_data['gst_awb_status']
+
+    def setFeaturesFromMci(self):
+        super().setFeaturesFromMci()
+
         for gst_zuor in self._mci_list:
 
             for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
@@ -616,6 +632,8 @@ class GstAktDataView(DataView):
 
         awb_id_fld = QgsField("awb_id", QVariant.Int)
 
+        awb_status_fld = QgsField("awb_status", QVariant.String)
+
         recht_id_fld = QgsField("recht_id", QVariant.Int)
 
         gis_area_fld = QgsField("gis_area", QVariant.Double)
@@ -633,6 +651,7 @@ class GstAktDataView(DataView):
         self.feature_fields.append(kgnr_fld)
         self.feature_fields.append(kgname_fld)
         self.feature_fields.append(awb_id_fld)
+        self.feature_fields.append(awb_status_fld)
         self.feature_fields.append(recht_id_fld)
         self.feature_fields.append(gis_area_fld)
         self.feature_fields.append(gb_area_fld)
@@ -699,10 +718,18 @@ class GstAktDataView(DataView):
         feature['kgnr'] = mci.rel_gst.kgnr
         feature['kgname'] = mci.rel_gst.rel_kat_gem.kgname
         feature['awb_id'] = mci.awb_status_id
+        feature['awb_status'] = mci.rel_awb_status.name
         feature['recht_id'] = mci.rechtsgrundlage_id
         feature['gis_area'] = last_gst.gst_gis_area
         feature['gb_area'] = gb_area
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
+
+    def updateFeatureAttributes(self, *args):
+        super().updateFeatureAttributes(args)
+
+        new_mci = args[0][0]
+
+        self.setFeatureAttributes(self.current_feature, new_mci)
 
     def signals(self):
         super().signals()
