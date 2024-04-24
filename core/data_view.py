@@ -200,6 +200,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     """
     baseclass für maintables
     """
+    instance_list = []
 
     """klasse des entity_widgets"""
     entity_widget_class = None
@@ -247,7 +248,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _delete_text = ["Der Eintrag", "kann nicht gelöscht werden, da er "
                                    "verwendet wird!"]
 
-    _commit_entity = True
+    # _commit_entity = True
     edit_entity_by = 'id'  # or 'mci'
 
     """einige einstellungen für diese klasse"""
@@ -438,11 +439,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
+        DataView.instance_list.append(self)
+
         self.parent = parent
         # self._mci_list = mci_list
         # self._gis_layer = gis_layer
         # self._canvas = canvas
 
+        self._commit_entity = True
         self.feature_fields = []
         self._gis_table_model_class = GisTableModel
         self._model_class = TableModel
@@ -510,7 +514,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def setCanvas(self, canvas):
 
         self._canvas = canvas
-    # def setLayer(self, layer):
+    # def setFeaturesFromMci(self, layer):
     #
     #     self._gis_layer = layer
 
@@ -879,8 +883,17 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def setLayer(self):
         """
         erstelle hier den gis_layer
+        :return: QgsVectorlayer
+        """
+        return
+
+    def setFeaturesFromMci(self):
+        """
+        erstelle hier die feature für den layer basierend auf der mci_list
+        und füge sie in den data_provider mit 'addFeatures' ein
         :return:
         """
+
         pass
 
     def setColumnVisibility(self, layer, columnName, visible):
@@ -945,7 +958,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere das table_view
         :return:
         """
-
         if self.current_feature is not None:
 
             self.updateFeatureAttributes(args)
@@ -958,10 +970,40 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.updateFooter()
 
-        """data_view hat als parent ein MainWidget"""
-        if issubclass(self.parent.__class__, MainWidget):
-            self.parent.updateMainWidget()
-        """"""
+        # """data_view hat als parent ein MainWidget"""
+        # if issubclass(self.parent.__class__, MainWidget):
+        #     self.parent.updateMainWidget()
+        # """"""
+
+        for instance in DataView.instance_list:
+
+            if instance != self and instance._commit_entity == True:
+
+                self.updateSameInstances(instance)
+
+    def updateSameInstances(self, instance):
+        """
+        update the given data_view instance
+        :param instance:
+        :return:
+        """
+
+        instance._gis_layer.startEditing()
+
+        instance._gis_layer.data_provider.truncate()
+
+        instance.loadData()
+        instance.setFeaturesFromMci()
+        instance._gis_layer.commitChanges()
+
+        instance._gis_layer.data_provider.dataChanged.emit()
+
+        instance.updateFooter()
+
+        # """data_view hat als parent ein MainWidget"""
+        # if issubclass(instance.parent.__class__, MainWidget):
+        #     instance.parent.updateMainWidget()
+        # """"""
 
     def setDataViewLayout(self):
         """

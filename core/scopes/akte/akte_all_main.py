@@ -371,8 +371,10 @@ class AkteAllMain(DataView):
         self.setFeatureFields()
         self.setFilterUI()
 
+        self._gis_layer = self.setLayer()
+
         self.loadData()
-        self.setLayer()
+        self.setFeaturesFromMci()
         self.setTableView()
 
 
@@ -455,14 +457,17 @@ class AkteAllMain(DataView):
         return mci
 
     def setLayer(self):
-        super().setLayer()
 
-        self._gis_layer = AktAllLayer(
+        layer = AktAllLayer(
             "None",
             "AktAllLay",
             "memory",
             feature_fields=self.feature_fields
         )
+        return layer
+
+    def setFeaturesFromMci(self):
+        super().setFeaturesFromMci()
 
         for akt in self._mci_list:
 

@@ -450,7 +450,7 @@ class GstAktDataView(DataView):
     _delete_text = ["Das Grundstück", "kann nicht gelöscht werden, da es "
                                           "verwendet wird!"]
 
-    _commit_entity = False
+    # _commit_entity = False
     edit_entity_by = 'mci'
 
     # _gis_table_model_class = GstTableModel
@@ -463,12 +463,13 @@ class GstAktDataView(DataView):
         super(__class__, self).__init__(parent)
 
         self._gis_table_model_class = GstTableModel
+        self._commit_entity = False
 
         self.setFeatureFields()
         self.setFilterUI()
 
         self.loadData()
-        self.setLayer()
+        self.setFeaturesFromMci()
         self.setTableView()
 
         self.finalInit()
@@ -556,8 +557,8 @@ class GstAktDataView(DataView):
 
         self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
-    def setLayer(self):
-        super().setLayer()
+    def setFeaturesFromMci(self):
+        super().setFeaturesFromMci()
 
         self._gis_layer = GstZuordLayer(
             "Polygon?crs=epsg:31259",
