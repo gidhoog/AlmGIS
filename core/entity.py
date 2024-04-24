@@ -155,7 +155,8 @@ class Entity(QMainWindow):
         self.setDefaultValues()
 
     @set_data
-    def editEntity(self, entity_mci=None, entity_id=None, feature=None, **kwargs):
+    def editEntity(self, entity_mci=None, entity_id=None, feature=None,
+                   custom_data=None):
         """
         instance der entity die bearbeitet werden soll
 
@@ -164,7 +165,7 @@ class Entity(QMainWindow):
         :param **kwargs: z.b. mci's für die Dateneingabe (die in der gleichen
             session wie die entity_mci erstellt werden sollten
         """
-        self.cccc = kwargs
+        self.cccc = custom_data
         self.feature = feature
 
         if entity_mci is not None:

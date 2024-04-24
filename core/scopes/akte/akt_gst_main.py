@@ -399,7 +399,7 @@ class GstTableModel(GisTableModel):
 
                 return str(self.feature(index).attribute('kgnr'))
 
-        if index.column() == 8:  # gis_area
+        if index.column() == 9:  # gis_area
 
             if role == Qt.DisplayRole:
 
@@ -411,7 +411,7 @@ class GstTableModel(GisTableModel):
             # if role == Qt.EditRole:
             #     return area
 
-        if index.column() == 9:  # gb_area
+        if index.column() == 10:  # gb_area
 
             if role == Qt.DisplayRole:
 
@@ -581,8 +581,16 @@ class GstAktDataView(DataView):
     def getCustomEntityData(self):
 
         print(f'...')
+        """erhalte die mci-liste mit den gst-awb-statusen von der session
+        bei der initialisierung des aktes"""
 
-        return self.parent._custom_entity_data['gst_awb_status']
+        self.custom_entity_data['awb_status'] \
+            = self.parent._custom_entity_data['gst_awb_status']
+
+        self.custom_entity_data['recht_status'] \
+            = self.parent._custom_entity_data['gst_recht_status']
+
+        return self.custom_entity_data
 
     def setFeaturesFromMci(self):
         super().setFeaturesFromMci()
@@ -633,8 +641,12 @@ class GstAktDataView(DataView):
         awb_id_fld = QgsField("awb_id", QVariant.Int)
 
         awb_status_fld = QgsField("awb_status", QVariant.String)
+        awb_status_fld.setAlias('AWB-Status')
 
         recht_id_fld = QgsField("recht_id", QVariant.Int)
+
+        recht_status_fld = QgsField("recht_status", QVariant.String)
+        recht_status_fld.setAlias('Rechtsgrundlage')
 
         gis_area_fld = QgsField("gis_area", QVariant.Double)
         gis_area_fld.setAlias('GIS-Fläche')
@@ -653,6 +665,7 @@ class GstAktDataView(DataView):
         self.feature_fields.append(awb_id_fld)
         self.feature_fields.append(awb_status_fld)
         self.feature_fields.append(recht_id_fld)
+        self.feature_fields.append(recht_status_fld)
         self.feature_fields.append(gis_area_fld)
         self.feature_fields.append(gb_area_fld)
         self.feature_fields.append(datenstand_fld)
@@ -720,6 +733,7 @@ class GstAktDataView(DataView):
         feature['awb_id'] = mci.awb_status_id
         feature['awb_status'] = mci.rel_awb_status.name
         feature['recht_id'] = mci.rechtsgrundlage_id
+        feature['recht_status'] = mci.rel_rechtsgrundlage.name
         feature['gis_area'] = last_gst.gst_gis_area
         feature['gb_area'] = gb_area
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
@@ -758,6 +772,8 @@ class GstAktDataView(DataView):
         super().finalInit()
 
         self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(5, True)
+        self.view.setColumnHidden(7, True)
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 

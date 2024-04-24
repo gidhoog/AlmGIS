@@ -20,7 +20,7 @@ from sqlalchemy.orm import joinedload
 from core import entity, db_session_cm
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
-    BGstZuordnung, BGstAwbStatus
+    BGstZuordnung, BGstAwbStatus, BRechtsgrundlage
 from core.entity_titel import EntityTitel
 from core.gis_control import GisControl
 from core.gis_item import GisItem
@@ -289,9 +289,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
         # super().getCustomEntityMci(session)
 
         gst_awb_status = session.scalars(select(BGstAwbStatus)).all()
+        gst_recht_status = session.scalars(select(BRechtsgrundlage)).all()
         bearbeitungsstatus = session.scalars(select(BBearbeitungsstatus)).all()
 
         self._custom_entity_data['gst_awb_status'] = gst_awb_status
+        self._custom_entity_data['gst_recht_status'] = gst_recht_status
         self._custom_entity_data['bearbeitungsstatus'] = bearbeitungsstatus
 
     def loadSubWidgets(self):
@@ -647,16 +649,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self._entity_mci.wwp = self.wwp
         self._entity_mci.wwp_jahr = self.wwp_jahr
-
-        print(f'...')
-
-        # todo: es wird bei der Änderung von mehreren zuordnungen hier nur die
-        #  erste commited!!
-        # self._entity_mci.rel_gst_zuordnung.clear()
-
-        # for mci in self.gst_table.data_view.model().sourceModel().mci_list:
-        #     print(f'xxx')
-        #     self._entity_mci.rel_gst_zuordnung.append(mci)
 
     def get_abgrenzung_di(self):
         """

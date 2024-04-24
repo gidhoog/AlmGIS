@@ -449,6 +449,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self._edit_behaviour = 'dialog'  # standardverhalten um tabelleneinträge zu bearbeiten
         self._custom_dataview_data = {}
+
+        self.custom_entity_data = {}
         """"""
 
         self.parent = parent
@@ -1173,9 +1175,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """"""
         return sel_rows[0]
 
-    def editEntity(self):
-
-        pass
+    # def editEntity(self):
+    #
+    #     pass
 
     def clickedEditRow(self):
         """
@@ -1204,7 +1206,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         define or create here a list with custom data that is given in 'editRow'
         to edit the entity (e.g. data for comboboxes)
         """
-        return []
+        return self.custom_entity_data
 
     def editRow(self, entity_widget, entity_id=None, entity_mci=None, feature=None):
         """
@@ -1216,12 +1218,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         if entity_id:
             entity_widget.editEntity(entity_id=entity_id,
-                                     custom_entity_data=self.getCustomEntityData(),
+                                     custom_data=self.getCustomEntityData(),
                                      feature=feature)
 
         if entity_mci:
             entity_widget.editEntity(entity_mci=entity_mci,
-                                     custom_entity_data=self.getCustomEntityData())
+                                     custom_data=self.getCustomEntityData())
 
         """open the entity_widget_class in a dialog"""
         self.openDialog(entity_widget)
