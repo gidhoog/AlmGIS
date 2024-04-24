@@ -520,7 +520,7 @@ class GstAktDataView(DataView):
         self.zuordnungs_dialog.initDialog(self.gst_zuordnung_widget,
                                           width=1700,
                                           height=700)
-        self.gst_zuordnung_widget.initWidget()
+        # self.gst_zuordnung_widget.initWidget()
 
         result = self.zuordnungs_dialog.exec()
 

@@ -970,6 +970,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere das table_view
         :return:
         """
+        # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+
         if self.current_feature is not None:
 
             self.updateFeatureAttributes(args)
@@ -978,7 +980,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self._gis_layer.updateFeature(self.current_feature)
             self._gis_layer.commitChanges()
 
+            # self._gis_layer.data_provider.dataChanged.emit()
+
         self.view.model().sourceModel().modelChanged.emit()
+        # self.view.model().sourceModel().layoutChanged.emit()
 
         self.updateFooter()
 
@@ -987,10 +992,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         #     self.parent.updateMainWidget()
         # """"""
 
+        """aktualisiere auch alle derzeit existierenden instanzen dieser klasse
+        außer dieser instanz"""
         for instance in DataView.instance_list:
-
             if instance != self and instance._commit_entity == True:
-
                 self.updateSameInstances(instance)
 
     def updateSameInstances(self, instance):

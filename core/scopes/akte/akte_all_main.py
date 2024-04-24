@@ -557,7 +557,7 @@ class AkteAllMain(DataView):
         self.feature_fields.append(weide_area_fld)
 
     def setFeatureAttributes(self, feature, mci):
-        super().setFeatureAttributes(feature, mci)
+        # super().setFeatureAttributes(feature, mci)
 
         """weide_area"""
         weide_area = 0.00
@@ -621,10 +621,6 @@ class AkteAllMain(DataView):
 
             self.setFeatureAttributes(self.current_feature, new_mci)
 
-            # self._gis_layer.startEditing()
-
-            # self._gis_layer.updateFeature(self.current_feature)
-            # self._gis_layer.commitChanges()
 
     def getCustomData(self, session):
 

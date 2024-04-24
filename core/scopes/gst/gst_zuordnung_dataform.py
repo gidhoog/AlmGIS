@@ -214,11 +214,10 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def mapData(self):
         super().mapData()
 
-        # for item in self.cccc['custom_entity_data']:
-        for item in self.cccc['awb_status']:
+        for item in self._custom_entity_data['awb_status']:
             self.uiAwbStatusCombo.addItem(item.name, item)
 
-        for item in self.cccc['recht_status']:
+        for item in self._custom_entity_data['recht_status']:
             self.uiRechtsgrundlageCombo.addItem(item.name, item)
 
         self.akt = self._entity_mci.rel_akt.name
@@ -237,15 +236,14 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def submitEntity(self):
         super().submitEntity()
 
-
-
         """wichtig ist hier, dass sowohl der status_id als auch der
         status selbst (als mci) an '_entity_mci' übergeben werden"""
         self._entity_mci.awb_status_id = self.awb_status.id
         self._entity_mci.rel_awb_status = self.awb_status
-        """"""
+
         self._entity_mci.rechtsgrundlage_id = self.rechtsgrundlage.id
         self._entity_mci.rel_rechtsgrundlage = self.rechtsgrundlage
+        """"""
 
         self._entity_mci.anmerkung = self.anmerkung
         self._entity_mci.probleme = self.probleme
