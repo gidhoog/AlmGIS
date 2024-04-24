@@ -165,7 +165,7 @@ class Entity(QMainWindow):
         :param **kwargs: z.b. mci's für die Dateneingabe (die in der gleichen
             session wie die entity_mci erstellt werden sollten
         """
-        self.cccc = custom_data
+        self._custom_entity_data = custom_data
         self.feature = feature
 
         if entity_mci is not None:
