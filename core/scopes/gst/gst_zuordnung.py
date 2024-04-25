@@ -30,7 +30,7 @@ from qgis.PyQt.QtCore import (QModelIndex, Qt, QAbstractTableModel,
 from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
     QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView,
-                             QSplitter, QVBoxLayout, QWidget)
+                             QSplitter, QVBoxLayout, QWidget, QLineEdit)
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
 
@@ -336,9 +336,11 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
             for feat in self.guiGstTable._gis_layer.selectedFeatures():
 
-                print(f'füge feature -- {feat.id()} -- ein!')
-                feat.setAttribute(5, 'neu')
-                self.guiGstTable._gis_layer.updateFeature(feat)
+                if feat.attribute('zugeordnet') != 'X':
+
+                    print(f'füge feature -- {feat.id()} -- ein!')
+                    feat.setAttribute(5, 'neu')
+                    self.guiGstTable._gis_layer.updateFeature(feat)
 
             self.guiGstTable._gis_layer.commitChanges()
 
@@ -958,7 +960,7 @@ class GstTableModel(GisTableModel):
 
                 return Qt.AlignRight | Qt.AlignVCenter
 
-            if index.column() in [1, 2]:
+            if index.column() in [1, 2, 5]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
@@ -990,6 +992,16 @@ class GstTableModel(GisTableModel):
         #         return area_r + ' ha'
 
         return super().data(index, role)
+
+    # def flags(self, index):
+    #
+    #     # if not index.isValid():
+    #     #     return None
+    #
+    #     if index.column() == 5:
+    #         return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+    #     else:
+    #         return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
 
 class GstTable(DataView):
@@ -1182,16 +1194,18 @@ class GstTable(DataView):
     def finalInit(self):
         super().finalInit()
 
+        self.setStretchMethod(2)
+
         self.view.setColumnHidden(0, True)
 
-        # """setzt bestimmte spaltenbreiten"""
-        # self.data_view.setColumnWidth(2, 80)
-        # self.data_view.setColumnWidth(3, 45)
-        # self.data_view.setColumnWidth(4, 130)
-        # self.data_view.setColumnWidth(5, 40)
-        # self.data_view.setColumnWidth(6, 180)
-        # self.data_view.setColumnWidth(7, 130)
-        # """"""
+        """setzt bestimmte spaltenbreiten"""
+        self.view.setColumnWidth(1, 60)
+        self.view.setColumnWidth(2, 50)
+        self.view.setColumnWidth(3, 60)
+        self.view.setColumnWidth(4, 150)
+        self.view.setColumnWidth(5, 80)
+        self.view.setColumnWidth(6, 100)
+        """"""
 
     # def setMaintableColumns(self):
     #     super().setMaintableColumns()
@@ -1396,6 +1410,194 @@ class GstTable(DataView):
         # else:
         #     self.guiPreSelectPbtn.setEnabled(False)
         """"""
+
+    def setFilterUI(self):
+        """
+        setze das layout für die filter
+        :return:
+        """
+
+        filter_lay = QHBoxLayout(self)
+
+        """filter gst"""
+        # filter_name = FilterElement(self)
+        # filter_name.uiLabelLbl.setText('Name:')
+        self.filter_gst_lbl = QLabel(self)
+
+        gst_lbl_font = self.filter_gst_lbl.font()
+        gst_lbl_font.setFamily(config.font_family)
+        self.filter_gst_lbl.setFont(gst_lbl_font)
+
+        self.filter_gst_lbl.setText('Gst:')
+        self.filter_gst_lbl.setVisible(False)
+
+        self.filter_gst_input_wdg = QLineEdit(self)
+
+        gst_input_wdg_font = self.filter_gst_input_wdg.font()
+        gst_input_wdg_font.setPointSize(11)
+        gst_input_wdg_font.setFamily(config.font_family)
+        self.filter_gst_input_wdg.setFont(gst_input_wdg_font)
+
+        self.filter_gst_input_wdg.setPlaceholderText('Gst')
+        self.filter_gst_input_wdg.setClearButtonEnabled(True)
+        self.filter_gst_input_wdg.setMaximumWidth(80)
+        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+
+        self.filter_gst_input_wdg.textChanged.connect(self.useFilter)
+
+        # filter_lay.addWidget(filter_name)
+        """"""
+
+        """filter ez"""
+        # filter_az = FilterElement(self)
+        # filter_az.uiLabelLbl.setText('AZ:')
+
+        self.filter_ez_lbl = QLabel(self)
+
+        ez_lbl_font = self.filter_ez_lbl.font()
+        ez_lbl_font.setFamily(config.font_family)
+        self.filter_ez_lbl.setFont(ez_lbl_font)
+
+        self.filter_ez_lbl.setText('Ez:')
+        self.filter_ez_lbl.setVisible(False)
+
+        self.filter_ez_input_wdg = QLineEdit(self)
+        self.filter_ez_input_wdg.setPlaceholderText('EZ')
+        ez_input_wdg_font = self.filter_ez_input_wdg.font()
+        ez_input_wdg_font.setPointSize(11)
+        ez_input_wdg_font.setFamily(config.font_family)
+        self.filter_ez_input_wdg.setFont(ez_input_wdg_font)
+        self.filter_ez_input_wdg.setClearButtonEnabled(True)
+        self.filter_ez_input_wdg.setMaximumWidth(80)
+        # filter_az.uiFilterElementLay.insertWidget(1, self.filter_az_input_wdg)
+
+        self.filter_ez_input_wdg.textChanged.connect(self.useFilter)
+        """"""
+
+        """filter kgnr"""
+        # filter_name = FilterElement(self)
+        # filter_name.uiLabelLbl.setText('Name:')
+        self.filter_kgnr_lbl = QLabel(self)
+
+        kgnr_lbl_font = self.filter_kgnr_lbl.font()
+        kgnr_lbl_font.setFamily(config.font_family)
+        self.filter_kgnr_lbl.setFont(kgnr_lbl_font)
+
+        self.filter_kgnr_lbl.setText('KG-Nr:')
+        self.filter_kgnr_lbl.setVisible(False)
+
+        self.filter_kgnr_input_wdg = QLineEdit(self)
+
+        kgnr_input_wdg_font = self.filter_kgnr_input_wdg.font()
+        kgnr_input_wdg_font.setPointSize(11)
+        kgnr_input_wdg_font.setFamily(config.font_family)
+        self.filter_kgnr_input_wdg.setFont(kgnr_input_wdg_font)
+
+        self.filter_kgnr_input_wdg.setPlaceholderText('KG-Nr')
+        self.filter_kgnr_input_wdg.setClearButtonEnabled(True)
+        self.filter_kgnr_input_wdg.setMaximumWidth(80)
+        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+
+        self.filter_kgnr_input_wdg.textChanged.connect(self.useFilter)
+
+        # filter_lay.addWidget(filter_name)
+        """"""
+
+        """filter kgname"""
+        # filter_name = FilterElement(self)
+        # filter_name.uiLabelLbl.setText('Name:')
+        self.filter_kgname_lbl = QLabel(self)
+
+        kgname_lbl_font = self.filter_kgname_lbl.font()
+        kgname_lbl_font.setFamily(config.font_family)
+        self.filter_kgname_lbl.setFont(kgname_lbl_font)
+
+        self.filter_kgname_lbl.setText('KG-Name:')
+        self.filter_kgname_lbl.setVisible(False)
+
+        self.filter_kgname_input_wdg = QLineEdit(self)
+
+        kgname_input_wdg_font = self.filter_kgname_input_wdg.font()
+        kgname_input_wdg_font.setPointSize(11)
+        kgname_input_wdg_font.setFamily(config.font_family)
+        self.filter_kgname_input_wdg.setFont(kgname_input_wdg_font)
+
+        self.filter_kgname_input_wdg.setPlaceholderText('KG-Name')
+        self.filter_kgname_input_wdg.setClearButtonEnabled(True)
+        self.filter_kgname_input_wdg.setMaximumWidth(200)
+        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+
+        self.filter_kgname_input_wdg.textChanged.connect(self.useFilter)
+
+        # filter_lay.addWidget(filter_name)
+        """"""
+
+        spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
+                                 QSizePolicy.Minimum)
+        filter_lay.addItem(spacerItem1)
+
+        filter_lay.addWidget(self.filter_gst_lbl)
+        filter_lay.addWidget(self.filter_gst_input_wdg)
+        filter_lay.addWidget(self.filter_ez_lbl)
+        filter_lay.addWidget(self.filter_ez_input_wdg)
+        filter_lay.addWidget(self.filter_kgnr_lbl)
+        filter_lay.addWidget(self.filter_kgnr_input_wdg)
+        filter_lay.addWidget(self.filter_kgname_lbl)
+        filter_lay.addWidget(self.filter_kgname_input_wdg)
+        """"""
+
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        filter_lay.addItem(spacerItem)
+
+        self.uiHeaderHley.insertLayout(1, filter_lay)
+
+    def useFilter(self):
+
+        gst_text = self.filter_gst_input_wdg.text()
+        ez_text = self.filter_ez_input_wdg.text()
+        kgnr_text = self.filter_kgnr_input_wdg.text()
+        kgname_text = self.filter_kgname_input_wdg.text()
+
+        gst_expr = f"lower(\"gst\") LIKE '%{gst_text}%'"
+        ez_expr = f"to_string(\"ez\") LIKE '%{ez_text}%'"
+        kgnr_expr = f"to_string(\"kgnr\") LIKE '%{kgnr_text}%'"
+        kgname_expr = f"lower(\"kgname\") LIKE '%{kgname_text}%'"
+
+        expr_list = []
+
+        if gst_text != '':
+            self.filter_gst_lbl.setVisible(True)
+            expr_list.append(gst_expr)
+        else:
+            self.filter_gst_lbl.setVisible(False)
+
+        if ez_text != '':
+            self.filter_ez_lbl.setVisible(True)
+            expr_list.append(ez_expr)
+        else:
+            self.filter_ez_lbl.setVisible(False)
+
+        if kgnr_text != '':
+            self.filter_kgnr_lbl.setVisible(True)
+            expr_list.append(kgnr_expr)
+        else:
+            self.filter_kgnr_lbl.setVisible(False)
+
+        if kgname_text != '':
+            self.filter_kgname_lbl.setVisible(True)
+            expr_list.append(kgname_expr)
+        else:
+            self.filter_kgname_lbl.setVisible(False)
+
+        if expr_list == []:
+            self._gis_layer.setSubsetString('')
+        else:
+
+            expr_string = " and ".join(expr for expr in expr_list)
+            print(f'expression string: {expr_string}')
+            self._gis_layer.setSubsetString(expr_string)
+
+        self.updateFooter()
 
 
 class GstPreSelTable(DataView):
