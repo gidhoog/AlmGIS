@@ -68,6 +68,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
         self.setLoadTimeLabel()
 
+        self.signals()
+
         # self.presel_proxy_model = GstPreSelFilter(self)
 
         # self.getZugeordneteGst()
@@ -243,6 +245,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
 
     def signals(self):
 
+        # if self._gis_layer is not None:
+        #     self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
+
         self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
         self.guiGstTable.guiPreSelectPbtn.clicked.connect(self.reserveSelectedGst)
 
@@ -325,20 +330,36 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         """übernehme ausgewählte Grundstücke der Gst-Tabelle in die Tabelle mit
         den vorgemerkten Grundstücke"""
 
-        model = self.guiGstTable.data_view_model
+        if self.guiGstTable._gis_layer.selectedFeatures() != []:
 
-        if self.guiGstTable.data_view.selectionModel():
-            _selected_rows_idx = self.guiGstTable.data_view.selectionModel().selectedRows()
+            self.guiGstTable._gis_layer.startEditing()
 
-            for row_idx in _selected_rows_idx:
-                """wandle den proxy-index in den 'model-index' um"""
-                row = self.guiGstTable.filter_proxy.mapToSource(row_idx).row()
-                """"""
-                """füge ein Gst nur ein, wenn es nicht angehackt ist!"""
-                if model.data(model.index(row, 2), Qt.CheckStateRole) == 0:  # 2 waere angehackt
-                    model.setData(
-                        model.index(row, 2), Qt.Checked, Qt.CheckStateRole)
-                """"""
+            for feat in self.guiGstTable._gis_layer.selectedFeatures():
+
+                print(f'füge feature -- {feat.id()} -- ein!')
+                feat.setAttribute(5, 'neu')
+                self.guiGstTable._gis_layer.updateFeature(feat)
+
+            self.guiGstTable._gis_layer.commitChanges()
+
+            self.guiGstTable._gis_layer.data_provider.dataChanged.emit()
+
+
+
+        # model = self.guiGstTable.data_view_model
+        #
+        # if self.guiGstTable.data_view.selectionModel():
+        #     _selected_rows_idx = self.guiGstTable.data_view.selectionModel().selectedRows()
+        #
+        #     for row_idx in _selected_rows_idx:
+        #         """wandle den proxy-index in den 'model-index' um"""
+        #         row = self.guiGstTable.filter_proxy.mapToSource(row_idx).row()
+        #         """"""
+        #         """füge ein Gst nur ein, wenn es nicht angehackt ist!"""
+        #         if model.data(model.index(row, 2), Qt.CheckStateRole) == 0:  # 2 waere angehackt
+        #             model.setData(
+        #                 model.index(row, 2), Qt.Checked, Qt.CheckStateRole)
+        #         """"""
 
     def loadGdbDaten(self):
         """
@@ -1027,6 +1048,9 @@ class GstTable(DataView):
         kgname_fld = QgsField("kgname", QVariant.String)
         kgname_fld.setAlias('KG-Name')
 
+        zugeordnet_fld = QgsField("zugeordnet", QVariant.String)
+        zugeordnet_fld.setAlias('zugeordnet')
+
         zugeordnet_zu_fld = QgsField("zugeordnet_zu", QVariant.String)
         zugeordnet_zu_fld.setAlias('zugeordnet zu')
 
@@ -1041,6 +1065,7 @@ class GstTable(DataView):
         self.feature_fields.append(ez_fld)
         self.feature_fields.append(kgnr_fld)
         self.feature_fields.append(kgname_fld)
+        self.feature_fields.append(zugeordnet_fld)
         self.feature_fields.append(zugeordnet_zu_fld)
         self.feature_fields.append(datenstand_fld)
         self.feature_fields.append(importzeit_fld)
@@ -1076,21 +1101,28 @@ class GstTable(DataView):
                        key=attrgetter('rel_alm_gst_ez.datenstand'))
         """"""
 
+        zugeordnet = '--'
+
         zugeordnet_list = []
         if mci.rel_gst_zuordnung != []:
             for gst_zuord in mci.rel_gst_zuordnung:
                 zugeordnet_list.append(gst_zuord.rel_akt.name)
 
-            zugeordnet_str = ", ".join(str(z) for z in zugeordnet_list)
+                if gst_zuord.rel_akt.id == self.parent.akt_id:
+                    zugeordnet = 'X'
+
+
+            zugeordnet_zu = ", ".join(str(z) for z in zugeordnet_list)
         else:
-            zugeordnet_str = '---'
+            zugeordnet_zu = '---'
 
         feature['gst_id'] = mci.id
         feature['gst'] = mci.gst
         feature['ez'] = last_gst.rel_alm_gst_ez.ez
         feature['kgnr'] = mci.kgnr
         feature['kgname'] = mci.rel_kat_gem.kgname
-        feature['zugeordnet_zu'] = zugeordnet_str
+        feature['zugeordnet'] = zugeordnet
+        feature['zugeordnet_zu'] = zugeordnet_zu
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
         feature['importzeit'] = last_gst.rel_alm_gst_ez.import_time
 
@@ -1353,10 +1385,16 @@ class GstTable(DataView):
 
         """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
         Grundstücke"""
-        if self.view.selectionModel().selectedRows():
+
+        if self._gis_layer.selectedFeatureIds() != []:
             self.guiPreSelectPbtn.setEnabled(True)
         else:
             self.guiPreSelectPbtn.setEnabled(False)
+
+        # if self.view.selectionModel().selectedRows():
+        #     self.guiPreSelectPbtn.setEnabled(True)
+        # else:
+        #     self.guiPreSelectPbtn.setEnabled(False)
         """"""
 
 
