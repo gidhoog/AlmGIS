@@ -476,6 +476,7 @@ class GstAktDataView(DataView):
         """"""
         self.setFeatureFields()
         self.setFilterUI()
+        self.setCanvas(self.parent.guiMainGis.uiCanvas)
 
         self._gis_layer = self.setLayer()
 

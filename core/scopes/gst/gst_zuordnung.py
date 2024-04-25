@@ -1,17 +1,23 @@
 import csv, sys, webbrowser, os
+from _operator import attrgetter
 
 from datetime import datetime
 from pathlib import Path
 
 from geoalchemy2 import WKTElement
-from sqlalchemy import desc, text
+from sqlalchemy import desc, text, select
+from sqlalchemy.orm import joinedload
+
+from geoalchemy2.shape import to_shape
 
 from core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
     BGstVersion, BSys, BKatGem, BGstZuordnung, BGstZuordnungMain, \
     BGisScopeLayer
 from core.gis_control import GisControl
+from core.gis_layer import GstAllLayer, Feature
 from core.main_gis import MainGis
-from core.data_view import DataView, TableModel, TableView, SortFilterProxyModel
+from core.data_view import DataView, TableModel, TableView, \
+    SortFilterProxyModel, GisTableModel
 
 import zipfile
 from io import TextIOWrapper
@@ -19,13 +25,14 @@ from os import listdir
 from os.path import isfile, join
 
 from qgis.PyQt.QtCore import (QModelIndex, Qt, QAbstractTableModel,
-                          QSortFilterProxyModel, QItemSelectionModel, QSize)
+                          QSortFilterProxyModel, QItemSelectionModel, QSize,
+                              QVariant)
 from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
     QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView,
                              QSplitter, QVBoxLayout, QWidget)
 from qgis.core import QgsVectorLayer, QgsProject, \
-    QgsCoordinateReferenceSystem, QgsCoordinateTransform
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
 
 from core import db_session_cm, config, main_dialog, settings
 from core.scopes.gst import gst_zuordnung_UI
@@ -55,8 +62,12 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.addDockWidget(Qt.RightDockWidgetArea, self.guiGisDock)
         self.guiGisDock.setWidget(self.guiMainGis)
 
-        self.guiGstTable = GstTable(self)
-        self.guiGstPreSelTview = GstPreSelTable(self)
+        self.loadSupWidgets()
+
+        self.initUi()
+
+        self.setLoadTimeLabel()
+
         # self.presel_proxy_model = GstPreSelFilter(self)
 
         # self.getZugeordneteGst()
@@ -238,6 +249,18 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
         self.guiMatchPreSelGstPbtn.clicked.connect(self.matchGstMultiple)
 
         self.uiOpenImpPathPbtn.clicked.connect(self.openImpPath)
+
+    def loadSupWidgets(self):
+
+        self.guiGstTable = GstTable(self)
+        self.guiGstPreSelTview = GstPreSelTable(self)
+
+        self.guiMainGis.project_instance.addMapLayer(self.guiGstTable._gis_layer)
+
+        self.guiGstTable._gis_layer.updateExtents()
+
+        extent = self.guiGstTable._gis_layer.extent()
+        self.guiMainGis.uiCanvas.setExtent(extent)
 
 
     def loadGisLayer(self):
@@ -899,28 +922,187 @@ class GstModel(TableModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
 
+class GstTableModel(GisTableModel):
+
+    def __init__(self, layerCache, parent=None):
+        super(GisTableModel, self).__init__(layerCache, parent)
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        # feat = self.feature(index)
+
+        if role == Qt.TextAlignmentRole:
+
+            if index.column() in [3]:
+
+                return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [1, 2]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 3:
+
+            if role == Qt.DisplayRole:
+
+                return str(self.feature(index).attribute('kgnr'))
+
+        # if index.column() == 9:  # gis_area
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         area = self.feature(index).attribute('gis_area')
+        #         area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+        #                                  ).replace(".", ",")
+        #         return area_r + ' ha'
+        #
+        #     # if role == Qt.EditRole:
+        #     #     return area
+        #
+        # if index.column() == 10:  # gb_area
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         area = self.feature(index).attribute('gb_area')
+        #         area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+        #                                  ).replace(".", ",")
+        #         return area_r + ' ha'
+
+        return super().data(index, role)
+
+
 class GstTable(DataView):
     """
     tabelle mit den grundstücken die zugeordnet werden können bzw. bereits
     zugeordnet sind
     """
 
-    gis_relation = {"gis_id_column": 0,
-                    "gis_layer_style_id": 108,
-                    "gis_layer_id_column": 'id'}
+    # gis_relation = {"gis_id_column": 0,
+    #                 "gis_layer_style_id": 108,
+    #                 "gis_layer_id_column": 'id'}
 
-    _data_view = TableView
-    _model_class = GstModel
+    # _data_view = TableView
+    # _model_class = GstModel
 
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
 
         self.parent = parent
-        self.title = 'Grundstücke die zugeordnet werden können:'
 
-        # self.available_filters = 'gs'
+        self._gis_table_model_class = GstTableModel
 
+        self.uiTitleLbl.setText('Grundstücke die zugeordnet werden können:')
         self.maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
+
+        self.setFeatureFields()
+        self.setFilterUI()
+        self.setCanvas(self.parent.guiMainGis.uiCanvas)
+
+        self._gis_layer = self.setLayer()
+
+        self.loadData()
+        self.setFeaturesFromMci()
+        self.setTableView()
+
+        self.finalInit()
+
+        self.updateFooter()
+
+        self.signals()
+
+
+    def setFeatureFields(self):
+
+        gst_id_fld = QgsField("gst_id", QVariant.Int)
+
+        gst_fld = QgsField("gst", QVariant.String)
+        gst_fld.setAlias('Gst')
+
+        ez_fld = QgsField("ez", QVariant.Int)
+        ez_fld.setAlias('EZ')
+
+        kgnr_fld = QgsField("kgnr", QVariant.Int)
+        kgnr_fld.setAlias('KG-Nr')
+
+        kgname_fld = QgsField("kgname", QVariant.String)
+        kgname_fld.setAlias('KG-Name')
+
+        zugeordnet_zu_fld = QgsField("zugeordnet_zu", QVariant.String)
+        zugeordnet_zu_fld.setAlias('zugeordnet zu')
+
+        datenstand_fld = QgsField("datenstand", QVariant.String)
+        datenstand_fld.setAlias('Datenstand')
+
+        importzeit_fld = QgsField("importzeit", QVariant.String)
+        importzeit_fld.setAlias('Importzeit')
+
+        self.feature_fields.append(gst_id_fld)
+        self.feature_fields.append(gst_fld)
+        self.feature_fields.append(ez_fld)
+        self.feature_fields.append(kgnr_fld)
+        self.feature_fields.append(kgname_fld)
+        self.feature_fields.append(zugeordnet_zu_fld)
+        self.feature_fields.append(datenstand_fld)
+        self.feature_fields.append(importzeit_fld)
+
+    def setFeaturesFromMci(self):
+        super().setFeaturesFromMci()
+
+        for gst in self._mci_list:
+
+            feat = Feature(self._gis_layer.fields(), self)
+
+            self.setFeatureAttributes(feat, gst)
+
+            """last_gst"""
+            gst_versionen_list = gst.rel_alm_gst_version
+            last_gst = max(gst_versionen_list,
+                           key=attrgetter('rel_alm_gst_ez.datenstand'))
+            """"""
+
+            geom_wkt = to_shape(last_gst.geometry).wkt
+            geom_new = QgsGeometry()
+            geom = geom_new.fromWkt(geom_wkt)
+
+            feat.setGeometry(geom)
+
+            self._gis_layer.data_provider.addFeatures([feat])
+
+    def setFeatureAttributes(self, feature, mci):
+
+        """last_gst"""
+        gst_versionen_list = mci.rel_alm_gst_version
+        last_gst = max(gst_versionen_list,
+                       key=attrgetter('rel_alm_gst_ez.datenstand'))
+        """"""
+
+        zugeordnet_list = []
+        if mci.rel_gst_zuordnung != []:
+            for gst_zuord in mci.rel_gst_zuordnung:
+                zugeordnet_list.append(gst_zuord.rel_akt.name)
+
+            zugeordnet_str = ", ".join(str(z) for z in zugeordnet_list)
+        else:
+            zugeordnet_str = '---'
+
+        feature['gst_id'] = mci.id
+        feature['gst'] = mci.gst
+        feature['ez'] = last_gst.rel_alm_gst_ez.ez
+        feature['kgnr'] = mci.kgnr
+        feature['kgname'] = mci.rel_kat_gem.kgname
+        feature['zugeordnet_zu'] = zugeordnet_str
+        feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
+        feature['importzeit'] = last_gst.rel_alm_gst_ez.import_time
+
+    def setLayer(self):
+
+        layer = GstAllLayer(
+            "Polygon?crs=epsg:31259",
+            "GstAllLay",
+            "memory",
+            feature_fields=self.feature_fields
+        )
+        return layer
 
     def initUi(self):
         super().initUi()
@@ -941,8 +1123,34 @@ class GstTable(DataView):
         self.guiGstChecked = QLabel()
         self.uiFooterSubVlay.addWidget(self.guiGstChecked)
 
+    def getMciList(self, session):
+
+        stmt = (select(BGst)
+        .options(
+            joinedload(BGst.rel_alm_gst_version)
+            .joinedload(BGstVersion.rel_alm_gst_ez)
+        )
+        .options(
+            joinedload(BGst.rel_alm_gst_version)
+            .joinedload(BGstVersion.rel_alm_gst_nutzung)
+        )
+        .options(
+            joinedload(BGst.rel_kat_gem)
+        )
+        .options(
+            joinedload(BGst.rel_gst_zuordnung)
+            .joinedload(BGstZuordnung.rel_akt)
+        )
+        )
+
+        mci = session.scalars(stmt).unique().all()
+
+        return mci
+
     def finalInit(self):
         super().finalInit()
+
+        self.view.setColumnHidden(0, True)
 
         # """setzt bestimmte spaltenbreiten"""
         # self.data_view.setColumnWidth(2, 80)
@@ -1145,7 +1353,7 @@ class GstTable(DataView):
 
         """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
         Grundstücke"""
-        if self.data_view.selectionModel().selectedRows():
+        if self.view.selectionModel().selectedRows():
             self.guiPreSelectPbtn.setEnabled(True)
         else:
             self.guiPreSelectPbtn.setEnabled(False)

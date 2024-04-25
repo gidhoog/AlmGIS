@@ -463,6 +463,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self._gis_table_model_class = GisTableModel
         self._model_class = TableModel
 
+        self.canvas = QgsMapCanvas()
+
         """liste mit den widgets im fußbereich der tabelle (zum anzeigen 
         verschiedener spaltensummen"""
         self.footer_list = []
@@ -529,6 +531,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     # def setFeaturesFromMci(self, layer):
     #
     #     self._gis_layer = layer
+
+    def setCanvas(self, canvas):
+
+        self.canvas = canvas
 
     def test_sel(self, selected):
 
@@ -835,7 +841,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.model.loadLayer()
 
         self.filter_proxy = GisSortFilterProxyModel(
-            QgsMapCanvas(),
+            self.canvas,
             self.model,
             self
         )

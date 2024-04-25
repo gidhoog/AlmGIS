@@ -137,6 +137,28 @@ class AktAllLayer(QgsVectorLayer):
         self.base = False
 
 
+class GstAllLayer(QgsVectorLayer):
+    """
+    GIS-Layer für alle Gst die einem Akt zugeordnet werden können
+    """
+
+    def __init__(self, path: str = ...,
+                 baseName: str = ...,
+                 providerLib: str = ...,
+                 options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions(),
+                 feature_fields=None) -> None:
+        super().__init__(path, baseName, providerLib, options)
+
+        self.data_provider = self.dataProvider()
+
+        self.data_provider.addAttributes(feature_fields)
+
+        self.updateFields()
+
+        self.back = False
+        self.base = False
+
+
 class GstZuordLayer(QgsVectorLayer):
     """
     GIS-Layer für zugeordnete Grundstücke

@@ -303,7 +303,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
 
         self.gst_table = GstAktDataView(self)
         self.uiGstListeVlay.addWidget(self.gst_table)
-        # self.gst_table.setCanvas(self.guiMainGis.uiCanvas)
 
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
 
