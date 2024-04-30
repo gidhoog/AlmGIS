@@ -543,6 +543,10 @@ class AkteAllMain(DataView):
         weide_area_fld = QgsField("weide_area", QVariant.Double)
         weide_area_fld.setAlias('Weidefläche')
 
+        # aa = QVariant.UserType
+
+        # test_fld = QgsField("test", QVariant.UserType)
+
         self.feature_fields.append(akt_id_fld)
         self.feature_fields.append(az_fld)
         self.feature_fields.append(name_fld)
@@ -555,6 +559,7 @@ class AkteAllMain(DataView):
         self.feature_fields.append(awb_area_gb_fld)
         self.feature_fields.append(awb_area_beweidet_fld)
         self.feature_fields.append(weide_area_fld)
+        # self.feature_fields.append(test_fld)
 
     def setFeatureAttributes(self, feature, mci):
         # super().setFeatureAttributes(feature, mci)
@@ -609,6 +614,7 @@ class AkteAllMain(DataView):
         feature['awb_area_gb'] = gst_area
         feature['awb_area_beweidet'] = cut_area
         feature['weide_area'] = weide_area
+        # feature['test'] = mci
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)

@@ -705,6 +705,39 @@ class BKomplexName(Base):
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
 
+class BKontakt(Base):
+    __tablename__ = 'a_alm_kontakt'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # type_id = Column(Integer, ForeignKey('type.id'))
+    type_id: Mapped[int]
+    parent_id: Mapped[int]
+
+    nachname: Mapped[str]
+    vorname: Mapped[str]
+    company: Mapped[str]
+    strasse: Mapped[str]
+    plz: Mapped[int]
+    ort: Mapped[str]
+    telefon1: Mapped[str]
+    telefon2: Mapped[str]
+    telefon3: Mapped[str]
+    mail1: Mapped[str]
+    mail2: Mapped[str]
+    mail3: Mapped[str]
+
+    blank_value: Mapped[bool]
+    inactive: Mapped[bool]
+    not_delete: Mapped[bool]
+
+    def __init__(self):  # set default values
+
+        self.blank_value = 0
+        self.inactive = 0
+        self.not_delete = 0
+
+    def __repr__(self):
+       return f"<BKontakt(id={self.id}, nachname='{self.nachname}')>"
 
 class BKoppel(Base):
     """
