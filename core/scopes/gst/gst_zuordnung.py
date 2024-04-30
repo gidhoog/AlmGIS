@@ -54,6 +54,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.akt_id = akt_id
 
         self.checked_gst_instances = []  # liste mit den vorgemerkten gst-instanzen
+        self.preselcted_gst_mci = []  # list der vorgemerkten gst-mci'S
 
         self.guiGisDock = GisDock(self)
         self.guiMainGis = MainGis(self.guiGisDock, self, akt_id)
@@ -341,6 +342,19 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                     print(f'füge feature -- {feat.id()} -- ein!')
                     feat.setAttribute(5, 'neu')
                     self.guiGstTable._gis_layer.updateFeature(feat)
+
+                    """füge gst_id's in die liste ein die noch nicht vorhanden
+                    sind"""
+                    # todo: erstelle mit der folgenden liste (oder dict) eine
+                    #  tabelle um die vorgewählten gst anzuzeigen; von hier
+                    #  aus können die angeklickte gst mit
+                    #  'self._gis_layer.selectByIds(list)' angezeigt werden
+
+                    new_gst_id = feat.attribute('gst_id')
+                    if new_gst_id not in self.preselcted_gst_mci:
+                        self.preselcted_gst_mci.append(feat.attribute('gst_id'))
+                    print(f'vorgemerkte gst: {self.preselcted_gst_mci}')
+                    """"""
 
             self.guiGstTable._gis_layer.commitChanges()
 
