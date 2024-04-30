@@ -22,7 +22,7 @@ from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
     BGstZuordnung, BGstAwbStatus, BRechtsgrundlage
 from core.entity_titel import EntityTitel
-from core.gis_control import GisControl
+# from core.gis_control import GisControl
 from core.gis_item import GisItem
 from core.gis_layer import KoppelLayer, KomplexLayer, GstZuordLayer, \
     setLayerStyle
@@ -38,7 +38,7 @@ from core.scopes.koppel.koppel_item import KoppelItem
 
 import resources_rc
 
-class Akt(akt_UI.Ui_Akt, entity.Entity, GisControl):
+class Akt(akt_UI.Ui_Akt, entity.Entity):
     """
     baseclass für einen akt-datensatz
     """

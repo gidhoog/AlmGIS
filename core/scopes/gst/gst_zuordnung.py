@@ -13,7 +13,7 @@ from geoalchemy2.shape import to_shape
 from core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
     BGstVersion, BSys, BKatGem, BGstZuordnung, BGstZuordnungMain, \
     BGisScopeLayer
-from core.gis_control import GisControl
+# from core.gis_control import GisControl
 from core.gis_layer import GstAllLayer, Feature
 from core.main_gis import MainGis
 from core.data_view import DataView, TableModel, TableView, \
@@ -39,7 +39,7 @@ from core.scopes.gst import gst_zuordnung_UI
 from core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
 
 
-class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow, GisControl):
+class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
     """
     mit diesem Formular können ein oder mehrere Gst zugeordnet werden
     """
