@@ -30,6 +30,8 @@ call pyuic5 core/scopes/komplex/komplex_dataform.ui -o core/scopes/komplex/kompl
 
 call pyuic5 core/scopes/koppel/koppel.ui -o core/scopes/koppel/koppel_UI.py
 
+call pyuic5 core/scopes/kontakt/kontakt.ui -o core/scopes/kontakt/kontakt_UI.py
+
 echo -
 echo -
 echo -

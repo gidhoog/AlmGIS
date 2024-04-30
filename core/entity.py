@@ -97,6 +97,8 @@ class Entity(QMainWindow):
 
         self.parent = parent
 
+        self.purpose = 'edit'  # or 'add'
+
         """"""
         self._entity_mc = None
         self._custom_entity_data = {}

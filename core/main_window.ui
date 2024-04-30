@@ -81,8 +81,15 @@
     </property>
     <addaction name="actionSettings"/>
    </widget>
+   <widget class="QMenu" name="menuKontakte">
+    <property name="title">
+     <string>Kontakte</string>
+    </property>
+    <addaction name="uiKontakteAllAction"/>
+   </widget>
    <addaction name="menuAkten"/>
    <addaction name="menuGrundst_cke"/>
+   <addaction name="menuKontakte"/>
    <addaction name="menuWerkzeuge"/>
    <addaction name="menuOptionen"/>
   </widget>
@@ -122,6 +129,11 @@
    </property>
    <property name="text">
     <string>Einstellungen</string>
+   </property>
+  </action>
+  <action name="uiKontakteAllAction">
+   <property name="text">
+    <string>alle Kontakte</string>
    </property>
   </action>
  </widget>

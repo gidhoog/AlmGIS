@@ -715,7 +715,6 @@ class BKontakt(Base):
 
     nachname: Mapped[str]
     vorname: Mapped[str]
-    company: Mapped[str]
     strasse: Mapped[str]
     plz: Mapped[int]
     ort: Mapped[str]

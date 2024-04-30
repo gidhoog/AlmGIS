@@ -10,7 +10,7 @@ from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButto
 
 from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
                       QgsAttributeTableFilterModel, QgsMapCanvas)
-from qgis.core import QgsVectorLayerCache
+from qgis.core import QgsVectorLayerCache, edit
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
@@ -18,6 +18,7 @@ from sqlalchemy import select
 from core import data_view_UI, db_session_cm
 from core.entity import EntityDialog
 from core.footer_line import FooterLine
+from core.gis_layer import Feature
 from core.main_widget import MainWidget
 
 
@@ -207,7 +208,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     """"""
     """klasse des dialoges"""
     # entity_dialog_class = DataViewEntityDialog
-    _type_mc = None
+    # _type_mc = None
     # _entity_mc = None
 
     # _model_class = TableModel
@@ -445,6 +446,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.entity_dialog_class = DataViewEntityDialog
         self.entity_widget_class = None
         self._entity_mc = None
+        self._type_mc = None
         self.edit_entity_by = 'id'  # or 'mci'
 
         self._edit_behaviour = 'dialog'  # standardverhalten um tabelleneinträge zu bearbeiten
@@ -545,7 +547,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def signals(self):
 
         # self.uiEditDataTbtn.clicked.connect(self.clickedEditRow)
-        # self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
+        self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
+        self.uiAddDataTbtn.clicked.connect(self.add_row)
 
         self.view.doubleClicked.connect(self.doubleClickedRow)
 
@@ -905,6 +908,23 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         return
 
+    def addFeaturesFromMciList(self, mci_list):
+        """
+        erstelle hier die feature für den layer basierend auf der mci_list
+        und füge sie in den data_provider mit 'addFeatures' ein
+        :return:
+        """
+        features_to_add = []
+
+        for mci in mci_list:
+            feat = Feature(self._gis_layer.fields(), self)
+
+            self.setFeatureAttributes(feat, mci)
+            features_to_add.append(feat)
+
+        # self._gis_layer.data_provider.addFeatures([feat])
+        self._gis_layer.data_provider.addFeatures(features_to_add)
+
     def setFeaturesFromMci(self):
         """
         erstelle hier die feature für den layer basierend auf der mci_list
@@ -971,22 +991,37 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
 
-    def updateMaintableNew(self, *args):
+    def updateMaintableNew(self, widget_purpose, *args):
         """
         aktualisiere das table_view
         :return:
         """
         # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-        if self.current_feature is not None:
+        if widget_purpose == 'add':
 
-            self.updateFeatureAttributes(args)
+            for instance in DataView.instance_list:
+                # if instance != self and instance._commit_entity == True:
+                if instance._commit_entity == True:
+                    self.updateSameInstances(instance)
 
-            self._gis_layer.startEditing()
-            self._gis_layer.updateFeature(self.current_feature)
-            self._gis_layer.commitChanges()
-
+            # self._gis_layer.startEditing()
+            # self.addFeaturesFromMciList(args)
+            # self._gis_layer.commitChanges()
+            #
             # self._gis_layer.data_provider.dataChanged.emit()
+
+        elif widget_purpose == 'edit':
+
+            if self.current_feature is not None:
+
+                self.updateFeatureAttributes(args)
+
+                self._gis_layer.startEditing()
+                self._gis_layer.updateFeature(self.current_feature)
+                self._gis_layer.commitChanges()
+
+                # self._gis_layer.data_provider.dataChanged.emit()
 
         self.view.model().sourceModel().modelChanged.emit()
         # self.view.model().sourceModel().layoutChanged.emit()
@@ -998,11 +1033,44 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         #     self.parent.updateMainWidget()
         # """"""
 
-        """aktualisiere auch alle derzeit existierenden instanzen dieser klasse
-        außer dieser instanz"""
-        for instance in DataView.instance_list:
-            if instance != self and instance._commit_entity == True:
-                self.updateSameInstances(instance)
+        # """aktualisiere auch alle derzeit existierenden instanzen dieser klasse
+        # außer dieser instanz"""
+        # for instance in DataView.instance_list:
+        #     if instance != self and instance._commit_entity == True:
+        #         self.updateSameInstances(instance)
+        #
+        # # self.view.setCurrentIndex(self.current_index)
+        # # self.view.selectionModel().setCurrentIndex(self.current_index, QItemSelectionModel.Select)
+
+
+
+        # # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+        #
+        # if self.current_feature is not None:
+        #
+        #     self.updateFeatureAttributes(args)
+        #
+        #     self._gis_layer.startEditing()
+        #     self._gis_layer.updateFeature(self.current_feature)
+        #     self._gis_layer.commitChanges()
+        #
+        #     # self._gis_layer.data_provider.dataChanged.emit()
+        #
+        # self.view.model().sourceModel().modelChanged.emit()
+        # # self.view.model().sourceModel().layoutChanged.emit()
+        #
+        # self.updateFooter()
+        #
+        # # """data_view hat als parent ein MainWidget"""
+        # # if issubclass(self.parent.__class__, MainWidget):
+        # #     self.parent.updateMainWidget()
+        # # """"""
+        #
+        # """aktualisiere auch alle derzeit existierenden instanzen dieser klasse
+        # außer dieser instanz"""
+        # for instance in DataView.instance_list:
+        #     if instance != self and instance._commit_entity == True:
+        #         self.updateSameInstances(instance)
 
     def updateSameInstances(self, instance):
         """
@@ -1016,7 +1084,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         instance._gis_layer.data_provider.truncate()
 
         instance.loadData()
-        instance.setFeaturesFromMci()
+        instance.addFeaturesFromMciList(instance._mci_list)
         instance._gis_layer.commitChanges()
 
         instance._gis_layer.data_provider.dataChanged.emit()
@@ -1309,19 +1377,44 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         einstiegs-metode zum löschen einer oder mehrerer zeilen dieser tabellen
         """
+        sel_features = self._gis_layer.selectedFeatures()
 
-        indexes = self.getSelectedRows()
+        # todo: take care of features that are just added
 
-        if not indexes:  # no row selected
-            self.no_row_selected_msg()
-            return
-        else:
-            msgbox = self.delMsg(len(indexes))
+        with edit(self._gis_layer):
+            for feat in sel_features:
+                for mci in self._mci_list:
+                    if feat.attribute('mci_id') == mci.id:
 
-            if msgbox.exec() == QMessageBox.Yes:
-                self.delRow()
-                # self.updateOnAccept()
-                self.updateMaintableNew()
+                        try:
+                            with db_session_cm() as session:
+                                session.add(mci)
+                                session.delete(mci)
+                        except IntegrityError:  # mci is used
+                            self.can_not_delete_msg(self.getFeatureDeleteInfo(feat))
+                        else:
+                            self._mci_list.remove(mci)
+                            self._gis_layer.data_provider.deleteFeatures([feat.id()])
+
+        # with edit(self._gis_layer):
+        #     self._gis_layer.data_provider.deleteFeatures(
+        #         self._gis_layer.selectedFeatureIds()
+        #     )
+
+        self._gis_layer.data_provider.dataChanged.emit()
+
+        # indexes = self.getSelectedRows()
+        #
+        # if not indexes:  # no row selected
+        #     self.no_row_selected_msg()
+        #     return
+        # else:
+        #     msgbox = self.delMsg(len(indexes))
+        #
+        #     if msgbox.exec() == QMessageBox.Yes:
+        #         self.delRow()
+        #         # self.updateOnAccept()
+        #         self.updateMaintableNew()
 
     def delRow(self):
         """eigentliche methode zum löschen von zeilen der tabelle"""
@@ -1416,7 +1509,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if kwargs:
             type_instance = kwargs['typ']
 
-        if self.entity_typ_column:
+        if self._type_mc:
             """unterschiedliche entity-typen sind vorhanden; hole die 
             entity_widget_class aus der type_tabelle in der datenbank"""
 
@@ -1434,14 +1527,19 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         else:
             """nehme das hinterlegt entity_widget"""
-            entity_widget = self.entity_widget(self)
-            entity_widget.newEntity()
+            entity_widget = self.entity_widget_class(self)
+            mci = self._entity_mc()
             """"""
 
-        """öffne das entity-widget in einem dialog"""
-        self.openDialog(entity_widget)
-        """"""
-        entity_widget.focusFirst()
+        entity_widget.purpose = 'add'
+
+        self.editRow(entity_widget=entity_widget,
+                     entity_mci=mci)
+
+        # """öffne das entity-widget in einem dialog"""
+        # self.openDialog(entity_widget)
+        # """"""
+        # entity_widget.focusFirst()
 
     def openDialog(self, entity_widget):
         """

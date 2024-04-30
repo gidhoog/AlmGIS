@@ -14,6 +14,7 @@ from core import main_window_UI, db_session_cm
 # from core.gis_tools import cut_koppel_gstversion
 from core.scopes.akte import akte_all_main
 from core.scopes.gst.gst_all_main import GstAllMain
+from core.scopes.kontakt import kontakt_main
 from core.settings import SettingsDlg, SettingsWdg
 
 
@@ -38,6 +39,10 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
         # Akte:
         self.uiAkteAllAction.triggered.connect(
             lambda: self._setMainWidget("akte_alle"))
+
+        # Kontakte:
+        self.uiKontakteAllAction.triggered.connect(
+            lambda: self._setMainWidget("kontakte_alle"))
 
         # alle zugeordneten gst:
         self.uiAactionAllMatchGst.triggered.connect(
@@ -72,6 +77,10 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             # widget = akte_all_main.AkteAllMain(self)
             widget = akte_all_main.AkteAllMainWidget(self)
             widget_title = "Akten"
+
+        if scope == "kontakte_alle":
+            widget = kontakt_main.KontaktMainWidget(self)
+            widget_title = "Kontakte"
 
         if scope == "gst_match_all":
             widget = GstAllMain(self)
