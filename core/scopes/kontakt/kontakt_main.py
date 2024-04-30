@@ -171,7 +171,6 @@ class KontaktMain(DataView):
         super().setFeatureFields()
 
         mci_id_fld = QgsField("mci_id", QVariant.Int)
-        mci_fld = QgsField("mci", QVariant.List)
 
         nachname_fld = QgsField("nachname", QVariant.String)
         nachname_fld.setAlias('Nachname')
@@ -207,7 +206,6 @@ class KontaktMain(DataView):
         mail3_fld.setAlias('e-Mail')
 
         self.feature_fields.append(mci_id_fld)
-        self.feature_fields.append(mci_fld)
         self.feature_fields.append(nachname_fld)
         self.feature_fields.append(vorname_fld)
         self.feature_fields.append(strasse_fld)
@@ -224,7 +222,6 @@ class KontaktMain(DataView):
         super().setFeatureAttributes(feature, mci)
 
         feature['mci_id'] = mci.id
-        feature['mci'] = [mci]
         feature['nachname'] = mci.nachname
         feature['vorname'] = mci.vorname
         feature['strasse'] = mci.strasse

@@ -1028,50 +1028,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.updateFooter()
 
-        # """data_view hat als parent ein MainWidget"""
-        # if issubclass(self.parent.__class__, MainWidget):
-        #     self.parent.updateMainWidget()
-        # """"""
-
-        # """aktualisiere auch alle derzeit existierenden instanzen dieser klasse
-        # außer dieser instanz"""
-        # for instance in DataView.instance_list:
-        #     if instance != self and instance._commit_entity == True:
-        #         self.updateSameInstances(instance)
-        #
-        # # self.view.setCurrentIndex(self.current_index)
-        # # self.view.selectionModel().setCurrentIndex(self.current_index, QItemSelectionModel.Select)
-
-
-
-        # # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
-        #
-        # if self.current_feature is not None:
-        #
-        #     self.updateFeatureAttributes(args)
-        #
-        #     self._gis_layer.startEditing()
-        #     self._gis_layer.updateFeature(self.current_feature)
-        #     self._gis_layer.commitChanges()
-        #
-        #     # self._gis_layer.data_provider.dataChanged.emit()
-        #
-        # self.view.model().sourceModel().modelChanged.emit()
-        # # self.view.model().sourceModel().layoutChanged.emit()
-        #
-        # self.updateFooter()
-        #
-        # # """data_view hat als parent ein MainWidget"""
-        # # if issubclass(self.parent.__class__, MainWidget):
-        # #     self.parent.updateMainWidget()
-        # # """"""
-        #
-        # """aktualisiere auch alle derzeit existierenden instanzen dieser klasse
-        # außer dieser instanz"""
-        # for instance in DataView.instance_list:
-        #     if instance != self and instance._commit_entity == True:
-        #         self.updateSameInstances(instance)
-
     def updateSameInstances(self, instance):
         """
         update the given data_view instance
@@ -1090,11 +1046,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         instance._gis_layer.data_provider.dataChanged.emit()
 
         instance.updateFooter()
-
-        # """data_view hat als parent ein MainWidget"""
-        # if issubclass(instance.parent.__class__, MainWidget):
-        #     instance.parent.updateMainWidget()
-        # """"""
 
     def setDataViewLayout(self):
         """
@@ -1379,8 +1330,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         sel_features = self._gis_layer.selectedFeatures()
 
-        # todo: take care of features that are just added
-
         with edit(self._gis_layer):
             for feat in sel_features:
                 for mci in self._mci_list:
@@ -1396,25 +1345,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                             self._mci_list.remove(mci)
                             self._gis_layer.data_provider.deleteFeatures([feat.id()])
 
-        # with edit(self._gis_layer):
-        #     self._gis_layer.data_provider.deleteFeatures(
-        #         self._gis_layer.selectedFeatureIds()
-        #     )
-
         self._gis_layer.data_provider.dataChanged.emit()
-
-        # indexes = self.getSelectedRows()
-        #
-        # if not indexes:  # no row selected
-        #     self.no_row_selected_msg()
-        #     return
-        # else:
-        #     msgbox = self.delMsg(len(indexes))
-        #
-        #     if msgbox.exec() == QMessageBox.Yes:
-        #         self.delRow()
-        #         # self.updateOnAccept()
-        #         self.updateMaintableNew()
 
     def delRow(self):
         """eigentliche methode zum löschen von zeilen der tabelle"""

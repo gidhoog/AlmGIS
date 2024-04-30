@@ -747,7 +747,7 @@ class GstAktDataView(DataView):
         self.setFeatureAttributes(self.current_feature, new_mci)
 
     def signals(self):
-        super().signals()
+        # super().signals()
 
         self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
 
