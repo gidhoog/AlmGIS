@@ -14,7 +14,7 @@ from core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
     BGstVersion, BSys, BKatGem, BGstZuordnung, BGstZuordnungMain, \
     BGisScopeLayer
 # from core.gis_control import GisControl
-from core.gis_layer import GstAllLayer, Feature
+from core.gis_layer import GstAllLayer, Feature, GstPreSelLayer
 from core.main_gis import MainGis
 from core.data_view import DataView, TableModel, TableView, \
     SortFilterProxyModel, GisTableModel
@@ -32,7 +32,8 @@ from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
     QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView,
                              QSplitter, QVBoxLayout, QWidget, QLineEdit)
 from qgis.core import QgsVectorLayer, QgsProject, \
-    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry, \
+    edit
 
 from core import db_session_cm, config, main_dialog, settings
 from core.scopes.gst import gst_zuordnung_UI
@@ -343,39 +344,45 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                     feat.setAttribute(5, 'neu')
                     self.guiGstTable._gis_layer.updateFeature(feat)
 
-                    """füge gst_id's in die liste ein die noch nicht vorhanden
-                    sind"""
-                    # todo: erstelle mit der folgenden liste (oder dict) eine
-                    #  tabelle um die vorgewählten gst anzuzeigen; von hier
-                    #  aus können die angeklickte gst mit
-                    #  'self._gis_layer.selectByIds(list)' angezeigt werden
+                    gst_feature_id = feat.id()
+                    if gst_feature_id not in [g[0] for g in self.preselcted_gst_mci]:
 
-                    new_gst_id = feat.attribute('gst_id')
-                    if new_gst_id not in self.preselcted_gst_mci:
-                        self.preselcted_gst_mci.append(feat.attribute('gst_id'))
+                        self.preselcted_gst_mci.append([
+                            gst_feature_id,
+                            feat.attribute('gst_id'),
+                            feat.attribute('gst'),
+                            feat.attribute('ez'),
+                            feat.attribute('kgnr'),
+                            feat.attribute('kgname')
+                            ])
+
                     print(f'vorgemerkte gst: {self.preselcted_gst_mci}')
-                    """"""
+
+            self.updatePreSelTable(self.preselcted_gst_mci)
+
+            self.preselcted_gst_mci.clear()
 
             self.guiGstTable._gis_layer.commitChanges()
 
             self.guiGstTable._gis_layer.data_provider.dataChanged.emit()
 
+    def updatePreSelTable(self, gst_list):
+        """
+        lade die features in der tabelle mit den vorgemerkten gst neu
+        :param gst_list:
+        :return:
+        """
+        self.guiGstPreSelTview._gis_layer.startEditing()
 
+        # self.guiGstPreSelTview._gis_layer.data_provider.truncate()
 
-        # model = self.guiGstTable.data_view_model
-        #
-        # if self.guiGstTable.data_view.selectionModel():
-        #     _selected_rows_idx = self.guiGstTable.data_view.selectionModel().selectedRows()
-        #
-        #     for row_idx in _selected_rows_idx:
-        #         """wandle den proxy-index in den 'model-index' um"""
-        #         row = self.guiGstTable.filter_proxy.mapToSource(row_idx).row()
-        #         """"""
-        #         """füge ein Gst nur ein, wenn es nicht angehackt ist!"""
-        #         if model.data(model.index(row, 2), Qt.CheckStateRole) == 0:  # 2 waere angehackt
-        #             model.setData(
-        #                 model.index(row, 2), Qt.Checked, Qt.CheckStateRole)
-        #         """"""
+        self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
+
+        self.guiGstPreSelTview._gis_layer.commitChanges()
+
+        self.guiGstPreSelTview._gis_layer.data_provider.dataChanged.emit()
+
+        self.guiGstPreSelTview.updateFooter()
 
     def loadGdbDaten(self):
         """
@@ -1641,18 +1648,130 @@ class GstPreSelTable(DataView):
 
         self.guiUndoPreSelPbtn.clicked.connect(self.undoPreSelGst)
 
+        """"""
+        self.setFeatureFields()
+        # self.setFilterUI()
+        # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+
+        self._gis_layer = self.setLayer()
+
+        self.loadData()
+        self.setFeaturesFromMci()
+        self.setTableView()
+
+        self.finalInit()
+
+        self.updateFooter()
+
+        self.signals()
+        """"""
+
+    def loadData(self):
+
+        self._mci_list = self.parent.preselcted_gst_mci
+        # self._mci_list = [[1, '314/3', 136, 19321, 'Mitterbachseerotte'],
+        #                   [2, '314/4', 136, 19321, 'Mitterbachseerotte']]
+
+    def setFeatureFields(self):
+
+        feat_id_fld = QgsField("feat_id", QVariant.Int)
+
+        gst_id_fld = QgsField("gst_id", QVariant.Int)
+
+        gst_fld = QgsField("gst", QVariant.String)
+        gst_fld.setAlias('Gst')
+
+        ez_fld = QgsField("ez", QVariant.Int)
+        ez_fld.setAlias('EZ')
+
+        kgnr_fld = QgsField("kgnr", QVariant.Int)
+        kgnr_fld.setAlias('KG-Nr')
+
+        kgname_fld = QgsField("kgname", QVariant.String)
+        kgname_fld.setAlias('KG-Name')
+
+        self.feature_fields.append(feat_id_fld)
+        self.feature_fields.append(gst_id_fld)
+        self.feature_fields.append(gst_fld)
+        self.feature_fields.append(ez_fld)
+        self.feature_fields.append(kgnr_fld)
+        self.feature_fields.append(kgname_fld)
+
+    def setFeaturesFromMci(self):
+        super().setFeaturesFromMci()
+
+        for gst in self._mci_list:
+
+            feat = Feature(self._gis_layer.fields(), self)
+
+            self.setFeatureAttributes(feat, gst)
+
+            # """last_gst"""
+            # gst_versionen_list = gst.rel_alm_gst_version
+            # last_gst = max(gst_versionen_list,
+            #                key=attrgetter('rel_alm_gst_ez.datenstand'))
+            # """"""
+
+            # geom_wkt = to_shape(last_gst.geometry).wkt
+            # geom_new = QgsGeometry()
+            # geom = geom_new.fromWkt(geom_wkt)
+            #
+            # feat.setGeometry(geom)
+
+            self._gis_layer.data_provider.addFeatures([feat])
+
+    def setFeatureAttributes(self, feature, mci):
+
+        # """last_gst"""
+        # gst_versionen_list = mci.rel_alm_gst_version
+        # last_gst = max(gst_versionen_list,
+        #                key=attrgetter('rel_alm_gst_ez.datenstand'))
+        # """"""
+        #
+        # zugeordnet = '--'
+        #
+        # zugeordnet_list = []
+        # if mci.rel_gst_zuordnung != []:
+        #     for gst_zuord in mci.rel_gst_zuordnung:
+        #         zugeordnet_list.append(gst_zuord.rel_akt.name)
+        #
+        #         if gst_zuord.rel_akt.id == self.parent.akt_id:
+        #             zugeordnet = 'X'
+        #
+        #
+        #     zugeordnet_zu = ", ".join(str(z) for z in zugeordnet_list)
+        # else:
+        #     zugeordnet_zu = '---'
+
+        feature['feat_id'] = mci[0]
+        feature['gst_id'] = mci[1]
+        feature['gst'] = mci[2]
+        feature['ez'] = mci[3]
+        feature['kgnr'] = mci[4]
+        feature['kgname'] = mci[5]
+
+    def setLayer(self):
+
+        layer = GstPreSelLayer(
+            "None",
+            "GstPreSelLay",
+            "memory",
+            feature_fields=self.feature_fields
+        )
+        return layer
+
     def undoPreSelGst(self):
         """
-        entferne alle vorgemerkten Grundstücke
+        entferne alle selektierten vorgemerkten Grundstücke
         :return:
         """
 
-        """bearbeite die Zeilen der Tabelle von oben nach unten (z.B. von 
-        Zeile 10 nach 0); nur so können alle Zeilen der Tabelle gelöscht werden"""
-        for r in range(self.data_view_model.rowCount(), 0, -1):
-            self.data_view_model.setData(self.data_view_model.index(r - 1, 2),
-                                         False, Qt.CheckStateRole)
-        """"""
+        self._gis_layer.data_provider.deleteFeatures(
+            self._gis_layer.selectedFeatureIds())
+
+        self._gis_layer.data_provider.dataChanged.emit()
+
+        self.updateFooter()
 
     def initUi(self):
         super().initUi()
@@ -1662,37 +1781,46 @@ class GstPreSelTable(DataView):
         self.uiDeleteDataTbtn.setVisible(False)
         self.uiToolsTbtn.setVisible(False)
 
-        """blende unnötige Spalten aus"""
-        self.view.setColumnHidden(0, True)
-        self.view.setColumnHidden(1, True)
-        self.view.setColumnHidden(6, True)
-        self.view.setColumnHidden(7, True)
-        self.view.setColumnHidden(8, True)
-        self.view.setColumnHidden(9, True)
-        """"""
+        # """blende unnötige Spalten aus"""
+        # self.view.setColumnHidden(0, True)
+        # self.view.setColumnHidden(1, True)
+        # self.view.setColumnHidden(6, True)
+        # self.view.setColumnHidden(7, True)
+        # self.view.setColumnHidden(8, True)
+        # self.view.setColumnHidden(9, True)
+        # """"""
 
     def finalInit(self):
         super().finalInit()
 
-        """setzt bestimmte spaltenbreiten"""
-        self.view.setColumnWidth(2, 80)
-        self.view.setColumnWidth(3, 45)
-        self.view.setColumnWidth(4, 150)
-        self.view.setColumnWidth(5, 40)
-        """"""
+        # """setzt bestimmte spaltenbreiten"""
+        # self.view.setColumnWidth(2, 80)
+        # self.view.setColumnWidth(3, 45)
+        # self.view.setColumnWidth(4, 150)
+        # self.view.setColumnWidth(5, 40)
+        # """"""
 
         self.setMaximumWidth(450)
 
         self.signals()
 
-    # def signals(self):
-    #     super().signals()
-    #
-    #     self.uiDeleteDataTbtn.clicked.disconnect()
-    #
-    #     self.uiDeleteDataTbtn.clicked.connect(self.removeReservedGst)
+    def signals(self):
+        # super().signals()
 
+        self._gis_layer.data_provider.dataChanged.connect(self.preselChangend)
+
+        # self.uiDeleteDataTbtn.clicked.disconnect()
+        #
+        # self.uiDeleteDataTbtn.clicked.connect(self.removeReservedGst)
+        #
         # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+
+    def preselChangend(self):
+
+        if self.view.model().rowCount() > 0:
+            self.parent.guiMatchPreSelGstPbtn.setEnabled(True)
+        else:
+            self.parent.guiMatchPreSelGstPbtn.setEnabled(False)
 
     # def clearSelectedRows(self):
     #     # super().clearSelectedRows()
