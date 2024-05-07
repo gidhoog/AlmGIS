@@ -52,7 +52,7 @@ class GstDialog(EntityDialog):
 
             new_mci = self.dialogWidget.acceptEntity()
 
-            self.parent.updateMaintableNew(new_mci)
+            self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
 
         QDialog.accept(self)
 
@@ -747,8 +747,9 @@ class GstAktDataView(DataView):
         self.setFeatureAttributes(self.current_feature, new_mci)
 
     def signals(self):
-        # super().signals()
+        super().signals()
 
+        self.uiAddDataTbtn.clicked.disconnect(self.add_row)
         self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
 
         # self.test_cut_btn.clicked.connect(self.test_cut)

@@ -44,6 +44,9 @@ class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget)
                                               id, Qt.EditRole)
                 self.awb_status_model.setData(self.awb_status_model.index(i, 1),
                                               name, Qt.DisplayRole)
+                self.awb_status_model.setData(self.awb_status_model.index(i, 0),
+                                              awb_status_query[i], Qt.UserRole)
+
             """"""
 
             """weise dem combo das model zu"""
@@ -69,6 +72,7 @@ class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget)
                 name = rechtsgrunglage_query[i].name
                 self.rechtsgrundlage_model.setData(self.rechtsgrundlage_model.index(i, 0), id, Qt.EditRole)
                 self.rechtsgrundlage_model.setData(self.rechtsgrundlage_model.index(i, 1), name, Qt.DisplayRole)
+                self.rechtsgrundlage_model.setData(self.rechtsgrundlage_model.index(i, 0), rechtsgrunglage_query[i], Qt.UserRole)
 
             self.uiRechtsformCombo.setModel(self.rechtsgrundlage_model)
             self.uiRechtsformCombo.setModelColumn(1)

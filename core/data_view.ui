@@ -79,6 +79,13 @@
         </spacer>
        </item>
        <item>
+        <widget class="Line" name="uiSeparator03">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QToolButton" name="uiSelectAllTbtn">
          <property name="text">
           <string/>
@@ -119,7 +126,7 @@
         </widget>
        </item>
        <item>
-        <widget class="Line" name="line_2">
+        <widget class="Line" name="uiSeparator02">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -234,7 +241,7 @@
         </widget>
        </item>
        <item>
-        <widget class="Line" name="line">
+        <widget class="Line" name="uiSeparator01">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
