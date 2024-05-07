@@ -15,7 +15,7 @@ from qgis.core import QgsVectorLayerCache, edit
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 
-from core import data_view_UI, db_session_cm
+from core import data_view_UI, db_session_cm, color
 from core.entity import EntityDialog
 from core.footer_line import FooterLine
 from core.gis_layer import Feature
@@ -478,6 +478,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """"""
 
         self.view = self._view_class(self)
+        selection_color = color.data_view_selection
+        color_string = (f'rgb({str(selection_color.red())}, '
+                        f'{str(selection_color.green())}, '
+                        f'{str(selection_color.blue())})')
+
+        self.view.setStyleSheet(f"selection-background-color: {color_string};")
         self.uiTableVlay.addWidget(self.view)
 
         self.uiTitleLbl.setVisible(False)
@@ -906,7 +912,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         erstelle hier den gis_layer
         :return: QgsVectorlayer
         """
-        return
+        pass
 
     def addFeaturesFromMciList(self, mci_list):
         """

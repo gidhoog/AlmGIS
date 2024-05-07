@@ -520,6 +520,9 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         exportiere den ausgewählten Layer
         :return:
         """
+
+
+
         if self.current_layer:
             QgsVectorFileWriter.writeAsVectorFormat(layer=self.current_layer,
                                                     fileName='C:/work/gst.gpkg',

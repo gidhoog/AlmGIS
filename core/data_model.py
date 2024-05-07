@@ -33,7 +33,9 @@ class BAkt(Base):
     rel_gst_zuordnung = relationship(
         'BGstZuordnung',
         back_populates='rel_akt')
+
     rel_komplex_name = relationship('BKomplexName', back_populates='rel_akt')
+
     rel_abgrenzung = relationship('BAbgrenzung',
                                   back_populates='rel_akt',
                                   cascade="all, delete, delete-orphan")
