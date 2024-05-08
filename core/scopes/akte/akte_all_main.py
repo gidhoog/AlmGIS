@@ -45,7 +45,7 @@ class AktDialog(EntityDialog):
 
             new_mci = self.dialogWidget.acceptEntity()
 
-            self.parent.updateMaintableNew(new_mci)
+            self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
 
         QDialog.accept(self)
 

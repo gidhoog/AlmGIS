@@ -19,7 +19,7 @@ from core import data_view_UI, db_session_cm, color
 from core.entity import EntityDialog
 from core.footer_line import FooterLine
 from core.gis_layer import Feature
-from core.main_widget import MainWidget
+# from core.main_widget import MainWidget
 
 
 class GisTableView(QgsAttributeTableView):
@@ -1009,7 +1009,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             for instance in DataView.instance_list:
                 # if instance != self and instance._commit_entity == True:
                 if instance._commit_entity == True:
-                    self.updateSameInstances(instance)
+                    self.updateInstance(instance)
 
             # self._gis_layer.startEditing()
             # self.addFeaturesFromMciList(args)
@@ -1032,9 +1032,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.view.model().sourceModel().modelChanged.emit()
         # self.view.model().sourceModel().layoutChanged.emit()
 
+        """aktualisiere auch alle derzeit existierenden instanzen 
+        dieser klasse außer dieser instanz"""
+        for instance in DataView.instance_list:
+            if instance != self and instance._commit_entity == True:
+                self.updateInstance(instance)
+        """"""
+
         self.updateFooter()
 
-    def updateSameInstances(self, instance):
+    def updateInstance(self, instance):
         """
         update the given data_view instance
         :param instance:
