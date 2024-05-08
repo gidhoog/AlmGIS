@@ -32,6 +32,7 @@ from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
 from core.scopes.akte.abgrenzung import Abgrenzung, AbgrenzungDialog
 from core.scopes.akte.akt_gst_main import GstAktDataView
+from core.scopes.akte.akt_koppel_dv import KoppelAktDataView
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
 from core.scopes.koppel.koppel import KoppelDialog, Koppel
 from core.scopes.koppel.koppel_item import KoppelItem
@@ -301,6 +302,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         """definiere notwendige tabellen und füge sie ein"""
 
+        """lade die gst-tabelle"""
         self.gst_table = GstAktDataView(self)
         self.uiGstListeVlay.addWidget(self.gst_table)
 
@@ -310,8 +312,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         extent = self.gst_table._gis_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
+        """"""
 
-
+        self.koppel_table = KoppelAktDataView(self)
 
 
 
