@@ -394,6 +394,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         :return:
         """
 
+        # todo: nach erfolgten import werden die neuen gst nicht im canvas
+        #  dargestellt!!
+
         """entferne alle vorgemerkten Grundstücke"""
         self.guiGstPreSelTview.undoPreSelGst()
         """"""
@@ -454,14 +457,14 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.guiGstTable.loadData()  # lade die Daten in der Gst-Tabelle neu
         """setzte das model für den Filter erneut, damit dieser korrekt 
         funktioniert"""
-        self.setPreSelModel()
+        # self.setPreSelModel()
         """"""
-        self.guiGstTable.updateMaintableNew()
+        self.guiGstTable.updateMaintableNew(purpose='add')
 
-        """aktualisiere main_gis"""
-        self.guiMainGis.uiCanvas.update()
-        self.guiMainGis.uiCanvas.refresh()
-        """"""
+        # """aktualisiere main_gis"""
+        # self.guiMainGis.uiCanvas.update()
+        # self.guiMainGis.uiCanvas.refresh()
+        # """"""
 
     def importGdbDaten(self):
         """

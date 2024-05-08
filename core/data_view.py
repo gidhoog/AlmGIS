@@ -997,14 +997,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
 
-    def updateMaintableNew(self, widget_purpose, *args):
+    def updateMaintableNew(self, purpose, *args):
         """
         aktualisiere das table_view
         :return:
         """
         # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-        if widget_purpose == 'add':
+        if purpose == 'add':
 
             for instance in DataView.instance_list:
                 # if instance != self and instance._commit_entity == True:
@@ -1017,7 +1017,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             #
             # self._gis_layer.data_provider.dataChanged.emit()
 
-        elif widget_purpose == 'edit':
+        elif purpose == 'edit':
 
             if self.current_feature is not None:
 
@@ -1056,7 +1056,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         instance.addFeaturesFromMciList(instance._mci_list)
         instance._gis_layer.commitChanges()
 
-        instance._gis_layer.data_provider.dataChanged.emit()
+        # instance._gis_layer.data_provider.dataChanged.emit()
+        instance._gis_layer.data_provider.reloadData()
+        instance._gis_layer.triggerRepaint()
 
         instance.updateFooter()
 
