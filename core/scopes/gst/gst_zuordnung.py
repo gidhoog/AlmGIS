@@ -14,7 +14,7 @@ from core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
     BGstVersion, BSys, BKatGem, BGstZuordnung, BGstZuordnungMain, \
     BGisScopeLayer
 # from core.gis_control import GisControl
-from core.gis_layer import GstAllLayer, Feature, GstPreSelLayer
+from core.gis_layer import ZVectorLayer, Feature, ZVectorLayer, setLayerStyle
 from core.main_gis import MainGis
 from core.data_view import DataView, TableModel, TableView, \
     SortFilterProxyModel, GisTableModel
@@ -1274,12 +1274,15 @@ class GstTable(DataView):
 
     def setLayer(self):
 
-        layer = GstAllLayer(
+        layer = ZVectorLayer(
             "Polygon?crs=epsg:31259",
-            "GstAllLay",
+            "Grundstücke (alle)",
             "memory",
             feature_fields=self.feature_fields
         )
+
+        setLayerStyle(layer, 'gst_zuordnung')
+
         return layer
 
     def initUi(self):
@@ -1876,7 +1879,7 @@ class GstPreSelTable(DataView):
 
     def setLayer(self):
 
-        layer = GstPreSelLayer(
+        layer = ZVectorLayer(
             "None",
             "GstPreSelLay",
             "memory",

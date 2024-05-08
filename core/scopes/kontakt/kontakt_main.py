@@ -5,7 +5,7 @@ from sqlalchemy import select
 from core import db_session_cm
 from core.data_view import DataView, TableModel, DataViewEntityDialog
 from core.entity import EntityDialog
-from core.gis_layer import KontaktAllLayer, Feature
+from core.gis_layer import ZVectorLayer, Feature
 from core.main_widget import MainWidget
 
 from core.data_model import BKontakt
@@ -148,7 +148,7 @@ class KontaktMain(DataView):
 
     def setLayer(self):
 
-        layer = KontaktAllLayer(
+        layer = ZVectorLayer(
             "None",
             "KontaktAllLay",
             "memory",

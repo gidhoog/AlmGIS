@@ -17,7 +17,7 @@ from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
 from core.entity import EntityDialog
 from core.data_view import DataView, TableModel, TableView, GisTableModel
 from core.filter_element import FilterElement
-from core.gis_layer import AktAllLayer, Feature
+from core.gis_layer import ZVectorLayer, Feature
 from core.main_widget import MainWidget
 from core.scopes.akte.akt import Akt
 
@@ -471,7 +471,7 @@ class AkteAllMain(DataView):
 
     def setLayer(self):
 
-        layer = AktAllLayer(
+        layer = ZVectorLayer(
             "None",
             "AktAllLay",
             "memory",

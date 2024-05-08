@@ -24,7 +24,7 @@ from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
 from core.entity_titel import EntityTitel
 # from core.gis_control import GisControl
 from core.gis_item import GisItem
-from core.gis_layer import KoppelLayer, KomplexLayer, GstZuordLayer, \
+from core.gis_layer import KoppelLayer, KomplexLayer, ZVectorLayer, \
     setLayerStyle
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis

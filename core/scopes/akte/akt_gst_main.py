@@ -20,7 +20,7 @@ from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BKomplex, BAkt, BKoppel, BAbgrenzung
 from core.entity import EntityDialog
 from core.gis_item import GisItem
-from core.gis_layer import setLayerStyle, GstZuordLayer, Feature
+from core.gis_layer import setLayerStyle, ZVectorLayer, Feature
 from core.gis_tools import cut_koppel_gstversion
 from core.main_dialog import MainDialog
 from core.data_view import DataView, TableModel, TableView, GisTableView, \
@@ -575,12 +575,15 @@ class GstAktDataView(DataView):
 
     def setLayer(self):
 
-        layer = GstZuordLayer(
+        layer = ZVectorLayer(
             "Polygon?crs=epsg:31259",
-            "GstZuordnungLay",
+            "Grundstücke",
             "memory",
             feature_fields=self.feature_fields
         )
+
+        setLayerStyle(layer, 'gst_awbuch_status')
+
         return layer
 
     def getCustomEntityData(self):
