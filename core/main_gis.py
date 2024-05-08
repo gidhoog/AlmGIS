@@ -3,13 +3,13 @@ import sys
 from pathlib import Path
 
 from qgis.PyQt.QtCore import Qt, QSize, QEvent
-from qgis.PyQt.QtGui import QIcon, QStandardItemModel, QStandardItem
+from qgis.PyQt.QtGui import QIcon, QStandardItemModel, QStandardItem, QColor
 from qgis.PyQt.QtWidgets import QWidget, QMenu, QAction, QToolButton, \
     QFileDialog, QMessageBox, QDockWidget, QMainWindow, QSizePolicy, \
     QHBoxLayout, QToolBar, QDialog, QApplication
 from qgis.PyQt.QtXml import QDomDocument
 
-from core import main_gis_UI, db_session_cm, config
+from core import main_gis_UI, db_session_cm, config, color
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsLayerTreeModel,\
     QgsLayerTreeLayer, QgsExpressionContextUtils, QgsLayout, QgsVectorLayer, \
@@ -145,6 +145,9 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         crs = QgsCoordinateReferenceSystem("EPSG:31259")
         self.uiCanvas.setDestinationCrs(crs)
         """"""
+
+        """setzte die selektions-farbe"""
+        self.uiCanvas.setSelectionColor(color.canvas_selection)
 
         """erzeuge eine projekt-instanz"""
         self.project_instance = QgsProject()

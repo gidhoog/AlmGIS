@@ -2,7 +2,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.PyQt.QtGui import QColor
 
-from core import footer_line_UI
+from core import footer_line_UI, color
 
 
 class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
@@ -126,7 +126,8 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         """setze die Hintergrundfarbe für das LineEdit mit der Summe der
         ausgewählten Zeilen"""
         pal_sel = self.uiValueSelLedit.palette()
-        pal_sel.setColor(self.uiValueSelLedit.backgroundRole(), QColor(130, 185, 230))
+        pal_sel.setColor(self.uiValueSelLedit.backgroundRole(),
+                         color.data_view_selection)
         self.uiValueSelLedit.setPalette(pal_sel)
         """"""
 

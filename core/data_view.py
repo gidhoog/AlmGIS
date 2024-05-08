@@ -3,7 +3,7 @@ import csv
 from qgis.PyQt.QtCore import QAbstractTableModel, Qt, QModelIndex, \
     QSortFilterProxyModel, QItemSelectionModel, QItemSelection, \
     QItemSelectionRange
-from qgis.PyQt.QtGui import QPalette, QColor
+# from qgis.PyQt.QtGui import QPalette, QColor
 from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
     QDialog
