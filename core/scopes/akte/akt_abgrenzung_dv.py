@@ -12,7 +12,7 @@ from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttribute
 
 from geoalchemy2.shape import to_shape
 
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.orm import joinedload
 
 from core import config, db_session_cm
@@ -34,7 +34,7 @@ from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
 
 
-class KoppelDialog(EntityDialog):
+class AbgrenzungDialog(EntityDialog):
     """
     dialog für die anzeige einer grundstückszuordnung
     """
@@ -46,7 +46,7 @@ class KoppelDialog(EntityDialog):
         #
         # self.enableApply = True
 
-        self.dialog_window_title = 'Koppel'
+        self.dialog_window_title = 'Abgrenzung'
         # self.set_apply_button_text('&Speichern und Schließen')
 
 
@@ -62,10 +62,10 @@ class KoppelDialog(EntityDialog):
         QDialog.accept(self)
 
 
-class KoppelModel(GisTableModel):
+class AbgrenzungModel(GisTableModel):
 
     def __init__(self, layerCache, parent=None):
-        super(KoppelModel, self).__init__(layerCache, parent)
+        super(AbgrenzungModel, self).__init__(layerCache, parent)
 
     # def data(self, index: QModelIndex, role: int = ...):
     #
@@ -114,18 +114,18 @@ class KoppelModel(GisTableModel):
     #     return super().data(index, role)
 
 
-class KoppelAktDataView(DataView):
+class AbgrenzungDataView(DataView):
     """
     koppeltabelle im akt
     """
 
-    _maintable_text = ["Koppel", "Koppeln", "keine Koppel"]
-    _delete_window_title = ["Koppel löschen", "Koppeln löschen"]
-    _delete_window_text_single = "Soll die ausgewählte Koppel " \
+    _maintable_text = ["Abgrenzung", "Abgrenzungen", "keine Abgrenzung"]
+    _delete_window_title = ["Abgrenzung löschen", "Abgrenzungen löschen"]
+    _delete_window_text_single = "Soll die ausgewählte Abgrenzung " \
                                  "wirklich gelöscht werden?"
     _delete_window_text_plural = ["Sollen die ausgewählten",
-                                  "Koppeln wirklich gelöscht werden?"]
-    _delete_text = ["Die Koppel", "kann nicht gelöscht werden, da sie "
+                                  "Abgrenzungen wirklich gelöscht werden?"]
+    _delete_text = ["Die Abgrenzung", "kann nicht gelöscht werden, da sie "
                                           "verwendet wird!"]
 
     # gst_zuordnung_wdg_class = GstZuordnung
@@ -134,11 +134,11 @@ class KoppelAktDataView(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
-        self.entity_dialog_class = KoppelDialog
+        self.entity_dialog_class = AbgrenzungDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
-        self._entity_mc = BKoppel
-        self._gis_table_model_class = KoppelModel
+        self._entity_mc = BAbgrenzung
+        self._gis_table_model_class = AbgrenzungModel
 
         self._commit_entity = False
         self.edit_entity_by = 'mci'
@@ -185,7 +185,7 @@ class KoppelAktDataView(DataView):
 
         self.uiTitleLbl.setVisible(True)
 
-        self.uiTitleLbl.setText('Koppeln')
+        self.uiTitleLbl.setText('Abgrenzungen')
 
         # self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
         #                       'ha', 'gb_area', 120,
@@ -212,18 +212,9 @@ class KoppelAktDataView(DataView):
             # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
 
             stmt = select(
-                BKoppel
-            ).join(
-                BKoppel.rel_komplex
-            ).join(
-                BKomplex.rel_abgrenzung
-            ).options(
-                joinedload(BKoppel.rel_komplex)
-                     .joinedload(BKomplex.rel_abgrenzung)
-            ).options(
-                joinedload(BKoppel.rel_komplex)
-                     .joinedload(BKomplex.rel_komplex_name)
-            ).where(BAbgrenzung.akt_id == self.parent._entity_id)
+                BAbgrenzung
+            ).where(BAbgrenzung.akt_id == self.parent._entity_id
+                    ).order_by(desc(BAbgrenzung.jahr))
 
             self._mci_list = session.scalars(stmt).unique().all()
 
@@ -233,8 +224,8 @@ class KoppelAktDataView(DataView):
     def setLayer(self):
 
         layer = ZVectorLayer(
-            "Polygon?crs=epsg:31259",
-            "Koppeln",
+            "None",
+            "Abgrenzungen",
             "memory",
             feature_fields=self.feature_fields
         )
@@ -276,11 +267,11 @@ class KoppelAktDataView(DataView):
             #                     '',
             #                     gst_version.rel_alm_gst_ez.datenstand])
 
-            geom_wkt = to_shape(koppel.geometry).wkt
-            geom_new = QgsGeometry()
-            geom = geom_new.fromWkt(geom_wkt)
-
-            feat.setGeometry(geom)
+            # geom_wkt = to_shape(koppel.geometry).wkt
+            # geom_new = QgsGeometry()
+            # geom = geom_new.fromWkt(geom_wkt)
+            #
+            # feat.setGeometry(geom)
 
             self._gis_layer.data_provider.addFeatures([feat])
 
@@ -289,63 +280,28 @@ class KoppelAktDataView(DataView):
 
         abgrenzung_id_fld = QgsField("abgrenzung_id", QVariant.Int)
 
-        abgrenzung_jahr_fld = QgsField("abgrenzung_jahr", QVariant.Int)
+        jahr_fld = QgsField("jahr", QVariant.Int)
 
-        abgrenzung_status_id_fld = QgsField("abgrenzung_status_id", QVariant.Int)
+        status_id_fld = QgsField("status_id", QVariant.Int)
 
-        komplex_id_fld = QgsField("komplex_id", QVariant.Int)
+        bearbeiter_fld = QgsField("bearbeiter", QVariant.String)
 
-        komplex_name_fld = QgsField("komplex_name", QVariant.String)
-
-        koppel_id_fld = QgsField("koppel_id", QVariant.Int)
-
-        koppel_nr_fld = QgsField("koppel_nr", QVariant.Int)
-
-        koppel_name_fld = QgsField("koppel_name", QVariant.String)
-
-        nicht_weide_fld = QgsField("nicht_weide", QVariant.String)
-
-        koppel_area_fld = QgsField("koppel_area", QVariant.Double)
+        erfassungsart_id_fld = QgsField("erfassungsart_id", QVariant.Int)
 
         self.feature_fields.append(abgrenzung_id_fld)
-        self.feature_fields.append(abgrenzung_jahr_fld)
-        self.feature_fields.append(abgrenzung_status_id_fld)
-        self.feature_fields.append(komplex_id_fld)
-        self.feature_fields.append(komplex_name_fld)
-        self.feature_fields.append(koppel_id_fld)
-        self.feature_fields.append(koppel_nr_fld)
-        self.feature_fields.append(koppel_name_fld)
-        self.feature_fields.append(nicht_weide_fld)
-        self.feature_fields.append(koppel_area_fld)
+        self.feature_fields.append(jahr_fld)
+        self.feature_fields.append(status_id_fld)
+        self.feature_fields.append(bearbeiter_fld)
+        self.feature_fields.append(erfassungsart_id_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
 
-        # """last_gst"""
-        # gst_versionen_list = mci.rel_gst.rel_alm_gst_version
-        # last_gst = max(gst_versionen_list,
-        #                key=attrgetter('rel_alm_gst_ez.datenstand'))
-        # """"""
-        #
-        # """gb_area"""
-        # gb_area = 0
-        # # gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
-        # # last_gst = max(gst_versionen_list,
-        # #                key=attrgetter('rel_alm_gst_ez.datenstand'))
-        # for nutz in last_gst.rel_alm_gst_nutzung:
-        #     gb_area = gb_area + nutz.area
-        # """"""
-
-        feature['abgrenzung_id'] = mci.rel_komplex.rel_abgrenzung.id
-        feature['abgrenzung_jahr'] = mci.rel_komplex.rel_abgrenzung.jahr
-        feature['abgrenzung_status_id'] = mci.rel_komplex.rel_abgrenzung.status_id
-        feature['komplex_id'] = mci.rel_komplex.id
-        feature['komplex_name'] = mci.rel_komplex.rel_komplex_name.name
-        feature['koppel_id'] = mci.id
-        feature['koppel_nr'] = mci.nr
-        feature['koppel_name'] = mci.name
-        feature['nicht_weide'] = mci.nicht_weide
-        feature['koppel_area'] = 1.23
+        feature['abgrenzung_id'] = mci.id
+        feature['jahr'] = mci.jahr
+        feature['status_id'] = mci.status_id
+        feature['bearbeiter'] = mci.bearbeiter
+        feature['erfassungsart_id'] = mci.erfassungsart_id
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
@@ -628,21 +584,6 @@ class KoppelAktDataView(DataView):
 
         # self.test_cut_btn.clicked.connect(self.test_cut)
         # self.test_update_btn.clicked.connect(self.test_update)
-
-    def test_update(self):
-
-        topLeft = self.model.createIndex(0, 0)
-        bottomRight = self.model.createIndex(11, 10)
-        self.model.dataChanged.emit(topLeft, bottomRight)
-
-        print(f'...')
-
-    def test_cut(self):
-
-        print(f'...')
-
-        current_koppel_layer = self.parent.current_abgrenzung_item.data(GisItem.KoppelLayer_Role)
-        cut_koppel_gstversion(current_koppel_layer)
 
     def finalInit(self):
         super().finalInit()

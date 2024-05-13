@@ -31,6 +31,7 @@ from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
 from core.scopes.akte.abgrenzung import Abgrenzung, AbgrenzungDialog
+from core.scopes.akte.akt_abgrenzung_dv import AbgrenzungDataView
 from core.scopes.akte.akt_gst_main import GstAktDataView
 from core.scopes.akte.akt_koppel_dv import KoppelAktDataView
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
@@ -225,14 +226,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.uiTitleToolBar.addWidget(self.uicTitleWdg)
 
         """zentriere den Header-Text"""
-        self.uiKKTv.header().setDefaultAlignment(Qt.AlignHCenter|Qt.AlignVCenter)
+        # self.uiKKTv.header().setDefaultAlignment(Qt.AlignHCenter|Qt.AlignVCenter)
         """"""
 
-        """mache den Header-Text 'bold'"""
-        header_font = self.uiKKTv.header().font()
-        header_font.setBold(True)
-        self.uiKKTv.header().setFont(header_font)
-        """"""
+        # """mache den Header-Text 'bold'"""
+        # header_font = self.uiKKTv.header().font()
+        # header_font.setBold(True)
+        # self.uiKKTv.header().setFont(header_font)
+        # """"""
 
     def finalInit(self):
         super().finalInit()
@@ -243,17 +244,17 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """"""
 
 
-        self.uiVersionTv.setColumnHidden(0, True)
-        self.uiVersionTv.setColumnHidden(5, True)
-        self.uiVersionTv.setColumnHidden(6, True)
-        self.uiVersionTv.setColumnHidden(7, True)
-        self.uiVersionTv.setColumnHidden(8, True)
+        # self.uiVersionTv.setColumnHidden(0, True)
+        # self.uiVersionTv.setColumnHidden(5, True)
+        # self.uiVersionTv.setColumnHidden(6, True)
+        # self.uiVersionTv.setColumnHidden(7, True)
+        # self.uiVersionTv.setColumnHidden(8, True)
 
-        self.uiKKTv.setColumnWidth(0, 400)
-        self.uiKKTv.setColumnHidden(1, True)
-        self.uiKKTv.setColumnHidden(2, True)
-        self.uiKKTv.setColumnHidden(3, True)
-        self.uiKKTv.setColumnHidden(4, True)
+        # self.uiKKTv.setColumnWidth(0, 400)
+        # self.uiKKTv.setColumnHidden(1, True)
+        # self.uiKKTv.setColumnHidden(2, True)
+        # self.uiKKTv.setColumnHidden(3, True)
+        # self.uiKKTv.setColumnHidden(4, True)
 
     def mapData(self):
         super().mapData()
@@ -308,34 +309,41 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
 
+        self.abgrenzung_table = AbgrenzungDataView(self)
+        self.uiAbgrenzungVlay.addWidget(self.abgrenzung_table)
+
+        self.koppel_table = KoppelAktDataView(self)
+        self.uiKoppelVlay.addWidget(self.koppel_table)
+
+        self.guiMainGis.project_instance.addMapLayer(self.koppel_table._gis_layer)
+
         self.gst_table._gis_layer.updateExtents()
 
         extent = self.gst_table._gis_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
         """"""
 
-        self.koppel_table = KoppelAktDataView(self)
+        self.abgrenzung_table._gis_layer.selectionChanged.connect(self.selectedAbgrenzungChanged)
+
+        if self.abgrenzung_table._gis_layer.hasFeatures():
+
+            abgr_id = self.abgrenzung_table.model.data(self.abgrenzung_table.model.index(0, 0), Qt.EditRole)
+            # print(f'abgrenzung_id: {abgr_id}')
+            filter_string = f"\"abgrenzung_id\" = {str(abgr_id)}"
+            self.koppel_table._gis_layer.setSubsetString(filter_string)
 
 
+    def selectedAbgrenzungChanged(self):
+
+        print(f'---sel abgr changed---')
+
+        for abgr_feat in self.abgrenzung_table._gis_layer.selectedFeatures():
 
 
-
-        # """lade die Abgrenzungsdaten"""
-        # self.loadKKModel()
-        # self.setCurrentRoleToKK()
-        # self.selectFirstAbgrenzung()
-        # self.uiVersionTv.selectionModel().selectionChanged.connect(
-        #     self.changedSelectedAbgrenzung)
-        # """"""
-        #
-        # self.initGis()
-        # self.loadGisLayer()  # lade layer die in der db definiert sind
-
-    # def initGis(self):
-    #
-    #     self.kk_gis_group = self.guiMainGis.layer_tree_root.addGroup(
-    #         'sonstige Komplexe und Koppeln')
-    #     self.kk_gis_group.setItemVisibilityChecked(False)
+            feat_id = abgr_feat.attribute('abgrenzung_id')
+            print(f'abgrenzung_id: {feat_id}')
+            filter_string = f"\"abgrenzung_id\" = {str(feat_id)}"
+            self.koppel_table._gis_layer.setSubsetString(filter_string)
 
     def updateKomplexe(self):
         """
@@ -575,18 +583,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             else:
                 abgr_item.setData(0, GisItem.Current_Role)
 
-    def selectFirstAbgrenzung(self):
-        """
-        wenn eine Abgrenzung vorhanden ist, dann zeige die erste an
-
-        :return:
-        """
-
-        if self.komplex_root_item.rowCount() > 0:
-
-            self._selected_version_item = self.komplex_root_item.child(0)
-            self.setKKTv(self._selected_version_item.index())
-            self.uiVersionTv.selectRow(0)
+    # def selectFirstAbgrenzung(self):
+    #     """
+    #     wenn eine Abgrenzung vorhanden ist, dann zeige die erste an
+    #
+    #     :return:
+    #     """
+    #
+    #     if self.komplex_root_item.rowCount() > 0:
+    #
+    #         self._selected_version_item = self.komplex_root_item.child(0)
+    #         self.setKKTv(self._selected_version_item.index())
+    #         self.uiVersionTv.selectRow(0)
 
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und
@@ -652,41 +660,41 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.wwp = self.wwp
         self._entity_mci.wwp_jahr = self.wwp_jahr
 
-    def get_abgrenzung_di(self):
-        """
-        erzeuge eine Liste mit den BAbgrenzung-Datenmodellen basierend auf die
-        aktuelle 'Abgrenzung/Komplex/Koppel'-Stuktur
-
-        :return: List [BAbgrenzung]
-        """
-
-        abgrenzungen = []
-
-        rootKkItem = self.uiVersionTv.model().invisibleRootItem()
-
-        for a in range(rootKkItem.rowCount()):
-
-            abgr_item = rootKkItem.child(a)
-            abgr_di = BAbgrenzung()
-            abgr_item.getItemData(abgr_di)
-
-            for k in range(abgr_item.rowCount()):
-
-                komplex_item = abgr_item.child(k)
-                komplex_di = BKomplex()
-                komplex_item.getItemData(komplex_di)
-
-                for kk in range(komplex_item.rowCount()):
-
-                    koppel_item = komplex_item.child(kk)
-                    koppel_di = BKoppel()
-                    koppel_item.getItemData(koppel_di)
-
-                    komplex_di.rel_koppel.append(koppel_di)
-                abgr_di.rel_komplex.append(komplex_di)
-            abgrenzungen.append(abgr_di)
-
-        return abgrenzungen
+    # def get_abgrenzung_di(self):
+    #     """
+    #     erzeuge eine Liste mit den BAbgrenzung-Datenmodellen basierend auf die
+    #     aktuelle 'Abgrenzung/Komplex/Koppel'-Stuktur
+    #
+    #     :return: List [BAbgrenzung]
+    #     """
+    #
+    #     abgrenzungen = []
+    #
+    #     rootKkItem = self.uiVersionTv.model().invisibleRootItem()
+    #
+    #     for a in range(rootKkItem.rowCount()):
+    #
+    #         abgr_item = rootKkItem.child(a)
+    #         abgr_di = BAbgrenzung()
+    #         abgr_item.getItemData(abgr_di)
+    #
+    #         for k in range(abgr_item.rowCount()):
+    #
+    #             komplex_item = abgr_item.child(k)
+    #             komplex_di = BKomplex()
+    #             komplex_item.getItemData(komplex_di)
+    #
+    #             for kk in range(komplex_item.rowCount()):
+    #
+    #                 koppel_item = komplex_item.child(kk)
+    #                 koppel_di = BKoppel()
+    #                 koppel_item.getItemData(koppel_di)
+    #
+    #                 komplex_di.rel_koppel.append(koppel_di)
+    #             abgr_di.rel_komplex.append(komplex_di)
+    #         abgrenzungen.append(abgr_di)
+    #
+    #     return abgrenzungen
 
 
     def post_data_set(self):
@@ -740,103 +748,103 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         # self.uiKKTv.selectionModel().selectionChanged.connect(
         #     self.changedSelectedKK)
 
-        self.uiEditVersionPbtn.clicked.connect(self.editAbgrenzung)
-        self.uiVersionTv.doubleClicked.connect(self.editAbgrenzung)
+        # self.uiEditVersionPbtn.clicked.connect(self.editAbgrenzung)
+        # self.uiVersionTv.doubleClicked.connect(self.editAbgrenzung)
 
-        self.uiKKTv.doubleClicked.connect(self.editKoppel)
+        # self.uiKKTv.doubleClicked.connect(self.editKoppel)
 
         # self.komplex_model.dataChanged.connect(self.changedKKModel)
 
-    def editAbgrenzung(self):
+    # def editAbgrenzung(self):
+    #
+    #     for idx in self.uiVersionTv.selectionModel().selectedIndexes():
+    #         if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+    #
+    #             item = self.komplex_model.itemFromIndex(idx)
+    #             self.abgr = Abgrenzung(parent=self, item=item)
+    #             self.abgr_dialog = AbgrenzungDialog(self)
+    #             self.abgr_dialog.insertWidget(self.abgr)
+    #             self.abgr_dialog.resize(self.minimumSizeHint())
+    #
+    #             if self.abgr_dialog.exec():
+    #
+    #                 self.updateAkt()
 
-        for idx in self.uiVersionTv.selectionModel().selectedIndexes():
-            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+    # def editKoppel(self):
+    #
+    #     for idx in self.uiKKTv.selectionModel().selectedIndexes():
+    #         if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+    #
+    #             item = self.komplex_model.itemFromIndex(idx)
+    #             self.abgr = Koppel(parent=self, item=item)
+    #             self.abgr_dialog = KoppelDialog(self)
+    #             self.abgr_dialog.insertWidget(self.abgr)
+    #             self.abgr_dialog.resize(self.minimumSizeHint())
+    #
+    #             if self.abgr_dialog.exec():
+    #                 self.komplex_model.layoutChanged.emit()
+    #                 feat_id = item.data(GisItem.Feature_Role).id()
+    #                 layer = item.data(GisItem.Layer_Role)
+    #                 koppel_id = item.data(GisItem.Instance_Role).id
+    #                 koppel_name = item.data(GisItem.Name_Role)
+    #                 attrs = {0: koppel_id,
+    #                          1: koppel_name,
+    #                          2: None,
+    #                          3: None,
+    #                          4: None,
+    #                          5: '0,123'}
+    #                 layer.dataProvider().changeAttributeValues({feat_id: attrs})
+    #                 self.guiMainGis.uiCanvas.refresh()
 
-                item = self.komplex_model.itemFromIndex(idx)
-                self.abgr = Abgrenzung(parent=self, item=item)
-                self.abgr_dialog = AbgrenzungDialog(self)
-                self.abgr_dialog.insertWidget(self.abgr)
-                self.abgr_dialog.resize(self.minimumSizeHint())
+    # def changedSelectedAbgrenzung(self, selected):
+    #
+    #     self._selected_version_index = selected[0].indexes()[0]
+    #     self._selected_version_item = self.uiVersionTv.model()\
+    #         .itemFromIndex(self._selected_version_index)
+    #
+    #     self.setKKTv(self._selected_version_index)
 
-                if self.abgr_dialog.exec():
+    # def setKKTv(self, index):
+    #     """
+    #     lade die Komplexe und Koppeln entsprechend der Auswahl im
+    #     Abgrenzungs-View
+    #
+    #     :param index:
+    #     :return:
+    #     """
+    #
+    #     self.uiKKTv.setModel(self.komplex_model)
+    #     self.uiKKTv.expandAll()
+    #
+    #     self.uiKKTv.setRootIndex(index)
 
-                    self.updateAkt()
-
-    def editKoppel(self):
-
-        for idx in self.uiKKTv.selectionModel().selectedIndexes():
-            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
-
-                item = self.komplex_model.itemFromIndex(idx)
-                self.abgr = Koppel(parent=self, item=item)
-                self.abgr_dialog = KoppelDialog(self)
-                self.abgr_dialog.insertWidget(self.abgr)
-                self.abgr_dialog.resize(self.minimumSizeHint())
-
-                if self.abgr_dialog.exec():
-                    self.komplex_model.layoutChanged.emit()
-                    feat_id = item.data(GisItem.Feature_Role).id()
-                    layer = item.data(GisItem.Layer_Role)
-                    koppel_id = item.data(GisItem.Instance_Role).id
-                    koppel_name = item.data(GisItem.Name_Role)
-                    attrs = {0: koppel_id,
-                             1: koppel_name,
-                             2: None,
-                             3: None,
-                             4: None,
-                             5: '0,123'}
-                    layer.dataProvider().changeAttributeValues({feat_id: attrs})
-                    self.guiMainGis.uiCanvas.refresh()
-
-    def changedSelectedAbgrenzung(self, selected):
-
-        self._selected_version_index = selected[0].indexes()[0]
-        self._selected_version_item = self.uiVersionTv.model()\
-            .itemFromIndex(self._selected_version_index)
-
-        self.setKKTv(self._selected_version_index)
-
-    def setKKTv(self, index):
-        """
-        lade die Komplexe und Koppeln entsprechend der Auswahl im
-        Abgrenzungs-View
-
-        :param index:
-        :return:
-        """
-
-        self.uiKKTv.setModel(self.komplex_model)
-        self.uiKKTv.expandAll()
-
-        self.uiKKTv.setRootIndex(index)
-
-    def changedSelectedKK(self):
-        """
-        die Auswahl im KK-View ändert sich; die Selection im Kartenfenster
-        wird daran angepasst
-        :return:
-        """
-
-        """erzeuge eine Liste mit den selectierten Items"""
-        sel_item = []
-        for idx in self.uiKKTv.selectionModel().selectedIndexes():
-            if idx.column() == 0:  # wähle nur indexe der ersten spalte!
-                item = self.komplex_model.itemFromIndex(idx)
-                sel_item.append(item)
-        """"""
-
-        """setze den Layer als aktiven Layer, auf dem sich die ausgewählten
-        KK-Item-Features befinden"""
-        if sel_item != []:
-            self.guiMainGis.layer_tree_view.setCurrentLayer(
-                sel_item[0].data(GisItem.Layer_Role))
-            """"""
-
-        """Selektiere die ausgewählten KK-Item-Features auf dem eben als aktiv
-        gesetzten Layer"""
-        self.selectFeatures(
-            [s.data(GisItem.Feature_Role).id() for s in sel_item])
-        """"""
+    # def changedSelectedKK(self):
+    #     """
+    #     die Auswahl im KK-View ändert sich; die Selection im Kartenfenster
+    #     wird daran angepasst
+    #     :return:
+    #     """
+    #
+    #     """erzeuge eine Liste mit den selectierten Items"""
+    #     sel_item = []
+    #     for idx in self.uiKKTv.selectionModel().selectedIndexes():
+    #         if idx.column() == 0:  # wähle nur indexe der ersten spalte!
+    #             item = self.komplex_model.itemFromIndex(idx)
+    #             sel_item.append(item)
+    #     """"""
+    #
+    #     """setze den Layer als aktiven Layer, auf dem sich die ausgewählten
+    #     KK-Item-Features befinden"""
+    #     if sel_item != []:
+    #         self.guiMainGis.layer_tree_view.setCurrentLayer(
+    #             sel_item[0].data(GisItem.Layer_Role))
+    #         """"""
+    #
+    #     """Selektiere die ausgewählten KK-Item-Features auf dem eben als aktiv
+    #     gesetzten Layer"""
+    #     self.selectFeatures(
+    #         [s.data(GisItem.Feature_Role).id() for s in sel_item])
+    #     """"""
 
     def selectFeatures(self, feat_id_list):
         """
