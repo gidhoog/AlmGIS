@@ -33,6 +33,7 @@ from core.scopes.akte import akt_UI
 from core.scopes.akte.abgrenzung import Abgrenzung, AbgrenzungDialog
 from core.scopes.akte.akt_abgrenzung_dv import AbgrenzungDataView
 from core.scopes.akte.akt_gst_main import GstAktDataView
+from core.scopes.akte.akt_komplex_dv import KomplexAktDataView
 from core.scopes.akte.akt_koppel_dv import KoppelAktDataView
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
 from core.scopes.koppel.koppel import KoppelDialog, Koppel
@@ -317,6 +318,12 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.guiMainGis.project_instance.addMapLayer(self.koppel_table._gis_layer)
 
+        self.komplex_table = KomplexAktDataView(self)
+        self.uiKomplexVlay.addWidget(self.komplex_table)
+
+        self.guiMainGis.project_instance.addMapLayer(
+            self.komplex_table._gis_layer)
+
         self.gst_table._gis_layer.updateExtents()
 
         extent = self.gst_table._gis_layer.extent()
@@ -327,10 +334,27 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         if self.abgrenzung_table._gis_layer.hasFeatures():
 
-            abgr_id = self.abgrenzung_table.model.data(self.abgrenzung_table.model.index(0, 0), Qt.EditRole)
+            current_feat = None
+
+            for feat in self.abgrenzung_table._gis_layer.getFeatures():
+
+                jahr = feat.attribute('jahr')
+                status = feat.attribute('status_id')
+
+                if status == 0:
+
+                    if current_feat == None:
+                        current_feat = feat
+
+            self.abgrenzung_table._gis_layer.select(current_feat.id())
+
+            # abgr_id = self.abgrenzung_table.model.data(self.abgrenzung_table.model.index(0, 0), Qt.EditRole)
+            abgr_id = current_feat.attribute('abgrenzung_id')
+
             # print(f'abgrenzung_id: {abgr_id}')
             filter_string = f"\"abgrenzung_id\" = {str(abgr_id)}"
             self.koppel_table._gis_layer.setSubsetString(filter_string)
+            self.komplex_table._gis_layer.setSubsetString(filter_string)
 
 
     def selectedAbgrenzungChanged(self):
@@ -344,6 +368,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             print(f'abgrenzung_id: {feat_id}')
             filter_string = f"\"abgrenzung_id\" = {str(feat_id)}"
             self.koppel_table._gis_layer.setSubsetString(filter_string)
+            self.komplex_table._gis_layer.setSubsetString(filter_string)
 
     def updateKomplexe(self):
         """

@@ -18,7 +18,7 @@ from sqlalchemy.orm import joinedload
 from core import config, db_session_cm
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
-    BKomplex, BAkt, BKoppel, BAbgrenzung
+    BKomplex, BAkt, BKoppel, BAbgrenzung, BKomplexName
 from core.entity import EntityDialog
 from core.gis_item import GisItem
 from core.gis_layer import setLayerStyle, ZVectorLayer, Feature
@@ -34,7 +34,7 @@ from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
 
 
-class KoppelDialog(EntityDialog):
+class KomplexDialog(EntityDialog):
     """
     dialog für die anzeige einer grundstückszuordnung
     """
@@ -46,7 +46,7 @@ class KoppelDialog(EntityDialog):
         #
         # self.enableApply = True
 
-        self.dialog_window_title = 'Koppel'
+        self.dialog_window_title = 'Komplex'
         # self.set_apply_button_text('&Speichern und Schließen')
 
 
@@ -62,10 +62,10 @@ class KoppelDialog(EntityDialog):
         QDialog.accept(self)
 
 
-class KoppelModel(GisTableModel):
+class KomplexModel(GisTableModel):
 
     def __init__(self, layerCache, parent=None):
-        super(KoppelModel, self).__init__(layerCache, parent)
+        super(KomplexModel, self).__init__(layerCache, parent)
 
     # def data(self, index: QModelIndex, role: int = ...):
     #
@@ -114,18 +114,18 @@ class KoppelModel(GisTableModel):
     #     return super().data(index, role)
 
 
-class KoppelAktDataView(DataView):
+class KomplexAktDataView(DataView):
     """
     koppeltabelle im akt
     """
 
-    _maintable_text = ["Koppel", "Koppeln", "keine Koppel"]
-    _delete_window_title = ["Koppel löschen", "Koppeln löschen"]
-    _delete_window_text_single = "Soll die ausgewählte Koppel " \
+    _maintable_text = ["Komplex", "Komplexe", "keine Komplexe"]
+    _delete_window_title = ["Komplex löschen", "Komplexe löschen"]
+    _delete_window_text_single = "Soll der ausgewählte Komplex " \
                                  "wirklich gelöscht werden?"
     _delete_window_text_plural = ["Sollen die ausgewählten",
-                                  "Koppeln wirklich gelöscht werden?"]
-    _delete_text = ["Die Koppel", "kann nicht gelöscht werden, da sie "
+                                  "Komplexe wirklich gelöscht werden?"]
+    _delete_text = ["Der Komplex", "kann nicht gelöscht werden, da er "
                                           "verwendet wird!"]
 
     # gst_zuordnung_wdg_class = GstZuordnung
@@ -134,11 +134,11 @@ class KoppelAktDataView(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
-        self.entity_dialog_class = KoppelDialog
+        self.entity_dialog_class = KomplexDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BKoppel
-        self._gis_table_model_class = KoppelModel
+        self._gis_table_model_class = KomplexModel
 
         self._commit_entity = False
         self.edit_entity_by = 'mci'
@@ -185,7 +185,7 @@ class KoppelAktDataView(DataView):
 
         self.uiTitleLbl.setVisible(True)
 
-        self.uiTitleLbl.setText('Koppeln')
+        self.uiTitleLbl.setText('Komplexe')
 
         # self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
         #                       'ha', 'gb_area', 120,
@@ -202,7 +202,7 @@ class KoppelAktDataView(DataView):
 
         # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
-        with (db_session_cm() as session):
+        with db_session_cm() as session:
 
             # stmt = select(
             #     BAbgrenzung
@@ -211,21 +211,15 @@ class KoppelAktDataView(DataView):
             #          .joinedload(BKomplex.rel_koppel)
             # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
 
-            """verwende hier .join() um verknüpfte tabellen abzufragen"""
             stmt = select(
-                BKoppel
-            ).join(
-                BKoppel.rel_komplex
-            ).join(
-                BKomplex.rel_abgrenzung
+                BKomplexName
             ).options(
-                joinedload(BKoppel.rel_komplex)
-                     .joinedload(BKomplex.rel_abgrenzung)
+                joinedload(BKomplexName.rel_komplex)
+                     .joinedload(BKomplex.rel_koppel)
             ).options(
-                joinedload(BKoppel.rel_komplex)
+                joinedload(BKomplexName.rel_komplex)
                      .joinedload(BKomplex.rel_komplex_name)
-            ).where(BAbgrenzung.akt_id == self.parent._entity_id)
-            """"""
+            ).where(BKomplexName.akt_id == self.parent._entity_id)
 
             self._mci_list = session.scalars(stmt).unique().all()
 
@@ -236,12 +230,12 @@ class KoppelAktDataView(DataView):
 
         layer = ZVectorLayer(
             "Polygon?crs=epsg:31259",
-            "Koppeln",
+            "Komplexe",
             "memory",
             feature_fields=self.feature_fields
         )
 
-        setLayerStyle(layer, 'koppel_gelb')
+        setLayerStyle(layer, 'komplex_rot')
 
         return layer
 
@@ -262,63 +256,82 @@ class KoppelAktDataView(DataView):
     def setFeaturesFromMci(self):
         super().setFeaturesFromMci()
 
-        for koppel in self._mci_list:
+        for komplex_name in self._mci_list:
 
-            feat = Feature(self._gis_layer.fields(), self)
+            if komplex_name.rel_komplex != []:
 
-            self.setFeatureAttributes(feat, koppel)
+                for komplex in komplex_name.rel_komplex:
 
-            # feat.setAttributes([gst_version.id,
-            #                     gst_zuor.rel_gst.gst,
-            #                     gst_version.rel_alm_gst_ez.ez,
-            #                     gst_version.rel_alm_gst_ez.kgnr,
-            #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-            #                     gst_zuor.awb_status_id,
-            #                     gst_zuor.rechtsgrundlage_id,
-            #                     '',
-            #                     gst_version.rel_alm_gst_ez.datenstand])
+                    komplex_geom = None
 
-            geom_wkt = to_shape(koppel.geometry).wkt
-            geom_new = QgsGeometry()
-            geom = geom_new.fromWkt(geom_wkt)
+                    feat = Feature(self._gis_layer.fields(), self)
 
-            feat.setGeometry(geom)
+                    self.setFeatureAttributes(feat, komplex)
 
-            self._gis_layer.data_provider.addFeatures([feat])
+                    # feat.setAttributes([gst_version.id,
+                    #                     gst_zuor.rel_gst.gst,
+                    #                     gst_version.rel_alm_gst_ez.ez,
+                    #                     gst_version.rel_alm_gst_ez.kgnr,
+                    #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+                    #                     gst_zuor.awb_status_id,
+                    #                     gst_zuor.rechtsgrundlage_id,
+                    #                     '',
+                    #                     gst_version.rel_alm_gst_ez.datenstand])
+
+                    if komplex.rel_koppel != []:
+
+                        for koppel in komplex.rel_koppel:
+
+                            geom_wkt = to_shape(koppel.geometry).wkt
+                            geom_new = QgsGeometry()
+                            geom = geom_new.fromWkt(geom_wkt)
+
+                            if komplex_geom == None:
+
+                                komplex_geom = geom
+                            else:
+                                komplex_geom = komplex_geom.combine(geom)
+
+                    # geom_wkt = to_shape(koppel.geometry).wkt
+                    # geom_new = QgsGeometry()
+                    # geom = geom_new.fromWkt(geom_wkt)
+
+                    feat.setGeometry(komplex_geom)
+                    # feat.setGeometry(geom)
+
+                    self._gis_layer.data_provider.addFeatures([feat])
 
     def setFeatureFields(self):
         # super().setFeatureFields()
 
         abgrenzung_id_fld = QgsField("abgrenzung_id", QVariant.Int)
 
-        abgrenzung_jahr_fld = QgsField("abgrenzung_jahr", QVariant.Int)
-
-        abgrenzung_status_id_fld = QgsField("abgrenzung_status_id", QVariant.Int)
-
         komplex_id_fld = QgsField("komplex_id", QVariant.Int)
+
+        komplex_nr_fld = QgsField("komplex_nr", QVariant.Int)
 
         komplex_name_fld = QgsField("komplex_name", QVariant.String)
 
-        koppel_id_fld = QgsField("koppel_id", QVariant.Int)
-
-        koppel_nr_fld = QgsField("koppel_nr", QVariant.Int)
-
-        koppel_name_fld = QgsField("koppel_name", QVariant.String)
-
-        nicht_weide_fld = QgsField("nicht_weide", QVariant.String)
-
-        koppel_area_fld = QgsField("koppel_area", QVariant.Double)
+        # koppel_id_fld = QgsField("koppel_id", QVariant.Int)
+        #
+        # koppel_nr_fld = QgsField("koppel_nr", QVariant.Int)
+        #
+        # koppel_name_fld = QgsField("koppel_name", QVariant.String)
+        #
+        # nicht_weide_fld = QgsField("nicht_weide", QVariant.String)
+        #
+        # koppel_area_fld = QgsField("koppel_area", QVariant.Double)
 
         self.feature_fields.append(abgrenzung_id_fld)
-        self.feature_fields.append(abgrenzung_jahr_fld)
-        self.feature_fields.append(abgrenzung_status_id_fld)
         self.feature_fields.append(komplex_id_fld)
+        self.feature_fields.append(komplex_nr_fld)
         self.feature_fields.append(komplex_name_fld)
-        self.feature_fields.append(koppel_id_fld)
-        self.feature_fields.append(koppel_nr_fld)
-        self.feature_fields.append(koppel_name_fld)
-        self.feature_fields.append(nicht_weide_fld)
-        self.feature_fields.append(koppel_area_fld)
+        # self.feature_fields.append(komplex_name_fld)
+        # self.feature_fields.append(koppel_id_fld)
+        # self.feature_fields.append(koppel_nr_fld)
+        # self.feature_fields.append(koppel_name_fld)
+        # self.feature_fields.append(nicht_weide_fld)
+        # self.feature_fields.append(koppel_area_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
@@ -338,16 +351,16 @@ class KoppelAktDataView(DataView):
         #     gb_area = gb_area + nutz.area
         # """"""
 
-        feature['abgrenzung_id'] = mci.rel_komplex.rel_abgrenzung.id
-        feature['abgrenzung_jahr'] = mci.rel_komplex.rel_abgrenzung.jahr
-        feature['abgrenzung_status_id'] = mci.rel_komplex.rel_abgrenzung.status_id
-        feature['komplex_id'] = mci.rel_komplex.id
-        feature['komplex_name'] = mci.rel_komplex.rel_komplex_name.name
-        feature['koppel_id'] = mci.id
-        feature['koppel_nr'] = mci.nr
-        feature['koppel_name'] = mci.name
-        feature['nicht_weide'] = mci.nicht_weide
-        feature['koppel_area'] = 1.23
+        feature['abgrenzung_id'] = mci.abgrenzung_id
+        feature['komplex_id'] = mci.id
+        feature['komplex_nr'] = mci.rel_komplex_name.nr
+        feature['komplex_name'] = mci.rel_komplex_name.name
+        # feature['komplex_name'] = mci.rel_komplex.rel_komplex_name.name
+        # feature['koppel_id'] = mci.id
+        # feature['koppel_nr'] = mci.nr
+        # feature['koppel_name'] = mci.name
+        # feature['nicht_weide'] = mci.nicht_weide
+        # feature['koppel_area'] = 1.23
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
