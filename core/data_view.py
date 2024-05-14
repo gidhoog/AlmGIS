@@ -726,6 +726,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
+    def useSubsetString(self):
+        """
+        wende die definierten filter_strings an
+        :return:
+        """
+
 
         # if 'g' in self.available_filters:
         #     self.setFilterGeneralUI()

@@ -356,271 +356,288 @@ class KoppelAktDataView(DataView):
 
         self.setFeatureAttributes(self.current_feature, new_mci)
 
-    def setFilterUI(self):
-        """
-        setze das layout für die filter
-        :return:
-        """
+    # def setFilterUI(self):
+    #     """
+    #     setze das layout für die filter
+    #     :return:
+    #     """
+    #
+    #     filter_lay = QHBoxLayout(self)
+    #
+    #     """filter gst"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_gst_lbl = QLabel(self)
+    #
+    #     gst_lbl_font = self.filter_gst_lbl.font()
+    #     gst_lbl_font.setFamily(config.font_family)
+    #     self.filter_gst_lbl.setFont(gst_lbl_font)
+    #
+    #     self.filter_gst_lbl.setText('Gst:')
+    #     self.filter_gst_lbl.setVisible(False)
+    #
+    #     self.filter_gst_input_wdg = QLineEdit(self)
+    #
+    #     gst_input_wdg_font = self.filter_gst_input_wdg.font()
+    #     gst_input_wdg_font.setPointSize(11)
+    #     gst_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_gst_input_wdg.setFont(gst_input_wdg_font)
+    #
+    #     self.filter_gst_input_wdg.setPlaceholderText('Gst')
+    #     self.filter_gst_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_gst_input_wdg.setMaximumWidth(80)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_gst_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter ez"""
+    #     # filter_az = FilterElement(self)
+    #     # filter_az.uiLabelLbl.setText('AZ:')
+    #
+    #     self.filter_ez_lbl = QLabel(self)
+    #
+    #     ez_lbl_font = self.filter_ez_lbl.font()
+    #     ez_lbl_font.setFamily(config.font_family)
+    #     self.filter_ez_lbl.setFont(ez_lbl_font)
+    #
+    #     self.filter_ez_lbl.setText('Ez:')
+    #     self.filter_ez_lbl.setVisible(False)
+    #
+    #     self.filter_ez_input_wdg = QLineEdit(self)
+    #     self.filter_ez_input_wdg.setPlaceholderText('EZ')
+    #     ez_input_wdg_font = self.filter_ez_input_wdg.font()
+    #     ez_input_wdg_font.setPointSize(11)
+    #     ez_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_ez_input_wdg.setFont(ez_input_wdg_font)
+    #     self.filter_ez_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_ez_input_wdg.setMaximumWidth(80)
+    #     # filter_az.uiFilterElementLay.insertWidget(1, self.filter_az_input_wdg)
+    #
+    #     self.filter_ez_input_wdg.textChanged.connect(self.useFilter)
+    #     """"""
+    #
+    #     """filter kgnr"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_kgnr_lbl = QLabel(self)
+    #
+    #     kgnr_lbl_font = self.filter_kgnr_lbl.font()
+    #     kgnr_lbl_font.setFamily(config.font_family)
+    #     self.filter_kgnr_lbl.setFont(kgnr_lbl_font)
+    #
+    #     self.filter_kgnr_lbl.setText('KG-Nr:')
+    #     self.filter_kgnr_lbl.setVisible(False)
+    #
+    #     self.filter_kgnr_input_wdg = QLineEdit(self)
+    #
+    #     kgnr_input_wdg_font = self.filter_kgnr_input_wdg.font()
+    #     kgnr_input_wdg_font.setPointSize(11)
+    #     kgnr_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_kgnr_input_wdg.setFont(kgnr_input_wdg_font)
+    #
+    #     self.filter_kgnr_input_wdg.setPlaceholderText('KG-Nr')
+    #     self.filter_kgnr_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_kgnr_input_wdg.setMaximumWidth(80)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_kgnr_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter kgname"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_kgname_lbl = QLabel(self)
+    #
+    #     kgname_lbl_font = self.filter_kgname_lbl.font()
+    #     kgname_lbl_font.setFamily(config.font_family)
+    #     self.filter_kgname_lbl.setFont(kgname_lbl_font)
+    #
+    #     self.filter_kgname_lbl.setText('KG-Name:')
+    #     self.filter_kgname_lbl.setVisible(False)
+    #
+    #     self.filter_kgname_input_wdg = QLineEdit(self)
+    #
+    #     kgname_input_wdg_font = self.filter_kgname_input_wdg.font()
+    #     kgname_input_wdg_font.setPointSize(11)
+    #     kgname_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_kgname_input_wdg.setFont(kgname_input_wdg_font)
+    #
+    #     self.filter_kgname_input_wdg.setPlaceholderText('KG-Name')
+    #     self.filter_kgname_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_kgname_input_wdg.setMaximumWidth(200)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_kgname_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter awb_status"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_awb_lbl = QLabel(self)
+    #
+    #     awb_lbl_font = self.filter_awb_lbl.font()
+    #     awb_lbl_font.setFamily(config.font_family)
+    #     self.filter_awb_lbl.setFont(awb_lbl_font)
+    #
+    #     self.filter_awb_lbl.setText('AWB-Status:')
+    #     self.filter_awb_lbl.setVisible(False)
+    #
+    #     self.filter_awb_input_wdg = QLineEdit(self)
+    #
+    #     awb_input_wdg_font = self.filter_awb_input_wdg.font()
+    #     awb_input_wdg_font.setPointSize(11)
+    #     awb_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_awb_input_wdg.setFont(awb_input_wdg_font)
+    #
+    #     self.filter_awb_input_wdg.setPlaceholderText('AWB-Status')
+    #     self.filter_awb_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_awb_input_wdg.setMaximumWidth(200)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_awb_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter recht"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_recht_lbl = QLabel(self)
+    #
+    #     recht_lbl_font = self.filter_recht_lbl.font()
+    #     recht_lbl_font.setFamily(config.font_family)
+    #     self.filter_recht_lbl.setFont(recht_lbl_font)
+    #
+    #     self.filter_recht_lbl.setText('Rechtsgrundlage:')
+    #     self.filter_recht_lbl.setVisible(False)
+    #
+    #     self.filter_recht_input_wdg = QLineEdit(self)
+    #
+    #     recht_input_wdg_font = self.filter_recht_input_wdg.font()
+    #     recht_input_wdg_font.setPointSize(11)
+    #     recht_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_recht_input_wdg.setFont(recht_input_wdg_font)
+    #
+    #     self.filter_recht_input_wdg.setPlaceholderText('Rechtsgrundlage')
+    #     self.filter_recht_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_recht_input_wdg.setMaximumWidth(200)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_recht_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
+    #                              QSizePolicy.Minimum)
+    #     filter_lay.addItem(spacerItem1)
+    #
+    #     filter_lay.addWidget(self.filter_gst_lbl)
+    #     filter_lay.addWidget(self.filter_gst_input_wdg)
+    #     filter_lay.addWidget(self.filter_ez_lbl)
+    #     filter_lay.addWidget(self.filter_ez_input_wdg)
+    #     filter_lay.addWidget(self.filter_kgnr_lbl)
+    #     filter_lay.addWidget(self.filter_kgnr_input_wdg)
+    #     filter_lay.addWidget(self.filter_kgname_lbl)
+    #     filter_lay.addWidget(self.filter_kgname_input_wdg)
+    #     filter_lay.addWidget(self.filter_awb_lbl)
+    #     filter_lay.addWidget(self.filter_awb_input_wdg)
+    #     filter_lay.addWidget(self.filter_recht_lbl)
+    #     filter_lay.addWidget(self.filter_recht_input_wdg)
+    #     """"""
+    #
+    #     spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+    #     filter_lay.addItem(spacerItem)
+    #
+    #     self.uiHeaderHley.insertLayout(1, filter_lay)
 
-        filter_lay = QHBoxLayout(self)
+    def useSubsetString(self):
 
-        """filter gst"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_gst_lbl = QLabel(self)
+        filter_sting_list = []
 
-        gst_lbl_font = self.filter_gst_lbl.font()
-        gst_lbl_font.setFamily(config.font_family)
-        self.filter_gst_lbl.setFont(gst_lbl_font)
+        if self.parent.filter_koppel_from_abgr_string != '':
+            filter_sting_list.append(self.parent.filter_koppel_from_abgr_string)
 
-        self.filter_gst_lbl.setText('Gst:')
-        self.filter_gst_lbl.setVisible(False)
+        if self.parent.filter_koppel_from_komplex_string != '':
+            filter_sting_list.append(self.parent.filter_koppel_from_komplex_string)
 
-        self.filter_gst_input_wdg = QLineEdit(self)
-
-        gst_input_wdg_font = self.filter_gst_input_wdg.font()
-        gst_input_wdg_font.setPointSize(11)
-        gst_input_wdg_font.setFamily(config.font_family)
-        self.filter_gst_input_wdg.setFont(gst_input_wdg_font)
-
-        self.filter_gst_input_wdg.setPlaceholderText('Gst')
-        self.filter_gst_input_wdg.setClearButtonEnabled(True)
-        self.filter_gst_input_wdg.setMaximumWidth(80)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_gst_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter ez"""
-        # filter_az = FilterElement(self)
-        # filter_az.uiLabelLbl.setText('AZ:')
-
-        self.filter_ez_lbl = QLabel(self)
-
-        ez_lbl_font = self.filter_ez_lbl.font()
-        ez_lbl_font.setFamily(config.font_family)
-        self.filter_ez_lbl.setFont(ez_lbl_font)
-
-        self.filter_ez_lbl.setText('Ez:')
-        self.filter_ez_lbl.setVisible(False)
-
-        self.filter_ez_input_wdg = QLineEdit(self)
-        self.filter_ez_input_wdg.setPlaceholderText('EZ')
-        ez_input_wdg_font = self.filter_ez_input_wdg.font()
-        ez_input_wdg_font.setPointSize(11)
-        ez_input_wdg_font.setFamily(config.font_family)
-        self.filter_ez_input_wdg.setFont(ez_input_wdg_font)
-        self.filter_ez_input_wdg.setClearButtonEnabled(True)
-        self.filter_ez_input_wdg.setMaximumWidth(80)
-        # filter_az.uiFilterElementLay.insertWidget(1, self.filter_az_input_wdg)
-
-        self.filter_ez_input_wdg.textChanged.connect(self.useFilter)
-        """"""
-
-        """filter kgnr"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_kgnr_lbl = QLabel(self)
-
-        kgnr_lbl_font = self.filter_kgnr_lbl.font()
-        kgnr_lbl_font.setFamily(config.font_family)
-        self.filter_kgnr_lbl.setFont(kgnr_lbl_font)
-
-        self.filter_kgnr_lbl.setText('KG-Nr:')
-        self.filter_kgnr_lbl.setVisible(False)
-
-        self.filter_kgnr_input_wdg = QLineEdit(self)
-
-        kgnr_input_wdg_font = self.filter_kgnr_input_wdg.font()
-        kgnr_input_wdg_font.setPointSize(11)
-        kgnr_input_wdg_font.setFamily(config.font_family)
-        self.filter_kgnr_input_wdg.setFont(kgnr_input_wdg_font)
-
-        self.filter_kgnr_input_wdg.setPlaceholderText('KG-Nr')
-        self.filter_kgnr_input_wdg.setClearButtonEnabled(True)
-        self.filter_kgnr_input_wdg.setMaximumWidth(80)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_kgnr_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter kgname"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_kgname_lbl = QLabel(self)
-
-        kgname_lbl_font = self.filter_kgname_lbl.font()
-        kgname_lbl_font.setFamily(config.font_family)
-        self.filter_kgname_lbl.setFont(kgname_lbl_font)
-
-        self.filter_kgname_lbl.setText('KG-Name:')
-        self.filter_kgname_lbl.setVisible(False)
-
-        self.filter_kgname_input_wdg = QLineEdit(self)
-
-        kgname_input_wdg_font = self.filter_kgname_input_wdg.font()
-        kgname_input_wdg_font.setPointSize(11)
-        kgname_input_wdg_font.setFamily(config.font_family)
-        self.filter_kgname_input_wdg.setFont(kgname_input_wdg_font)
-
-        self.filter_kgname_input_wdg.setPlaceholderText('KG-Name')
-        self.filter_kgname_input_wdg.setClearButtonEnabled(True)
-        self.filter_kgname_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_kgname_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter awb_status"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_awb_lbl = QLabel(self)
-
-        awb_lbl_font = self.filter_awb_lbl.font()
-        awb_lbl_font.setFamily(config.font_family)
-        self.filter_awb_lbl.setFont(awb_lbl_font)
-
-        self.filter_awb_lbl.setText('AWB-Status:')
-        self.filter_awb_lbl.setVisible(False)
-
-        self.filter_awb_input_wdg = QLineEdit(self)
-
-        awb_input_wdg_font = self.filter_awb_input_wdg.font()
-        awb_input_wdg_font.setPointSize(11)
-        awb_input_wdg_font.setFamily(config.font_family)
-        self.filter_awb_input_wdg.setFont(awb_input_wdg_font)
-
-        self.filter_awb_input_wdg.setPlaceholderText('AWB-Status')
-        self.filter_awb_input_wdg.setClearButtonEnabled(True)
-        self.filter_awb_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_awb_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter recht"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_recht_lbl = QLabel(self)
-
-        recht_lbl_font = self.filter_recht_lbl.font()
-        recht_lbl_font.setFamily(config.font_family)
-        self.filter_recht_lbl.setFont(recht_lbl_font)
-
-        self.filter_recht_lbl.setText('Rechtsgrundlage:')
-        self.filter_recht_lbl.setVisible(False)
-
-        self.filter_recht_input_wdg = QLineEdit(self)
-
-        recht_input_wdg_font = self.filter_recht_input_wdg.font()
-        recht_input_wdg_font.setPointSize(11)
-        recht_input_wdg_font.setFamily(config.font_family)
-        self.filter_recht_input_wdg.setFont(recht_input_wdg_font)
-
-        self.filter_recht_input_wdg.setPlaceholderText('Rechtsgrundlage')
-        self.filter_recht_input_wdg.setClearButtonEnabled(True)
-        self.filter_recht_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_recht_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
-                                 QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem1)
-
-        filter_lay.addWidget(self.filter_gst_lbl)
-        filter_lay.addWidget(self.filter_gst_input_wdg)
-        filter_lay.addWidget(self.filter_ez_lbl)
-        filter_lay.addWidget(self.filter_ez_input_wdg)
-        filter_lay.addWidget(self.filter_kgnr_lbl)
-        filter_lay.addWidget(self.filter_kgnr_input_wdg)
-        filter_lay.addWidget(self.filter_kgname_lbl)
-        filter_lay.addWidget(self.filter_kgname_input_wdg)
-        filter_lay.addWidget(self.filter_awb_lbl)
-        filter_lay.addWidget(self.filter_awb_input_wdg)
-        filter_lay.addWidget(self.filter_recht_lbl)
-        filter_lay.addWidget(self.filter_recht_input_wdg)
-        """"""
-
-        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem)
-
-        self.uiHeaderHley.insertLayout(1, filter_lay)
-
-    def useFilter(self):
-
-        gst_text = self.filter_gst_input_wdg.text()
-        ez_text = self.filter_ez_input_wdg.text()
-        kgnr_text = self.filter_kgnr_input_wdg.text()
-        kgname_text = self.filter_kgname_input_wdg.text()
-        awb_text = self.filter_awb_input_wdg.text()
-        recht_text = self.filter_recht_input_wdg.text()
-
-        gst_expr = f"lower(\"gst\") LIKE '%{gst_text}%'"
-        ez_expr = f"to_string(\"ez\") LIKE '%{ez_text}%'"
-        kgnr_expr = f"to_string(\"kgnr\") LIKE '%{kgnr_text}%'"
-        kgname_expr = f"lower(\"kgname\") LIKE '%{kgname_text}%'"
-        awb_expr = f"lower(\"awb_status\") LIKE '%{awb_text}%'"
-        recht_expr = f"lower(\"recht_status\") LIKE '%{recht_text}%'"
-
-        expr_list = []
-
-        if gst_text != '':
-            self.filter_gst_lbl.setVisible(True)
-            expr_list.append(gst_expr)
-        else:
-            self.filter_gst_lbl.setVisible(False)
-
-        if ez_text != '':
-            self.filter_ez_lbl.setVisible(True)
-            expr_list.append(ez_expr)
-        else:
-            self.filter_ez_lbl.setVisible(False)
-
-        if kgnr_text != '':
-            self.filter_kgnr_lbl.setVisible(True)
-            expr_list.append(kgnr_expr)
-        else:
-            self.filter_kgnr_lbl.setVisible(False)
-
-        if kgname_text != '':
-            self.filter_kgname_lbl.setVisible(True)
-            expr_list.append(kgname_expr)
-        else:
-            self.filter_kgname_lbl.setVisible(False)
-
-        if awb_text != '':
-            self.filter_awb_lbl.setVisible(True)
-            expr_list.append(awb_expr)
-        else:
-            self.filter_awb_lbl.setVisible(False)
-
-        if recht_text != '':
-            self.filter_recht_lbl.setVisible(True)
-            expr_list.append(recht_expr)
-        else:
-            self.filter_recht_lbl.setVisible(False)
-
-        if expr_list == []:
-            self._gis_layer.setSubsetString('')
-        else:
-
-            expr_string = " and ".join(expr for expr in expr_list)
-            print(f'expression string: {expr_string}')
-            self._gis_layer.setSubsetString(expr_string)
+        expr_string = " and ".join(expr for expr in filter_sting_list)
+        print(f'expression string: {expr_string}')
+        self._gis_layer.setSubsetString(expr_string)
 
         self.updateFooter()
+
+
+    # def useFilter(self):
+    #
+    #     gst_text = self.filter_gst_input_wdg.text()
+    #     ez_text = self.filter_ez_input_wdg.text()
+    #     kgnr_text = self.filter_kgnr_input_wdg.text()
+    #     kgname_text = self.filter_kgname_input_wdg.text()
+    #     awb_text = self.filter_awb_input_wdg.text()
+    #     recht_text = self.filter_recht_input_wdg.text()
+    #
+    #     gst_expr = f"lower(\"gst\") LIKE '%{gst_text}%'"
+    #     ez_expr = f"to_string(\"ez\") LIKE '%{ez_text}%'"
+    #     kgnr_expr = f"to_string(\"kgnr\") LIKE '%{kgnr_text}%'"
+    #     kgname_expr = f"lower(\"kgname\") LIKE '%{kgname_text}%'"
+    #     awb_expr = f"lower(\"awb_status\") LIKE '%{awb_text}%'"
+    #     recht_expr = f"lower(\"recht_status\") LIKE '%{recht_text}%'"
+    #
+    #     expr_list = []
+    #
+    #     if gst_text != '':
+    #         self.filter_gst_lbl.setVisible(True)
+    #         expr_list.append(gst_expr)
+    #     else:
+    #         self.filter_gst_lbl.setVisible(False)
+    #
+    #     if ez_text != '':
+    #         self.filter_ez_lbl.setVisible(True)
+    #         expr_list.append(ez_expr)
+    #     else:
+    #         self.filter_ez_lbl.setVisible(False)
+    #
+    #     if kgnr_text != '':
+    #         self.filter_kgnr_lbl.setVisible(True)
+    #         expr_list.append(kgnr_expr)
+    #     else:
+    #         self.filter_kgnr_lbl.setVisible(False)
+    #
+    #     if kgname_text != '':
+    #         self.filter_kgname_lbl.setVisible(True)
+    #         expr_list.append(kgname_expr)
+    #     else:
+    #         self.filter_kgname_lbl.setVisible(False)
+    #
+    #     if awb_text != '':
+    #         self.filter_awb_lbl.setVisible(True)
+    #         expr_list.append(awb_expr)
+    #     else:
+    #         self.filter_awb_lbl.setVisible(False)
+    #
+    #     if recht_text != '':
+    #         self.filter_recht_lbl.setVisible(True)
+    #         expr_list.append(recht_expr)
+    #     else:
+    #         self.filter_recht_lbl.setVisible(False)
+    #
+    #     if expr_list == []:
+    #         self._gis_layer.setSubsetString('')
+    #     else:
+    #
+    #         expr_string = " and ".join(expr for expr in expr_list)
+    #         print(f'expression string: {expr_string}')
+    #         self._gis_layer.setSubsetString(expr_string)
+    #
+    #     self.updateFooter()
 
     def signals(self):
         super().signals()

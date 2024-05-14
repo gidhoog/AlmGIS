@@ -185,6 +185,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
+        self.filter_koppel_from_abgr_string = ''
+        self.filter_koppel_from_komplex_string = ''
+        self.filter_komplex_from_abgr_string = ''
+
         """erlaube nur integer in uiAlmBnr"""
         onlyInt = QIntValidator()
         onlyInt.setRange(0, 99999999)
@@ -330,7 +334,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.guiMainGis.uiCanvas.setExtent(extent)
         """"""
 
-        self.abgrenzung_table._gis_layer.selectionChanged.connect(self.selectedAbgrenzungChanged)
+        self.abgrenzung_table._gis_layer.selectionChanged.connect(
+            self.selectedAbgrenzungChanged
+        )
+
+        self.komplex_table._gis_layer.selectionChanged.connect(
+            self.selectedKomplexChanged
+        )
 
         if self.abgrenzung_table._gis_layer.hasFeatures():
 
@@ -366,9 +376,29 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
             feat_id = abgr_feat.attribute('abgrenzung_id')
             print(f'abgrenzung_id: {feat_id}')
-            filter_string = f"\"abgrenzung_id\" = {str(feat_id)}"
-            self.koppel_table._gis_layer.setSubsetString(filter_string)
-            self.komplex_table._gis_layer.setSubsetString(filter_string)
+            self.filter_komplex_from_abgr_string = f"\"abgrenzung_id\" = {str(feat_id)}"
+            self.filter_koppel_from_abgr_string = f"\"abgrenzung_id\" = {str(feat_id)}"
+
+            self.koppel_table.useSubsetString()
+            self.komplex_table.useSubsetString()
+
+    def selectedKomplexChanged(self):
+
+        print(f'---sel komplex changed---')
+
+        if self.komplex_table._gis_layer.selectedFeatureCount() > 0:
+
+            for komplex_feat in self.komplex_table._gis_layer.selectedFeatures():
+
+                feat_id = komplex_feat.attribute('komplex_id')
+                print(f'komplex_id: {feat_id}')
+                self.filter_koppel_from_komplex_string = \
+                    f"\"komplex_id\" = {str(feat_id)}"
+
+        else:
+            self.filter_koppel_from_komplex_string = ''
+
+        self.koppel_table.useSubsetString()
 
     def updateKomplexe(self):
         """
