@@ -67,26 +67,26 @@ class AbgrenzungModel(GisTableModel):
     def __init__(self, layerCache, parent=None):
         super(AbgrenzungModel, self).__init__(layerCache, parent)
 
-    # def data(self, index: QModelIndex, role: int = ...):
-    #
-    #     # feat = self.feature(index)
-    #
-    #     if role == Qt.TextAlignmentRole:
-    #
-    #         if index.column() in [3]:
-    #
-    #             return Qt.AlignRight | Qt.AlignVCenter
-    #
-    #         if index.column() in [1, 2]:
-    #
-    #             return Qt.AlignHCenter | Qt.AlignVCenter
-    #
-    #     if index.column() == 3:
-    #
-    #         if role == Qt.DisplayRole:
-    #
-    #             return str(self.feature(index).attribute('kgnr'))
-    #
+    def data(self, index: QModelIndex, role: int = ...):
+
+        # feat = self.feature(index)
+
+        if role == Qt.TextAlignmentRole:
+
+            # if index.column() in [3]:
+            #
+            #     return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [1]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 1:
+
+            if role == Qt.DisplayRole:
+
+                return str(self.feature(index).attribute('jahr'))
+
     #     if index.column() == 9:  # gis_area
     #
     #         if role == Qt.DisplayRole:
@@ -111,7 +111,7 @@ class AbgrenzungModel(GisTableModel):
     #         # if role == Qt.EditRole:
     #         #     return area
     #
-    #     return super().data(index, role)
+        return super().data(index, role)
 
 
 class AbgrenzungDataView(DataView):
@@ -281,10 +281,12 @@ class AbgrenzungDataView(DataView):
         abgrenzung_id_fld = QgsField("abgrenzung_id", QVariant.Int)
 
         jahr_fld = QgsField("jahr", QVariant.Int)
+        jahr_fld.setAlias('Jahr')
 
         status_id_fld = QgsField("status_id", QVariant.Int)
 
         bearbeiter_fld = QgsField("bearbeiter", QVariant.String)
+        bearbeiter_fld.setAlias('Bearbeiter')
 
         erfassungsart_id_fld = QgsField("erfassungsart_id", QVariant.Int)
 
@@ -590,9 +592,9 @@ class AbgrenzungDataView(DataView):
 
         self.setStretchMethod(2)
 
-        self.view.setSelectionMode(QgsAttributeTableView.SingleSelection)
+        # self.view.setSelectionMode(QgsAttributeTableView.SingleSelection)
 
-        # self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(0, True)
         # self.view.setColumnHidden(5, True)
         # self.view.setColumnHidden(7, True)
         #

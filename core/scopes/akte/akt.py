@@ -248,6 +248,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.setMinimumHeight(900)
         """"""
 
+        self.uiKkSplitter.setStretchFactor(1, 3)
+        self.uiAbgrKkSplitter.setStretchFactor(1, 3)
 
         # self.uiVersionTv.setColumnHidden(0, True)
         # self.uiVersionTv.setColumnHidden(5, True)

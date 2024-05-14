@@ -726,7 +726,7 @@
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QSplitter" name="splitter">
+           <widget class="QSplitter" name="uiAbgrKkSplitter">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -804,9 +804,15 @@
                <number>4</number>
               </property>
               <item>
-               <widget class="QSplitter" name="splitter_2">
+               <widget class="QSplitter" name="uiKkSplitter">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="handleWidth">
+                 <number>5</number>
+                </property>
+                <property name="childrenCollapsible">
+                 <bool>true</bool>
                 </property>
                 <widget class="QFrame" name="uiKomplexFrm">
                  <property name="sizePolicy">

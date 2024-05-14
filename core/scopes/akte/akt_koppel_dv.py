@@ -67,37 +67,39 @@ class KoppelModel(GisTableModel):
     def __init__(self, layerCache, parent=None):
         super(KoppelModel, self).__init__(layerCache, parent)
 
-    # def data(self, index: QModelIndex, role: int = ...):
-    #
-    #     # feat = self.feature(index)
-    #
-    #     if role == Qt.TextAlignmentRole:
-    #
-    #         if index.column() in [3]:
-    #
-    #             return Qt.AlignRight | Qt.AlignVCenter
-    #
-    #         if index.column() in [1, 2]:
-    #
-    #             return Qt.AlignHCenter | Qt.AlignVCenter
-    #
+    def data(self, index: QModelIndex, role: int = ...):
+
+        # feat = self.feature(index)
+
+        if role == Qt.TextAlignmentRole:
+
+            # if index.column() in [3]:
+            #
+            #     return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [4, 7, 9]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
     #     if index.column() == 3:
     #
     #         if role == Qt.DisplayRole:
     #
     #             return str(self.feature(index).attribute('kgnr'))
     #
-    #     if index.column() == 9:  # gis_area
-    #
-    #         if role == Qt.DisplayRole:
-    #
-    #             area = self.feature(index).attribute('gis_area')
-    #             area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
-    #                                      ).replace(".", ",")
-    #             return area_r + ' ha'
-    #
-    #         # if role == Qt.EditRole:
-    #         #     return area
+        if index.column() == 10:  # koppel_area
+
+            if role == Qt.DisplayRole:
+
+                area = self.feature(index).attribute('koppel_area')
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+                                         ).replace(".", ",")
+                return area_r + ' ha'
+
+
+            # if role == Qt.EditRole:
+            #     area = self.feature(index).attribute('koppel_area')
+            #     return area
     #
     #     if index.column() == 10:  # gb_area
     #
@@ -111,7 +113,7 @@ class KoppelModel(GisTableModel):
     #         # if role == Qt.EditRole:
     #         #     return area
     #
-    #     return super().data(index, role)
+        return super().data(index, role)
 
 
 class KoppelAktDataView(DataView):
@@ -186,6 +188,10 @@ class KoppelAktDataView(DataView):
         self.uiTitleLbl.setVisible(True)
 
         self.uiTitleLbl.setText('Koppeln')
+
+        self.insertFooterLine('Flächensumme:',
+                              'ha', 'koppel_area', 120,
+                              0.0001, 4)
 
         # self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
         #                       'ha', 'gb_area', 120,
@@ -297,22 +303,31 @@ class KoppelAktDataView(DataView):
 
         komplex_id_fld = QgsField("komplex_id", QVariant.Int)
 
+        komplex_nr_fld = QgsField("komplex_nr", QVariant.Int)
+        komplex_nr_fld.setAlias('Nr')
+
         komplex_name_fld = QgsField("komplex_name", QVariant.String)
+        komplex_name_fld.setAlias('Komplex')
 
         koppel_id_fld = QgsField("koppel_id", QVariant.Int)
 
         koppel_nr_fld = QgsField("koppel_nr", QVariant.Int)
+        koppel_nr_fld.setAlias('Nr')
 
         koppel_name_fld = QgsField("koppel_name", QVariant.String)
+        koppel_name_fld.setAlias('Koppel')
 
         nicht_weide_fld = QgsField("nicht_weide", QVariant.String)
+        nicht_weide_fld.setAlias('nW')
 
         koppel_area_fld = QgsField("koppel_area", QVariant.Double)
+        koppel_area_fld.setAlias('Koppelfläche')
 
         self.feature_fields.append(abgrenzung_id_fld)
         self.feature_fields.append(abgrenzung_jahr_fld)
         self.feature_fields.append(abgrenzung_status_id_fld)
         self.feature_fields.append(komplex_id_fld)
+        self.feature_fields.append(komplex_nr_fld)
         self.feature_fields.append(komplex_name_fld)
         self.feature_fields.append(koppel_id_fld)
         self.feature_fields.append(koppel_nr_fld)
@@ -342,12 +357,13 @@ class KoppelAktDataView(DataView):
         feature['abgrenzung_jahr'] = mci.rel_komplex.rel_abgrenzung.jahr
         feature['abgrenzung_status_id'] = mci.rel_komplex.rel_abgrenzung.status_id
         feature['komplex_id'] = mci.rel_komplex.id
+        feature['komplex_nr'] = mci.rel_komplex.rel_komplex_name.nr
         feature['komplex_name'] = mci.rel_komplex.rel_komplex_name.name
         feature['koppel_id'] = mci.id
         feature['koppel_nr'] = mci.nr
         feature['koppel_name'] = mci.name
         feature['nicht_weide'] = mci.nicht_weide
-        feature['koppel_area'] = 1.23
+        feature['koppel_area'] = mci.koppel_area
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
@@ -666,21 +682,23 @@ class KoppelAktDataView(DataView):
     def finalInit(self):
         super().finalInit()
 
-        # self.view.setColumnHidden(0, True)
-        # self.view.setColumnHidden(5, True)
-        # self.view.setColumnHidden(7, True)
-        #
-        # self.view.sortByColumn(1, Qt.AscendingOrder)
+        self.setStretchMethod(2)
 
-        # """setzt bestimmte spaltenbreiten"""
-        # self.view.setColumnWidth(1, 70)
-        # self.view.setColumnWidth(2, 50)
-        # self.view.setColumnWidth(3, 70)
-        # self.view.setColumnWidth(4, 120)
-        # self.view.setColumnWidth(5, 120)
-        # self.view.setColumnWidth(6, 120)
-        # self.view.setColumnWidth(7, 80)
-        # """"""
+        self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(1, True)
+        self.view.setColumnHidden(2, True)
+        self.view.setColumnHidden(3, True)
+        self.view.setColumnHidden(6, True)
+
+        self.view.sortByColumn(7, Qt.AscendingOrder)
+
+        """setzt bestimmte spaltenbreiten"""
+        self.view.setColumnWidth(4, 40)
+        self.view.setColumnWidth(5, 140)
+        self.view.setColumnWidth(7, 40)
+        self.view.setColumnWidth(8, 120)
+        self.view.setColumnWidth(9, 50)
+        """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
         # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)

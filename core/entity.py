@@ -1,6 +1,7 @@
 from functools import wraps
 from qgis.PyQt.QtGui import QFont
 from qgis.PyQt.QtWidgets import QLabel, QMessageBox, QMainWindow
+from qgis.PyQt.QtCore import Qt
 
 from sqlalchemy import select
 
@@ -377,6 +378,8 @@ class EntityDialog(MainDialog):
         self.parent = parent
         self.enableApply = True
         self.set_apply_button_text('&Speichern und Schließen')
+
+        self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
 
     def accept(self):
         """

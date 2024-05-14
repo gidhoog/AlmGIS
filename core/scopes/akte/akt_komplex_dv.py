@@ -67,20 +67,20 @@ class KomplexModel(GisTableModel):
     def __init__(self, layerCache, parent=None):
         super(KomplexModel, self).__init__(layerCache, parent)
 
-    # def data(self, index: QModelIndex, role: int = ...):
-    #
-    #     # feat = self.feature(index)
-    #
-    #     if role == Qt.TextAlignmentRole:
-    #
-    #         if index.column() in [3]:
-    #
-    #             return Qt.AlignRight | Qt.AlignVCenter
-    #
-    #         if index.column() in [1, 2]:
-    #
-    #             return Qt.AlignHCenter | Qt.AlignVCenter
-    #
+    def data(self, index: QModelIndex, role: int = ...):
+
+        # feat = self.feature(index)
+
+        if role == Qt.TextAlignmentRole:
+
+            # if index.column() in [3]:
+            #
+            #     return Qt.AlignRight | Qt.AlignVCenter
+
+            if index.column() in [2]:
+
+                return Qt.AlignHCenter | Qt.AlignVCenter
+
     #     if index.column() == 3:
     #
     #         if role == Qt.DisplayRole:
@@ -111,7 +111,7 @@ class KomplexModel(GisTableModel):
     #         # if role == Qt.EditRole:
     #         #     return area
     #
-    #     return super().data(index, role)
+        return super().data(index, role)
 
 
 class KomplexAktDataView(DataView):
@@ -309,8 +309,10 @@ class KomplexAktDataView(DataView):
         komplex_id_fld = QgsField("komplex_id", QVariant.Int)
 
         komplex_nr_fld = QgsField("komplex_nr", QVariant.Int)
+        komplex_nr_fld.setAlias('Nr')
 
         komplex_name_fld = QgsField("komplex_name", QVariant.String)
+        komplex_name_fld.setAlias('Name')
 
         # koppel_id_fld = QgsField("koppel_id", QVariant.Int)
         #
@@ -669,21 +671,18 @@ class KomplexAktDataView(DataView):
     def finalInit(self):
         super().finalInit()
 
-        # self.view.setColumnHidden(0, True)
-        # self.view.setColumnHidden(5, True)
-        # self.view.setColumnHidden(7, True)
-        #
-        # self.view.sortByColumn(1, Qt.AscendingOrder)
+        self.setStretchMethod(2)
 
-        # """setzt bestimmte spaltenbreiten"""
-        # self.view.setColumnWidth(1, 70)
-        # self.view.setColumnWidth(2, 50)
-        # self.view.setColumnWidth(3, 70)
-        # self.view.setColumnWidth(4, 120)
-        # self.view.setColumnWidth(5, 120)
-        # self.view.setColumnWidth(6, 120)
-        # self.view.setColumnWidth(7, 80)
-        # """"""
+        self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(1, True)
+
+        self.view.sortByColumn(2, Qt.AscendingOrder)
+
+        """setzt bestimmte spaltenbreiten"""
+        self.view.setColumnWidth(2, 50)
+        """"""
+
+        # self.setMaximumWidth(300)
 
         """passe die Zeilenhöhen an den Inhalt an"""
         # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
