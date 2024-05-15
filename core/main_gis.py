@@ -1045,15 +1045,19 @@ class FeatureInfoTool(QgsMapToolIdentifyFeature):
     def canvasReleaseEvent(self, event):
 
         if event.button() == Qt.LeftButton:
-            found_features = self.identify(event.x(), event.y(), [self.layer],
+            # found_features = self.identify(event.x(), event.y(), [self.layer],
+            #                                QgsMapToolIdentify.ActiveLayer)
+            found_features = self.identify(event.x(), event.y(), [self.parent.current_layer],
                                            QgsMapToolIdentify.ActiveLayer)
+
             if found_features:
                 for feat in found_features:
 
                     print(f'##############################################')
                     print(f'found_feature: {feat}')
                     print(f'----------------------------------------------')
-                    for field_name in self.layer.fields():
+                    # for field_name in self.layer.fields():
+                    for field_name in self.parent.current_layer.fields():
                         print(f'{field_name.name()}: {feat.mFeature[field_name.name()]}')
                     print(f'##############################################')
 
@@ -1110,13 +1114,13 @@ class SelectTool(QgsMapToolIdentifyFeature):
             self.selected_features_id.append(feat)
         """"""
 
-        """wenn das main_gis-widget teil eines komplexen entity-widget ist (z.b. Akt)
-        dann wähle ausßerdem die zeilen von verknüpften tabellen
-        """
-        if self.parent.gis_control_widget:
-            self.parent.gis_control_widget.selectRows(self.layer.style_id,
-                                                      self.selected_features_id)
-        """"""
+        # """wenn das main_gis-widget teil eines komplexen entity-widget ist (z.b. Akt)
+        # dann wähle ausßerdem die zeilen von verknüpften tabellen
+        # """
+        # if self.parent.gis_control_widget:
+        #     self.parent.gis_control_widget.selectRows(self.layer.style_id,
+        #                                               self.selected_features_id)
+        # """"""
 
 
 class DigiTool(QgsMapToolDigitizeFeature):

@@ -581,6 +581,7 @@ class GstAktDataView(DataView):
             "memory",
             feature_fields=self.feature_fields
         )
+        layer.base = True
 
         setLayerStyle(layer, 'gst_awbuch_status')
 
