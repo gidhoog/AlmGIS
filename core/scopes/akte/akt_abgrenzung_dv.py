@@ -1,5 +1,5 @@
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
-from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog,
                                  QAbstractItemView, QSpacerItem, QLineEdit,
                                  QLabel, QHBoxLayout, QSizePolicy, QTableView)
@@ -77,7 +77,7 @@ class AbgrenzungModel(GisTableModel):
             #
             #     return Qt.AlignRight | Qt.AlignVCenter
 
-            if index.column() in [1]:
+            if index.column() in [1, 3, 4]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
@@ -86,6 +86,23 @@ class AbgrenzungModel(GisTableModel):
             if role == Qt.DisplayRole:
 
                 return str(self.feature(index).attribute('jahr'))
+
+            if role == Qt.DecorationRole:
+
+                if self.feature(index).attribute(
+                        'abgrenzung_id') == self.parent().getIstAbgrenzungId().id:
+
+                    return QIcon(':/svg/resources/icons/tick_green.svg')
+
+        # if index.column() == 3:
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         if self.feature(index).attribute('abgrenzung_id') == self.parent().getIstAbgrenzungId().id:
+        #
+        #             return 'IIIIst'
+        #         else:
+        #             return 'ist'
 
     #     if index.column() == 9:  # gis_area
     #
@@ -213,12 +230,40 @@ class AbgrenzungDataView(DataView):
 
             stmt = select(
                 BAbgrenzung
+            ).options(
+                joinedload(BAbgrenzung.rel_status)
+            ).options(
+                joinedload(BAbgrenzung.rel_erfassungsart)
             ).where(BAbgrenzung.akt_id == self.parent._entity_id
                     ).order_by(desc(BAbgrenzung.jahr))
+
+            # .order_by(desc(BAbgrenzung.jahr))
 
             self._mci_list = session.scalars(stmt).unique().all()
 
         print(f'---')
+
+    def getIstAbgrenzungId(self):
+        """
+        getter für die aktuell gültige abgrenzung (IST-Version)
+        :return: id der abgrenzung
+        """
+
+        """filtere alle abgrenzungen mit status 0 (=IST-Version)"""
+        ist_abgr_list = [a for a in self._mci_list if a.status_id == 0]
+        """"""
+
+        """sortiere absteigend nach dem jahr, der erste eintrag ist der
+        aktuelle"""
+        sort_abgr = sorted(ist_abgr_list, key=lambda x: x.jahr, reverse=True)
+        """"""
+
+        """gib den ersten eintrag zurück wenn etwas gefunden wird"""
+        if sort_abgr != []:
+            return sort_abgr[0]
+        else:
+            return None
+        """"""
 
 
     def setLayer(self):
@@ -285,16 +330,22 @@ class AbgrenzungDataView(DataView):
 
         status_id_fld = QgsField("status_id", QVariant.Int)
 
+        status_name_fld = QgsField("status_name", QVariant.String)
+
         bearbeiter_fld = QgsField("bearbeiter", QVariant.String)
         bearbeiter_fld.setAlias('Bearbeiter')
 
         erfassungsart_id_fld = QgsField("erfassungsart_id", QVariant.Int)
 
+        erfassungsart_name_fld = QgsField("erfassungsart_name", QVariant.String)
+
         self.feature_fields.append(abgrenzung_id_fld)
         self.feature_fields.append(jahr_fld)
         self.feature_fields.append(status_id_fld)
+        self.feature_fields.append(status_name_fld)
         self.feature_fields.append(bearbeiter_fld)
         self.feature_fields.append(erfassungsart_id_fld)
+        self.feature_fields.append(erfassungsart_name_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
@@ -302,8 +353,10 @@ class AbgrenzungDataView(DataView):
         feature['abgrenzung_id'] = mci.id
         feature['jahr'] = mci.jahr
         feature['status_id'] = mci.status_id
+        feature['status_name'] = mci.rel_status.name_short
         feature['bearbeiter'] = mci.bearbeiter
         feature['erfassungsart_id'] = mci.erfassungsart_id
+        feature['erfassungsart_name'] = mci.rel_erfassungsart.name
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
@@ -595,10 +648,10 @@ class AbgrenzungDataView(DataView):
         # self.view.setSelectionMode(QgsAttributeTableView.SingleSelection)
 
         self.view.setColumnHidden(0, True)
-        # self.view.setColumnHidden(5, True)
-        # self.view.setColumnHidden(7, True)
-        #
-        # self.view.sortByColumn(1, Qt.AscendingOrder)
+        self.view.setColumnHidden(2, True)
+        self.view.setColumnHidden(5, True)
+
+        self.view.sortByColumn(1, Qt.DescendingOrder)
 
         # """setzt bestimmte spaltenbreiten"""
         # self.view.setColumnWidth(1, 70)
