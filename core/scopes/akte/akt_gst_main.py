@@ -387,6 +387,10 @@ class GstTableModel(GisTableModel):
 
         # feat = self.feature(index)
 
+        # if role == Qt.UserRole:
+        #
+        #     return self.parent._mci_list[index.row()]
+
         if role == Qt.TextAlignmentRole:
 
             if index.column() in [3]:
@@ -482,9 +486,10 @@ class GstAktDataView(DataView):
         self.setFilterUI()
         self.setCanvas(self.parent.guiMainGis.uiCanvas)
 
+        self.loadData()
+
         self._gis_layer = self.setLayer()
 
-        self.loadData()
         self.setFeaturesFromMci()
         self.setTableView()
 
@@ -582,6 +587,10 @@ class GstAktDataView(DataView):
             feature_fields=self.feature_fields
         )
         layer.base = True
+
+        layer.entity_dialog = GstDialog
+        layer.entity_form = GstZuordnungDataForm
+        layer.mci_list = self._mci_list
 
         setLayerStyle(layer, 'gst_awbuch_status')
 

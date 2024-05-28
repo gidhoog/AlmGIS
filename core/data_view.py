@@ -54,6 +54,8 @@ class GisTableModel(QgsAttributeTableModel):
     def __init__(self, layerCache, parent=None):
         super(GisTableModel, self).__init__(layerCache, parent)
 
+        # self.parent = parent
+
     def headerData(self, column, orientation, role=None):
         super().headerData(column, orientation, role)
 

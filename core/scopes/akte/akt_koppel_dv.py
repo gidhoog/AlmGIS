@@ -67,9 +67,19 @@ class KoppelModel(GisTableModel):
     def __init__(self, layerCache, parent=None):
         super(KoppelModel, self).__init__(layerCache, parent)
 
+        # self.parent = parent
+
+        # print(f'-.-.-.')
+
     def data(self, index: QModelIndex, role: int = ...):
 
         # feat = self.feature(index)
+
+        # if role == Qt.UserRole:
+        #
+        #     if index.column() == 1:
+        #
+        #         return self.parent()._mci_list[index.row()]
 
         if role == Qt.TextAlignmentRole:
 
