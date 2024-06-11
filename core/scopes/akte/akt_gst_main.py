@@ -642,7 +642,7 @@ class GstAktDataView(DataView):
     def setFeatureFields(self):
         # super().setFeatureFields()
 
-        gst_version_id_fld = QgsField("gst_version_id", QVariant.Int)
+        gst_version_id_fld = QgsField("id", QVariant.Int)
 
         gst_fld = QgsField("gst", QVariant.String)
         gst_fld.setAlias('Gst')
@@ -691,43 +691,6 @@ class GstAktDataView(DataView):
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
 
-        # """weide_area"""
-        # weide_area = 0.00
-        # if mci.rel_abgrenzung != []:
-        #     last_abgrenzung = max(mci.rel_abgrenzung,
-        #                           key=attrgetter('jahr'))
-        #     for komplex in last_abgrenzung.rel_komplex:
-        #         for koppel in komplex.rel_koppel:
-        #             weide_area = weide_area + koppel.koppel_area
-        # """weide_area"""
-        #
-        # """awb area"""
-        # gst_area = 0
-        # for gst_zuord in mci.rel_gst_zuordnung:
-        #
-        #     if gst_zuord.awb_status_id == 1:
-        #         gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-        #         last_gst = max(gst_versionen_list,
-        #                        key=attrgetter('rel_alm_gst_ez.datenstand'))
-        #
-        #         gst_nutz_area = 0
-        #         for ba in last_gst.rel_alm_gst_nutzung:
-        #             gst_nutz_area = gst_nutz_area + ba.area
-        #         gst_area = gst_area + gst_nutz_area
-        # """"""
-        #
-        # """awb beweidet"""
-        # cut_area = 0
-        # for gst_zuord in mci.rel_gst_zuordnung:
-        #
-        #     if gst_zuord.awb_status_id == 1:
-        #         gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-        #         last_gst = max(gst_versionen_list,
-        #                        key=attrgetter('rel_alm_gst_ez.datenstand'))
-        #
-        #         for cut in last_gst.rel_cut_koppel_gst:
-        #             cut_area = cut_area + cut.cutarea
-        # """"""
         """last_gst"""
         gst_versionen_list = mci.rel_gst.rel_alm_gst_version
         last_gst = max(gst_versionen_list,
@@ -736,14 +699,11 @@ class GstAktDataView(DataView):
 
         """gb_area"""
         gb_area = 0
-        # gst_versionen_list = self.mci_list[row].rel_gst.rel_alm_gst_version
-        # last_gst = max(gst_versionen_list,
-        #                key=attrgetter('rel_alm_gst_ez.datenstand'))
         for nutz in last_gst.rel_alm_gst_nutzung:
             gb_area = gb_area + nutz.area
         """"""
 
-        feature['gst_version_id'] = mci.id
+        feature['id'] = mci.id
         feature['gst'] = mci.rel_gst.gst
         feature['ez'] = last_gst.rel_alm_gst_ez.ez
         feature['kgnr'] = mci.rel_gst.kgnr
@@ -755,6 +715,37 @@ class GstAktDataView(DataView):
         feature['gis_area'] = last_gst.gst_gis_area
         feature['gb_area'] = gb_area
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
+
+    def changeAttributes(self, feature, mci):
+
+        """last_gst"""
+        gst_versionen_list = mci.rel_gst.rel_alm_gst_version
+        last_gst = max(gst_versionen_list,
+                       key=attrgetter('rel_alm_gst_ez.datenstand'))
+        """"""
+
+        """gb_area"""
+        gb_area = 0
+        for nutz in last_gst.rel_alm_gst_nutzung:
+            gb_area = gb_area + nutz.area
+        """"""
+
+        attrib = {0: mci.id,
+                  1: mci.rel_gst.gst,
+                  2: last_gst.rel_alm_gst_ez.ez,
+                  3: mci.rel_gst.kgnr,
+                  4: mci.rel_gst.rel_kat_gem.kgname,
+                  5: mci.awb_status_id,
+                  6: mci.rel_awb_status.name,
+                  7: mci.rechtsgrundlage_id,
+                  8: mci.rel_rechtsgrundlage.name,
+                  9: last_gst.gst_gis_area,
+                  10: gb_area,
+                  11: last_gst.rel_alm_gst_ez.datenstand
+                  }
+
+        self._gis_layer.changeAttributeValues(feature.id(),
+                                              attrib)
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)

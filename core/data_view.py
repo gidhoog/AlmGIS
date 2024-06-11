@@ -1032,20 +1032,26 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 self.updateFeatureAttributes(args)
 
                 self._gis_layer.startEditing()
-                self._gis_layer.updateFeature(self.current_feature)
+
+                self.changeAttributes(self.current_feature,
+                                      args[0])
+
+                # update = self._gis_layer.updateFeature(self.current_feature)
                 self._gis_layer.commitChanges()
+
+                # self.parent.guiMainGis.uiCanvas.refresh()
 
                 # self._gis_layer.data_provider.dataChanged.emit()
 
         self.view.model().sourceModel().modelChanged.emit()
         # self.view.model().sourceModel().layoutChanged.emit()
 
-        """aktualisiere auch alle derzeit existierenden instanzen 
-        dieser klasse außer dieser instanz"""
-        for instance in DataView.instance_list:
-            if instance != self and instance._commit_entity == True:
-                self.updateInstance(instance)
-        """"""
+        # """aktualisiere auch alle derzeit existierenden instanzen
+        # dieser klasse außer dieser instanz"""
+        # for instance in DataView.instance_list:
+        #     if instance != self and instance._commit_entity == True:
+        #         self.updateInstance(instance)
+        # """"""
 
         self.updateFooter()
 
