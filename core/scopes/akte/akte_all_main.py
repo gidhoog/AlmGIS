@@ -364,6 +364,48 @@ class AkteAllMain(DataView):
     # _available_filters = 'gs'
     # """"""
 
+    def get_weide_area(self, mci):
+        weide_area = 0.00
+        if mci.rel_abgrenzung != []:
+            last_abgrenzung = max(mci.rel_abgrenzung,
+                                  key=attrgetter('jahr'))
+            for komplex in last_abgrenzung.rel_komplex:
+                for koppel in komplex.rel_koppel:
+                    weide_area = weide_area + koppel.koppel_area
+
+        return weide_area
+
+    def get_awb_gb_area(self, mci):
+
+        awb_area = 0
+        for gst_zuord in mci.rel_gst_zuordnung:
+
+            if gst_zuord.awb_status_id == 1:
+                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                gst_nutz_area = 0
+                for ba in last_gst.rel_alm_gst_nutzung:
+                    gst_nutz_area = gst_nutz_area + ba.area
+                awb_area = awb_area + gst_nutz_area
+        return awb_area
+
+    def get_awb_beweidet(self, mci):
+
+        awb_beweidet_area = 0
+        for gst_zuord in mci.rel_gst_zuordnung:
+
+            if gst_zuord.awb_status_id == 1:
+                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+
+                for cut in last_gst.rel_cut_koppel_gst:
+                    awb_beweidet_area = awb_beweidet_area + cut.cutarea
+
+        return awb_beweidet_area
+
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
@@ -561,46 +603,27 @@ class AkteAllMain(DataView):
         self.feature_fields.append(weide_area_fld)
         # self.feature_fields.append(test_fld)
 
+    def changeAttributes(self, feature, mci):
+
+        attrib = {0: mci.id,
+                  1: mci.az,
+                  2: mci.name,
+                  3: mci.bearbeitungsstatus_id,
+                  4: mci.rel_bearbeitungsstatus.name,
+                  5: mci.rel_bearbeitungsstatus.color,
+                  6: mci.stz,
+                  7: mci.wwp,
+                  8: mci.wwp_jahr,
+                  9: self.get_awb_gb_area(mci),
+                  10: self.get_awb_beweidet(mci),
+                  11: self.get_weide_area(mci)
+                  }
+
+        self._gis_layer.changeAttributeValues(feature.id(),
+                                              attrib)
+
     def setFeatureAttributes(self, feature, mci):
         # super().setFeatureAttributes(feature, mci)
-
-        """weide_area"""
-        weide_area = 0.00
-        if mci.rel_abgrenzung != []:
-            last_abgrenzung = max(mci.rel_abgrenzung,
-                                  key=attrgetter('jahr'))
-            for komplex in last_abgrenzung.rel_komplex:
-                for koppel in komplex.rel_koppel:
-                    weide_area = weide_area + koppel.koppel_area
-        """weide_area"""
-
-        """awb area"""
-        gst_area = 0
-        for gst_zuord in mci.rel_gst_zuordnung:
-
-            if gst_zuord.awb_status_id == 1:
-                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-                last_gst = max(gst_versionen_list,
-                               key=attrgetter('rel_alm_gst_ez.datenstand'))
-
-                gst_nutz_area = 0
-                for ba in last_gst.rel_alm_gst_nutzung:
-                    gst_nutz_area = gst_nutz_area + ba.area
-                gst_area = gst_area + gst_nutz_area
-        """"""
-
-        """awb beweidet"""
-        cut_area = 0
-        for gst_zuord in mci.rel_gst_zuordnung:
-
-            if gst_zuord.awb_status_id == 1:
-                gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-                last_gst = max(gst_versionen_list,
-                               key=attrgetter('rel_alm_gst_ez.datenstand'))
-
-                for cut in last_gst.rel_cut_koppel_gst:
-                    cut_area = cut_area + cut.cutarea
-        """"""
 
         feature['akt_id'] = mci.id
         feature['az'] = mci.az
@@ -611,10 +634,9 @@ class AkteAllMain(DataView):
         feature['stz'] = mci.stz
         feature['wwp'] = mci.wwp
         feature['wwp_jahr'] = mci.wwp_jahr
-        feature['awb_area_gb'] = gst_area
-        feature['awb_area_beweidet'] = cut_area
-        feature['weide_area'] = weide_area
-        # feature['test'] = mci
+        feature['awb_area_gb'] = self.get_awb_gb_area(mci)
+        feature['awb_area_beweidet'] = self.get_awb_beweidet(mci)
+        feature['weide_area'] = self.get_weide_area(mci)
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)

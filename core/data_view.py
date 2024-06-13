@@ -3,7 +3,7 @@ import csv
 from qgis.PyQt.QtCore import QAbstractTableModel, Qt, QModelIndex, \
     QSortFilterProxyModel, QItemSelectionModel, QItemSelection, \
     QItemSelectionRange
-# from qgis.PyQt.QtGui import QPalette, QColor
+from qgis.PyQt.QtGui import QPalette, QColor
 from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
     QDialog
@@ -693,12 +693,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # self.uiActionExportCsv.setText('exportiere csv-Datei')
         # self.uiToolsTbtn.addAction(self.uiActionExportCsv)
         #
-        # """definiere für eine alternative zeilen farbe"""
-        # data_view_palette = self.view.palette()
-        # data_view_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
-        # self.view.setPalette(data_view_palette)
-        # self.view.setAlternatingRowColors(True)
-        # """"""
+        """definiere für eine alternative zeilen farbe"""
+        data_view_palette = self.view.palette()
+        data_view_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
+        self.view.setPalette(data_view_palette)
+        self.view.setAlternatingRowColors(True)
+        """"""
 
     def setDisplayVetricalHeader(self):
         """
