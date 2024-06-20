@@ -429,7 +429,7 @@ class KomplexAktDataView(DataView):
     #     self.filter_ez_input_wdg.setFont(ez_input_wdg_font)
     #     self.filter_ez_input_wdg.setClearButtonEnabled(True)
     #     self.filter_ez_input_wdg.setMaximumWidth(80)
-    #     # filter_az.uiFilterElementLay.insertWidget(1, self.filter_az_input_wdg)
+    #     # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
     #
     #     self.filter_ez_input_wdg.textChanged.connect(self.useFilter)
     #     """"""

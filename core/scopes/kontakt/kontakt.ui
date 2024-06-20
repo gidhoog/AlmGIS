@@ -57,7 +57,7 @@
        </widget>
       </item>
       <item row="21" column="1" colspan="3">
-       <widget class="QPlainTextEdit" name="plainTextEdit">
+       <widget class="QPlainTextEdit" name="uiAnmPedit">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -541,7 +541,7 @@
   <tabstop>uiMail2Ledit</tabstop>
   <tabstop>uiMail3Ledit</tabstop>
   <tabstop>uiVertreterCombo</tabstop>
-  <tabstop>plainTextEdit</tabstop>
+  <tabstop>uiAnmPedit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

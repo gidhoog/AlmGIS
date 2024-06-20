@@ -44,13 +44,13 @@ class Ui_Kontakt(object):
         self.uiVertreterAdresse1Lbl.setFont(font)
         self.uiVertreterAdresse1Lbl.setObjectName("uiVertreterAdresse1Lbl")
         self.gridLayout.addWidget(self.uiVertreterAdresse1Lbl, 16, 1, 1, 3)
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.uiAnmPedit = QtWidgets.QPlainTextEdit(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Calibri")
         font.setPointSize(11)
-        self.plainTextEdit.setFont(font)
-        self.plainTextEdit.setObjectName("plainTextEdit")
-        self.gridLayout.addWidget(self.plainTextEdit, 21, 1, 1, 3)
+        self.uiAnmPedit.setFont(font)
+        self.uiAnmPedit.setObjectName("uiAnmPedit")
+        self.gridLayout.addWidget(self.uiAnmPedit, 21, 1, 1, 3)
         self.uiTelefon3Ledit = QtWidgets.QLineEdit(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Calibri")
@@ -318,7 +318,7 @@ class Ui_Kontakt(object):
         Kontakt.setTabOrder(self.uiMail1Ledit, self.uiMail2Ledit)
         Kontakt.setTabOrder(self.uiMail2Ledit, self.uiMail3Ledit)
         Kontakt.setTabOrder(self.uiMail3Ledit, self.uiVertreterCombo)
-        Kontakt.setTabOrder(self.uiVertreterCombo, self.plainTextEdit)
+        Kontakt.setTabOrder(self.uiVertreterCombo, self.uiAnmPedit)
 
     def retranslateUi(self, Kontakt):
         _translate = QtCore.QCoreApplication.translate

@@ -25,6 +25,26 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
     _mail1 = ''
     _mail2 = ''
     _mail3 = ''
+    _anm = ''
+    _vertreter_id = 0
+
+    @property  # getter
+    def vertreter_id(self):
+
+        # type_mci = self.uiTypCombo.currentData(Qt.UserRole)
+
+        # self._type_id = type_mci.id
+        self._vertreter_id = self.uiVertreterCombo.currentData(Qt.UserRole)
+        # self.rel_type = type_mci
+        return self._vertreter_id
+
+    @vertreter_id.setter
+    def vertreter_id(self, value):
+
+        self.uiVertreterCombo.setCurrentIndex(
+            self.uiVertreterCombo.findData(value, Qt.UserRole)
+        )
+        self._vertreter_id = value
 
     @property  # getter
     def type_id(self):
@@ -211,6 +231,18 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self.uiMail3Ledit.setText(value)
         self._mail3 = value
 
+    @property  # getter
+    def anm(self):
+
+        self._anm = self.uiAnmPedit.toPlainText()
+        return self._anm
+
+    @anm.setter
+    def anm(self, value):
+
+        self.uiAnmPedit.setPlainText(value)
+        self._anm = value
+
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
@@ -233,6 +265,12 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         print(f'init entity widget')
 
         self.setTypeCombo()
+        self.setVertrKontaktCombo()
+
+    def finalInit(self):
+        super().finalInit()
+
+        self.setMinimumWidth(650)
 
     def setTypeCombo(self):
 
@@ -247,6 +285,14 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
 
         for type in type_items:
             self.uiTypCombo.addItem(type.name, type.id)
+
+    def setVertrKontaktCombo(self):
+
+        vertr_kontakt_items = sorted(self._custom_entity_data['vertr_kontakte'],
+                              key=lambda x:x.name)
+
+        for kontakt in vertr_kontakt_items:
+            self.uiVertreterCombo.addItem(kontakt.name, kontakt.id)
 
     def mapData(self, model=None):
 
@@ -263,6 +309,10 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self.mail1 = self._entity_mci.mail1
         self.mail2 = self._entity_mci.mail2
         self.mail3 = self._entity_mci.mail3
+
+        self.anm = self._entity_mci.anm
+
+        self.vertreter_id = self._entity_mci.vertreter_id
 
     def checkValidity(self):
         super().checkValidity()
@@ -289,6 +339,32 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
 
                 self.showInvalidityMsg(text)
                 self.uiMail1Ledit.setFocus()
+                self.valid = False
+
+        if self.uiMail2Ledit.text() != '':
+            mail_rex = QRegExp("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b")
+            mail_rex.setCaseSensitivity(Qt.CaseInsensitive)
+            mail_rex.setPatternSyntax(QRegExp.RegExp)
+
+            if mail_rex.exactMatch(self.uiMail2Ledit.text()) == False:
+
+                text = "e-Mail ist nicht korrekt!"
+
+                self.showInvalidityMsg(text)
+                self.uiMail2Ledit.setFocus()
+                self.valid = False
+
+        if self.uiMail3Ledit.text() != '':
+            mail_rex = QRegExp("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b")
+            mail_rex.setCaseSensitivity(Qt.CaseInsensitive)
+            mail_rex.setPatternSyntax(QRegExp.RegExp)
+
+            if mail_rex.exactMatch(self.uiMail3Ledit.text()) == False:
+
+                text = "e-Mail ist nicht korrekt!"
+
+                self.showInvalidityMsg(text)
+                self.uiMail3Ledit.setFocus()
                 self.valid = False
 
     def getEntityMci(self, session, entity_id):
@@ -326,5 +402,9 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self._entity_mci.mail1 = self.mail1
         self._entity_mci.mail2 = self.mail2
         self._entity_mci.mail3 = self.mail3
+
+        self._entity_mci.anm = self.anm
+
+        self._entity_mci.vertreter_id = self.vertreter_id
 
         # super().submitEntity()

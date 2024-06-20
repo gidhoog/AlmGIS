@@ -387,9 +387,6 @@ class EntityDialog(MainDialog):
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
 
     def accept(self):
-        """
-        wenn 'acceptEntity' des entity-widget True zurückgibt (die daten sind
-        gültig) dann rufe QDialog.accept() auf
-        """
-        if self.dialogWidget.acceptEntity():
-            super().accept()
+        # super().accept()
+
+        self.accepted_mci = self.dialogWidget.acceptEntity()

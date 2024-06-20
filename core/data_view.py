@@ -1265,7 +1265,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         define or create here a list with custom data that is given in 'editRow'
         to edit the entity (e.g. data for comboboxes)
         """
-        return self.custom_entity_data
+        return self._custom_dataview_data
 
     def editRow(self, entity_widget, entity_id=None, entity_mci=None, feature=None):
         """
