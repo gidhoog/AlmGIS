@@ -711,9 +711,9 @@ class BKontakt(Base):
     __tablename__ = 'a_alm_kontakt'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # type_id = Column(Integer, ForeignKey('type.id'))
-    type_id: Mapped[int]
-    parent_id: Mapped[int]
+
+    type_id = Column(Integer, ForeignKey('a_alm_kontakt_typ.id'))
+    vertreter_id: Mapped[int]
 
     nachname: Mapped[str]
     vorname: Mapped[str]
@@ -731,7 +731,12 @@ class BKontakt(Base):
     inactive: Mapped[bool]
     not_delete: Mapped[bool]
 
+    # rel_type = relationship('BKontaktTyp', lazy='joined')
+    rel_type = relationship('BKontaktTyp')
+
     def __init__(self):  # set default values
+
+        self.type_id = 0
 
         self.blank_value = 0
         self.inactive = 0
@@ -739,6 +744,24 @@ class BKontakt(Base):
 
     def __repr__(self):
        return f"<BKontakt(id={self.id}, nachname='{self.nachname}')>"
+
+class BKontaktTyp(Base):
+    __tablename__ = 'a_alm_kontakt_typ'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    name: Mapped[str]
+    name_short: Mapped[str]
+    gemeinschaft: Mapped[bool]
+    vertreter: Mapped[bool]
+
+    color: Mapped[str]
+    sort: Mapped[int]
+
+    def __repr__(self):
+       return (f"<BKontaktTyp(id={self.id}, "
+               f"name='{self.name}, "
+               f"name_short='{self.name_short}')>")
 
 class BKoppel(Base):
     """

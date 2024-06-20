@@ -30,6 +30,7 @@ def set_data(func):
 
         func(self, *args, **kwargs)
         self.setPreMapData()
+        self.initEntityWidget()
         self.mapData()
 
         self.post_data_set()
@@ -279,6 +280,10 @@ class Entity(QMainWindow):
             self.uiHeaderHlay.addWidget(self.guiHeaderTextLbl)
 
             self.uiHeaderHlay.setContentsMargins(10, 10, 10, 10)
+
+    def initEntityWidget(self):
+
+        pass
 
     def setPreMapData(self):
 

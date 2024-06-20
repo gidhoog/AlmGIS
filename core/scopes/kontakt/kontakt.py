@@ -1,16 +1,19 @@
 from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QRegExpValidator
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
-from core import entity
+from core import entity, db_session_cm
 from core.scopes.kontakt import kontakt_UI
 
-from core.data_model import BKontakt
+from core.data_model import BKontakt, BKontaktTyp
 
 
 class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
     """
     class for a contact-item
     """
+    _type_id = 0
     _nachname = ''
     _vorname = ''
     _strasse = ''
@@ -22,6 +25,24 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
     _mail1 = ''
     _mail2 = ''
     _mail3 = ''
+
+    @property  # getter
+    def type_id(self):
+
+        # type_mci = self.uiTypCombo.currentData(Qt.UserRole)
+
+        # self._type_id = type_mci.id
+        self._type_id = self.uiTypCombo.currentData(Qt.UserRole)
+        # self.rel_type = type_mci
+        return self._type_id
+
+    @type_id.setter
+    def type_id(self, value):
+
+        self.uiTypCombo.setCurrentIndex(
+            self.uiTypCombo.findData(value, Qt.UserRole)
+        )
+        self._type_id = value
 
     @property  # getter
     def nachname(self):
@@ -206,8 +227,30 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         input_validator = QRegExpValidator(reg_ex, self.uiNachnameLedit)
         self.uiNachnameLedit.setValidator(input_validator)
 
+    def initEntityWidget(self):
+        super().initEntityWidget()
+
+        print(f'init entity widget')
+
+        self.setTypeCombo()
+
+    def setTypeCombo(self):
+
+        type_items = sorted(self._custom_entity_data['typ'],
+                              key=lambda x:x.sort)
+
+        # with db_session_cm() as session:
+        #
+        #     stmt = select(BKontaktTyp).order_by(BKontaktTyp.sort)
+        #
+        #     type_mci = session.scalars(stmt).all()
+
+        for type in type_items:
+            self.uiTypCombo.addItem(type.name, type.id)
+
     def mapData(self, model=None):
 
+        self.type_id = self._entity_mci.type_id
         self.nachname = self._entity_mci.nachname
         self.vorname = self._entity_mci.vorname
         self.strasse = self._entity_mci.strasse
@@ -248,11 +291,28 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
                 self.uiMail1Ledit.setFocus()
                 self.valid = False
 
+    def getEntityMci(self, session, entity_id):
+
+        mci = session.scalars(
+            select(BKontakt)
+            .where(BKontakt.id == entity_id)
+        ).unique().first()
+
+        # mci = session.scalars(
+        #     select(BKontakt)
+        #     .options(joinedload(BKontakt.rel_type))
+        #     .where(BKontakt.id == entity_id)
+        # ).unique().first()
+
+        return mci
+
     def submitEntity(self):
         """
         set the shown_name befor submitting
         :return:
         """
+        self._entity_mci.type_id = self.type_id
+        # self._entity_mci.type_id = self.typ
         self._entity_mci.nachname = self.nachname
         self._entity_mci.vorname = self.vorname
         self._entity_mci.strasse = self.strasse
@@ -267,4 +327,4 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self._entity_mci.mail2 = self.mail2
         self._entity_mci.mail3 = self.mail3
 
-        super().submitEntity()
+        # super().submitEntity()

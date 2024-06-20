@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QVariant
 from PyQt5.QtWidgets import QLabel, QComboBox, QDialog
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from core import db_session_cm
 from core.data_view import DataView, TableModel, DataViewEntityDialog
@@ -8,7 +9,7 @@ from core.entity import EntityDialog
 from core.gis_layer import ZVectorLayer, Feature
 from core.main_widget import MainWidget
 
-from core.data_model import BKontakt
+from core.data_model import BKontakt, BKontaktTyp
 from core.scopes.kontakt.kontakt import Kontakt
 
 from qgis.core import QgsField
@@ -170,7 +171,12 @@ class KontaktMain(DataView):
     def setFeatureFields(self):
         super().setFeatureFields()
 
-        mci_id_fld = QgsField("mci_id", QVariant.Int)
+        mci_id_fld = QgsField("id", QVariant.Int)
+
+        typ_id_fld = QgsField("typ_id", QVariant.String)
+
+        typ_name_fld = QgsField("typ_name", QVariant.String)
+        typ_name_fld.setAlias('Typ')
 
         nachname_fld = QgsField("nachname", QVariant.String)
         nachname_fld.setAlias('Nachname')
@@ -206,6 +212,8 @@ class KontaktMain(DataView):
         mail3_fld.setAlias('e-Mail')
 
         self.feature_fields.append(mci_id_fld)
+        self.feature_fields.append(typ_id_fld)
+        self.feature_fields.append(typ_name_fld)
         self.feature_fields.append(nachname_fld)
         self.feature_fields.append(vorname_fld)
         self.feature_fields.append(strasse_fld)
@@ -218,10 +226,33 @@ class KontaktMain(DataView):
         self.feature_fields.append(mail2_fld)
         self.feature_fields.append(mail3_fld)
 
+    def changeAttributes(self, feature, mci):
+
+        attrib = {0: mci.id,
+                  1: mci.type_id,
+                  2: mci.rel_type.name,
+                  3: mci.nachname,
+                  4: mci.vorname,
+                  5: mci.strasse,
+                  6: mci.plz,
+                  7: mci.ort,
+                  8: mci.telefon1,
+                  9: mci.telefon2,
+                  10: mci.telefon3,
+                  11: mci.mail1,
+                  12: mci.mail2,
+                  13: mci.mail3
+                  }
+
+        self._gis_layer.changeAttributeValues(feature.id(),
+                                              attrib)
+
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
 
-        feature['mci_id'] = mci.id
+        feature['id'] = mci.id
+        feature['typ_id'] = mci.type_id
+        feature['typ_name'] = mci.rel_type.name
         feature['nachname'] = mci.nachname
         feature['vorname'] = mci.vorname
         feature['strasse'] = mci.strasse
@@ -239,11 +270,11 @@ class KontaktMain(DataView):
 
         mci = args[0][0]
 
-        # with db_session_cm() as session:
-        #
-        #     session.add(mci)
+        with db_session_cm() as session:
 
-        self.setFeatureAttributes(self.current_feature, mci)
+            session.add(mci)
+
+            self.setFeatureAttributes(self.current_feature, mci)
 
     def getFeatureDeleteInfo(self, feature):
 
@@ -258,8 +289,9 @@ class KontaktMain(DataView):
         super().finalInit()
 
         self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(1, True)
 
-        self.view.sortByColumn(1, Qt.AscendingOrder)
+        self.view.sortByColumn(2, Qt.AscendingOrder)
 
         self.view.resizeColumnsToContents()
 
@@ -342,9 +374,23 @@ class KontaktMain(DataView):
 
     def getMciList(self, session):
 
-        stmt = select(
-            BKontakt).where(BKontakt.blank_value == 0)
+        stmt = (select(BKontakt)
+        .options(
+            joinedload(BKontakt.rel_type)
+        )
+                .where(BKontakt.blank_value == 0))
 
         mci = session.scalars(stmt).all()
 
         return mci
+
+    def getCustomData(self, session):
+
+        custom_data = {}
+
+        type_stmt = select(BKontaktTyp).order_by(BKontaktTyp.sort)
+        type_mci = session.scalars(type_stmt).all()
+
+        custom_data['typ'] = type_mci
+
+        return custom_data

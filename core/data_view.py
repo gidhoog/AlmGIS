@@ -1277,7 +1277,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         if entity_id:
             entity_widget.editEntity(entity_id=entity_id,
-                                     custom_data=self.getCustomEntityData(),
+                                     custom_data=self._custom_dataview_data,
                                      feature=feature)
 
         if entity_mci:
