@@ -638,7 +638,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         try:
             """erstelle eine neue datei"""
             name, _ = QFileDialog.getSaveFileName(
-                self, 'exportiere Tabelle', "", "All Files (*);;CSV Files (*.csv)")
+                self, 'exportiere Tabelle', "",
+                "All Files (*);;CSV Files (*.csv)")
             """"""
 
             """öffne die datei"""
@@ -1039,6 +1040,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 # update = self._gis_layer.updateFeature(self.current_feature)
                 self._gis_layer.commitChanges()
 
+                self.loadData()
+
                 # self.parent.guiMainGis.uiCanvas.refresh()
 
                 # self._gis_layer.data_provider.dataChanged.emit()
@@ -1265,7 +1268,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         define or create here a list with custom data that is given in 'editRow'
         to edit the entity (e.g. data for comboboxes)
         """
-        return self.custom_entity_data
+        return self._custom_dataview_data
 
     def editRow(self, entity_widget, entity_id=None, entity_mci=None, feature=None):
         """
@@ -1353,6 +1356,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # msg.centerInGivenWdg(self.view)
         msg.exec()
 
+    def deleteCheck(self, mci):
+        """
+        return True if the given mci can be deleted
+        :param mci:
+        :return:
+        """
+        return True
+
     def delRowMain(self):
         """
         einstiegs-metode zum löschen einer oder mehrerer zeilen dieser tabellen
@@ -1362,17 +1373,24 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         with edit(self._gis_layer):
             for feat in sel_features:
                 for mci in self._mci_list:
-                    if feat.attribute('mci_id') == mci.id:
+                    if feat.attribute('id') == mci.id:
 
-                        try:
-                            with db_session_cm() as session:
-                                session.add(mci)
-                                session.delete(mci)
-                        except IntegrityError:  # mci is used
-                            self.can_not_delete_msg(self.getFeatureDeleteInfo(feat))
+                        if self.deleteCheck(mci):
+                            try:
+                                with db_session_cm() as session:
+                                    session.add(mci)
+                                    session.delete(mci)
+                            except IntegrityError:  # mci is used
+                                self.can_not_delete_msg(
+                                    self.getFeatureDeleteInfo(feat))
+                            else:
+                                self._mci_list.remove(mci)
+                                self._gis_layer.data_provider.deleteFeatures(
+                                    [feat.id()])
+
                         else:
-                            self._mci_list.remove(mci)
-                            self._gis_layer.data_provider.deleteFeatures([feat.id()])
+                            self.can_not_delete_msg(
+                                self.getFeatureDeleteInfo(feat))
 
         self._gis_layer.data_provider.dataChanged.emit()
 
@@ -1417,10 +1435,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         msgbox = QMessageBox(self)
         msgbox.setWindowTitle(self._delete_window_title[0])
-        msgbox.setInformativeText(self.delete_text[0] + '\n\n' + delete_info
-                                  + '\n\n' + self.delete_text[1])
+        msgbox.setInformativeText(self._delete_text[0] + '\n\n' + delete_info
+                                  + '\n\n' + self._delete_text[1])
         msgbox.setStandardButtons(QMessageBox.Ok)
-        msgbox.centerInGivenWdg(self.view)
+        # msgbox.centerInGivenWdg(self.view)
         msgbox.exec()
 
     def delMsg(self, delete_number):
