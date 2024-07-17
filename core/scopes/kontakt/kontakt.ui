@@ -139,7 +139,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="uiTypLbl">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -162,7 +162,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="uiNachnameLbl">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -170,7 +170,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Nachname/Organistion:</string>
+         <string>Gemeinschaft/Organisation:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -201,7 +201,7 @@
        </widget>
       </item>
       <item row="15" column="0">
-       <widget class="QLabel" name="label_13">
+       <widget class="QLabel" name="uiVertreterLbl">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -479,7 +479,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="uiVornameLbl">
         <property name="font">
          <font>
           <family>Calibri</family>

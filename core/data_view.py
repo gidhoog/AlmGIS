@@ -1195,9 +1195,20 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                              feature=self.current_feature)
 
             if self.edit_entity_by == 'mci':
-                self.editRow(entity_witdget_class(self),
-                             entity_mci=self.getEntityMci(index),
+                entity_mci = self.getEntityMci(index)
+                self.editRow(self.getEntityWidgetCls(entity_mci)(self),
+                             entity_mci=entity_mci,
                              feature=self.current_feature)
+
+    def getEntityWidgetCls(self, entity_mci):
+        """
+        verwende das entity_mci um eine datenbasierende auswahl zu treffen
+
+        :param entity_mci:
+        :return:
+        """
+
+        return self.entity_widget_class
 
     def getEntityId(self, index):
         """
@@ -1370,29 +1381,34 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         sel_features = self._gis_layer.selectedFeatures()
 
-        with edit(self._gis_layer):
-            for feat in sel_features:
-                for mci in self._mci_list:
-                    if feat.attribute('id') == mci.id:
+        if sel_features:
 
-                        if self.deleteCheck(mci):
-                            try:
-                                with db_session_cm() as session:
-                                    session.add(mci)
-                                    session.delete(mci)
-                            except IntegrityError:  # mci is used
+            with edit(self._gis_layer):
+                for feat in sel_features:
+                    for mci in self._mci_list:
+                        if feat.attribute('id') == mci.id:
+
+                            if self.deleteCheck(mci):
+                                try:
+                                    with db_session_cm() as session:
+                                        session.add(mci)
+                                        session.delete(mci)
+                                except IntegrityError:  # mci is used
+                                    self.can_not_delete_msg(
+                                        self.getFeatureDeleteInfo(feat))
+                                else:
+                                    self._mci_list.remove(mci)
+                                    self._gis_layer.data_provider.deleteFeatures(
+                                        [feat.id()])
+
+                            else:
                                 self.can_not_delete_msg(
                                     self.getFeatureDeleteInfo(feat))
-                            else:
-                                self._mci_list.remove(mci)
-                                self._gis_layer.data_provider.deleteFeatures(
-                                    [feat.id()])
 
-                        else:
-                            self.can_not_delete_msg(
-                                self.getFeatureDeleteInfo(feat))
+            self._gis_layer.data_provider.dataChanged.emit()
 
-        self._gis_layer.data_provider.dataChanged.emit()
+        else:
+            self.no_row_selected_msg()
 
     def delRow(self):
         """eigentliche methode zum löschen von zeilen der tabelle"""
@@ -1504,7 +1520,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             entity_widget.newEntity(type_instance=type_instance)
 
         else:
-            """nehme das hinterlegt entity_widget"""
+            """nehme das hinterlegte entity_widget"""
             entity_widget = self.entity_widget_class(self)
             mci = self._entity_mc()
             """"""

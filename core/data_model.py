@@ -733,10 +733,9 @@ class BKontakt(Base):
     inactive: Mapped[bool]
     not_delete: Mapped[bool]
 
-    # rel_type = relationship('BKontaktTyp', lazy='joined')
-    rel_type = relationship('BKontaktTyp')
+    rel_type = relationship('BKontaktTyp', lazy="joined")
 
-    vertreter = relationship("BKontakt", lazy="joined", join_depth=1,
+    rel_vertreter = relationship("BKontakt", lazy="joined", join_depth=1,
                              remote_side=[id])
 
     @hybrid_property
@@ -826,7 +825,6 @@ class BKontaktTyp(Base):
     name: Mapped[str]
     name_short: Mapped[str]
     gemeinschaft: Mapped[bool]
-    vertreter: Mapped[bool]
 
     color: Mapped[str]
     sort: Mapped[int]

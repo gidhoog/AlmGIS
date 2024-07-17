@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QRegExp, Qt
-from PyQt5.QtGui import QRegExpValidator
+# from PyQt5.QtGui import QRegExpValidator
+from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 
@@ -11,7 +12,7 @@ from core.data_model import BKontakt, BKontaktTyp
 
 class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
     """
-    class for a contact-item
+    klasse für einen gemeinschafts-kontakt
     """
     _type_id = 0
     _nachname = ''
@@ -34,35 +35,72 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         # type_mci = self.uiTypCombo.currentData(Qt.UserRole)
 
         # self._type_id = type_mci.id
-        self._vertreter_id = self.uiVertreterCombo.currentData(Qt.UserRole)
+        self._vertreter_id = self.uiVertreterCombo.currentData(Qt.UserRole + 1)
         # self.rel_type = type_mci
         return self._vertreter_id
 
     @vertreter_id.setter
     def vertreter_id(self, value):
 
-        self.uiVertreterCombo.setCurrentIndex(
-            self.uiVertreterCombo.findData(value, Qt.UserRole)
-        )
-        self._vertreter_id = value
+        # self.uiVertreterCombo.setCurrentIndex(
+        #     self.uiVertreterCombo.findData(value, Qt.UserRole)
+        # )
+        # self._vertreter_id = value
+
+
+        """finde den type_id im model des uiTypeCombo"""
+        match_index = self.uiVertreterCombo.model().match(
+            self.uiVertreterCombo.model().index(0, 0),
+            Qt.UserRole + 1,
+            value,
+            -1,
+            Qt.MatchExactly)
+        """"""
+
+        if match_index:
+
+            self.uiVertreterCombo.setCurrentIndex(match_index[0].row())
+            self._vertreter_id = value
+        else:
+            self._vertreter_id = 0
 
     @property  # getter
     def type_id(self):
 
-        # type_mci = self.uiTypCombo.currentData(Qt.UserRole)
-
-        # self._type_id = type_mci.id
-        self._type_id = self.uiTypCombo.currentData(Qt.UserRole)
-        # self.rel_type = type_mci
+        self._type_id = self.uiTypCombo.currentData(Qt.UserRole + 1)
         return self._type_id
 
     @type_id.setter
     def type_id(self, value):
+        """
+        setter for type_id
 
-        self.uiTypCombo.setCurrentIndex(
-            self.uiTypCombo.findData(value, Qt.UserRole)
-        )
-        self._type_id = value
+        :param value:
+        :return:
+        """
+
+        """finde den type_id im model des uiTypeCombo"""
+        match_index = self.uiTypCombo.model().match(
+            self.uiTypCombo.model().index(0, 0),
+            Qt.UserRole + 1,
+            value,
+            -1,
+            Qt.MatchExactly)
+        """"""
+
+        if match_index:
+
+            self.uiTypCombo.setCurrentIndex(match_index[0].row())
+            self._type_id = value
+        else:
+            self.type_id = 0
+
+    @property  # getter
+    def type_mci(self):
+
+        type_mci = self.uiTypCombo.currentData(Qt.UserRole)
+        # self.rel_type = type_mci
+        return type_mci
 
     @property  # getter
     def nachname(self):
@@ -135,16 +173,13 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
     @property  # getter
     def plz(self):
 
-        if self.uiPlzLedit.text() is None or self.uiPlzLedit.text() == 'None':
-            self._plz = 0
-        else:
-            self._plz = int(self.uiPlzLedit.text())
+        self._plz = self.uiPlzLedit.text()
         return self._plz
 
     @plz.setter
     def plz(self, value):
 
-        self.uiPlzLedit.setText(str(value))
+        self.uiPlzLedit.setText(value)
         self._plz = value
 
     @property  # getter
@@ -259,6 +294,11 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         input_validator = QRegExpValidator(reg_ex, self.uiNachnameLedit)
         self.uiNachnameLedit.setValidator(input_validator)
 
+    def initUi(self):
+
+        self.uiVornameLedit.setVisible(False)
+        self.uiVornameLbl.setVisible(False)
+
     def initEntityWidget(self):
         super().initEntityWidget()
 
@@ -274,17 +314,37 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
 
     def setTypeCombo(self):
 
-        type_items = sorted(self._custom_entity_data['typ'],
-                              key=lambda x:x.sort)
+        # type_items = sorted(self._custom_entity_data['typ'],
+        #                       key=lambda x:x.sort)
 
-        # with db_session_cm() as session:
-        #
-        #     stmt = select(BKontaktTyp).order_by(BKontaktTyp.sort)
-        #
-        #     type_mci = session.scalars(stmt).all()
+        with (db_session_cm() as session):
 
-        for type in type_items:
-            self.uiTypCombo.addItem(type.name, type.id)
+            stmt = select(BKontaktTyp).where(BKontaktTyp.gemeinschaft == 1
+                                             ).order_by(BKontaktTyp.sort)
+
+            type_mci = session.scalars(stmt).all()
+
+        # for type in type_items:
+        #     self.uiTypCombo.addItem(type.name, type.id)
+
+        """erstelle ein model mit 1 spalten für das type-combo"""
+        type_model = QStandardItemModel(len(type_mci), 1)
+        for i in range(len(type_mci)):
+            # id = type_items[i].id
+            # name = type_items[i].name
+            if type_mci[i].gemeinschaft == 1:
+                type_model.setData(type_model.index(i, 0),
+                                              type_mci[i].name, Qt.DisplayRole)
+                type_model.setData(type_model.index(i, 0),
+                                              type_mci[i].id, Qt.UserRole + 1)
+                type_model.setData(type_model.index(i, 0),
+                                              type_mci[i], Qt.UserRole)
+        """"""
+
+        """weise dem combo das model zu"""
+        self.uiTypCombo.setModel(type_model)
+        # self.uiTypCombo.setModelColumn(1)
+        """"""
 
     def setVertrKontaktCombo(self):
 
@@ -299,13 +359,33 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
                 func.lower(BKontakt.name))
             vertreter_mci_list = session.scalars(vertreter_stmt).all()
 
-        # for kontakt in vertr_kontakt_items:
-        for kontakt in vertreter_mci_list:
-            self.uiVertreterCombo.addItem(kontakt.name, kontakt.id)
+        # # for kontakt in vertr_kontakt_items:
+        # for kontakt in vertreter_mci_list:
+        #     self.uiVertreterCombo.addItem(kontakt.name, kontakt.id)
+
+        """erstelle ein model mit 1 spalten für das type-combo"""
+        vertreter_model = QStandardItemModel(len(vertreter_mci_list), 1)
+        for i in range(len(vertreter_mci_list)):
+            # id = type_items[i].id
+            # name = type_items[i].name
+            vertreter_model.setData(vertreter_model.index(i, 0),
+                                          vertreter_mci_list[i].name, Qt.DisplayRole)
+            vertreter_model.setData(vertreter_model.index(i, 0),
+                                          vertreter_mci_list[i].id, Qt.UserRole + 1)
+            vertreter_model.setData(vertreter_model.index(i, 0),
+                                          vertreter_mci_list[i], Qt.UserRole)
+        """"""
+
+        """weise dem combo das model zu"""
+        self.uiVertreterCombo.setModel(vertreter_model)
+        # self.uiTypCombo.setModelColumn(1)
+        """"""
 
     def mapData(self, model=None):
 
-        self.type_id = self._entity_mci.type_id
+        if self._entity_mci.type_id != 0:  # keine Einzelperson
+            self.type_id = self._entity_mci.type_id
+
         self.nachname = self._entity_mci.nachname
         self.vorname = self._entity_mci.vorname
         self.strasse = self._entity_mci.strasse
@@ -322,6 +402,18 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self.anm = self._entity_mci.anm
 
         self.vertreter_id = self._entity_mci.vertreter_id
+        self.setVertreter()
+
+    def setVertreter(self):
+
+        vertreter = self.uiVertreterCombo.currentData(Qt.UserRole)
+
+        self.uiVertreterAdresse1Lbl.setText(vertreter.strasse)
+        if vertreter.plz is not None:
+            self.uiVertreterAdresse2Lbl.setText(vertreter.plz + ' ' + vertreter.ort)
+        self.uiVertreterTelefonLbl.setText(vertreter.telefon_all)
+        self.uiVertreterMailLbl.setText(vertreter.mail_all)
+
 
     def checkValidity(self):
         super().checkValidity()
@@ -397,7 +489,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         :return:
         """
         self._entity_mci.type_id = self.type_id
-        # self._entity_mci.type_id = self.typ
+        self._entity_mci.rel_type = self.type_mci
         self._entity_mci.nachname = self.nachname
         self._entity_mci.vorname = self.vorname
         self._entity_mci.strasse = self.strasse
@@ -417,3 +509,56 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self._entity_mci.vertreter_id = self.vertreter_id
 
         # super().submitEntity()
+
+    def signals(self):
+        super().signals()
+
+        self.uiVertreterCombo.currentIndexChanged.connect(self.setVertreter)
+
+
+class KontaktEinzel(Kontakt):
+    """
+    klasse für die Kontaktdaten einer Einzelperson
+    """
+
+    def __init__(self, parent=None):
+        super(__class__, self).__init__(parent)
+
+    def initUi(self):
+        super().initUi()
+
+        self.uiTypLbl.setVisible(False)
+        self.uiTypCombo.setVisible(False)
+
+        self.uiVornameLedit.setVisible(True)
+        self.uiVornameLbl.setVisible(True)
+
+        self.uiVertreterCombo.setVisible(False)
+        self.uiVertreterLbl.setVisible(False)
+
+        self.uiVertreterAdresse1Lbl.setVisible(False)
+        self.uiVertreterAdresse2Lbl.setVisible(False)
+        self.uiVertreterTelefonLbl.setVisible(False)
+        self.uiVertreterMailLbl.setVisible(False)
+
+        self.uiNachnameLbl.setText('Nachname')
+
+    def submitEntity(self):
+
+        self._entity_mci.nachname = self.nachname
+        self._entity_mci.vorname = self.vorname
+        self._entity_mci.strasse = self.strasse
+
+        self._entity_mci.plz = self.plz
+
+        self._entity_mci.ort = self.ort
+        self._entity_mci.telefon1 = self.telefon1
+        self._entity_mci.telefon2 = self.telefon2
+        self._entity_mci.telefon3 = self.telefon3
+        self._entity_mci.mail1 = self.mail1
+        self._entity_mci.mail2 = self.mail2
+        self._entity_mci.mail3 = self.mail3
+
+        self._entity_mci.anm = self.anm
+
+        self._entity_mci.vertreter_id = self.vertreter_id

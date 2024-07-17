@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QVariant
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QDialog, QLineEdit,
-                                 QSpacerItem, QSizePolicy, QHBoxLayout)
+                                 QSpacerItem, QSizePolicy, QHBoxLayout,
+                                 QMenu, QAction, QToolButton)
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
@@ -11,7 +12,7 @@ from core.gis_layer import ZVectorLayer, Feature
 from core.main_widget import MainWidget
 
 from core.data_model import BKontakt, BKontaktTyp
-from core.scopes.kontakt.kontakt import Kontakt
+from core.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 
 from qgis.core import QgsField
 
@@ -133,9 +134,12 @@ class KontaktMain(DataView):
         super(__class__, self).__init__(parent)
 
         self.entity_dialog_class = KontaktEntityDialog
-        self.entity_widget_class = Kontakt
+        # self.entity_widget_class = Kontakt
+        self.entity_widget_class = KontaktEinzel
 
         self._entity_mc = BKontakt
+
+        self.edit_entity_by = 'mci'
         """"""
 
         self.setFeatureFields()
@@ -242,9 +246,12 @@ class KontaktMain(DataView):
         super().setFeatureAttributes(feature, mci)
 
         feature['id'] = mci.id
+
+        # if mci.type_id != 0:  # keine Einzelperson
         feature['typ_id'] = mci.type_id
         feature['typ_name'] = mci.rel_type.name
         feature['typ_color'] = mci.rel_type.color
+
         feature['name'] = mci.name
         feature['adresse'] = mci.adresse
         feature['telefon'] = mci.telefon_all
@@ -269,6 +276,41 @@ class KontaktMain(DataView):
         super().initUi()
 
         self.setStretchMethod(2)
+
+        self.add_menu = QMenu(self)
+
+        action_einzel = QAction('Einzelperson', self)
+        action_einzel.triggered.connect(self.addEinzelperson)
+        action_gemeinschaft = QAction('Gemeinschaft', self)
+        action_gemeinschaft.triggered.connect(self.addGemeinschaft)
+
+        self.add_menu.addAction(action_einzel)
+        self.add_menu.addAction(action_gemeinschaft)
+
+        self.uiAddDataTbtn.setMenu(self.add_menu)
+        self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
+
+    def addEinzelperson(self):
+
+        entity_widget = KontaktEinzel(self)
+
+        mci = BKontakt()
+
+        entity_widget.purpose = 'add'
+
+        self.editRow(entity_widget=entity_widget,
+                     entity_mci=mci)
+
+    def addGemeinschaft(self):
+
+        entity_widget = Kontakt(self)
+
+        mci = BKontakt()
+
+        entity_widget.purpose = 'add'
+
+        self.editRow(entity_widget=entity_widget,
+                     entity_mci=mci)
 
     def finalInit(self):
         super().finalInit()
@@ -436,6 +478,13 @@ class KontaktMain(DataView):
                 index.row(), 1))
 
         return del_info
+
+    def getEntityWidgetCls(self, entity_mci):
+
+        if entity_mci.rel_type.gemeinschaft:
+            return Kontakt
+        else:
+            return KontaktEinzel
 
     def getMciList(self, session):
 
