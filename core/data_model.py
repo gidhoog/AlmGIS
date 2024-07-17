@@ -806,6 +806,74 @@ class BKontakt(Base):
 
         return mail_all
 
+    @hybrid_property
+    def name(self):
+
+        name = ''
+
+        if self.nachname != '':
+            name += self.nachname
+
+        if self.vorname != '':
+            name += ' '
+            name += self.vorname
+
+        return name
+
+    @hybrid_property
+    def adresse(self):
+
+        adresse = ''
+
+        if str(self.plz) != '':
+            adresse += str(self.plz)
+
+        if self.ort != '':
+            adresse += ' '
+            adresse += self.ort
+
+        if self.strasse != '':
+            adresse += ', '
+            adresse += self.strasse
+
+        return adresse
+
+    @hybrid_property
+    def telefon_all(self):
+
+        telfon_list = []
+
+        if self.telefon1 != '':
+            telfon_list.append(self.telefon1)
+
+        if self.telefon2 != '':
+            telfon_list.append(self.telefon2)
+
+        if self.telefon3 != '':
+            telfon_list.append(self.telefon3)
+
+        telefon_all = ", ".join(str(t) for t in telfon_list)
+
+        return telefon_all
+
+    @hybrid_property
+    def mail_all(self):
+
+        mail_list = []
+
+        if self.mail1 != '':
+            mail_list.append(self.mail1)
+
+        if self.mail2 != '':
+            mail_list.append(self.mail2)
+
+        if self.mail3 != '':
+            mail_list.append(self.mail3)
+
+        mail_all = ", ".join(str(m) for m in mail_list)
+
+        return mail_all
+
     def __init__(self):  # set default values
 
         self.type_id = 0
