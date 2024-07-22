@@ -322,7 +322,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         # type_items = sorted(self._custom_entity_data['typ'],
         #                       key=lambda x:x.sort)
 
-        with (db_session_cm() as session):
+        with db_session_cm(name='set contact-type in contact',
+                           expire_on_commit=False) as session:
 
             stmt = select(BKontaktTyp).where(BKontaktTyp.gemeinschaft == 1
                                              ).order_by(BKontaktTyp.sort)
@@ -356,7 +357,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         # vertr_kontakt_items = sorted(self._custom_entity_data['vertr_kontakte'],
         #                       key=lambda x:x.name)
 
-        with db_session_cm() as session:
+        with db_session_cm(name='set vertreter in kontakt',
+                           expire_on_commit=False) as session:
 
             vertreter_stmt = select(
                 BKontakt).where(

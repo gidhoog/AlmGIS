@@ -30,10 +30,13 @@ class KontaktEntityDialog(EntityDialog):
     def accept(self):
         super().accept()
 
-        if self.accepted_mci is not False:
+        self.accepted_entity = self.dialogWidget.acceptEntity()
+
+        if self.accepted_entity is not False:
 
             self.parent.updateMaintableNew(self.dialogWidget.purpose,
-                                           self.accepted_mci)
+                                           self.accepted_entity)
+            print(f'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
             QDialog.accept(self)
 
         # self.dialogWidget.removeEntity()
@@ -53,7 +56,12 @@ class KontaktMainWidget(MainWidget):
 
         self.uiTitleLbl.setText('alle Kontakte')
 
-        self.kontakt_table = KontaktMain()
+        self.kontakt_table = KontaktMain(self)
+
+        with db_session_cm(name='main-widget - kontakt',
+                           expire_on_commit=False) as session:
+
+            self.kontakt_table.initDataView(dataview_session=session)
 
     def initMainWidget(self):
         super().initMainWidget()
@@ -63,62 +71,59 @@ class KontaktMainWidget(MainWidget):
         # self.kontakt_table.initDataView()
 
 
-# class ContactModel(TableModel):
-#
-#     header = [
-#         'Name',
-#         'Straße',
-#         'PLZ',
-#         'Ort',
-#         'Festnetz',
-#         'Mobil'
-#     ]
-#
-#     def data(self, index, role=None):
-#
-#         row = index.row()
-#         # col = index.column()
-#
-#         # if role == Qt.TextAlignmentRole:
-#         #
-#         #     if index.column() in [5, 6]:
-#         #
-#         #         return Qt.AlignRight | Qt.AlignVCenter
-#         #
-#         #     if index.column() in [1, 2, 4]:
-#         #
-#         #         return Qt.AlignHCenter | Qt.AlignVCenter
-#
-#         if index.column() == 0:
-#             if role == Qt.DisplayRole:
-#                 return self.mci_list[row].shown_name
-#                 # return self.mci_list[row][0]
-#
-#         if index.column() == 1:
-#             if role == Qt.DisplayRole:
-#                 return self.mci_list[row].street
-#
-#         if index.column() == 2:
-#             if role == Qt.DisplayRole:
-#                 return self.mci_list[row].postcode
-#                 # return self.mci_list[row][1]
-#
-#         if index.column() == 3:
-#             if role == Qt.DisplayRole:
-#                 return self.mci_list[row].town
-#
-#         if index.column() == 4:
-#             if role == Qt.DisplayRole:
-#                 return self.mci_list[row].phone
-#
-#         if index.column() == 5:
-#             if role == Qt.DisplayRole:
-#                 return self.mci_list[row].mobile
+class KontaktModel(TableModel):
+
+    header = [
+        'Typ',
+        'Name',
+        'Adresse',
+        'Telefon',
+        'e-Mail'
+    ]
+
+    def data(self, index, role=None):
+
+        row = index.row()
+        # col = index.column()
+
+        # if role == Qt.TextAlignmentRole:
+        #
+        #     if index.column() in [5, 6]:
+        #
+        #         return Qt.AlignRight | Qt.AlignVCenter
+        #
+        #     if index.column() in [1, 2, 4]:
+        #
+        #         return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 0:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].rel_type.name
+                # return self.mci_list[row][0]
+
+            if role == Qt.EditRole:
+                return self.mci_list[row].rel_type.id
+
+
+        if index.column() == 1:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].name
+
+        if index.column() == 2:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].adresse
+                # return self.mci_list[row][1]
+
+        if index.column() == 3:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].telefon_all
+
+        if index.column() == 4:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].mail_all
 
 
 class KontaktMain(DataView):
-
-
 
     # data_view_mc = BContact
 
@@ -140,35 +145,37 @@ class KontaktMain(DataView):
 
         self._entity_mc = BKontakt
 
+        self._model_class = KontaktModel
+
         self.edit_entity_by = 'mci'
         """"""
 
-        self.setFeatureFields()
-        self.loadData()
-        self.setFilterUI()
+        # self.setFeatureFields()
+        # self.loadData()
+        # self.setFilterUI()
+        #
+        # self._gis_layer = self.setLayer()
+        #
+        # self.addFeaturesFromMciList(self._mci_list)
+        # self.setTableView()
+        #
+        # self.initUi()
+        #
+        # self.finalInit()
+        #
+        # self.updateFooter()
+        #
+        # self.signals()
 
-        self._gis_layer = self.setLayer()
-
-        self.addFeaturesFromMciList(self._mci_list)
-        self.setTableView()
-
-        self.initUi()
-
-        self.finalInit()
-
-        self.updateFooter()
-
-        self.signals()
-
-    def setLayer(self):
-
-        layer = ZVectorLayer(
-            "None",
-            "KontaktAllLay",
-            "memory",
-            feature_fields=self.feature_fields
-        )
-        return layer
+    # def setLayer(self):
+    #
+    #     layer = ZVectorLayer(
+    #         "None",
+    #         "KontaktAllLay",
+    #         "memory",
+    #         feature_fields=self.feature_fields
+    #     )
+    #     return layer
 
     # def addFeaturesFromMciList(self):
     #     super().addFeaturesFromMciList()
@@ -181,53 +188,53 @@ class KontaktMain(DataView):
     #
     #         self._gis_layer.data_provider.addFeatures([feat])
 
-    def setFeatureFields(self):
-        super().setFeatureFields()
+    # def setFeatureFields(self):
+    #     super().setFeatureFields()
+    #
+    #     mci_id_fld = QgsField("id", QVariant.Int)
+    #
+    #     typ_id_fld = QgsField("typ_id", QVariant.String)
+    #
+    #     typ_name_fld = QgsField("typ_name", QVariant.String)
+    #     typ_name_fld.setAlias('Typ')
+    #
+    #     typ_color_fld = QgsField("typ_color", QVariant.String)
+    #
+    #     name_fld = QgsField("name", QVariant.String)
+    #     name_fld.setAlias('Name')
+    #
+    #     adresse_fld = QgsField("adresse", QVariant.String)
+    #     adresse_fld.setAlias('Adresse')
+    #
+    #     telefon_fld = QgsField("telefon", QVariant.String)
+    #     telefon_fld.setAlias('Telefon')
+    #
+    #     mail_fld = QgsField("mail", QVariant.String)
+    #     mail_fld.setAlias('e-Mail')
+    #
+    #     self.feature_fields.append(mci_id_fld)
+    #     self.feature_fields.append(typ_id_fld)
+    #     self.feature_fields.append(typ_name_fld)
+    #     self.feature_fields.append(typ_color_fld)
+    #     self.feature_fields.append(name_fld)
+    #     self.feature_fields.append(adresse_fld)
+    #     self.feature_fields.append(telefon_fld)
+    #     self.feature_fields.append(mail_fld)
 
-        mci_id_fld = QgsField("id", QVariant.Int)
-
-        typ_id_fld = QgsField("typ_id", QVariant.String)
-
-        typ_name_fld = QgsField("typ_name", QVariant.String)
-        typ_name_fld.setAlias('Typ')
-
-        typ_color_fld = QgsField("typ_color", QVariant.String)
-
-        name_fld = QgsField("name", QVariant.String)
-        name_fld.setAlias('Name')
-
-        adresse_fld = QgsField("adresse", QVariant.String)
-        adresse_fld.setAlias('Adresse')
-
-        telefon_fld = QgsField("telefon", QVariant.String)
-        telefon_fld.setAlias('Telefon')
-
-        mail_fld = QgsField("mail", QVariant.String)
-        mail_fld.setAlias('e-Mail')
-
-        self.feature_fields.append(mci_id_fld)
-        self.feature_fields.append(typ_id_fld)
-        self.feature_fields.append(typ_name_fld)
-        self.feature_fields.append(typ_color_fld)
-        self.feature_fields.append(name_fld)
-        self.feature_fields.append(adresse_fld)
-        self.feature_fields.append(telefon_fld)
-        self.feature_fields.append(mail_fld)
-
-    def changeAttributes(self, feature, mci):
-
-        attrib = {0: mci.id,
-                  1: mci.type_id,
-                  2: mci.rel_type.name,
-                  3: mci.rel_type.color,
-                  4: mci.name,
-                  5: mci.adresse,
-                  6: mci.telefon_all,
-                  7: mci.mail_all
-                  }
-
-        self._gis_layer.changeAttributeValues(feature.id(),
-                                              attrib)
+    # def changeAttributes(self, feature, mci):
+    #
+    #     attrib = {0: mci.id,
+    #               1: mci.type_id,
+    #               2: mci.rel_type.name,
+    #               3: mci.rel_type.color,
+    #               4: mci.name,
+    #               5: mci.adresse,
+    #               6: mci.telefon_all,
+    #               7: mci.mail_all
+    #               }
+    #
+    #     self._gis_layer.changeAttributeValues(feature.id(),
+    #                                           attrib)
 
     def deleteCheck(self, mci):
 
@@ -242,35 +249,35 @@ class KontaktMain(DataView):
         else:
             return True
 
-    def setFeatureAttributes(self, feature, mci):
-        super().setFeatureAttributes(feature, mci)
+    # def setFeatureAttributes(self, feature, mci):
+    #     super().setFeatureAttributes(feature, mci)
+    #
+    #     feature['id'] = mci.id
+    #
+    #     # if mci.type_id != 0:  # keine Einzelperson
+    #     feature['typ_id'] = mci.type_id
+    #     feature['typ_name'] = mci.rel_type.name
+    #     feature['typ_color'] = mci.rel_type.color
+    #
+    #     feature['name'] = mci.name
+    #     feature['adresse'] = mci.adresse
+    #     feature['telefon'] = mci.telefon_all
+    #     feature['mail'] = mci.mail_all
 
-        feature['id'] = mci.id
+    # def updateFeatureAttributes(self, *args):
+    #     super().updateFeatureAttributes(args)
+    #
+    #     mci = args[0][0]
+    #
+    #     with db_session_cm() as session:
+    #
+    #         session.add(mci)
+    #
+    #         self.setFeatureAttributes(self.current_feature, mci)
 
-        # if mci.type_id != 0:  # keine Einzelperson
-        feature['typ_id'] = mci.type_id
-        feature['typ_name'] = mci.rel_type.name
-        feature['typ_color'] = mci.rel_type.color
-
-        feature['name'] = mci.name
-        feature['adresse'] = mci.adresse
-        feature['telefon'] = mci.telefon_all
-        feature['mail'] = mci.mail_all
-
-    def updateFeatureAttributes(self, *args):
-        super().updateFeatureAttributes(args)
-
-        mci = args[0][0]
-
-        with db_session_cm() as session:
-
-            session.add(mci)
-
-            self.setFeatureAttributes(self.current_feature, mci)
-
-    def getFeatureDeleteInfo(self, feature):
-
-        return feature.attribute('name')
+    # def getFeatureDeleteInfo(self, feature):
+    #
+    #     return feature.attribute('name')
 
     def initUi(self):
         super().initUi()
@@ -317,11 +324,11 @@ class KontaktMain(DataView):
     def finalInit(self):
         super().finalInit()
 
-        self.view.setColumnHidden(0, True)
-        self.view.setColumnHidden(1, True)
-        self.view.setColumnHidden(3, True)
+        # self.view.setColumnHidden(0, True)
+        # self.view.setColumnHidden(1, True)
+        # self.view.setColumnHidden(3, True)
 
-        self.view.sortByColumn(4, Qt.AscendingOrder)
+        self.view.sortByColumn(1, Qt.AscendingOrder)
 
         self.view.resizeColumnsToContents()
 
@@ -340,76 +347,84 @@ class KontaktMain(DataView):
         kontakt_type_lbl_font = self.filter_type_lbl.font()
         kontakt_type_lbl_font.setFamily(config.font_family)
         self.filter_type_lbl.setFont(kontakt_type_lbl_font)
+        self.filter_type_lbl.setVisible(False)
 
         self.filter_type_input_wdg = QComboBox(self)
 
         self.filter_type_input_wdg.addItem('--- alle Typen ---', -1)
 
-        for kontact_type in self._custom_dataview_data['typ']:
-            self.filter_type_input_wdg.addItem(kontact_type.name,
-                                               kontact_type.id)
+        with db_session_cm(name='contact type filter') as session:
+
+            contact_type_stmt = select(BKontaktTyp)
+            contact_type_list = session.scalars(contact_type_stmt).all()
+
+            for kontact_type in contact_type_list:
+                self.filter_type_input_wdg.addItem(kontact_type.name,
+                                                   kontact_type.id)
 
         kontakt_type_input_wdg_font = self.filter_type_input_wdg.font()
         kontakt_type_input_wdg_font.setPointSize(11)
         kontakt_type_input_wdg_font.setFamily(config.font_family)
         self.filter_type_input_wdg.setFont(kontakt_type_input_wdg_font)
 
-        self.filter_type_input_wdg.currentIndexChanged.connect(self.useFilter)
+        # self.filter_type_input_wdg.currentIndexChanged.connect(self.useFilter)
+        self.filter_type_input_wdg.currentTextChanged.connect(
+            self.applyFilter)
         """"""
 
-        """filter name"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_name_lbl = QLabel(self)
-
-        name_lbl_font = self.filter_name_lbl.font()
-        name_lbl_font.setFamily(config.font_family)
-        self.filter_name_lbl.setFont(name_lbl_font)
-
-        self.filter_name_lbl.setText('Name:')
-        self.filter_name_lbl.setVisible(False)
-
-        self.filter_name_input_wdg = QLineEdit(self)
-
-        name_input_wdg_font = self.filter_name_input_wdg.font()
-        name_input_wdg_font.setPointSize(11)
-        name_input_wdg_font.setFamily(config.font_family)
-        self.filter_name_input_wdg.setFont(name_input_wdg_font)
-
-        self.filter_name_input_wdg.setPlaceholderText('Name')
-        self.filter_name_input_wdg.setClearButtonEnabled(True)
-        self.filter_name_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_name_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter adresse"""
-        # filter_az = FilterElement(self)
-        # filter_az.uiLabelLbl.setText('AZ:')
-
-        self.filter_adr_lbl = QLabel(self)
-
-        adr_lbl_font = self.filter_adr_lbl.font()
-        adr_lbl_font.setFamily(config.font_family)
-        self.filter_adr_lbl.setFont(adr_lbl_font)
-
-        self.filter_adr_lbl.setText('Adresse:')
-        self.filter_adr_lbl.setVisible(False)
-
-        self.filter_adr_input_wdg = QLineEdit(self)
-        self.filter_adr_input_wdg.setPlaceholderText('Adresse')
-        adr_input_wdg_font = self.filter_adr_input_wdg.font()
-        adr_input_wdg_font.setPointSize(11)
-        adr_input_wdg_font.setFamily(config.font_family)
-        self.filter_adr_input_wdg.setFont(adr_input_wdg_font)
-        self.filter_adr_input_wdg.setClearButtonEnabled(True)
-        self.filter_adr_input_wdg.setMaximumWidth(80)
-        # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
-
-        self.filter_adr_input_wdg.textChanged.connect(self.useFilter)
+        # """filter name"""
+        # # filter_name = FilterElement(self)
+        # # filter_name.uiLabelLbl.setText('Name:')
+        # self.filter_name_lbl = QLabel(self)
+        #
+        # name_lbl_font = self.filter_name_lbl.font()
+        # name_lbl_font.setFamily(config.font_family)
+        # self.filter_name_lbl.setFont(name_lbl_font)
+        #
+        # self.filter_name_lbl.setText('Name:')
+        # self.filter_name_lbl.setVisible(False)
+        #
+        # self.filter_name_input_wdg = QLineEdit(self)
+        #
+        # name_input_wdg_font = self.filter_name_input_wdg.font()
+        # name_input_wdg_font.setPointSize(11)
+        # name_input_wdg_font.setFamily(config.font_family)
+        # self.filter_name_input_wdg.setFont(name_input_wdg_font)
+        #
+        # self.filter_name_input_wdg.setPlaceholderText('Name')
+        # self.filter_name_input_wdg.setClearButtonEnabled(True)
+        # self.filter_name_input_wdg.setMaximumWidth(200)
+        # # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+        #
+        # self.filter_name_input_wdg.textChanged.connect(self.useFilter)
+        #
+        # # filter_lay.addWidget(filter_name)
+        # """"""
+        #
+        # """filter adresse"""
+        # # filter_az = FilterElement(self)
+        # # filter_az.uiLabelLbl.setText('AZ:')
+        #
+        # self.filter_adr_lbl = QLabel(self)
+        #
+        # adr_lbl_font = self.filter_adr_lbl.font()
+        # adr_lbl_font.setFamily(config.font_family)
+        # self.filter_adr_lbl.setFont(adr_lbl_font)
+        #
+        # self.filter_adr_lbl.setText('Adresse:')
+        # self.filter_adr_lbl.setVisible(False)
+        #
+        # self.filter_adr_input_wdg = QLineEdit(self)
+        # self.filter_adr_input_wdg.setPlaceholderText('Adresse')
+        # adr_input_wdg_font = self.filter_adr_input_wdg.font()
+        # adr_input_wdg_font.setPointSize(11)
+        # adr_input_wdg_font.setFamily(config.font_family)
+        # self.filter_adr_input_wdg.setFont(adr_input_wdg_font)
+        # self.filter_adr_input_wdg.setClearButtonEnabled(True)
+        # self.filter_adr_input_wdg.setMaximumWidth(80)
+        # # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
+        #
+        # self.filter_adr_input_wdg.textChanged.connect(self.useFilter)
 
         spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
                                  QSizePolicy.Minimum)
@@ -417,10 +432,10 @@ class KontaktMain(DataView):
 
         filter_lay.addWidget(self.filter_type_lbl)
         filter_lay.addWidget(self.filter_type_input_wdg)
-        filter_lay.addWidget(self.filter_name_lbl)
-        filter_lay.addWidget(self.filter_name_input_wdg)
-        filter_lay.addWidget(self.filter_adr_lbl)
-        filter_lay.addWidget(self.filter_adr_input_wdg)
+        # filter_lay.addWidget(self.filter_name_lbl)
+        # filter_lay.addWidget(self.filter_name_input_wdg)
+        # filter_lay.addWidget(self.filter_adr_lbl)
+        # filter_lay.addWidget(self.filter_adr_input_wdg)
 
         """"""
 
@@ -428,6 +443,15 @@ class KontaktMain(DataView):
         filter_lay.addItem(spacerItem)
 
         self.uiHeaderHley.insertLayout(1, filter_lay)
+
+    def applyFilter(self):
+
+        if self.filter_type_input_wdg.currentData(Qt.UserRole) == -1:
+            self.filter_type_lbl.setVisible(False)
+        else:
+            self.filter_type_lbl.setVisible(True)
+
+        super().applyFilter()
 
     def useFilter(self):
 
@@ -472,6 +496,20 @@ class KontaktMain(DataView):
 
         self.updateFooter()
 
+    def useFilterScope(self, source_row, source_parent):
+        super().useFilterScope(source_row, source_parent)
+
+        """filter contact_typ"""
+        contact_type = self.filter_proxy.sourceModel() \
+            .data(self.filter_proxy.sourceModel().index(source_row, 0),
+                  Qt.EditRole)
+        # if self.filter_type_input_wdg.currentText() != "--- alle Typen ---":
+        if self.filter_type_input_wdg.currentData(Qt.UserRole) != -1:
+            # return False
+            if contact_type != self.filter_type_input_wdg.currentData(Qt.UserRole):
+                return False
+        """"""
+
     def getDeleteInfo(self, index=None):
         super().getDeleteInfo(index)
 
@@ -481,7 +519,7 @@ class KontaktMain(DataView):
 
         return del_info
 
-    def getEntityWidgetCls(self, entity_mci):
+    def get_entity_widget_class(self, entity_mci):
 
         if entity_mci.rel_type.gemeinschaft:
             return Kontakt

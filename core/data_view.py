@@ -115,21 +115,85 @@ class TableView(QTableView):
 
     def __init__(self, parent):
         super(TableView, self).__init__(parent)
+        # QTableView.__init__(self)
 
         self.parent = parent
 
-        self.horizontalHeader().setStretchLastSection(True)
-        self.resizeColumnsToContents()
+        self.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
-        # self.style = ('QTableView::item:focus {border: 3px solid #00FF7F;}')
-        # self.setStyleSheet(self.style)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSortingEnabled(True)
+
+        # self.verticalHeader().viewport().installEventFilter(self)
+
+        #todo: implement here 'selectRow' (see c++ code):
+        self.verticalHeader().sectionPressed.connect(self.nothing)
+        # self.verticalHeader().sectionEntered.connect(self.nothing)
+        # self.horizontalHeader().sectionResized.connect(self.nothing)
+        # self.horizontalHeader().sortIndicatorChanged.connect(self.nothing)
+
+
+        # self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        # self.setSelectionMode(QAbstractItemView.NoSelection)
+        # self.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        # self.setFocusPolicy(Qt.ClickFocus)
+
+        # self.horizontalHeader().setStretchLastSection(True)
+        # self.resizeColumnsToContents()
+
+        # self.clicked.connect(self.view_clicked)
+
+        highlight_focus_string = 'QTableView::item:focus {border: 2px solid #00FF7F}; '
+
+        selection_color = color.data_view_selection
+        color_string = (f'rgb({str(selection_color.red())}, '
+                        f'{str(selection_color.green())}, '
+                        f'{str(selection_color.blue())})')
+        selection_style = f'selection-background-color: {color_string};'
+
+        """zweiter string funktioniert leider nicht"""
+        self.setStyleSheet(selection_style + highlight_focus_string)
+        """"""
+
+    def nothing(self, index):
+
+        print(f'..nothing: {index}')
+
+    def mousePressEvent(self, e):
+
+        print(f'mouse pressed')
+
+        self.setSelectionMode(QAbstractItemView.NoSelection)
+        super().mousePressEvent(e)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+    def mouseReleaseEvent(self, e):
+
+        pass
+
+        self.setSelectionMode(QAbstractItemView.NoSelection)
+        super().mouseReleaseEvent(e)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+    def mouseMoveEvent(self, e):
+
+        pass
+
+        self.setSelectionMode(QAbstractItemView.NoSelection)
+        super().mouseMoveEvent(e)
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
     def keyPressEvent(self, event):
-        """
-        aktionen die bei tastendruck durchgeführt werden sollen
-        """
 
-        if event.key() == Qt.Key_Delete:
+        if event.key() in [Qt.Key_Up, Qt.Key_Down, Qt.Key_Left,
+                           Qt.Key_Right]:
+            self.setSelectionMode(QAbstractItemView.NoSelection)
+            super().keyPressEvent(event)
+            self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            return
+        elif event.key() == Qt.Key_Delete:
             self.parent.delRowMain()
         # elif event.key() == Qt.Key_Insert:
         #     self.parent.addRowMain()
@@ -158,48 +222,75 @@ class DataViewEntityDialog(EntityDialog):
 
 
 class TableModel(QAbstractTableModel):
-    """
-    baseclass für ein model für ein data_view
+# class TableModel(QgsAttributeTableModel):
 
-    bei der initialisierung wird ein einfaches data_array übergeben (das z.b.
-    mit einer SQLAlchemy-abfrage erzeugt wurde); aus diesem data_array wird auf
-    basis des 'QAbstractTableModel' ein 'TableModel' erzeugt
-    """
+    header = ['g',
+              'f']
 
-    def __init__(self, parent):
-        super(TableModel, self).__init__(parent)
+    def __init__(self, parent, mci_list):
+        super(TableModel, self).__init__()
 
         self.parent = parent
-        self.mci_list = []
+        self.mci_list = mci_list
 
-        self.header = []
+    def data(self, index: QModelIndex, role: int = ...):
+        pass
 
-    def data(self, index: QModelIndex, role: int = ...): ...
+    def insertRows(self, position, rows, QModelIndex, parent):
+        self.beginInsertRows(QModelIndex, position, position+rows-1)
+        default_row = ['']*len(self._data[0])  # or _headers if you have that defined.
+        for i in range(rows):
+
+            self.mci_list.insert(position, default_row)
+        self.endInsertRows()
+        self.layoutChanged.emit()
+        return True
+
+    def removeRows(self, position, rows, QModelIndex):
+        self.layoutAboutToBeChanged.emit()
+        self.beginRemoveRows(QModelIndex, position, position+rows-1)
+        for i in range(rows):
+
+            with db_session_cm() as session:
+                session.delete(self.mci_list[position])
+            del(self.mci_list[position])
+        self.endRemoveRows()
+
+        self.layoutChanged.emit()
+
+        return True
 
     def rowCount(self, parent: QModelIndex = ...):
         """
         definiere die zeilenanzahl
         """
 
-        if self.mci_list:
-            return len(self.mci_list)
-        else:
-            return 0
+        return len(self.mci_list)
 
     def columnCount(self, parent: QModelIndex = ...):
         """
         definiere die spaltenanzahl
         """
-
         return len(self.header)
 
     def headerData(self, column, orientation, role=None):
+        """
+        wenn individuelle überschriften gesetzt sind (in 'self.header')
+        dann nehme diese
+        """
         super().headerData(column, orientation, role)
 
         if self.header:
             if role == Qt.DisplayRole and orientation == Qt.Horizontal:
 
                 return self.header[column]
+
+    # def flags(self, index):  # to make the table(-cells) editable
+    #     if not index.isValid():
+    #         return Qt.ItemIsEnabled
+    #
+    #     return Qt.ItemFlags(
+    #         QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
 
 
 class DataView(QWidget, data_view_UI.Ui_DataView):
@@ -229,11 +320,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _gis_layer = None
     # _canvas = None
 
-    current_feature = None
+    # current_feature = None
 
-    _view_class = GisTableView
+    filter_proxy_gis_class = None
+    vector_layer_cache_class = None
 
-    data_view_class = TableView
+    _model_gis_class = GisTableModel
+    _view_gis_class = GisTableView
+
+    _view_class = TableView
+    _model_class = None
 
     # """verfügbare filter für diese tabelle"""
     # _available_filters = 'g'
@@ -441,11 +537,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     #     self.uiTitleLbl.setText(value)
     #     self._title = value
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
-        DataView.instance_list.append(self)
+        # DataView.instance_list.append(self)
+
+        self.gis_mode = gis_mode
+        self.current_feature = None
+
+        self.dataview_session = None
 
         """"""
         self.entity_dialog_class = DataViewEntityDialog
@@ -470,7 +571,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self._gis_table_model_class = GisTableModel
         self._model_class = TableModel
 
-        self.canvas = QgsMapCanvas()
+        # self.canvas = QgsMapCanvas()
 
         """liste mit den widgets im fußbereich der tabelle (zum anzeigen 
         verschiedener spaltensummen"""
@@ -482,68 +583,79 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.add_entity_menu = QMenu(self)
         """"""
 
-        self.view = self._view_class(self)
-        selection_color = color.data_view_selection
-        color_string = (f'rgb({str(selection_color.red())}, '
-                        f'{str(selection_color.green())}, '
-                        f'{str(selection_color.blue())})')
-
-        self.view.setStyleSheet(f"selection-background-color: {color_string};")
-        self.uiTableVlay.addWidget(self.view)
+        # selection_color = color.data_view_selection
+        # color_string = (f'rgb({str(selection_color.red())}, '
+        #                 f'{str(selection_color.green())}, '
+        #                 f'{str(selection_color.blue())})')
+        #
+        # self.view.setStyleSheet(f"selection-background-color: {color_string};")
 
         self.uiTitleLbl.setVisible(False)
 
+        if self.gis_mode:
+
+            self.filter_proxy_gis_class = QgsAttributeTableFilterModel
+            self.vector_layer_cache_class = QgsVectorLayerCache
+
+            self.view = self._view_gis_class(self)
+
+        else:
+            self.view = self._view_class(self)
+            # self.model = self._model_class(self)
+            self._model_class = TableModel
+
+        self.uiTableVlay.addWidget(self.view)
+
+    def initDataView(self, dataview_session=None):
+
+        # with db_session_cm(expire_on_commit=False) as session:
+        # # with db_session_cm() as session:
+
+        self.dataview_session = dataview_session
+
+        self.loadData(self.dataview_session)
+
+        if self.gis_mode:
+
+            self.setFeatureFields()
+
+            self._gis_layer = self.setLayer()
+
+            self.addFeaturesFromMciList(self._mci_list)
+
+        self.setFilterUI()
+
+        self.initView()
+
         self.initUi()
 
-        # if self._gis_layer is not None:
-        #
-        #     self.vector_layer_cache = QgsVectorLayerCache(gis_layer,
-        #                                              10000)
-        #     self.model = self._gis_table_model_class(
-        #         self.vector_layer_cache, self)
-        #     self.model.loadLayer()
-        #
-        #     self.filter_proxy = QgsAttributeTableFilterModel(
-        #         canvas,
-        #         self.model
-        #     )
-        #
-        #     # self.view = QgsAttributeTableView()
-        #     self.view = GisTableView(self)
-        #     self.view.setModel(self.filter_proxy)
-        #     self.initUi()
-        #
-        #     self.initDataView()
-        #
-        # else:
-        #
-        #     self.model = self._model_class(self)
-        #     self.filter_proxy = SortFilterProxyModel(self)
-        #     # self.filter_proxy = QgsAttributeTableFilterModel(None, self.model, self)
-        #     self.filter_proxy.setSourceModel(self.model)
-        #
-        #     """definiere das verwendete view; funktioniert derzeit nur mit
-        #     einem QTableView, soll aber auch mit einem QTreeView möglich sein"""
-        #     self.view = self.data_view_class(self)
-        #     self.view.setModel(self.filter_proxy)
-        #
-        #     self.initUi()
-        #     self.loadData()
-        #
-        #     self.initDataView()
-        #     """"""
-        #
-        # self.uiTableVlay.addWidget(self.view)
-        #
-        # self.view_gis = GisTableView(self)
-        # self.uiTableVlay.addWidget(self.view_gis)
+        self.finalInit()
 
-    # def setCanvas(self, canvas):
-    #
-    #     self._canvas = canvas
-    # def setFeaturesFromMci(self, layer):
-    #
-    #     self._gis_layer = layer
+        self.updateFooter()
+
+        self.signals()
+
+    def initView(self):
+
+        if self.gis_mode:
+
+            self.vector_layer_cache = self.vector_layer_cache_class(self._gis_layer,
+                                                          10000)
+            self.model = self._model_gis_class(
+                self.vector_layer_cache, self)
+            self.model.loadLayer()
+
+            self.filter_proxy = self.filter_proxy_gis_class(
+                QgsMapCanvas(),
+                self.model
+            )
+
+        else:
+            self.model = self._model_class(self, self._mci_list)
+            self.filter_proxy = SortFilterProxyModel(self)
+            self.filter_proxy.setSourceModel(self.model)
+
+        self.view.setModel(self.filter_proxy)
 
     def setCanvas(self, canvas):
 
@@ -573,6 +685,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
         #
         # self.uiActionExportCsv.triggered.connect(self.export_csv)
+
+        if self.gis_mode:
+            self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
+        else:
+            self.view.selectionModel().selectionChanged.connect(
+                self.selectedRowsChanged)
 
     def getSelectedRows(self):
         """
@@ -614,7 +732,31 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         erhalte den filter_proxy index des übergebenen maintable_model index
         :return: QModelIndex
         """
-        return self.filter_proxy.mapToMaster(index)
+        return self.filter_proxy.mapToSource(index)
+
+    def getDisplayedRowsNumber(self):
+
+        number = 0
+
+        if self.gis_mode:
+            number = self._gis_layer.featureCount()
+        else:
+            number = len(self._mci_list)
+
+        return number
+
+    def getSelectedRowsNumber(self):
+
+        number = 0
+
+        if self.gis_mode:
+            number = len(self._gis_layer.selectedFeatureIds())
+        else:
+            if self.view.selectionModel():
+                indexes = self.view.selectionModel().selectedRows()
+                number = len(indexes)
+
+        return number
 
     def setSelectedRowsNumber(self):
         """
@@ -825,16 +967,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.filter_proxy.invalidateFilter()
         self.updateFooter()
 
-    # def useFilterScope(self, source_row, source_parent):
-    #     """
-    #     teil der methode 'filterAcceptsRow' um die werte des scope-filters
-    #     und dem tableview zu vergleichen
-    #
-    #     :param source_row:
-    #     :param source_parent:
-    #     :return: False wenn die werte nicht übereinstimmen
-    #     """
-    #     pass
+    def useFilterScope(self, source_row, source_parent):
+        """
+        teil der methode 'filterAcceptsRow' um die werte des scope-filters
+        und dem tableview zu vergleichen
+
+        :param source_row:
+        :param source_parent:
+        :return: False wenn die werte nicht übereinstimmen
+        """
+        pass
 
     # def updateFilterElements(self):
     #     """
@@ -962,12 +1104,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         config.setColumns(columns)
         layer.setAttributeTableConfig(config)
 
-    def loadData(self):
+    def loadData(self, session=None):
 
-        with db_session_cm() as session:
-
-            self._mci_list = self.getMciList(session)
-            self._custom_dataview_data = self.getCustomData(session)
+        self._mci_list = self.getMciList(session)
+        # self._custom_dataview_data = self.getCustomData(session)
 
         # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
         #
@@ -1016,48 +1156,56 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-        if purpose == 'add':
+        if self.gis_mode:
+            if purpose == 'add':
 
-            for instance in DataView.instance_list:
-                # if instance != self and instance._commit_entity == True:
-                if instance._commit_entity == True:
-                    self.updateInstance(instance)
+                for instance in DataView.instance_list:
+                    # if instance != self and instance._commit_entity == True:
+                    if instance._commit_entity == True:
+                        self.updateInstance(instance)
 
-            # self._gis_layer.startEditing()
-            # self.addFeaturesFromMciList(args)
-            # self._gis_layer.commitChanges()
-            #
-            # self._gis_layer.data_provider.dataChanged.emit()
-
-        elif purpose == 'edit':
-
-            if self.current_feature is not None:
-
-                self.updateFeatureAttributes(args)
-
-                self._gis_layer.startEditing()
-
-                self.changeAttributes(self.current_feature,
-                                      args[0])
-
-                # update = self._gis_layer.updateFeature(self.current_feature)
-                self._gis_layer.commitChanges()
-
-                self.loadData()
-
-                # self.parent.guiMainGis.uiCanvas.refresh()
-
+                # self._gis_layer.startEditing()
+                # self.addFeaturesFromMciList(args)
+                # self._gis_layer.commitChanges()
+                #
                 # self._gis_layer.data_provider.dataChanged.emit()
 
-        self.view.model().sourceModel().modelChanged.emit()
-        # self.view.model().sourceModel().layoutChanged.emit()
+            elif purpose == 'edit':
 
-        # """aktualisiere auch alle derzeit existierenden instanzen
-        # dieser klasse außer dieser instanz"""
-        # for instance in DataView.instance_list:
-        #     if instance != self and instance._commit_entity == True:
-        #         self.updateInstance(instance)
-        # """"""
+                if self.current_feature is not None:
+
+                    self.updateFeatureAttributes(args)
+
+                    self._gis_layer.startEditing()
+
+                    self.changeAttributes(self.current_feature,
+                                          args[0])
+
+                    # update = self._gis_layer.updateFeature(self.current_feature)
+                    self._gis_layer.commitChanges()
+
+                    self.loadData()
+
+                    # self.parent.guiMainGis.uiCanvas.refresh()
+
+                    # self._gis_layer.data_provider.dataChanged.emit()
+
+            self.view.model().sourceModel().modelChanged.emit()
+            # self.view.model().sourceModel().layoutChanged.emit()
+
+            # """aktualisiere auch alle derzeit existierenden instanzen
+            # dieser klasse außer dieser instanz"""
+            # for instance in DataView.instance_list:
+            #     if instance != self and instance._commit_entity == True:
+            #         self.updateInstance(instance)
+            # """"""
+        else:  # no gis-mode
+
+            # with db_session_cm(name='update data_view') as session:
+            #
+            #     session.add_all(self._mci_list)
+
+            self.view.model().sourceModel().layoutChanged.emit()
 
         self.updateFooter()
 
@@ -1127,8 +1275,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         for line in self.footer_list:
             line.update_footer_line()
 
-        self.displayed_rows = self.view.model().rowCount()
-        self.selected_rows_number = len(self._gis_layer.selectedFeatureIds())
+        self.displayed_rows = self.getDisplayedRowsNumber()
+        self.selected_rows_number = self.getSelectedRowsNumber()
 
         # if self.getSelectedRows():
         #     self.selected_rows_number = len(self.getSelectedRows())
@@ -1187,32 +1335,26 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         if 0 <= index.column() <= 9999:  # all columns of the model
 
-            proxy_index = self.getProxyIndex(index)
+            entity_index = self.getProxyIndex(index)
 
-            entity_witdget_class = self.get_entity_widget_class(index)
-            self.current_feature = self.model.feature(proxy_index)
+            if self.gis_mode:
+                self.current_feature = self.model.feature(entity_index)
+
 
             if self.edit_entity_by == 'id':
-                self.editRow(entity_witdget_class(self),
-                             entity_id=self.getEntityId(proxy_index),
+
+                self.editRow(self.get_entity_widget_class(self),
+                             entity_id=self.getEntityId(entity_index),
                              feature=self.current_feature)
 
             if self.edit_entity_by == 'mci':
-                # entity_mci = self.getEntityMci(index)
-                entity_mci = self.getEntityMci(proxy_index)
-                self.editRow(self.getEntityWidgetCls(entity_mci)(self),
+
+                entity_mci = self.getEntityMci(entity_index)
+                entity_wdg = self.get_entity_widget_class(entity_mci)
+
+                self.editRow(entity_wdg(self),
                              entity_mci=entity_mci,
                              feature=self.current_feature)
-
-    def getEntityWidgetCls(self, entity_mci):
-        """
-        verwende das entity_mci um eine datenbasierende auswahl zu treffen
-
-        :param entity_mci:
-        :return:
-        """
-
-        return self.entity_widget_class
 
     def getEntityId(self, index):
         """
@@ -1233,7 +1375,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return: MCI-Objekt (z.B.: self._mci_list[index.row()])
         """
         # return self.model.mci_list[self.getProxyIndex(index).row()]
-        return self._mci_list[self.getProxyIndex(index).row()]
+        return self._mci_list[index.row()]
 
     def rowSelected(self):
         """
@@ -1295,60 +1437,72 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         if entity_id:
             entity_widget.editEntity(entity_id=entity_id,
-                                     custom_data=self._custom_dataview_data,
                                      feature=feature)
 
         if entity_mci:
-            entity_widget.editEntity(entity_mci=entity_mci,
-                                     custom_data=self.getCustomEntityData())
+            entity_widget.editEntity(entity_mci=entity_mci)
 
         """open the entity_widget_class in a dialog"""
         self.openDialog(entity_widget)
         """"""
 
-    def get_entity_widget(self, sel_index):
+    # def get_entity_widget(self, sel_index):
+    #     """
+    #     hole das entity-widget; brücksichtige, dass es typ-abhängig sein kann;
+    #     in diesem fall wird die widget-klasse aus der entsprechenden tabelle mit
+    #     den typ-date geholt und eine entity-widget instanz erzeugt"""
+    #
+    #     if self.entity_typ_column:  #: if there are entity_type set
+    #         """hole die modul und widget_class infos von der type_data_instance"""
+    #         module, widget_class = self.get_entity_widget_class(
+    #             self.get_selected_type_id(sel_index))
+    #         """"""
+    #
+    #         """hole die widget_class erzeuge eine instance"""
+    #         entity_module = __import__(module, fromlist=[widget_class])
+    #         wid = getattr(entity_module, widget_class)
+    #         entity_widget = wid(self)
+    #         """"""
+    #     else:  # es gibt keine unterschiedlichen entity-typen
+    #         entity_widget = self.entity_widget(self)
+    #
+    #     return entity_widget
+
+    def get_entity_widget_class(self, entity_mci=None):
         """
-        hole das entity-widget; brücksichtige, dass es typ-abhängig sein kann;
-        in diesem fall wird die widget-klasse aus der entsprechenden tabelle mit
-        den typ-date geholt und eine entity-widget instanz erzeugt"""
+        gebe die klasse des entity_widgets zurück;
+        falls unterschiedliche typen im daten-model definiert sind kann auch
+        der rückgabewert von 'getEntityTypeWdgCls' verwendet werden;
+        oder es kann hier eine komplett eigenständige methode definiert werden
+        (z.B. siehe 'kontakt_main')
+        :param entity_mci:
+        :return:
+        """
 
-        if self.entity_typ_column:  #: if there are entity_type set
-            """hole die modul und widget_class infos von der type_data_instance"""
-            module, widget_class = self.get_entity_widget_class(
-                self.get_selected_type_id(sel_index))
-            """"""
+        # return self.getEntityTypeWdgCls(entity_mci)
+        return self.entity_widget_class
 
-            """hole die widget_class erzeuge eine instance"""
-            entity_module = __import__(module, fromlist=[widget_class])
-            wid = getattr(entity_module, widget_class)
-            entity_widget = wid(self)
-            """"""
-        else:  # es gibt keine unterschiedlichen entity-typen
-            entity_widget = self.entity_widget(self)
+    def getEntityTypeWdgCls(self, entity_mci):
+        """
+        falls es für das entity_mci verschiedene typen gibt, dann gebe hier die
+        widget-klasse für dieses entity_mci zurück
+        :param entity_mci:
+        :return:
+        """
 
-        return entity_widget
-
-    def get_entity_widget_class(self, sel_index):
-        """get the entity_widget_class; consider there are different types of the
-        item"""
-
-        if self.entity_widget_class is not None:
-
-            wdg_class = self.entity_widget_class
-
-        elif hasattr(self._mci_list[sel_index.row()], 'rel_type'):
+        if hasattr(entity_mci, 'rel_type'):
             """get the module and the widget_class from the
             type_data_instance"""
 
-            module = self._mci_list[sel_index.row()].rel_type.module
-            widget_class = self._mci_list[sel_index.row()].rel_type.type_class
+            module = entity_mci.rel_type.module
+            widget_class = entity_mci.rel_type.type_class
 
             """import the widget_class and make a instance"""
             item_module = __import__(module, fromlist=[widget_class])
             wdg_class = getattr(item_module, widget_class)
             """"""
 
-        return wdg_class
+            return wdg_class
 
     def get_type_class(self, type_instance):
         """
@@ -1676,39 +1830,41 @@ class SortFilterProxyModel(QSortFilterProxyModel):
                                                             orientation,
                                                             role)
 
-    # def filterAcceptsRow(self, source_row, source_parent):
-    #     """
-    #     diese methode überwacht ob ein filtereintrag mit einem datensatzeintrag
-    #     übereinstimmt
-    #
-    #     return True to display the row
-    #     return False to hide the row
-    #
-    #     :param source_row:
-    #     :param source_parent:
-    #     :return:
-    #     """
-    #     """filter general"""
-    #     if 'g' in self.parent.available_filters:
-    #         if self.parent.guiFiltGeneralLedit.text() != '':
-    #             found = False
-    #             """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
-    #             for col in range(len(self.parent.model.header)):
-    #                 col_value = self.sourceModel().data(
-    #                             self.sourceModel().index(source_row,
-    #                                                      col), Qt.DisplayRole)
-    #                 if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
-    #                         col_value).lower():
-    #                     found = True
-    #             """"""
-    #             if found == False:  # kein treffer in der zeile
-    #                 return False
-    #     """"""
-    #
-    #     """filter scope"""
-    #     if 's' in self.parent.available_filters:
-    #         if self.parent.useFilterScope(source_row, source_parent) == False:
-    #             return False
-    #     """"""
-    #
-    #     return True
+    def filterAcceptsRow(self, source_row, source_parent):
+        """
+        diese methode überwacht ob ein filtereintrag mit einem datensatzeintrag
+        übereinstimmt
+
+        return True to display the row
+        return False to hide the row
+
+        :param source_row:
+        :param source_parent:
+        :return:
+        """
+        # """filter general"""
+        # if 'g' in self.parent.available_filters:
+        #     if self.parent.guiFiltGeneralLedit.text() != '':
+        #         found = False
+        #         """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
+        #         for col in range(len(self.parent.model.header)):
+        #             col_value = self.sourceModel().data(
+        #                         self.sourceModel().index(source_row,
+        #                                                  col), Qt.DisplayRole)
+        #             if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
+        #                     col_value).lower():
+        #                 found = True
+        #         """"""
+        #         if found == False:  # kein treffer in der zeile
+        #             return False
+        # """"""
+
+        # """filter scope"""
+        # if 's' in self.parent.available_filters:
+        #     if self.parent.useFilterScope(source_row, source_parent) == False:
+        #         return False
+        # """"""
+        if self.parent.useFilterScope(source_row, source_parent) == False:
+            return False
+
+        return True

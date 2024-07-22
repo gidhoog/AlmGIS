@@ -39,7 +39,8 @@ class ContactCombo(ExtendedCombo):
 
     def loadData(self):
 
-        with db_session_cm() as session:
+        with db_session_cm(name='load contact-type in contact',
+                           expire_on_commit=False) as session:
 
             stmt = select(BKontakt).join(BKontakt.rel_type).where(
                 BKontaktTyp.gemeinschaft == False)

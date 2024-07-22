@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from core import config
+from core.logger import LOGGER
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -31,19 +32,25 @@ DbSession.configure(bind=engine)
 """verwende den Contextmanager 'db_session_cm' für schnelle Datenbankzugriffe;
 danach wird automatisch 'commit' und 'close' ausgeführt"""
 @contextmanager
-def db_session_cm(expire_on_commit=False, name=''):
-    print(f"- create SESSION - {name}")
+def db_session_cm(expire_on_commit=True, name=''):
+    # print(f"- create SESSION - {name}")
+    LOGGER.info(f"--- create SESSION: {name} "
+                f"(expire_on_commit={expire_on_commit})")
     session = DbSession()
     session.expire_on_commit = expire_on_commit
     try:
         yield session
-        print(f"-- commit SESSION -- {name}")
+        # print(f"-- commit SESSION -- {name}")
+        LOGGER.info(f"--- commit SESSION: {name})")
         session.commit()
     except:
-        print(f"-- except SESSION -- {name}")
+        # print(f"-- except SESSION -- {name}")
         session.rollback()
+        LOGGER.info(f"--- except SESSION: {name})")
         raise
     finally:
-        print(f"--- close SESSION --- {name}")
+        # print(f"--- close SESSION --- {name}")
         session.close()
+        LOGGER.info(f"--- close SESSION: {name})")
+
 """"""

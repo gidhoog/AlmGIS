@@ -1,0 +1,18 @@
+2024-07-22 17:32:28  - almgis.run: DEBUG    :almgis started! + + + + + + + + + + + + + + + + 
+2024-07-22 17:32:29  - __init__.db_session_cm: INFO     :--- create SESSION: main-widget - kontakt (expire_on_commit=False)
+2024-07-22 17:32:30  - base._begin_impl: INFO     :BEGIN (implicit)
+2024-07-22 17:32:30  - base._exec_single_context: INFO     :SELECT a_alm_kontakt.id, a_alm_kontakt.type_id, a_alm_kontakt.vertreter_id, a_alm_kontakt.nachname, a_alm_kontakt.vorname, a_alm_kontakt.strasse, a_alm_kontakt.plz, a_alm_kontakt.ort, a_alm_kontakt.telefon1, a_alm_kontakt.telefon2, a_alm_kontakt.telefon3, a_alm_kontakt.mail1, a_alm_kontakt.mail2, a_alm_kontakt.mail3, a_alm_kontakt.anm, a_alm_kontakt.blank_value, a_alm_kontakt.inactive, a_alm_kontakt.not_delete, a_alm_kontakt_typ_1.id AS id_1, a_alm_kontakt_typ_1.name, a_alm_kontakt_typ_1.name_short, a_alm_kontakt_typ_1.gemeinschaft, a_alm_kontakt_typ_1.color, a_alm_kontakt_typ_1.sort, a_alm_kontakt_typ_2.id AS id_2, a_alm_kontakt_typ_2.name AS name_1, a_alm_kontakt_typ_2.name_short AS name_short_1, a_alm_kontakt_typ_2.gemeinschaft AS gemeinschaft_1, a_alm_kontakt_typ_2.color AS color_1, a_alm_kontakt_typ_2.sort AS sort_1, a_alm_kontakt_1.id AS id_3, a_alm_kontakt_1.type_id AS type_id_1, a_alm_kontakt_1.vertreter_id AS vertreter_id_1, a_alm_kontakt_1.nachname AS nachname_1, a_alm_kontakt_1.vorname AS vorname_1, a_alm_kontakt_1.strasse AS strasse_1, a_alm_kontakt_1.plz AS plz_1, a_alm_kontakt_1.ort AS ort_1, a_alm_kontakt_1.telefon1 AS telefon1_1, a_alm_kontakt_1.telefon2 AS telefon2_1, a_alm_kontakt_1.telefon3 AS telefon3_1, a_alm_kontakt_1.mail1 AS mail1_1, a_alm_kontakt_1.mail2 AS mail2_1, a_alm_kontakt_1.mail3 AS mail3_1, a_alm_kontakt_1.anm AS anm_1, a_alm_kontakt_1.blank_value AS blank_value_1, a_alm_kontakt_1.inactive AS inactive_1, a_alm_kontakt_1.not_delete AS not_delete_1 
+FROM a_alm_kontakt LEFT OUTER JOIN a_alm_kontakt_typ AS a_alm_kontakt_typ_1 ON a_alm_kontakt_typ_1.id = a_alm_kontakt.type_id LEFT OUTER JOIN a_alm_kontakt AS a_alm_kontakt_1 ON a_alm_kontakt_1.id = a_alm_kontakt.vertreter_id LEFT OUTER JOIN a_alm_kontakt_typ AS a_alm_kontakt_typ_2 ON a_alm_kontakt_typ_2.id = a_alm_kontakt_1.type_id 
+WHERE a_alm_kontakt.blank_value = ?
+2024-07-22 17:32:30  - base._exec_single_context: INFO     :[generated in 0.00052s] (0,)
+2024-07-22 17:32:30  - __init__.db_session_cm: INFO     :--- create SESSION: contact type filter (expire_on_commit=True)
+2024-07-22 17:32:30  - base._begin_impl: INFO     :BEGIN (implicit)
+2024-07-22 17:32:30  - base._exec_single_context: INFO     :SELECT a_alm_kontakt_typ.id, a_alm_kontakt_typ.name, a_alm_kontakt_typ.name_short, a_alm_kontakt_typ.gemeinschaft, a_alm_kontakt_typ.color, a_alm_kontakt_typ.sort 
+FROM a_alm_kontakt_typ
+2024-07-22 17:32:30  - base._exec_single_context: INFO     :[generated in 0.00049s] ()
+2024-07-22 17:32:30  - __init__.db_session_cm: INFO     :--- commit SESSION: contact type filter)
+2024-07-22 17:32:30  - base._commit_impl: INFO     :COMMIT
+2024-07-22 17:32:30  - __init__.db_session_cm: INFO     :--- close SESSION: contact type filter)
+2024-07-22 17:32:30  - __init__.db_session_cm: INFO     :--- commit SESSION: main-widget - kontakt)
+2024-07-22 17:32:30  - base._commit_impl: INFO     :COMMIT
+2024-07-22 17:32:30  - __init__.db_session_cm: INFO     :--- close SESSION: main-widget - kontakt)

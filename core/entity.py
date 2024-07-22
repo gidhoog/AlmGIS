@@ -3,9 +3,9 @@ from qgis.PyQt.QtGui import QFont
 from qgis.PyQt.QtWidgets import QLabel, QMessageBox, QMainWindow
 from qgis.PyQt.QtCore import Qt
 
-from sqlalchemy import select
+from sqlalchemy import select, inspect
 
-from core import db_session_cm
+from core import db_session_cm, LOGGER
 from core.main_dialog import MainDialog
 
 
@@ -158,9 +158,8 @@ class Entity(QMainWindow):
 
         self.setDefaultValues()
 
-    @set_data
-    def editEntity(self, entity_mci=None, entity_id=None, feature=None,
-                   custom_data=None):
+    # @set_data
+    def editEntity(self, entity_mci=None, entity_id=None, feature=None):
         """
         instance der entity die bearbeitet werden soll
 
@@ -169,7 +168,7 @@ class Entity(QMainWindow):
         :param **kwargs: z.b. mci's für die Dateneingabe (die in der gleichen
             session wie die entity_mci erstellt werden sollten
         """
-        self._custom_entity_data = custom_data
+
         self.feature = feature
 
         if entity_mci is not None:
@@ -178,12 +177,22 @@ class Entity(QMainWindow):
         if entity_id is not None:
             self.entity_id = entity_id
 
-            with db_session_cm() as session:
+            # with db_session_cm() as session:
+            #
+            #     # self._entity_mci = session.get(self._entity_mc, self.entity_id)
+            #     self._entity_mci = self.getEntityMci(session, entity_id)
+            #
+            #     self.getCustomEntityMci(session)
 
-                # self._entity_mci = session.get(self._entity_mc, self.entity_id)
-                self._entity_mci = self.getEntityMci(session, entity_id)
+        self.initEntityWidget()
 
-                self.getCustomEntityMci(session)
+        self.mapData()
+
+        # if hasattr(self._entity_mci, 'rel_type'):
+        #     # if self._type_mci is not None:
+        self.setTypeProperties()
+
+        self.post_data_set()
 
         print(f'...')
 
@@ -262,6 +271,14 @@ class Entity(QMainWindow):
         """
         pass
 
+    def setTypeProperties(self):
+        """set type-specific values, layout, appearance, ..."""
+
+        pass
+
+        # if hasattr(self, 'uiHeaderWdgt'):
+        #     self.guiHeaderTextLbl.setText(str(self._entity_mci.rel_type.name))
+
     def insertEntityHeader(self):
         """
         definiere hier den kopfbereich für diese entity
@@ -330,22 +347,33 @@ class Entity(QMainWindow):
         """
         'commit' die daten der entity_session in die datenbank
         """
-        with db_session_cm(name='commit_entity') as session:
+        # with db_session_cm(name='commit_entity') as session:
+        #
+        #     try:
+        #         session.add(self._entity_mci)
+        #     except:
+        #         print(f'cannot add {self._entity_mci} to session')
 
+        entity_inspect = inspect(self._entity_mci)
+
+        if entity_inspect.detached or entity_inspect.transient:
+
+            with db_session_cm(name='commit_entity',
+                               expire_on_commit=False) as session:
+
+                try:
+                    session.add(self._entity_mci)
+                except:
+                    LOGGER.exception("Cannot add entity_mci to new session "
+                                     "in Entity.commitEntity")
+        else:
+            session = inspect(self._entity_mci).session
             try:
                 session.add(self._entity_mci)
+                session.commit()
             except:
-                print(f'cannot add {self._entity_mci} to session')
-
-        # print('aa')
-        #
-        # self.parent._gis_layer.startEditing()
-        # self.feature['wwp_jahr'] = self.wwp_jahr
-        # self.parent._gis_layer.updateFeature(self.feature)
-        # # self.parent.vector_layer_cache.attributeValueChanged(self._feature.id, 0, 444)
-        # self.parent._gis_layer.commitChanges()
-        #
-        # print(f'bb')
+                LOGGER.exception("Cannot add entity_mci to existing session "
+                                 "in Entity.commitEntity")
 
     def rejectEntity(self):
         """
