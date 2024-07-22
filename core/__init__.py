@@ -18,7 +18,8 @@ def load_spatialite(dbapi_conn, connection_record):
     # dbapi_conn.load_extension('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll')
     dbapi_conn.load_extension(str(config.mod_spatialite_dll))
 
-engine = create_engine(f"sqlite:///{config.alm_data_db_path}")
+engine = create_engine(f"sqlite:///{config.alm_data_db_path}",
+                       echo=True)
 listen(engine, 'connect', load_spatialite)
 
 """verwende die Klasse 'DbSession' für Sessions bei denen du 'commit' und

@@ -101,6 +101,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="uiAkteAllAction"/>
+   <addaction name="uiKontakteAllAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="uiAkteAllAction">
@@ -132,6 +133,10 @@
    </property>
   </action>
   <action name="uiKontakteAllAction">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/contacts.svg</normaloff>:/svg/resources/icons/contacts.svg</iconset>
+   </property>
    <property name="text">
     <string>alle Kontakte</string>
    </property>

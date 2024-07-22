@@ -5,6 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 
 from core import entity, db_session_cm
+from core.combogroup import ComboModel
 from core.scopes.kontakt import kontakt_UI
 
 from core.data_model import BKontakt, BKontaktTyp
@@ -307,6 +308,10 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self.setTypeCombo()
         self.setVertrKontaktCombo()
 
+        self.uiVertreterCombo.loadData()
+        self.uiVertreterCombo.combo_widget_form = KontaktEinzel
+        self.uiVertreterCombo.initCombo()
+
     def finalInit(self):
         super().finalInit()
 
@@ -406,13 +411,22 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
 
     def setVertreter(self):
 
-        vertreter = self.uiVertreterCombo.currentData(Qt.UserRole)
+        vertreter = self.uiVertreterCombo.currentData(ComboModel.MciRole)
 
-        self.uiVertreterAdresse1Lbl.setText(vertreter.strasse)
-        if vertreter.plz is not None:
-            self.uiVertreterAdresse2Lbl.setText(vertreter.plz + ' ' + vertreter.ort)
-        self.uiVertreterTelefonLbl.setText(vertreter.telefon_all)
-        self.uiVertreterMailLbl.setText(vertreter.mail_all)
+        if vertreter is None:
+
+            self.uiVertreterAdresse1Lbl.setText('')
+            self.uiVertreterAdresse2Lbl.setText('')
+            self.uiVertreterTelefonLbl.setText('')
+            self.uiVertreterMailLbl.setText('')
+
+        else:
+
+            self.uiVertreterAdresse1Lbl.setText(vertreter.strasse)
+            if vertreter.plz is not None:
+                self.uiVertreterAdresse2Lbl.setText(vertreter.plz + ' ' + vertreter.ort)
+            self.uiVertreterTelefonLbl.setText(vertreter.telefon_all)
+            self.uiVertreterMailLbl.setText(vertreter.mail_all)
 
 
     def checkValidity(self):

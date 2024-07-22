@@ -64,6 +64,9 @@
           <pointsize>11</pointsize>
          </font>
         </property>
+        <property name="tabChangesFocus">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="9" column="1" colspan="2">
@@ -418,7 +421,7 @@
        </widget>
       </item>
       <item row="15" column="1" colspan="3">
-       <widget class="QComboBox" name="uiVertreterCombo">
+       <widget class="ContactCombo" name="uiVertreterCombo">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -527,6 +530,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ContactCombo</class>
+   <extends>QComboBox</extends>
+   <header>core.scopes.kontakt.contact_combo</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>uiTypCombo</tabstop>
   <tabstop>uiNachnameLedit</tabstop>

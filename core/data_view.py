@@ -121,6 +121,9 @@ class TableView(QTableView):
         self.horizontalHeader().setStretchLastSection(True)
         self.resizeColumnsToContents()
 
+        # self.style = ('QTableView::item:focus {border: 3px solid #00FF7F;}')
+        # self.setStyleSheet(self.style)
+
     def keyPressEvent(self, event):
         """
         aktionen die bei tastendruck durchgeführt werden sollen
@@ -611,7 +614,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         erhalte den filter_proxy index des übergebenen maintable_model index
         :return: QModelIndex
         """
-        return self.filter_proxy.mapToSource(index)
+        return self.filter_proxy.mapToMaster(index)
 
     def setSelectedRowsNumber(self):
         """
@@ -1166,7 +1169,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def doubleClickedRow(self, index):
 
-        print(f'doubleclicke: row: {index.row()} - col: {index.column()}')
+        print(f'::::::::doubleclicke: row: {index.row()} - col: {index.column()}')
 
         self.model_index = index
 
@@ -1195,7 +1198,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                              feature=self.current_feature)
 
             if self.edit_entity_by == 'mci':
-                entity_mci = self.getEntityMci(index)
+                # entity_mci = self.getEntityMci(index)
+                entity_mci = self.getEntityMci(proxy_index)
                 self.editRow(self.getEntityWidgetCls(entity_mci)(self),
                              entity_mci=entity_mci,
                              feature=self.current_feature)

@@ -7,6 +7,9 @@
   </qresource>
   <qresource prefix="html_info"/>
   <qresource prefix="svg">
+    <file>resources/icons/contacts.svg</file>
+    <file>resources/icons/group.svg</file>
+    <file>resources/icons/person.svg</file>
     <file>resources/icons/white_cross_in_red_circle.svg</file>
     <file>resources/icons/triangle_right_green.svg</file>
     <file>resources/icons/_leeres_icon.svg</file>

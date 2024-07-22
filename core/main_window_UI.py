@@ -64,6 +64,9 @@ class Ui_MainWindow(object):
         self.actionSettings.setIcon(icon1)
         self.actionSettings.setObjectName("actionSettings")
         self.uiKontakteAllAction = QtWidgets.QAction(MainWindow)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/svg/resources/icons/contacts.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiKontakteAllAction.setIcon(icon2)
         self.uiKontakteAllAction.setObjectName("uiKontakteAllAction")
         self.menuAkten.addAction(self.uiAkteAllAction)
         self.menuWerkzeuge.addAction(self.actionCutGstVersionKomplexe)
@@ -76,6 +79,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuWerkzeuge.menuAction())
         self.menuBar.addAction(self.menuOptionen.menuAction())
         self.uiMainToolBar.addAction(self.uiAkteAllAction)
+        self.uiMainToolBar.addAction(self.uiKontakteAllAction)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)

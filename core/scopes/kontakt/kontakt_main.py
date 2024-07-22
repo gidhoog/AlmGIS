@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt, QVariant
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QDialog, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
                                  QMenu, QAction, QToolButton)
+from qgis.PyQt.QtGui import QIcon
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
@@ -148,7 +149,6 @@ class KontaktMain(DataView):
 
         self._gis_layer = self.setLayer()
 
-
         self.addFeaturesFromMciList(self._mci_list)
         self.setTableView()
 
@@ -279,9 +279,11 @@ class KontaktMain(DataView):
 
         self.add_menu = QMenu(self)
 
-        action_einzel = QAction('Einzelperson', self)
+        action_einzel = QAction(QIcon(":/svg/resources/icons/person.svg"),
+                                'Einzelperson', self)
         action_einzel.triggered.connect(self.addEinzelperson)
-        action_gemeinschaft = QAction('Gemeinschaft', self)
+        action_gemeinschaft = QAction(QIcon(":/svg/resources/icons/group.svg"),
+                                      'Gemeinschaft', self)
         action_gemeinschaft.triggered.connect(self.addGemeinschaft)
 
         self.add_menu.addAction(action_einzel)

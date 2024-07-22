@@ -49,6 +49,7 @@ class Ui_Kontakt(object):
         font.setFamily("Calibri")
         font.setPointSize(11)
         self.uiAnmPedit.setFont(font)
+        self.uiAnmPedit.setTabChangesFocus(True)
         self.uiAnmPedit.setObjectName("uiAnmPedit")
         self.gridLayout.addWidget(self.uiAnmPedit, 21, 1, 1, 3)
         self.uiTelefon3Ledit = QtWidgets.QLineEdit(self.centralwidget)
@@ -242,7 +243,7 @@ class Ui_Kontakt(object):
         self.uiMail1Ledit.setClearButtonEnabled(True)
         self.uiMail1Ledit.setObjectName("uiMail1Ledit")
         self.gridLayout.addWidget(self.uiMail1Ledit, 11, 1, 1, 3)
-        self.uiVertreterCombo = QtWidgets.QComboBox(self.centralwidget)
+        self.uiVertreterCombo = ContactCombo(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Calibri")
         font.setPointSize(11)
@@ -340,3 +341,4 @@ class Ui_Kontakt(object):
         self.label_8.setText(_translate("Kontakt", "Telefon:"))
         self.label_7.setText(_translate("Kontakt", "Post"))
         self.uiVornameLbl.setText(_translate("Kontakt", "Vorname:"))
+from core.scopes.kontakt.contact_combo import ContactCombo
