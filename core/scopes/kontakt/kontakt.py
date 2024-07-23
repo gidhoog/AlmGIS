@@ -66,6 +66,13 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
             self._vertreter_id = 0
 
     @property  # getter
+    def vertreter_mci(self):
+
+        vertreter_mci = self.uiVertreterCombo.currentData(Qt.UserRole + 2)
+        # self.rel_type = type_mci
+        return vertreter_mci
+
+    @property  # getter
     def type_id(self):
 
         self._type_id = self.uiTypCombo.currentData(Qt.UserRole + 1)
@@ -380,7 +387,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
             vertreter_model.setData(vertreter_model.index(i, 0),
                                           vertreter_mci_list[i].id, Qt.UserRole + 1)
             vertreter_model.setData(vertreter_model.index(i, 0),
-                                          vertreter_mci_list[i], Qt.UserRole)
+                                          vertreter_mci_list[i], Qt.UserRole + 2)
+            print(f'----vertreter_mci_list[i]: {vertreter_mci_list[i]}')
         """"""
 
         """weise dem combo das model zu"""
@@ -409,11 +417,12 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self.anm = self._entity_mci.anm
 
         self.vertreter_id = self._entity_mci.vertreter_id
-        self.setVertreter()
+        self.displayVertreterAdresse()
 
-    def setVertreter(self):
+    def displayVertreterAdresse(self):
 
-        vertreter = self.uiVertreterCombo.currentData(ComboModel.MciRole)
+        # vertreter = self.uiVertreterCombo.currentData(ComboModel.MciRole)
+        vertreter = self.uiVertreterCombo.currentData(Qt.UserRole + 2)
 
         if vertreter is None:
 
@@ -523,13 +532,14 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self._entity_mci.anm = self.anm
 
         self._entity_mci.vertreter_id = self.vertreter_id
+        self._entity_mci.rel_vertreter = self.vertreter_mci
 
         # super().submitEntity()
 
     def signals(self):
         super().signals()
 
-        self.uiVertreterCombo.currentIndexChanged.connect(self.setVertreter)
+        self.uiVertreterCombo.currentIndexChanged.connect(self.displayVertreterAdresse)
 
 
 class KontaktEinzel(Kontakt):
@@ -561,6 +571,14 @@ class KontaktEinzel(Kontakt):
 
     def submitEntity(self):
 
+        with db_session_cm(name='get einzelkontakt-typ') as session:
+
+            einzel_typ_mci = session.get(BKontaktTyp, 0)
+            leerer_kontakt = session.get(BKontakt, 0)
+
+        self._entity_mci.type_id = 0
+        self._entity_mci.rel_type = einzel_typ_mci
+
         self._entity_mci.nachname = self.nachname
         self._entity_mci.vorname = self.vorname
         self._entity_mci.strasse = self.strasse
@@ -577,4 +595,5 @@ class KontaktEinzel(Kontakt):
 
         self._entity_mci.anm = self.anm
 
-        self._entity_mci.vertreter_id = self.vertreter_id
+        self._entity_mci.vertreter_id = 0
+        self._entity_mci.rel_vertreter = leerer_kontakt

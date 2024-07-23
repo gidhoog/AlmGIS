@@ -1,6 +1,6 @@
 from functools import wraps
 from qgis.PyQt.QtGui import QFont
-from qgis.PyQt.QtWidgets import QLabel, QMessageBox, QMainWindow
+from qgis.PyQt.QtWidgets import QLabel, QMessageBox, QMainWindow, QDialog
 from qgis.PyQt.QtCore import Qt
 
 from sqlalchemy import select, inspect
@@ -194,6 +194,9 @@ class Entity(QMainWindow):
 
         self.post_data_set()
 
+        self.signals()
+        self.finalInit()
+
         print(f'...')
 
     def getEntityMci(self, session, entity_id):
@@ -356,24 +359,33 @@ class Entity(QMainWindow):
 
         entity_inspect = inspect(self._entity_mci)
 
+        print(f'entity to commit is detached: {entity_inspect.detached}')
+        print(f'entity to commit is transient: {entity_inspect.transient}')
+        print(f'entity to commit is pending: {entity_inspect.pending}')
+        print(f'entity to commit is persistent: {entity_inspect.persistent}')
+        print(f'entity to commit is deleted: {entity_inspect.deleted}')
+
         if entity_inspect.detached or entity_inspect.transient:
+        # if entity_inspect.transient:
 
             with db_session_cm(name='commit_entity',
                                expire_on_commit=False) as session:
 
                 try:
                     session.add(self._entity_mci)
+                    # session.add(self._entity_mci.rel_type)
                 except:
                     LOGGER.exception("Cannot add entity_mci to new session "
                                      "in Entity.commitEntity")
-        else:
-            session = inspect(self._entity_mci).session
-            try:
-                session.add(self._entity_mci)
-                session.commit()
-            except:
-                LOGGER.exception("Cannot add entity_mci to existing session "
-                                 "in Entity.commitEntity")
+
+        # else:
+        #     session = inspect(self._entity_mci).session
+        #     try:
+        #         session.add(self._entity_mci)
+        #         session.commit()
+        #     except:
+        #         LOGGER.exception("Cannot add entity_mci to existing session "
+        #                          "in Entity.commitEntity")
 
     def rejectEntity(self):
         """
@@ -418,3 +430,4 @@ class EntityDialog(MainDialog):
         # super().accept()
 
         self.accepted_mci = self.dialogWidget.acceptEntity()
+        QDialog.accept(self)

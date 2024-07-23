@@ -406,8 +406,10 @@ class ActionAdd(ComboAction):
 
             new_index = len(self.parent._mci_list)
 
+            self.parent.model().sourceModel().layoutAboutToBeChanged.emit()
+
             self.parent._mci_list.append(new_mci)
 
-            self.parent.model().layoutChanged.emit()
+            self.parent.model().sourceModel().layoutChanged.emit()
 
             self.parent.setCurrentIndex(new_index)
