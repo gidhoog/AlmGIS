@@ -13,7 +13,7 @@ from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
 from qgis.core import QgsVectorLayerCache, edit
 
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select
+from sqlalchemy import select, inspect
 
 from core import data_view_UI, db_session_cm, color
 from core.entity import EntityDialog
@@ -706,7 +706,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def selectAllRows(self):
 
-        self._gis_layer.selectAll()
+        if self.gis_mode:
+            self._gis_layer.selectAll()
+        else:
+            self.view.selectAll()
 
         self.view.setFocus()
 
@@ -716,7 +719,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         # self.view.selectionModel().clear()
 
-        self._gis_layer.removeSelection()
+        if self.gis_mode:
+            self._gis_layer.removeSelection()
+        else:
+            self.view.selectionModel().clear()
 
         self.view.setFocus()
 
@@ -1201,13 +1207,18 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             # """"""
         else:  # no gis-mode
 
+            print(f'update no gis')
+            if purpose == 'add':
+
+                self._mci_list.append(args[0])
+
             # with db_session_cm(name='update data_view') as session:
             #
             #     session.add_all(self._mci_list)
 
             self.view.model().sourceModel().layoutChanged.emit()
 
-        self.updateFooter()
+        # self.updateFooter()
 
     def updateInstance(self, instance):
         """
@@ -1440,6 +1451,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                                      feature=feature)
 
         if entity_mci:
+            self.view.model().sourceModel().layoutAboutToBeChanged.emit()
             entity_widget.editEntity(entity_mci=entity_mci)
 
         """open the entity_widget_class in a dialog"""
@@ -1537,36 +1549,70 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         einstiegs-metode zum löschen einer oder mehrerer zeilen dieser tabellen
         """
-        sel_features = self._gis_layer.selectedFeatures()
+        if self.gis_mode:
+            sel_features = self._gis_layer.selectedFeatures()
 
-        if sel_features:
+            if sel_features:
 
-            with edit(self._gis_layer):
-                for feat in sel_features:
-                    for mci in self._mci_list:
-                        if feat.attribute('id') == mci.id:
+                with edit(self._gis_layer):
+                    for feat in sel_features:
+                        for mci in self._mci_list:
+                            if feat.attribute('id') == mci.id:
 
-                            if self.deleteCheck(mci):
-                                try:
-                                    with db_session_cm() as session:
-                                        session.add(mci)
-                                        session.delete(mci)
-                                except IntegrityError:  # mci is used
+                                if self.deleteCheck(mci):
+                                    try:
+                                        with db_session_cm() as session:
+                                            session.add(mci)
+                                            session.delete(mci)
+                                    except IntegrityError:  # mci is used
+                                        self.can_not_delete_msg(
+                                            self.getFeatureDeleteInfo(feat))
+                                    else:
+                                        self._mci_list.remove(mci)
+                                        self._gis_layer.data_provider.deleteFeatures(
+                                            [feat.id()])
+
+                                else:
                                     self.can_not_delete_msg(
                                         self.getFeatureDeleteInfo(feat))
-                                else:
-                                    self._mci_list.remove(mci)
-                                    self._gis_layer.data_provider.deleteFeatures(
-                                        [feat.id()])
 
-                            else:
-                                self.can_not_delete_msg(
-                                    self.getFeatureDeleteInfo(feat))
+                self._gis_layer.data_provider.dataChanged.emit()
 
-            self._gis_layer.data_provider.dataChanged.emit()
+            else:
+                self.no_row_selected_msg()
 
+        else:  # no gis-mode
+
+            sel_rows_idx = self.getSelectedRows()
+
+            # test_idx = [self._mci_list[self.getProxyIndex(i).row()].id for i in sel_rows_idx]
+
+            # sel_rows = sorted([self.getProxyIndex(r).row() for r in sel_rows_idx], reverse=True)
+            del_mci = [self._mci_list[self.getProxyIndex(r).row()]
+                       for r in sel_rows_idx]
+
+            self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+
+            for mci in del_mci:
+                self.delMci(mci)
+
+            self.view.model().sourceModel().layoutChanged.emit()
+            print(f'....')
+
+        self.clearSelectedRows()
+        self.updateFooter()
+
+    def delMci(self, mci):
+
+        try:
+            with db_session_cm(name='delete mci from data_view') as session:
+                session.delete(mci)
+        except IntegrityError:  # mci is used
+            # self.can_not_delete_msg('cannot delete')
+            print('...........................................cannot delete')
+            raise
         else:
-            self.no_row_selected_msg()
+            self._mci_list.remove(mci)
 
     def delRow(self):
         """eigentliche methode zum löschen von zeilen der tabelle"""

@@ -28,7 +28,6 @@ class KontaktEntityDialog(EntityDialog):
         self.dialog_window_title = 'Kontakt'
 
     def accept(self):
-        super().accept()
 
         self.accepted_entity = self.dialogWidget.acceptEntity()
 
@@ -39,15 +38,6 @@ class KontaktEntityDialog(EntityDialog):
             print(f'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
             QDialog.accept(self)
 
-        # self.dialogWidget.removeEntity()
-
-        # if self.dialogWidget.acceptEntity() is not None:
-        #
-        #     new_mci = self.dialogWidget.acceptEntity()
-        #
-        #     self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
-        #
-        # QDialog.accept(self)
 
 class KontaktMainWidget(MainWidget):
 
@@ -76,6 +66,7 @@ class KontaktModel(TableModel):
     header = [
         'Typ',
         'Name',
+        'Vertreter',
         'Adresse',
         'Telefon',
         'e-Mail'
@@ -111,14 +102,22 @@ class KontaktModel(TableModel):
 
         if index.column() == 2:
             if role == Qt.DisplayRole:
-                return self.mci_list[row].adresse
-                # return self.mci_list[row][1]
+
+                if self.mci_list[row].rel_type.id == 0:
+                    return ''
+                else:
+                    return self.mci_list[row].rel_vertreter.name
 
         if index.column() == 3:
             if role == Qt.DisplayRole:
-                return self.mci_list[row].telefon_all
+                return self.mci_list[row].adresse
+                # return self.mci_list[row][1]
 
         if index.column() == 4:
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].telefon_all
+
+        if index.column() == 5:
             if role == Qt.DisplayRole:
                 return self.mci_list[row].mail_all
 
