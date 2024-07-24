@@ -747,7 +747,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if self.gis_mode:
             number = self._gis_layer.featureCount()
         else:
-            number = len(self._mci_list)
+            # number = len(self._mci_list)
+            number = self.filter_proxy.rowCount()
 
         return number
 

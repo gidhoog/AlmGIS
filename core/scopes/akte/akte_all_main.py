@@ -243,6 +243,8 @@ class AktAllModel(TableModel):
 
                 if role == Qt.DisplayRole:
                     return self.mci_list[row].rel_bearbeitungsstatus.name
+                if role == Qt.EditRole:
+                    return self.mci_list[row].bearbeitungsstatus_id
 
         if index.column() == 3:
             if role == Qt.DisplayRole:
@@ -547,129 +549,9 @@ class AkteAllMain(DataView):
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
-    # def setFeatureFields(self):
-    #     super().setFeatureFields()
+    # def updateMainWidget(self):
     #
-    #     akt_id_fld = QgsField("akt_id", QVariant.Int)
-    #
-    #     az_fld = QgsField("az", QVariant.Int)
-    #     az_fld.setAlias('AZ')
-    #
-    #     name_fld = QgsField("name", QVariant.String)
-    #     name_fld.setAlias('Akt')
-    #
-    #     status_id_fld = QgsField("status_id", QVariant.Int)
-    #
-    #     status_fld = QgsField("status", QVariant.String)
-    #     status_fld.setAlias('Bearbeitung')
-    #
-    #     status_color_fld = QgsField("status_color", QVariant.String)
-    #
-    #     stz_fld = QgsField("stz", QVariant.String)
-    #     stz_fld.setAlias('Stz')
-    #
-    #     wwp_fld = QgsField("wwp", QVariant.Int)
-    #     wwp_fld.setAlias('WWP')
-    #
-    #     wwp_jahr_fld = QgsField("wwp_jahr", QVariant.Int)
-    #     wwp_jahr_fld.setAlias('WWP gültig')
-    #
-    #     awb_area_gb_fld = QgsField("awb_area_gb", QVariant.Int)
-    #     awb_area_gb_fld.setAlias('AWB Fläche (lt. GB)')
-    #
-    #     awb_area_beweidet_fld = QgsField("awb_area_beweidet", QVariant.Int)
-    #     awb_area_beweidet_fld.setAlias('AWB Fläche beweidet')
-    #
-    #     weide_area_fld = QgsField("weide_area", QVariant.Double)
-    #     weide_area_fld.setAlias('Weidefläche')
-    #
-    #     # aa = QVariant.UserType
-    #
-    #     # test_fld = QgsField("test", QVariant.UserType)
-    #
-    #     self.feature_fields.append(akt_id_fld)
-    #     self.feature_fields.append(az_fld)
-    #     self.feature_fields.append(name_fld)
-    #     self.feature_fields.append(status_id_fld)
-    #     self.feature_fields.append(status_fld)
-    #     self.feature_fields.append(status_color_fld)
-    #     self.feature_fields.append(stz_fld)
-    #     self.feature_fields.append(wwp_fld)
-    #     self.feature_fields.append(wwp_jahr_fld)
-    #     self.feature_fields.append(awb_area_gb_fld)
-    #     self.feature_fields.append(awb_area_beweidet_fld)
-    #     self.feature_fields.append(weide_area_fld)
-    #     # self.feature_fields.append(test_fld)
-    #
-    # def changeAttributes(self, feature, mci):
-    #
-    #     attrib = {0: mci.id,
-    #               1: mci.az,
-    #               2: mci.name,
-    #               3: mci.bearbeitungsstatus_id,
-    #               4: mci.rel_bearbeitungsstatus.name,
-    #               5: mci.rel_bearbeitungsstatus.color,
-    #               6: mci.stz,
-    #               7: mci.wwp,
-    #               8: mci.wwp_jahr,
-    #               9: self.get_awb_gb_area(mci),
-    #               10: self.get_awb_beweidet(mci),
-    #               11: self.get_weide_area(mci)
-    #               }
-    #
-    #     self._gis_layer.changeAttributeValues(feature.id(),
-    #                                           attrib)
-    #
-    # def setFeatureAttributes(self, feature, mci):
-    #     # super().setFeatureAttributes(feature, mci)
-    #
-    #     feature['akt_id'] = mci.id
-    #     feature['az'] = mci.az
-    #     feature['name'] = mci.name
-    #     feature['status_id'] = mci.bearbeitungsstatus_id
-    #     feature['status'] = mci.rel_bearbeitungsstatus.name
-    #     feature['status_color'] = mci.rel_bearbeitungsstatus.color
-    #     feature['stz'] = mci.stz
-    #     feature['wwp'] = mci.wwp
-    #     feature['wwp_jahr'] = mci.wwp_jahr
-    #     feature['awb_area_gb'] = self.get_awb_gb_area(mci)
-    #     feature['awb_area_beweidet'] = self.get_awb_beweidet(mci)
-    #     feature['weide_area'] = self.get_weide_area(mci)
-    #
-    # def updateFeatureAttributes(self, *args):
-    #     super().updateFeatureAttributes(args)
-    #
-    #     new_mci = args[0][0]
-    #
-    #     with db_session_cm() as session:
-    #
-    #         session.add(new_mci)
-    #
-    #         self.setFeatureAttributes(self.current_feature, new_mci)
-
-
-    # def getCustomData(self, session):
-    #
-    #     custom_data = {}
-    #
-    #     status_stmt = select(BBearbeitungsstatus)
-    #     status_mci = session.scalars(status_stmt).all()
-    #
-    #     # awb_status_stmt = select(BGstAwbStatus)
-    #     # awb_status_mci = session.scalars(awb_status_stmt).all()
-    #
-    #     custom_data['status'] = status_mci
-    #     # custom_data['awb_status'] = awb_status_mci
-    #
-    #     return custom_data
-
-    # def getCustomEntityData(self):
-    #
-    #     return [self._custom_entity_data['awb_status']]
-
-    def updateMainWidget(self):
-
-        self.updateMaintable()
+    #     self.updateMaintable()
 
     def setFilterUI(self):
         """
@@ -703,7 +585,8 @@ class AkteAllMain(DataView):
         self.filter_name_input_wdg.setMaximumWidth(200)
         # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
 
-        self.filter_name_input_wdg.textChanged.connect(self.useFilter)
+        self.filter_name_input_wdg.textChanged.connect(
+            self.applyFilter)
 
         # filter_lay.addWidget(filter_name)
         """"""
@@ -731,8 +614,43 @@ class AkteAllMain(DataView):
         self.filter_az_input_wdg.setMaximumWidth(80)
         # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
 
-        self.filter_az_input_wdg.textChanged.connect(self.useFilter)
+        self.filter_az_input_wdg.textChanged.connect(
+            self.applyFilter)
+        """"""
 
+        """filter status"""
+        self.filter_status_lbl = QLabel(self)
+
+        status_lbl_font = self.filter_status_lbl.font()
+        status_lbl_font.setFamily(config.font_family)
+        self.filter_status_lbl.setFont(status_lbl_font)
+
+        self.filter_status_lbl.setText('AZ:')
+        self.filter_status_lbl.setVisible(False)
+
+        self.filter_status_input_wdg = QComboBox(self)
+
+        self.filter_status_input_wdg.addItem('--- alle Statuse ---', -1)
+
+        with db_session_cm(name='contact type filter') as session:
+
+            status_stmt = select(BBearbeitungsstatus)
+            status_mci_list = session.scalars(status_stmt).all()
+
+            for status in status_mci_list:
+                self.filter_status_input_wdg.addItem(status.name,
+                                                   status.id)
+
+        status_input_wdg_font = self.filter_status_input_wdg.font()
+        status_input_wdg_font.setPointSize(11)
+        status_input_wdg_font.setFamily(config.font_family)
+        self.filter_status_input_wdg.setFont(status_input_wdg_font)
+
+        self.filter_status_input_wdg.currentIndexChanged.connect(
+            self.applyFilter)
+        """"""
+
+        """platziere die filter-elemente"""
         spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
                                  QSizePolicy.Minimum)
         filter_lay.addItem(spacerItem1)
@@ -741,6 +659,8 @@ class AkteAllMain(DataView):
         filter_lay.addWidget(self.filter_az_input_wdg)
         filter_lay.addWidget(self.filter_name_lbl)
         filter_lay.addWidget(self.filter_name_input_wdg)
+        filter_lay.addWidget(self.filter_status_lbl)
+        filter_lay.addWidget(self.filter_status_input_wdg)
         """"""
 
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -751,37 +671,76 @@ class AkteAllMain(DataView):
         # spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         # self.uiFilterGLay.addItem(spacerItem2, 0, 2)
 
-    def useFilter(self):
+    def applyFilter(self):
 
-        name_text = self.filter_name_input_wdg.text()
-        az_text = self.filter_az_input_wdg.text()
-
-        name_expr = f"lower(\"name\") LIKE '%{name_text}%'"
-        az_expr = f"to_string(\"az\") LIKE '%{az_text}%'"
-
-        expr_list = []
-
-        if name_text != '':
-            self.filter_name_lbl.setVisible(True)
-            expr_list.append(name_expr)
-        else:
+        if self.filter_name_input_wdg.text() == '':
             self.filter_name_lbl.setVisible(False)
-
-        if az_text != '':
-            self.filter_az_lbl.setVisible(True)
-            expr_list.append(az_expr)
         else:
-            self.filter_az_lbl.setVisible(False)
+            self.filter_name_lbl.setVisible(True)
 
-        if expr_list == []:
-            self._gis_layer.setSubsetString('')
-        else:
+        super().applyFilter()
 
-            expr_string = " and ".join(expr for expr in expr_list)
-            print(f'expression string: {expr_string}')
-            self._gis_layer.setSubsetString(expr_string)
+    def useFilterScope(self, source_row, source_parent):
+        super().useFilterScope(source_row, source_parent)
 
-        self.updateFooter()
+        """filter az"""
+        table_value = self.filter_proxy.sourceModel() \
+            .data(self.filter_proxy.sourceModel().index(source_row, 0),
+        Qt.DisplayRole)
+        if self.filter_az_input_wdg.text() not in str(table_value):
+            return False
+        """"""
+
+        """filter name"""
+        table_value = self.filter_proxy.sourceModel() \
+            .data(self.filter_proxy.sourceModel().index(source_row, 1),
+        Qt.DisplayRole)
+        if self.filter_name_input_wdg.text() not in table_value.lower():
+            return False
+        """"""
+
+        """filter status"""
+        status = self.filter_proxy.sourceModel() \
+            .data(self.filter_proxy.sourceModel().index(source_row, 2),
+                  Qt.EditRole)
+        # if self.filter_type_input_wdg.currentText() != "--- alle Typen ---":
+        if self.filter_status_input_wdg.currentData(Qt.UserRole) != -1:
+            # return False
+            if status != self.filter_status_input_wdg.currentData(Qt.UserRole):
+                return False
+        """"""
+
+    # def useFilter(self):
+    #
+    #     name_text = self.filter_name_input_wdg.text()
+    #     az_text = self.filter_az_input_wdg.text()
+    #
+    #     name_expr = f"lower(\"name\") LIKE '%{name_text}%'"
+    #     az_expr = f"to_string(\"az\") LIKE '%{az_text}%'"
+    #
+    #     expr_list = []
+    #
+    #     if name_text != '':
+    #         self.filter_name_lbl.setVisible(True)
+    #         expr_list.append(name_expr)
+    #     else:
+    #         self.filter_name_lbl.setVisible(False)
+    #
+    #     if az_text != '':
+    #         self.filter_az_lbl.setVisible(True)
+    #         expr_list.append(az_expr)
+    #     else:
+    #         self.filter_az_lbl.setVisible(False)
+    #
+    #     if expr_list == []:
+    #         self._gis_layer.setSubsetString('')
+    #     else:
+    #
+    #         expr_string = " and ".join(expr for expr in expr_list)
+    #         print(f'expression string: {expr_string}')
+    #         self._gis_layer.setSubsetString(expr_string)
+    #
+    #     self.updateFooter()
 
 
     # def setFilterScopeUI(self):
