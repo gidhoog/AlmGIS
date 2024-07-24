@@ -1263,17 +1263,17 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.view.horizontalHeader().setSectionResizeMode(
                 QHeaderView.Stretch)
 
-    def insertFooterLine(self, label, unit, attribute, amount_width, factor=1,
-                         decimal=None, filter_attribute='', filter_operator=None,
-                         filter_criterion=None):
+    def insertFooterLine(self, label, unit=None, attribute=None, column_id=None, value_width=120, factor=1,
+                         decimal=None, filter_col=None, filter_operator=None,
+                         filter_criterion=None, column_type=int):
         """
         füge ein footer-elemet (=widget am fuß der tabelle) auf position 0
         in das layout 'uiFooterLinesVlay' ein
         """
 
-        footer_line = self._footer_line(self, label, unit, attribute, amount_width,
-                                        factor, decimal, filter_attribute, filter_operator,
-                                        filter_criterion)
+        footer_line = self._footer_line(self, label, unit, attribute, column_id, value_width,
+                                             factor, decimal, filter_col, filter_operator,
+                                             filter_criterion, column_type)
 
         self.uiFooterLinesVlay.insertWidget(0, footer_line)
         self.footer_list.append(footer_line)

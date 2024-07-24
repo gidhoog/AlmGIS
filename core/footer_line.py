@@ -2,7 +2,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.PyQt.QtGui import QColor
 
-from core import footer_line_UI, color
+from core import footer_line_UI, color, LOGGER
 
 
 class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
@@ -13,6 +13,7 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
     'self.insertFooter('TestFoo', 'Baa', 3, 100)' aufgerufen und in einer
     subclass von maintable in 'initUI' geladen werden
     """
+    VALID_COLUMN_TYPE = {int, float}
 
     _column_calc = 0
     _attribute = ''
@@ -102,22 +103,35 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         self.uiValueSelLedit.setMaximumWidth(val)
         self._value_width = val
 
-    def __init__(self, parent, label_text, unit, attribute, value_width,
-                 factor=1, decimal=None, filter_attribute='', filter_operator=None,
-                 filter_criterion=None):
+    def __init__(self, parent, label_text, unit, attribute, column_id=None,
+                 value_width=120, factor=1, decimal=None, filter_col=None,
+                 filter_operator=None, filter_criterion=None, column_type=int):
         super(__class__, self).__init__()
         self.setupUi(self)
 
-        self.parent = parent
+        self.data_view = parent
+        self.gis_mode = self.data_view.gis_mode
+
+        """check column_type"""
+        if column_type in self.VALID_COLUMN_TYPE:
+            self.column_type = column_type
+        else:
+            raise ValueError(LOGGER.error(f"Error: column_type must be one of "
+                                          f"{self.VALID_COLUMN_TYPE}."))
+            # raise ValueError(f"Error: column_type must be one of {
+            # self.VALID_COLUMN_TYPE}.")
+        """"""
 
         self.attribute = attribute
+        self.column_id = column_id
+
         self.decimal = decimal
         self.factor = factor
         self.label = label_text
         self.unit = unit
         self.value_width = value_width
 
-        self.filter_attribute = filter_attribute
+        self.filter_col = filter_col
         self.filter_operator = filter_operator
         self.filter_criterion = filter_criterion
 
@@ -141,20 +155,32 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         value_text = ''
         value_sel_text = ''
 
-        field_names = [field for field in self.parent._gis_layer.fields()]
-        field_type = [f for f in field_names if self.attribute == f.name()][0].typeName()
+        if self.gis_mode:
+            sel_entities_ids = self.data_view._gis_layer.selectedFeatureIds()
+        else:
+            sel_entities_ids = self.data_view.view.selectionModel().selectedRows()
 
-        sel_feature_ids = self.parent._gis_layer.selectedFeatureIds()
-
-        if field_type == 'integer':
+        if self.column_type == int:
             amount = 0
             amount_sel = 0
-        if field_type == 'double':
+        elif self.column_type == float:
             amount = 0.00
             amount_sel = 0.00
 
+        # field_names = [field for field in self.parent._gis_layer.fields()]
+        # field_type = [f for f in field_names if self.attribute == f.name()][0].typeName()
+        #
+        # sel_feature_ids = self.parent._gis_layer.selectedFeatureIds()
+        #
+        # if field_type == 'integer':
+        #     amount = 0
+        #     amount_sel = 0
+        # if field_type == 'double':
+        #     amount = 0.00
+        #     amount_sel = 0.00
+
         calc_amount = self.calc_all_values(amount)
-        calc_amount_sel = self.calc_sel_values(amount_sel, sel_feature_ids)
+        calc_amount_sel = self.calc_sel_values(amount_sel, sel_entities_ids)
 
         value_text = str(self.round_value(calc_amount, self.decimal, self.factor))
         value_sel_text = str(self.round_value(calc_amount_sel, self.decimal, self.factor))
@@ -162,36 +188,60 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         self.value = value_text
         self.value_sel = value_sel_text
 
-        """steuere die Sichtbarkeit der des Wertes für ausgewählte Zeilen"""
-        if len(sel_feature_ids) > 0:
+        # """steuere die Sichtbarkeit der des Wertes für ausgewählte Zeilen"""
+        # if len(sel_feature_ids) > 0:
+        #     self.uiValueSelLedit.setVisible(True)
+        # else:
+        #     self.uiValueSelLedit.setVisible(False)
+        # """"""
+
+        self.setSelectedCalcVisibility(len(sel_entities_ids))
+
+    def setSelectedCalcVisibility(self, number_selected):
+        """
+        set the visibility of the widget that displays the calculation of the
+        selected entities
+        """
+        if number_selected > 0:
             self.uiValueSelLedit.setVisible(True)
         else:
             self.uiValueSelLedit.setVisible(False)
-        """"""
 
     def calc_all_values(self, amount):
 
-        for feat in self.parent._gis_layer.getFeatures():
-
-            if self.filter_attribute == '':
-                amount = amount + feat.attribute(self.attribute)
-            else:
-                if feat.attribute(self.filter_attribute) == self.filter_criterion:
-                    amount = amount + feat.attribute(self.attribute)
+        if self.gis_mode:
+            for feature in self.data_view._gis_layer.getFeatures():
+                amount = amount + feature.attribute(self.attribute)
+        else:
+            for i in range(self.data_view.model.rowCount()):
+                value = self.data_view.model.data(
+                    self.data_view.model.index(
+                        i, self.column_id),
+                    Qt.EditRole)
+                if value:
+                    amount = amount + self.column_type(value)
 
         return amount
 
-    def calc_sel_values(self, amount_sel, sel_feature_ids):
+    def calc_sel_values(self, amount_sel, sel_feature_ids=[]):
 
-        for feat_id in sel_feature_ids:
+        if self.gis_mode:
 
-            feat = self.parent._gis_layer.getFeature(feat_id)
-
-            if self.filter_attribute == '':
+            for feat_id in sel_feature_ids:
+                feat = self.data_view._gis_layer.getFeature(feat_id)
                 amount_sel = amount_sel + feat.attribute(self.attribute)
-            else:
-                if feat.attribute(self.filter_attribute) == self.filter_criterion:
-                    amount_sel = amount_sel + feat.attribute(self.attribute)
+
+        else:
+            for model_index in sel_feature_ids:
+
+                proxy_index = self.parent().filter_proxy.mapToSource(model_index)
+
+                value = self.data_view.model.data(
+                    self.data_view.model.index(
+                        proxy_index.row(), self.column_id),
+                    Qt.EditRole)
+                if value:
+                    amount_sel = amount_sel + self.column_type(value)
 
         return amount_sel
 
