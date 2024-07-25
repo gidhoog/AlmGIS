@@ -469,35 +469,35 @@ class GstAktDataView(DataView):
     gst_zuordnung_wdg_class = GstZuordnung
     gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.entity_dialog_class = GstDialog
         self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BGstZuordnung
-        self._gis_table_model_class = GstTableModel
+        self._model_gis_class = GstTableModel
 
         self._commit_entity = False
         self.edit_entity_by = 'mci'
 
         """"""
-        self.setFeatureFields()
-        self.setFilterUI()
-        self.setCanvas(self.parent.guiMainGis.uiCanvas)
-
-        self.loadData()
-
-        self._gis_layer = self.setLayer()
-
-        self.setFeaturesFromMci()
-        self.setTableView()
-
-        self.finalInit()
-
-        self.updateFooter()
-
-        self.signals()
+        # self.setFeatureFields()
+        # self.setFilterUI()
+        # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+        #
+        # self.loadData()
+        #
+        # self._gis_layer = self.setLayer()
+        #
+        # self.setFeaturesFromMci()
+        # self.setTableView()
+        #
+        # self.finalInit()
+        #
+        # self.updateFooter()
+        #
+        # self.signals()
 
 
         # self.vector_layer_cache = QgsVectorLayerCache(gis_layer, 10000)
@@ -553,16 +553,7 @@ class GstAktDataView(DataView):
         # # self.insertFooterLine('beweidet:',
         # #                       'ha', 8, 120,
         # #                       0.0001, 4)
-        self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
-                              'ha', 'gb_area', 120,
-                              0.0001, 4, 'awb_id',
-                              '==', 1)
-        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
-                              'ha', 'gis_area', 120,
-                              0.0001, 4)
-        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GB):',
-                              'ha', 'gb_area', 120,
-                              0.0001, 4)
+
         #
         # self.uiAddDataTbtn.setToolTip("ordne diesem Akt Grundstücke zu")
         #
@@ -574,7 +565,7 @@ class GstAktDataView(DataView):
         # self.test_update_btn.setText('test_update')
         # self.uiTableFilterHLay.addWidget(self.test_update_btn)
 
-    def loadData(self):
+    def loadData(self, session=None):
 
         self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
@@ -1052,6 +1043,17 @@ class GstAktDataView(DataView):
         self.view.setColumnHidden(7, True)
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
+
+        self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
+                              'ha', 'gb_area', value_width=120,
+                              factor=0.0001, decimal=4, filter_col='awb_id',
+                              filter_operator='==', filter_criterion=1)
+        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
+                              'ha', 'gis_area', value_width=120,
+                              factor=0.0001, decimal=4)
+        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GB):',
+                              'ha', 'gb_area', value_width=120,
+                              factor=0.0001, decimal=4)
 
         # """setzt bestimmte spaltenbreiten"""
         # self.view.setColumnWidth(1, 70)

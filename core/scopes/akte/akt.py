@@ -52,7 +52,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     _alias = ''
     _name = ''
     _stz = ''
-    _status = 0
+    _status_id = 0
+    _status_mci = None
     _wwp = 0
     _wwp_jahr = 0
 
@@ -122,18 +123,35 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._name = value
 
     @property  # getter
-    def status(self):
+    def status_id(self):
 
-        self._status = self.uiStatusCombo.currentData(Qt.UserRole)
-        return self._status
+        self._status_id = self.uiStatusCombo.currentData(Qt.UserRole + 1)
+        return self._status_id
 
-    @status.setter
-    def status(self, value):
+    @status_id.setter
+    def status_id(self, value):
 
-        self.uiStatusCombo.setCurrentIndex(
-            self.uiStatusCombo.findData(value, Qt.UserRole)
-        )
-        self._status = value
+        """finde den status_id im model des uiStatusCombo"""
+        match_index = self.uiStatusCombo.model().match(
+            self.uiStatusCombo.model().index(0, 0),
+            Qt.UserRole + 1,
+            value,
+            -1,
+            Qt.MatchExactly)
+        """"""
+
+        if match_index:
+
+            self.uiStatusCombo.setCurrentIndex(match_index[0].row())
+            self._status_id = value
+        else:
+            self._status_id = 0
+
+    @property  # getter
+    def status_mci(self):
+
+        status_mci = self.uiStatusCombo.currentData(Qt.UserRole)
+        return status_mci
 
     @property  # getter
     def stz(self):
@@ -218,11 +236,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         #
         # self.current_abgrenzung_item = None
 
-    def setPreMapData(self):
-        super().setPreMapData()
-
-        self.setStatusComboData()
-
     def initUi(self):
         super().initUi()
 
@@ -263,6 +276,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         # self.uiKKTv.setColumnHidden(3, True)
         # self.uiKKTv.setColumnHidden(4, True)
 
+    def initEntityWidget(self):
+
+        self.setStatusComboData()
+
     def mapData(self):
         super().mapData()
 
@@ -273,7 +290,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.alias = self._entity_mci.alias
         self.alm_bnr = self._entity_mci.alm_bnr
         self.anm = self._entity_mci.anm
-        self.status = self._entity_mci.bearbeitungsstatus_id
+        self.status_id = self._entity_mci.bearbeitungsstatus_id
 
         self.wwp = self._entity_mci.wwp
         self.wwp_jahr = self._entity_mci.wwp_jahr
@@ -311,38 +328,45 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """definiere notwendige tabellen und füge sie ein"""
 
         """lade die gst-tabelle"""
-        self.gst_table = GstAktDataView(self)
+        self.gst_table = GstAktDataView(self, gis_mode=True)
+        with db_session_cm(name='query gst-table in akt',
+                           expire_on_commit=False) as session:
+            self.gst_table.initDataView(dataview_session=session)
         self.uiGstListeVlay.addWidget(self.gst_table)
-
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
+        """"""
 
-        self.abgrenzung_table = AbgrenzungDataView(self)
+        """lade die abgrenzungen"""
+        self.abgrenzung_table = AbgrenzungDataView(self, gis_mode=True)
+        self.koppel_table = KoppelAktDataView(self, gis_mode=True)
+        self.komplex_table = KomplexAktDataView(self, gis_mode=True)
+
+        with db_session_cm(name='query abgrenzungen in akt',
+                           expire_on_commit=False) as session:
+            self.abgrenzung_table.initDataView(dataview_session=session)
+            self.koppel_table.initDataView(dataview_session=session)
+            self.komplex_table.initDataView(dataview_session=session)
+
         self.uiAbgrenzungVlay.addWidget(self.abgrenzung_table)
-
-        self.koppel_table = KoppelAktDataView(self)
         self.uiKoppelVlay.addWidget(self.koppel_table)
-
-        self.guiMainGis.project_instance.addMapLayer(self.koppel_table._gis_layer)
-
-        self.komplex_table = KomplexAktDataView(self)
         self.uiKomplexVlay.addWidget(self.komplex_table)
 
+        self.guiMainGis.project_instance.addMapLayer(self.koppel_table._gis_layer)
         self.guiMainGis.project_instance.addMapLayer(
             self.komplex_table._gis_layer)
+        """"""
 
+        """setzte die karte auf die ausdehnung des gst-layers"""
         self.gst_table._gis_layer.updateExtents()
-
         extent = self.gst_table._gis_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
         """"""
 
-        self.abgrenzung_table._gis_layer.selectionChanged.connect(
-            self.selectedAbgrenzungChanged
-        )
-
-        self.komplex_table._gis_layer.selectionChanged.connect(
-            self.selectedKomplexChanged
-        )
+        # self.abgrenzung_table._gis_layer.selectionChanged.connect(
+        #     self.selectedAbgrenzungChanged)
+        #
+        # self.komplex_table._gis_layer.selectionChanged.connect(
+        #     self.selectedKomplexChanged)
 
         if self.abgrenzung_table._gis_layer.hasFeatures():
 
@@ -351,9 +375,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             for feat in self.abgrenzung_table._gis_layer.getFeatures():
 
                 jahr = feat.attribute('jahr')
-                status = feat.attribute('status_id')
+                status_id = feat.attribute('status_id')
 
-                if status == 0:
+                if status_id == 0:
 
                     if current_feat == None:
                         current_feat = feat
@@ -712,7 +736,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.alias = self.alias
         self._entity_mci.alm_bnr = self.alm_bnr
         self._entity_mci.anm = self.anm
-        self._entity_mci.bearbeitungsstatus_id = self.status
+        self._entity_mci.bearbeitungsstatus_id = self.status_id
+        self._entity_mci.rel_bearbeitungsstatus = self.status_mci
 
         self._entity_mci.wwp = self.wwp
         self._entity_mci.wwp_jahr = self.wwp_jahr
@@ -784,20 +809,50 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
     def setStatusComboData(self):
         """
-        hole die daten für die status-combobox aus der datenbank und füge sie in
+        hole die daten für die status_id-combobox aus der datenbank und füge sie in
         die combobox ein
         """
-        status_items = sorted(self._custom_entity_data['bearbeitungsstatus'],
-                              key=lambda x:x.sort)
+        # status_items = sorted(self._custom_entity_data['bearbeitungsstatus'],
+        #                       key=lambda x:x.sort)
 
-        for item in status_items:
-            self.uiStatusCombo.addItem(item.name, item.id)
+        with db_session_cm(name='query akt bearbeitungsstatuse',
+                           expire_on_commit=False) as session:
+
+            status_stmt = select(BBearbeitungsstatus)
+            status_mci_list = session.scalars(status_stmt).all()
+
+            # for item in status_items:
+            #     self.uiStatusCombo.addItem(item.name, item.id)
+
+        """erstelle ein model mit 1 spalten für das type-combo"""
+        status_model = QStandardItemModel(len(status_mci_list), 1)
+        for i in range(len(status_mci_list)):
+            # id = type_items[i].id
+            # name = type_items[i].name
+            status_model.setData(status_model.index(i, 0),
+                                          status_mci_list[i].name, Qt.DisplayRole)
+            status_model.setData(status_model.index(i, 0),
+                                          status_mci_list[i].id, Qt.UserRole + 1)
+            status_model.setData(status_model.index(i, 0),
+                                          status_mci_list[i], Qt.UserRole)
+        """"""
+
+        """weise dem combo das model zu"""
+        self.uiStatusCombo.setModel(status_model)
+        # self.uiTypCombo.setModelColumn(1)
+        """"""
 
     def signals(self):
         super().signals()
 
         self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
         self.actionPrintAWB.triggered.connect(self.createAwbPrint)
+
+        self.abgrenzung_table._gis_layer.selectionChanged.connect(
+            self.selectedAbgrenzungChanged)
+
+        self.komplex_table._gis_layer.selectionChanged.connect(
+            self.selectedKomplexChanged)
 
         # self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
         # self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
@@ -1132,7 +1187,7 @@ class KomplexModel(QStandardItemModel):
                         return QIcon(":/svg/resources/icons/_leeres_icon.svg")
                     """"""
 
-        if index.column() == 2:  # status
+        if index.column() == 2:  # status_id
 
             if type(first_item) == AbgrenzungItem:
                 if role == Qt.DisplayRole:

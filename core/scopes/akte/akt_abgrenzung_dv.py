@@ -148,34 +148,34 @@ class AbgrenzungDataView(DataView):
     # gst_zuordnung_wdg_class = GstZuordnung
     # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.entity_dialog_class = AbgrenzungDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BAbgrenzung
-        self._gis_table_model_class = AbgrenzungModel
+        self._model_gis_class = AbgrenzungModel
 
         self._commit_entity = False
         self.edit_entity_by = 'mci'
 
         """"""
-        self.setFeatureFields()
-        self.setFilterUI()
-        self.setCanvas(self.parent.guiMainGis.uiCanvas)
-
-        self._gis_layer = self.setLayer()
-
-        self.loadData()
-        self.setFeaturesFromMci()
-        self.setTableView()
-
-        self.finalInit()
-
-        self.updateFooter()
-
-        self.signals()
+        # self.setFeatureFields()
+        # self.setFilterUI()
+        # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+        #
+        # self._gis_layer = self.setLayer()
+        #
+        # self.loadData()
+        # self.setFeaturesFromMci()
+        # self.setTableView()
+        #
+        # self.finalInit()
+        #
+        # self.updateFooter()
+        #
+        # self.signals()
 
     # def openGstZuordnung(self):
     #     """
@@ -215,11 +215,11 @@ class AbgrenzungDataView(DataView):
         #                       'ha', 'gb_area', 120,
         #                       0.0001, 4)
 
-    def loadData(self):
+    def loadData(self, session=None):
 
         # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
-        with (db_session_cm() as session):
+        # with (db_session_cm() as session):
 
             # stmt = select(
             #     BAbgrenzung
@@ -228,18 +228,18 @@ class AbgrenzungDataView(DataView):
             #          .joinedload(BKomplex.rel_koppel)
             # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
 
-            stmt = select(
-                BAbgrenzung
-            ).options(
-                joinedload(BAbgrenzung.rel_status)
-            ).options(
-                joinedload(BAbgrenzung.rel_erfassungsart)
-            ).where(BAbgrenzung.akt_id == self.parent._entity_id
-                    ).order_by(desc(BAbgrenzung.jahr))
+        stmt = select(
+            BAbgrenzung
+        ).options(
+            joinedload(BAbgrenzung.rel_status)
+        ).options(
+            joinedload(BAbgrenzung.rel_erfassungsart)
+        ).where(BAbgrenzung.akt_id == self.parent._entity_id
+                ).order_by(desc(BAbgrenzung.jahr))
 
-            # .order_by(desc(BAbgrenzung.jahr))
+        # .order_by(desc(BAbgrenzung.jahr))
 
-            self._mci_list = session.scalars(stmt).unique().all()
+        self._mci_list = session.scalars(stmt).unique().all()
 
         print(f'---')
 
@@ -249,7 +249,7 @@ class AbgrenzungDataView(DataView):
         :return: id der abgrenzung
         """
 
-        """filtere alle abgrenzungen mit status 0 (=IST-Version)"""
+        """filtere alle abgrenzungen mit status_id 0 (=IST-Version)"""
         ist_abgr_list = [a for a in self._mci_list if a.status_id == 0]
         """"""
 

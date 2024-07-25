@@ -468,7 +468,7 @@ class Ui_Akt(object):
         Akt.addToolBar(QtCore.Qt.TopToolBarArea, self.uiTitleToolBar)
 
         self.retranslateUi(Akt)
-        self.tabAkt.setCurrentIndex(3)
+        self.tabAkt.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Akt)
 
     def retranslateUi(self, Akt):

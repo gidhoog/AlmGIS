@@ -237,7 +237,7 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         super().submitEntity()
 
         """wichtig ist hier, dass sowohl der status_id als auch der
-        status selbst (als mci) an '_entity_mci' übergeben werden"""
+        status_id selbst (als mci) an '_entity_mci' übergeben werden"""
         self._entity_mci.awb_status_id = self.awb_status.id
         self._entity_mci.rel_awb_status = self.awb_status
 

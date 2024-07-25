@@ -66,6 +66,9 @@
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="uiFilterHlay"/>
+       </item>
+       <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>

@@ -64,7 +64,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.guiGisDock)
         self.guiGisDock.setWidget(self.guiMainGis)
 
-        self.loadSupWidgets()
+        self.loadSubWidgets()
 
         self.initUi()
 
@@ -260,10 +260,15 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.uiOpenImpPathPbtn.clicked.connect(self.openImpPath)
 
 
-    def loadSupWidgets(self):
+    def loadSubWidgets(self):
 
-        self.guiGstTable = GstTable(self)
-        self.guiGstPreSelTview = GstPreSelTable(self)
+        self.guiGstTable = GstTable(self, gis_mode=True)
+        self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=True)
+
+        with db_session_cm(name='query tables in gst-zuordung',
+                           expire_on_commit=False) as session:
+            self.guiGstTable.initDataView(dataview_session=session)
+            self.guiGstPreSelTview.initDataView(dataview_session=session)
 
         self.guiMainGis.project_instance.addMapLayer(self.guiGstTable._gis_layer)
 
@@ -379,7 +384,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         # self.guiGstPreSelTview._gis_layer.data_provider.truncate()
 
-        self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
+        # self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
+        self.guiGstPreSelTview.setFeaturesFromMci()
 
         self.guiGstPreSelTview._gis_layer.commitChanges()
 
@@ -810,7 +816,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                 new_gst_zuordnung.gst_id = gst_mci.id
                 new_gst_zuordnung.rel_gst = gst_mci
 
-                # todo: füge hier die mci für status und rechtsgrunglage ein!!!
+                # todo: füge hier die mci für status_id und rechtsgrunglage ein!!!
 
                 new_gst_zuordnung.awb_status_id = awb_status_mci.id
                 new_gst_zuordnung.rel_awb_status = awb_status_mci
@@ -864,7 +870,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
             self.parent._gis_layer.data_provider.truncate()
 
             # self.parent.loadData()
-            self.parent.addFeaturesFromMciList(self.parent._mci_list)
+            # self.parent.addFeaturesFromMciList(self.parent._mci_list)
+            self.parent.setFeaturesFromMci()
             self.parent._gis_layer.commitChanges()
 
             self.parent._gis_layer.data_provider.dataChanged.emit()
@@ -951,7 +958,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 #                     return QColor(15, 153, 222)
 #         """"""
 #
-#         """setze den check-status auf spalte 2"""
+#         """setze den check-status_id auf spalte 2"""
 #         if role == Qt.CheckStateRole:
 #             if index.column() == 2:
 #                 return self.checkState(QModelIndex(index))
@@ -1150,31 +1157,31 @@ class GstTable(DataView):
     # _data_view = TableView
     # _model_class = GstModel
 
-    def __init__(self, parent):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.parent = parent
 
-        self._gis_table_model_class = GstTableModel
+        self._model_gis_class = GstTableModel
 
         self.uiTitleLbl.setText('Grundstücke die zugeordnet werden können:')
         self.maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
 
-        self.setFeatureFields()
-        self.setFilterUI()
-        self.setCanvas(self.parent.guiMainGis.uiCanvas)
-
-        self._gis_layer = self.setLayer()
-
-        self.loadData()
-        self.setFeaturesFromMci()
-        self.setTableView()
-
-        self.finalInit()
-
-        self.updateFooter()
-
-        self.signals()
+        # self.setFeatureFields()
+        # self.setFilterUI()
+        # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+        #
+        # self._gis_layer = self.setLayer()
+        #
+        # self.loadData()
+        # self.setFeaturesFromMci()
+        # self.setTableView()
+        #
+        # self.finalInit()
+        #
+        # self.updateFooter()
+        #
+        # self.signals()
 
 
     def setFeatureFields(self):
@@ -1746,12 +1753,12 @@ class GstPreSelTable(DataView):
 
     _data_view = TableView
 
-    def __init__(self, parent):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.parent = parent
 
-        self._gis_table_model_class = GstPreSelTableModel
+        self._model_gis_class = GstPreSelTableModel
 
         # self.available_filters = ''
         self.title = 'vorgemerkte Grundstücke:'
@@ -1778,25 +1785,25 @@ class GstPreSelTable(DataView):
 
         self.guiUndoPreSelPbtn.clicked.connect(self.undoPreSelGst)
 
-        """"""
-        self.setFeatureFields()
-        # self.setFilterUI()
-        # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+        # """"""
+        # self.setFeatureFields()
+        # # self.setFilterUI()
+        # # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+        #
+        # self._gis_layer = self.setLayer()
+        #
+        # self.loadData()
+        # self.setFeaturesFromMci()
+        # self.setTableView()
+        #
+        # self.finalInit()
+        #
+        # self.updateFooter()
+        #
+        # self.signals()
+        # """"""
 
-        self._gis_layer = self.setLayer()
-
-        self.loadData()
-        self.setFeaturesFromMci()
-        self.setTableView()
-
-        self.finalInit()
-
-        self.updateFooter()
-
-        self.signals()
-        """"""
-
-    def loadData(self):
+    def loadData(self, session=None):
 
         self._mci_list = self.parent.preselcted_gst_mci
         # self._mci_list = [[1, '314/3', 136, 19321, 'Mitterbachseerotte'],

@@ -164,7 +164,7 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
 
     def setAddDisplayAreaCheckStatus(self):
         """
-        mache den status zum hinzufügen einer neuen display_area am button sichtbar
+        mache den status_id zum hinzufügen einer neuen display_area am button sichtbar
         """
 
         if self._guiAddMainAreaPbtn.isChecked():

@@ -559,8 +559,6 @@ class AkteAllMain(DataView):
         :return:
         """
 
-        filter_lay = QHBoxLayout(self)
-
         """filter name"""
         # filter_name = FilterElement(self)
         # filter_name.uiLabelLbl.setText('Name:')
@@ -618,7 +616,7 @@ class AkteAllMain(DataView):
             self.applyFilter)
         """"""
 
-        """filter status"""
+        """filter status_id"""
         self.filter_status_lbl = QLabel(self)
 
         status_lbl_font = self.filter_status_lbl.font()
@@ -653,32 +651,66 @@ class AkteAllMain(DataView):
         """platziere die filter-elemente"""
         spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
                                  QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem1)
+        self.uiFilterHlay.addItem(spacerItem1)
 
-        filter_lay.addWidget(self.filter_az_lbl)
-        filter_lay.addWidget(self.filter_az_input_wdg)
-        filter_lay.addWidget(self.filter_name_lbl)
-        filter_lay.addWidget(self.filter_name_input_wdg)
-        filter_lay.addWidget(self.filter_status_lbl)
-        filter_lay.addWidget(self.filter_status_input_wdg)
-        """"""
+        self.uiFilterHlay.addWidget(self.filter_az_lbl)
+        self.uiFilterHlay.addWidget(self.filter_az_input_wdg)
+        self.uiFilterHlay.addWidget(self.filter_name_lbl)
+        self.uiFilterHlay.addWidget(self.filter_name_input_wdg)
+        self.uiFilterHlay.addWidget(self.filter_status_lbl)
+        self.uiFilterHlay.addWidget(self.filter_status_input_wdg)
+
+        self.setFilterRemoveBtn()
 
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem)
-
-        self.uiHeaderHley.insertLayout(1, filter_lay)
+        self.uiFilterHlay.addItem(spacerItem)
+        """"""
 
         # spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         # self.uiFilterGLay.addItem(spacerItem2, 0, 2)
 
     def applyFilter(self):
 
+        filter = False
+
+        """filter az"""
+        if self.filter_az_input_wdg.text() == '':
+            self.filter_az_lbl.setVisible(False)
+        else:
+            self.filter_az_lbl.setVisible(True)
+            filter = True
+        """"""
+
+        """filter name"""
         if self.filter_name_input_wdg.text() == '':
             self.filter_name_lbl.setVisible(False)
         else:
             self.filter_name_lbl.setVisible(True)
+            filter = True
+        """"""
+
+        """filter voucher type"""
+        if self.filter_status_input_wdg.currentData(Qt.UserRole) == -1:
+            self.filter_status_lbl.setVisible(False)
+        else:
+            self.filter_status_lbl.setVisible(True)
+            filter = True
+        """"""
+
+        """filter remove button"""
+        if filter:
+            self.uiFilterRemovePbtn.setVisible(True)
+        else:
+            self.uiFilterRemovePbtn.setVisible(False)
+        """"""
 
         super().applyFilter()
+
+    def removeFilter(self):
+
+        self.filter_az_input_wdg.setText('')
+        self.filter_name_input_wdg.setText('')
+        self.filter_status_input_wdg.setCurrentIndex(0)
 
     def useFilterScope(self, source_row, source_parent):
         super().useFilterScope(source_row, source_parent)
@@ -699,7 +731,7 @@ class AkteAllMain(DataView):
             return False
         """"""
 
-        """filter status"""
+        """filter status_id"""
         status = self.filter_proxy.sourceModel() \
             .data(self.filter_proxy.sourceModel().index(source_row, 2),
                   Qt.EditRole)
@@ -772,12 +804,12 @@ class AkteAllMain(DataView):
     #
     #         self.uicAktStatusFilterCombo.addItem('- Alle -')
     #
-    #         status_list = self._custom_entity_data['status']
+    #         status_list = self._custom_entity_data['status_id']
     #         status_sorted = sorted(status_list,
     #                                 key=lambda x: x.sort)
     #
-    #         for status in status_sorted:
-    #             self.uicAktStatusFilterCombo.addItem(str(status.name))
+    #         for status_id in status_sorted:
+    #             self.uicAktStatusFilterCombo.addItem(str(status_id.name))
     #
     #         self.uicAktStatusFilterCombo.setCurrentText(prev_typ)
     #
@@ -788,7 +820,7 @@ class AkteAllMain(DataView):
     #     super().useFilterScope(source_row, source_parent)
     #
     #     try:
-    #         """filter status"""
+    #         """filter status_id"""
     #         table_value = self.filter_proxy.sourceModel() \
     #             .data(self.filter_proxy.sourceModel().index(source_row, 2),
     #         Qt.DisplayRole)

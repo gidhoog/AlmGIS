@@ -323,7 +323,7 @@ class BGst(Base):
 
 class BGstAwbStatus(Base):
     """
-    alm- und weidebuch-status eines grundstückes
+    alm- und weidebuch-status_id eines grundstückes
     """
     __tablename__ = 'a_alm_awb_status'
 

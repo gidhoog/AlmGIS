@@ -2,11 +2,11 @@ import csv
 
 from qgis.PyQt.QtCore import QAbstractTableModel, Qt, QModelIndex, \
     QSortFilterProxyModel, QItemSelectionModel, QItemSelection, \
-    QItemSelectionRange
-from qgis.PyQt.QtGui import QPalette, QColor
+    QItemSelectionRange, QSize
+from qgis.PyQt.QtGui import QPalette, QColor, QIcon
 from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
-    QDialog
+    QDialog, QPushButton
 
 from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
                       QgsAttributeTableFilterModel, QgsMapCanvas)
@@ -57,7 +57,7 @@ class GisTableModel(QgsAttributeTableModel):
         # self.parent = parent
 
     def headerData(self, column, orientation, role=None):
-        super().headerData(column, orientation, role)
+        # super().headerData(column, orientation, role)
 
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
 
@@ -568,7 +568,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self._commit_entity = True
         self.feature_fields = []
-        self._gis_table_model_class = GisTableModel
+        self._model_gis_class = GisTableModel
         self._model_class = TableModel
 
         # self.canvas = QgsMapCanvas()
@@ -589,6 +589,15 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         #                 f'{str(selection_color.blue())})')
         #
         # self.view.setStyleSheet(f"selection-background-color: {color_string};")
+
+        """"setzt die farbe der selection von zeilen"""
+        selection_color = color.data_view_selection
+        color_string = (f'rgb({str(selection_color.red())}, '
+                        f'{str(selection_color.green())}, '
+                        f'{str(selection_color.blue())})')
+        selection_style = f'selection-background-color: {color_string};'
+        self.setStyleSheet(selection_style)
+        """"""
 
         self.uiTitleLbl.setVisible(False)
 
@@ -621,7 +630,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             self._gis_layer = self.setLayer()
 
-            self.addFeaturesFromMciList(self._mci_list)
+            # self.addFeaturesFromMciList(self._mci_list)
+            self.setFeaturesFromMci()
 
         self.setFilterUI()
 
@@ -881,6 +891,34 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
+    def removeFilter(self):
+        """
+        remove here the inputs of the filter widgets to remove the filter
+        """
+        pass
+
+    def setFilterRemoveBtn(self):
+        """
+        insert the button to remove the filter into the data_view
+        """
+        self.uiFilterRemovePbtn = QPushButton()
+        self.uiFilterRemovePbtn.setMaximumWidth(30)
+        self.uiFilterRemovePbtn.setIcon(
+            QIcon(':/svg/resources/icons/filter_remove.svg'))
+        self.uiFilterRemovePbtn.setIconSize(QSize(20, 20))
+        self.uiFilterRemovePbtn.setFlat(True)
+        self.uiFilterRemovePbtn.setVisible(False)
+
+        self.uiFilterRemovePbtn.clicked.connect(self.removeFilter)
+
+        self.uiFilterHlay.addWidget(self.uiFilterRemovePbtn)
+
+    def useFilter(self):
+        """
+        use the filter
+        """
+        pass
+
     def useSubsetString(self):
         """
         wende die definierten filter_strings an
@@ -1002,21 +1040,21 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
-    def setTableView(self):
-
-        self.vector_layer_cache = QgsVectorLayerCache(self._gis_layer,
-                                                 10000)
-        self.model = self._gis_table_model_class(
-            self.vector_layer_cache, self)
-        self.model.loadLayer()
-
-        self.filter_proxy = GisSortFilterProxyModel(
-            self.canvas,
-            self.model,
-            self
-        )
-
-        self.view.setModel(self.filter_proxy)
+    # def setTableView(self):
+    #
+    #     self.vector_layer_cache = QgsVectorLayerCache(self._gis_layer,
+    #                                              10000)
+    #     self.model = self._gis_table_model_class(
+    #         self.vector_layer_cache, self)
+    #     self.model.loadLayer()
+    #
+    #     self.filter_proxy = GisSortFilterProxyModel(
+    #         self.canvas,
+    #         self.model,
+    #         self
+    #     )
+    #
+    #     self.view.setModel(self.filter_proxy)
 
     # def initDataView(self):
     #     """
@@ -1232,7 +1270,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         instance._gis_layer.data_provider.truncate()
 
         instance.loadData()
-        instance.addFeaturesFromMciList(instance._mci_list)
+        # instance.addFeaturesFromMciList(instance._mci_list)
+        instance.setFeaturesFromMci()
         instance._gis_layer.commitChanges()
 
         # instance._gis_layer.data_provider.dataChanged.emit()

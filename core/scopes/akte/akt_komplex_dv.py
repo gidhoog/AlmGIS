@@ -131,34 +131,34 @@ class KomplexAktDataView(DataView):
     # gst_zuordnung_wdg_class = GstZuordnung
     # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.entity_dialog_class = KomplexDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BKoppel
-        self._gis_table_model_class = KomplexModel
+        self._model_gis_class = KomplexModel
 
         self._commit_entity = False
         self.edit_entity_by = 'mci'
 
         """"""
-        self.setFeatureFields()
-        self.setFilterUI()
-        self.setCanvas(self.parent.guiMainGis.uiCanvas)
-
-        self._gis_layer = self.setLayer()
-
-        self.loadData()
-        self.setFeaturesFromMci()
-        self.setTableView()
-
-        self.finalInit()
-
-        self.updateFooter()
-
-        self.signals()
+        # self.setFeatureFields()
+        # self.setFilterUI()
+        # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+        #
+        # self._gis_layer = self.setLayer()
+        #
+        # self.loadData()
+        # self.setFeaturesFromMci()
+        # self.setTableView()
+        #
+        # self.finalInit()
+        #
+        # self.updateFooter()
+        #
+        # self.signals()
 
     # def openGstZuordnung(self):
     #     """
@@ -198,11 +198,11 @@ class KomplexAktDataView(DataView):
         #                       'ha', 'gb_area', 120,
         #                       0.0001, 4)
 
-    def loadData(self):
+    def loadData(self, session=None):
 
         # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
-        with db_session_cm() as session:
+        # with db_session_cm() as session:
 
             # stmt = select(
             #     BAbgrenzung
@@ -211,17 +211,17 @@ class KomplexAktDataView(DataView):
             #          .joinedload(BKomplex.rel_koppel)
             # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
 
-            stmt = select(
-                BKomplexName
-            ).options(
-                joinedload(BKomplexName.rel_komplex)
-                     .joinedload(BKomplex.rel_koppel)
-            ).options(
-                joinedload(BKomplexName.rel_komplex)
-                     .joinedload(BKomplex.rel_komplex_name)
-            ).where(BKomplexName.akt_id == self.parent._entity_id)
+        stmt = select(
+            BKomplexName
+        ).options(
+            joinedload(BKomplexName.rel_komplex)
+                 .joinedload(BKomplex.rel_koppel)
+        ).options(
+            joinedload(BKomplexName.rel_komplex)
+                 .joinedload(BKomplex.rel_komplex_name)
+        ).where(BKomplexName.akt_id == self.parent._entity_id)
 
-            self._mci_list = session.scalars(stmt).unique().all()
+        self._mci_list = session.scalars(stmt).unique().all()
 
         print(f'---')
 

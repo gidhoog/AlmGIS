@@ -35,7 +35,7 @@ class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget)
                     .order_by(BGstAwbStatus.sort)\
                     .all()
 
-            """erstelle ein model mit 2 spalten für das awb-status-combo"""
+            """erstelle ein model mit 2 spalten für das awb-status_id-combo"""
             self.awb_status_model = QStandardItemModel(len(awb_status_query), 2)
             for i in range(len(awb_status_query)):
                 id = awb_status_query[i].id

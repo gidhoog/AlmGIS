@@ -143,34 +143,34 @@ class KoppelAktDataView(DataView):
     # gst_zuordnung_wdg_class = GstZuordnung
     # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.entity_dialog_class = KoppelDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BKoppel
-        self._gis_table_model_class = KoppelModel
+        self._model_gis_class = KoppelModel
 
         self._commit_entity = False
         self.edit_entity_by = 'mci'
 
         """"""
-        self.setFeatureFields()
-        self.setFilterUI()
-        self.setCanvas(self.parent.guiMainGis.uiCanvas)
-
-        self._gis_layer = self.setLayer()
-
-        self.loadData()
-        self.setFeaturesFromMci()
-        self.setTableView()
-
-        self.finalInit()
-
-        self.updateFooter()
-
-        self.signals()
+        # self.setFeatureFields()
+        # self.setFilterUI()
+        # self.setCanvas(self.parent.guiMainGis.uiCanvas)
+        #
+        # self._gis_layer = self.setLayer()
+        #
+        # self.loadData()
+        # self.setFeaturesFromMci()
+        # self.setTableView()
+        #
+        # self.finalInit()
+        #
+        # self.updateFooter()
+        #
+        # self.signals()
 
     # def openGstZuordnung(self):
     #     """
@@ -199,9 +199,9 @@ class KoppelAktDataView(DataView):
 
         self.uiTitleLbl.setText('Koppeln')
 
-        self.insertFooterLine('Flächensumme:',
-                              'ha', 'koppel_area', 120,
-                              0.0001, 4)
+        # self.insertFooterLine('Flächensumme:',
+        #                       'ha', 'koppel_area', 120,
+        #                       0.0001, 4)
 
         # self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
         #                       'ha', 'gb_area', 120,
@@ -214,11 +214,11 @@ class KoppelAktDataView(DataView):
         #                       'ha', 'gb_area', 120,
         #                       0.0001, 4)
 
-    def loadData(self):
+    def loadData(self, session=None):
 
         # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
-        with (db_session_cm() as session):
+        # with (db_session_cm() as session):
 
             # stmt = select(
             #     BAbgrenzung
@@ -227,23 +227,23 @@ class KoppelAktDataView(DataView):
             #          .joinedload(BKomplex.rel_koppel)
             # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
 
-            """verwende hier .join() um verknüpfte tabellen abzufragen"""
-            stmt = select(
-                BKoppel
-            ).join(
-                BKoppel.rel_komplex
-            ).join(
-                BKomplex.rel_abgrenzung
-            ).options(
-                joinedload(BKoppel.rel_komplex)
-                     .joinedload(BKomplex.rel_abgrenzung)
-            ).options(
-                joinedload(BKoppel.rel_komplex)
-                     .joinedload(BKomplex.rel_komplex_name)
-            ).where(BAbgrenzung.akt_id == self.parent._entity_id)
-            """"""
+        """verwende hier .join() um verknüpfte tabellen abzufragen"""
+        stmt = select(
+            BKoppel
+        ).join(
+            BKoppel.rel_komplex
+        ).join(
+            BKomplex.rel_abgrenzung
+        ).options(
+            joinedload(BKoppel.rel_komplex)
+                 .joinedload(BKomplex.rel_abgrenzung)
+        ).options(
+            joinedload(BKoppel.rel_komplex)
+                 .joinedload(BKomplex.rel_komplex_name)
+        ).where(BAbgrenzung.akt_id == self.parent._entity_id)
+        """"""
 
-            self._mci_list = session.scalars(stmt).unique().all()
+        self._mci_list = session.scalars(stmt).unique().all()
 
         print(f'---')
 
@@ -328,6 +328,7 @@ class KoppelAktDataView(DataView):
         koppel_name_fld.setAlias('Koppel')
 
         nicht_weide_fld = QgsField("nicht_weide", QVariant.String)
+        # nicht_weide_fld = QgsField("nw", QVariant.String)
         nicht_weide_fld.setAlias('nW')
 
         koppel_area_fld = QgsField("koppel_area", QVariant.Double)
@@ -709,6 +710,10 @@ class KoppelAktDataView(DataView):
         self.view.setColumnWidth(8, 120)
         self.view.setColumnWidth(9, 50)
         """"""
+
+        self.insertFooterLine('Flächensumme:',
+                              'ha', 'koppel_area', value_width=120,
+                              factor=0.0001, decimal=4)
 
         """passe die Zeilenhöhen an den Inhalt an"""
         # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)

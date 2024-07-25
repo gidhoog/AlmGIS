@@ -119,8 +119,8 @@ class Koppel(QWidget, koppel_UI.Ui_Koppel):
     #
     #         for erfass in erfassungsart_di:
     #             self.uiErfassCombo.addItem(erfass.name, erfass.id)
-    #         for status in status_di:
-    #             self.uiStatusCombo.addItem(status.name_short, status.id)
+    #         for status_id in status_di:
+    #             self.uiStatusCombo.addItem(status_id.name_short, status_id.id)
     #
     def submitData(self):
 
