@@ -109,10 +109,10 @@
              </spacer>
             </item>
             <item row="0" column="5">
-             <widget class="InfoButton" name="uicInfoBtnStatus" native="true"/>
+             <widget class="InfoButton" name="uiInfoBtnStatus" native="true"/>
             </item>
             <item row="6" column="5">
-             <widget class="InfoButton" name="widget_3" native="true"/>
+             <widget class="InfoButton" name="uiInfoBtnBewirtschafter" native="true"/>
             </item>
             <item row="8" column="1">
              <widget class="QLabel" name="label_10">
@@ -231,7 +231,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="label_15">
+               <widget class="QCheckBox" name="uiWwpExistCkBox">
                 <property name="font">
                  <font>
                   <family>Calibri</family>
@@ -241,7 +241,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>gültig bis:</string>
+                 <string>erstellt:</string>
                 </property>
                </widget>
               </item>
@@ -256,10 +256,13 @@
                  </font>
                 </property>
                 <property name="minimum">
-                 <number>1900</number>
+                 <number>1960</number>
                 </property>
                 <property name="maximum">
                  <number>2200</number>
+                </property>
+                <property name="stepType">
+                 <enum>QAbstractSpinBox::DefaultStepType</enum>
                 </property>
                </widget>
               </item>
@@ -520,10 +523,10 @@
              </widget>
             </item>
             <item row="11" column="5">
-             <widget class="InfoButton" name="widget_4" native="true"/>
+             <widget class="InfoButton" name="uiInfoBtnWwp" native="true"/>
             </item>
             <item row="1" column="5">
-             <widget class="InfoButton" name="widget" native="true"/>
+             <widget class="InfoButton" name="uiInfoBtnAlias" native="true"/>
             </item>
             <item row="8" column="2">
              <widget class="QLabel" name="label_11">
@@ -692,7 +695,7 @@
              </spacer>
             </item>
             <item row="2" column="5">
-             <widget class="InfoButton" name="widget_2" native="true"/>
+             <widget class="InfoButton" name="uiInfoBtnAlmBnr" native="true"/>
             </item>
             <item row="13" column="0" colspan="5">
              <widget class="Line" name="line_3">
@@ -977,6 +980,20 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabAkt</tabstop>
+  <tabstop>uiStatusCombo</tabstop>
+  <tabstop>uiAliasLedit</tabstop>
+  <tabstop>uiAlmBnrLedit</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>uiWwpCkBox</tabstop>
+  <tabstop>uiWwpExistCkBox</tabstop>
+  <tabstop>uiWwpJahrSBox</tabstop>
+  <tabstop>uiAnmTedit</tabstop>
+ </tabstops>
  <resources>
   <include location="../../../resources.qrc"/>
  </resources>

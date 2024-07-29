@@ -27,6 +27,7 @@ class BAkt(Base):
     anm = Column(String)
     stz = Column(String)
     wwp = Column(Boolean)
+    wwp_exist = Column(Boolean)
     wwp_jahr = Column(Integer)
 
     rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
@@ -587,6 +588,17 @@ class BGstZuordnungMain(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(kg_gst: {self.kg_gst}, " \
                f"gst: {self.gst})"
+
+
+class McInfoButton(Base):
+    __tablename__ = 'info_button'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    content = Column(String)
+
+    def __repr__(self):
+       return f"<<McInfoButton(id='{self.id}', title='{self.title}')>>"
 
 
 class BKatGem(Base):

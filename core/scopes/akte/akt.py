@@ -55,6 +55,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     _status_id = 0
     _status_mci = None
     _wwp = 0
+    _wwp_exist = 0
     _wwp_jahr = 0
 
     @property  # getter
@@ -185,6 +186,26 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._wwp = value
 
     @property  # getter
+    def wwp_exist(self):
+
+        if self.uiWwpExistCkBox.isChecked():
+            self._wwp_exist = 1
+        else:
+            self._wwp_exist = 0
+
+        return self._wwp_exist
+
+    @wwp_exist.setter
+    def wwp_exist(self, value):
+
+        if value == 1:
+            self.uiWwpExistCkBox.setCheckState(Qt.Checked)
+        else:
+            self.uiWwpExistCkBox.setCheckState(Qt.Unchecked)
+
+        self._wwp_exist = value
+
+    @property  # getter
     def wwp_jahr(self):
 
         self._wwp_jahr = self.uiWwpJahrSBox.value()
@@ -280,6 +301,12 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.setStatusComboData()
 
+        self.uiInfoBtnAlmBnr.initInfoButton(1001)
+        self.uiInfoBtnStatus.initInfoButton(1002)
+        self.uiInfoBtnBewirtschafter.initInfoButton(1004)
+        self.uiInfoBtnWwp.initInfoButton(1005)
+        self.uiInfoBtnAlias.initInfoButton(1003)
+
     def mapData(self):
         super().mapData()
 
@@ -293,6 +320,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.status_id = self._entity_mci.bearbeitungsstatus_id
 
         self.wwp = self._entity_mci.wwp
+        self.wwp_exist = self._entity_mci.wwp_exist
         self.wwp_jahr = self._entity_mci.wwp_jahr
 
         # self.guiMainGis.entity_id = self._entity_mci.id
@@ -740,6 +768,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.rel_bearbeitungsstatus = self.status_mci
 
         self._entity_mci.wwp = self.wwp
+        self._entity_mci.wwp_exist = self.wwp_exist
         self._entity_mci.wwp_jahr = self.wwp_jahr
 
     # def get_abgrenzung_di(self):

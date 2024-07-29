@@ -57,7 +57,7 @@ class GisTableModel(QgsAttributeTableModel):
         # self.parent = parent
 
     def headerData(self, column, orientation, role=None):
-        # super().headerData(column, orientation, role)
+        super().headerData(column, orientation, role)
 
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
 

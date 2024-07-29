@@ -5,6 +5,8 @@ from qgis.PyQt.QtSvg import QSvgWidget
 from qgis.PyQt.QtWidgets import QWidget, QVBoxLayout
 
 import resources_rc
+from core import db_session_cm
+from core.data_model import McInfoButton
 
 
 class InfoButton(QWidget):
@@ -13,7 +15,9 @@ class InfoButton(QWidget):
     icon_file_enter = ':/svg/resources/icons/info_blue.svg'
     icon_file_leave = ':/svg/resources/icons/info_grey.svg'
     _html_file = ""
-    _html_text = ''
+    _info_element = None
+
+    _info_id = 0
 
     @property  # getter
     def html_file(self):
@@ -29,24 +33,56 @@ class InfoButton(QWidget):
             self.html_text = f.read()
 
     @property  # getter
-    def html_text(self):
-        return self._html_text
+    def info_element(self):
+        return self._info_element
 
-    @html_text.setter
-    def html_text(self, value):
+    @info_element.setter
+    def info_element(self, value):
 
-        self._html_text = value
+        if value:
 
-        html = "<!DOCTYPE html>"\
-                '''<html lang="en">'''\
-                "<head>"\
-                '''    <meta charset="UTF-10">'''\
-                "    <title>Title</title>"\
-                "</head>"\
-                "<body>" + self._html_text + "</body>"\
-                "</html>"
+            self._info_element = value
+
+            title = self._info_element.title
+            content = self._info_element.content
+            id_str = str(self._info_element.id)
+
+        else:
+            title = "Info"
+            content = "Keine Information vorhanden."
+            id_str = '---'
+
+        html = '''<!DOCTYPE html>'''\
+               '''<html lang="en">'''\
+               '''<head>'''\
+               '''<meta charset="UTF-10">'''\
+               '''<title>Title</title>'''\
+               '''</head>'''\
+               '''<body>''' + \
+               '''<b>'''+ title +'''</b>'''\
+               '''<hr><br/>'''\
+               + content + \
+               '''<hr><p align="right">InfoID: '''\
+               + id_str + \
+               '''</p></body>'''\
+               '''</html>'''
 
         self.icon_widget.setToolTip(html)
+
+    @property  # getter
+    def info_id(self):
+
+        return self._info_id
+
+    @info_id.setter
+    def info_id(self, value):
+
+        self._info_id = value
+
+        with db_session_cm(name=f'set info button -{value}-') as session:
+            info_mci = session.get(McInfoButton, value)
+
+            self.info_element = info_mci
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
@@ -68,7 +104,13 @@ class InfoButton(QWidget):
 
         lay.setContentsMargins(0, 0, 0, 0)
 
-        self.html_text = 'Keine Information vorhanden.'
+        self.html_text = 'Noch keine Information vorhanden.'
+
+        self.info_element = None
+
+    def initInfoButton(self, info_id):
+
+        self.info_id = info_id
 
     def eventFilter(self, event_object, event):
 
