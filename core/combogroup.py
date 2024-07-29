@@ -260,7 +260,7 @@ class ActionClear(ComboAction):
     def __init__(self, parent):
         super(ActionClear, self).__init__(parent)
 
-        self.setIcon(QIcon(':/svg/resources/icons/white_cross_in_red_circle.svg'))
+        self.setIcon(QIcon(':/svg/resources/icons/reset_blue.svg'))
 
     def doAction(self, *args, **kwargs):
         super().doAction()

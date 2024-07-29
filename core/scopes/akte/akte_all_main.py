@@ -186,7 +186,7 @@ class AktAllModel(TableModel):
               'Name',
               'Status',
               'Stz',
-              'Anmerkung',
+              'Bewirtschafter',
               'WWP',
               'WWP-Jahr',
               'AWB-Fläche (GB)',
@@ -251,8 +251,14 @@ class AktAllModel(TableModel):
                 return self.mci_list[row].stz
 
         if index.column() == 4:
-            if role == Qt.DisplayRole:
-                return self.mci_list[row].anm
+            # if role == Qt.DisplayRole:
+            #     return self.mci_list[row].anm
+            if self.mci_list[row].rel_bewirtschafter is not None:
+
+                if role == Qt.DisplayRole:
+                    return self.mci_list[row].rel_bewirtschafter.name
+                if role == Qt.EditRole:
+                    return self.mci_list[row].bewirtschafter_id
 
         if index.column() == 5:
             if role == Qt.DisplayRole:

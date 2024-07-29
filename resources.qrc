@@ -7,6 +7,7 @@
   </qresource>
   <qresource prefix="html_info"/>
   <qresource prefix="svg">
+    <file>resources/icons/reset_blue.svg</file>
     <file>resources/icons/filter_remove.svg</file>
     <file>resources/icons/contacts.svg</file>
     <file>resources/icons/group.svg</file>

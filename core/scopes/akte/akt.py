@@ -14,13 +14,13 @@ from geoalchemy2.shape import to_shape
 from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry, QgsVectorLayerCache, QgsVectorLayer, QgsField, QgsPointXY
 from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
 from qgis.PyQt.QtCore import QVariant
-from sqlalchemy import desc, select, text
+from sqlalchemy import desc, select, text, func
 from sqlalchemy.orm import joinedload
 
 from core import entity, db_session_cm
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
-    BGstZuordnung, BGstAwbStatus, BRechtsgrundlage
+    BGstZuordnung, BGstAwbStatus, BRechtsgrundlage, BKontakt
 from core.entity_titel import EntityTitel
 # from core.gis_control import GisControl
 from core.gis_item import GisItem
@@ -36,6 +36,7 @@ from core.scopes.akte.akt_gst_main import GstAktDataView
 from core.scopes.akte.akt_komplex_dv import KomplexAktDataView
 from core.scopes.akte.akt_koppel_dv import KoppelAktDataView
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
+from core.scopes.kontakt.kontakt import Kontakt
 from core.scopes.koppel.koppel import KoppelDialog, Koppel
 from core.scopes.koppel.koppel_item import KoppelItem
 
@@ -46,6 +47,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     baseclass für einen akt-datensatz
     """
 
+    _bewirtschafter_id = 0
     _alm_bnr = 0
     _anm = ''
     _az = 0
@@ -57,6 +59,48 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     _wwp = 0
     _wwp_exist = 0
     _wwp_jahr = 0
+
+    @property  # getter
+    def bewirtschafter_id(self):
+
+        # type_mci = self.uiTypCombo.currentData(Qt.UserRole)
+
+        # self._type_id = type_mci.id
+        self._bewirtschafter_id = self.uiBewirtschafterCombo.currentData(Qt.UserRole + 1)
+        # self.rel_type = type_mci
+        return self._bewirtschafter_id
+
+    @bewirtschafter_id.setter
+    def bewirtschafter_id(self, value):
+
+        # self.uiVertreterCombo.setCurrentIndex(
+        #     self.uiVertreterCombo.findData(value, Qt.UserRole)
+        # )
+        # self._vertreter_id = value
+
+
+        """finde den type_id im model des uiTypeCombo"""
+        match_index = self.uiBewirtschafterCombo.model().match(
+            self.uiBewirtschafterCombo.model().index(0, 0),
+            Qt.UserRole + 1,
+            value,
+            -1,
+            Qt.MatchExactly)
+        """"""
+
+        if match_index:
+
+            self.uiBewirtschafterCombo.setCurrentIndex(match_index[0].row())
+            self._bewirtschafter_id = value
+        else:
+            self._bewirtschafter_id = 0
+
+    @property  # getter
+    def bewirtschafter_mci(self):
+
+        bewirtschafter_mci = self.uiBewirtschafterCombo.currentData(Qt.UserRole + 2)
+        # self.rel_type = type_mci
+        return bewirtschafter_mci
 
     @property  # getter
     def alm_bnr(self):
@@ -285,6 +329,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.uiKkSplitter.setStretchFactor(1, 3)
         self.uiAbgrKkSplitter.setStretchFactor(1, 3)
 
+        self.displayBewirtschafterAdresse()
+
         # self.uiVersionTv.setColumnHidden(0, True)
         # self.uiVersionTv.setColumnHidden(5, True)
         # self.uiVersionTv.setColumnHidden(6, True)
@@ -300,6 +346,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     def initEntityWidget(self):
 
         self.setStatusComboData()
+
+        """init bewirtschafter_combo"""
+        self.setBewirtschafterCombo()
+        # self.uiBewirtschafterCombo.loadData()
+        # self.uiBewirtschafterCombo.combo_widget_form = Kontakt
+        # self.uiBewirtschafterCombo.initCombo()
+        """"""
 
         self.uiInfoBtnAlmBnr.initInfoButton(1001)
         self.uiInfoBtnStatus.initInfoButton(1002)
@@ -323,10 +376,50 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.wwp_exist = self._entity_mci.wwp_exist
         self.wwp_jahr = self._entity_mci.wwp_jahr
 
+        self.bewirtschafter_id = self._entity_mci.bewirtschafter_id
+
         # self.guiMainGis.entity_id = self._entity_mci.id
 
         # self.uiVersionTv.setModel(self.komplex_model)
         self.loadSubWidgets()
+
+    def displayBewirtschafterAdresse(self):
+
+        # vertreter = self.uiVertreterCombo.currentData(ComboModel.MciRole)
+        bewirtschafter = self.uiBewirtschafterCombo.currentData(Qt.UserRole + 2)
+
+        if bewirtschafter is None:
+
+            self.uiBewirtschafterTypLbl.setText('')
+            self.uiVertreterNameLbl.setText('')
+            self.uiAdresseLbl.setText('')
+            self.uiTelefonLbl.setText('')
+            self.uiMailLbl.setText('')
+
+            self.uiVertreterLbl.setVisible(False)
+            self.uiVertreterNameLbl.setVisible(False)
+
+        else:
+            self.uiBewirtschafterTypLbl.setText(bewirtschafter.rel_type.name)
+
+            if bewirtschafter.rel_type.gemeinschaft:
+
+                self.uiVertreterLbl.setVisible(True)
+                self.uiVertreterNameLbl.setVisible(True)
+
+                self.uiVertreterNameLbl.setText(bewirtschafter.rel_vertreter.name)
+                self.uiAdresseLbl.setText(bewirtschafter.rel_vertreter.adresse)
+                self.uiTelefonLbl.setText(bewirtschafter.rel_vertreter.telefon_all)
+                self.uiMailLbl.setText(bewirtschafter.rel_vertreter.mail_all)
+
+            else:
+                self.uiVertreterLbl.setVisible(False)
+                self.uiVertreterNameLbl.setVisible(False)
+
+                self.uiVertreterNameLbl.setText(bewirtschafter.name)
+                self.uiAdresseLbl.setText(bewirtschafter.adresse)
+                self.uiTelefonLbl.setText(bewirtschafter.telefon_all)
+                self.uiMailLbl.setText(bewirtschafter.mail_all)
 
     def getEntityMci(self, session, entity_id):
 
@@ -771,6 +864,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.wwp_exist = self.wwp_exist
         self._entity_mci.wwp_jahr = self.wwp_jahr
 
+        self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
+        self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
+
     # def get_abgrenzung_di(self):
     #     """
     #     erzeuge eine Liste mit den BAbgrenzung-Datenmodellen basierend auf die
@@ -836,6 +932,46 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         pass
 
+    def setBewirtschafterCombo(self):
+
+        # vertr_kontakt_items = sorted(self._custom_entity_data['vertr_kontakte'],
+        #                       key=lambda x:x.name)
+
+        with db_session_cm(name='set bewirtschafter_combo in akt',
+                           expire_on_commit=False) as session:
+
+            bewirtschafter_stmt = select(
+                BKontakt).order_by(
+                func.lower(BKontakt.name))
+            self.uiBewirtschafterCombo._mci_list = session.scalars(bewirtschafter_stmt).all()
+
+        # # for kontakt in vertr_kontakt_items:
+        # for kontakt in vertreter_mci_list:
+        #     self.uiVertreterCombo.addItem(kontakt.name, kontakt.id)
+
+        """erstelle ein model mit 1 spalten für das type-combo"""
+        bew_model = QStandardItemModel(len(self.uiBewirtschafterCombo._mci_list), 1)
+        for i in range(len(self.uiBewirtschafterCombo._mci_list)):
+            # id = type_items[i].id
+            # name = type_items[i].name
+            bew_model.setData(bew_model.index(i, 0),
+                                          self.uiBewirtschafterCombo._mci_list[i].name, Qt.DisplayRole)
+            bew_model.setData(bew_model.index(i, 0),
+                                          self.uiBewirtschafterCombo._mci_list[i].id, Qt.UserRole + 1)
+            bew_model.setData(bew_model.index(i, 0),
+                                          self.uiBewirtschafterCombo._mci_list[i], Qt.UserRole + 2)
+            print(f'----vertreter_mci_list[i]: {self.uiBewirtschafterCombo._mci_list[i]}')
+        """"""
+
+        """weise dem combo das model zu"""
+        self.uiBewirtschafterCombo.setModel(bew_model)
+        # self.uiTypCombo.setModelColumn(1)
+        """"""
+
+        # self.uiBewirtschafterCombo.loadData()
+        self.uiBewirtschafterCombo.combo_widget_form = Kontakt
+        self.uiBewirtschafterCombo.initCombo()
+
     def setStatusComboData(self):
         """
         hole die daten für die status_id-combobox aus der datenbank und füge sie in
@@ -882,6 +1018,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.komplex_table._gis_layer.selectionChanged.connect(
             self.selectedKomplexChanged)
+
+        self.uiBewirtschafterCombo.currentIndexChanged.connect(
+            self.displayBewirtschafterAdresse)
 
         # self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
         # self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)

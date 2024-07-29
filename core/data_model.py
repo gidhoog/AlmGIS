@@ -22,6 +22,7 @@ class BAkt(Base):
     name = Column(String)
     alias = Column(String)
     az = Column(Integer)
+    bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("a_alm_kontakt.id"))
     bearbeitungsstatus_id = Column(Integer, ForeignKey('a_alm_bearbeitungsstatus.id'))
     alm_bnr = Column(Integer)
     anm = Column(String)
@@ -40,6 +41,8 @@ class BAkt(Base):
     rel_abgrenzung = relationship('BAbgrenzung',
                                   back_populates='rel_akt',
                                   cascade="all, delete, delete-orphan")
+
+    rel_bewirtschafter: Mapped["BKontakt"] = relationship(lazy='joined')
 
     def __repr__(self):
         return "<BAkt(id='%s', name='%s', az='%s')>" % (
@@ -840,11 +843,13 @@ class BKontakt(Base):
         if str(self.plz) != '':
             adresse += str(self.plz)
 
-        if self.ort != '':
+        # print(f'self.ort: {self.ort}')
+
+        if self.ort != '' and self.ort is not None:
             adresse += ' '
             adresse += self.ort
 
-        if self.strasse != '':
+        if self.strasse != '' and self.strasse is not None:
             adresse += ', '
             adresse += self.strasse
 
