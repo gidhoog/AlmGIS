@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QRegExp, Qt
 # from PyQt5.QtGui import QRegExpValidator
 from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
+from qgis.PyQt.QtWidgets import QWidget, QPushButton, QVBoxLayout
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 
@@ -597,3 +598,27 @@ class KontaktEinzel(Kontakt):
 
         self._entity_mci.vertreter_id = 0
         self._entity_mci.rel_vertreter = leerer_kontakt
+
+
+class KontaktNewSelector(QWidget):
+    """
+    widget zum auswählen, ob ein neuer Einzelkontakt oder Gemeinschaftskontakt
+    angelegt werden soll
+    """
+
+    def __init__(self, parent=None):
+        super(KontaktNewSelector, self).__init__(parent)
+
+        self.parent = parent
+
+        self.main_layout = QVBoxLayout(self)
+
+        self.setLayout(self.main_layout)
+
+        self.uiEinzelPbtn = QPushButton(self)
+        self.uiEinzelPbtn.setText('Einzelkontakt')
+        self.main_layout.addWidget(self.uiEinzelPbtn)
+
+        self.uiGemeinschaftPbtn = QPushButton(self)
+        self.uiGemeinschaftPbtn.setText('Gemeinschaftskontakt')
+        self.main_layout.addWidget(self.uiGemeinschaftPbtn)

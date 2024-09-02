@@ -36,7 +36,7 @@ from core.scopes.akte.akt_gst_main import GstAktDataView
 from core.scopes.akte.akt_komplex_dv import KomplexAktDataView
 from core.scopes.akte.akt_koppel_dv import KoppelAktDataView
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
-from core.scopes.kontakt.kontakt import Kontakt
+from core.scopes.kontakt.kontakt import Kontakt, KontaktNewSelector
 from core.scopes.koppel.koppel import KoppelDialog, Koppel
 from core.scopes.koppel.koppel_item import KoppelItem
 
@@ -300,6 +300,18 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         # self.komplex_root_item = self.komplex_model.invisibleRootItem()
         #
         # self.current_abgrenzung_item = None
+
+        """setzte neuen slot für die add_action"""
+        self.uiBewirtschafterCombo.action_add.triggered.disconnect()
+        self.uiBewirtschafterCombo.action_add.triggered.connect(self.add_new_kontakt)
+        """"""
+
+    def add_new_kontakt(self):
+
+        print(f'new kontakt')
+
+        self.kt = KontaktNewSelector()
+        self.kt.show()
 
     def initUi(self):
         super().initUi()
