@@ -1,2 +1,4 @@
-GeoAlchemy2==0.13.3
-SQLAlchemy==2.0.15
+GeoAlchemy2
+SQLAlchemy
+shapely
+packaging

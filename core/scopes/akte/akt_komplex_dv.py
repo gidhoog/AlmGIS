@@ -260,46 +260,48 @@ class KomplexAktDataView(DataView):
 
             if komplex_name.rel_komplex != []:
 
-                for komplex in komplex_name.rel_komplex:
+                # for komplex in komplex_name.rel_komplex:
 
-                    komplex_geom = None
+                komplex = komplex_name.rel_komplex
 
-                    feat = Feature(self._gis_layer.fields(), self)
+                komplex_geom = None
 
-                    self.setFeatureAttributes(feat, komplex)
+                feat = Feature(self._gis_layer.fields(), self)
 
-                    # feat.setAttributes([gst_version.id,
-                    #                     gst_zuor.rel_gst.gst,
-                    #                     gst_version.rel_alm_gst_ez.ez,
-                    #                     gst_version.rel_alm_gst_ez.kgnr,
-                    #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-                    #                     gst_zuor.awb_status_id,
-                    #                     gst_zuor.rechtsgrundlage_id,
-                    #                     '',
-                    #                     gst_version.rel_alm_gst_ez.datenstand])
+                self.setFeatureAttributes(feat, komplex)
 
-                    if komplex.rel_koppel != []:
+                # feat.setAttributes([gst_version.id,
+                #                     gst_zuor.rel_gst.gst,
+                #                     gst_version.rel_alm_gst_ez.ez,
+                #                     gst_version.rel_alm_gst_ez.kgnr,
+                #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+                #                     gst_zuor.awb_status_id,
+                #                     gst_zuor.rechtsgrundlage_id,
+                #                     '',
+                #                     gst_version.rel_alm_gst_ez.datenstand])
 
-                        for koppel in komplex.rel_koppel:
+                if komplex.rel_koppel != []:
 
-                            geom_wkt = to_shape(koppel.geometry).wkt
-                            geom_new = QgsGeometry()
-                            geom = geom_new.fromWkt(geom_wkt)
+                    for koppel in komplex.rel_koppel:
 
-                            if komplex_geom == None:
+                        geom_wkt = to_shape(koppel.geometry).wkt
+                        geom_new = QgsGeometry()
+                        geom = geom_new.fromWkt(geom_wkt)
 
-                                komplex_geom = geom
-                            else:
-                                komplex_geom = komplex_geom.combine(geom)
+                        if komplex_geom == None:
 
-                    # geom_wkt = to_shape(koppel.geometry).wkt
-                    # geom_new = QgsGeometry()
-                    # geom = geom_new.fromWkt(geom_wkt)
+                            komplex_geom = geom
+                        else:
+                            komplex_geom = komplex_geom.combine(geom)
 
-                    feat.setGeometry(komplex_geom)
-                    # feat.setGeometry(geom)
+                # geom_wkt = to_shape(koppel.geometry).wkt
+                # geom_new = QgsGeometry()
+                # geom = geom_new.fromWkt(geom_wkt)
 
-                    self._gis_layer.data_provider.addFeatures([feat])
+                feat.setGeometry(komplex_geom)
+                # feat.setGeometry(geom)
+
+                self._gis_layer.data_provider.addFeatures([feat])
 
     def setFeatureFields(self):
         # super().setFeatureFields()
