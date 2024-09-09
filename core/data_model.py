@@ -715,7 +715,7 @@ class BKomplexName(Base):
 
     rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplex_name')
     # rel_komplex_version: Mapped[List["BKomplexVersion"]] = relationship(back_populates="rel_komplex")
-    rel_komplex: Mapped[BKomplex] = relationship(back_populates='rel_komplex_name')
+    rel_komplex: Mapped[List[BKomplex]] = relationship(back_populates='rel_komplex_name')
 
     def __repr__(self):
         return f"<BKomplexName(id: {self.id}, " \
