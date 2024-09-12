@@ -384,7 +384,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         # self.guiGstPreSelTview._gis_layer.data_provider.truncate()
 
-        # self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
+        self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
         self.guiGstPreSelTview.setFeaturesFromMci()
 
         self.guiGstPreSelTview._gis_layer.commitChanges()
