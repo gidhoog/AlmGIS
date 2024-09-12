@@ -4,6 +4,7 @@ from _operator import attrgetter
 from datetime import datetime
 from pathlib import Path
 
+from PyQt5.QtWidgets import QAbstractButton
 from geoalchemy2 import WKTElement
 from sqlalchemy import desc, text, select
 from sqlalchemy.orm import joinedload
@@ -263,7 +264,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
     def loadSubWidgets(self):
 
         self.guiGstTable = GstTable(self, gis_mode=True)
-        self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=True)
+        self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=False)
 
         with db_session_cm(name='query tables in gst-zuordung',
                            expire_on_commit=False) as session:
@@ -346,29 +347,34 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
             for feat in self.guiGstTable._gis_layer.selectedFeatures():
 
-                if feat.attribute('zugeordnet') != 'X':
+                if feat['zugeordnet'] != 'X':
 
                     print(f'füge feature -- {feat.id()} -- ein!')
+                    """markiere die ausgewählten gst als vorgemerkt"""
                     feat.setAttribute(5, 'neu')
                     self.guiGstTable._gis_layer.updateFeature(feat)
+                    """"""
 
-                    gst_feature_id = feat.id()
-                    if gst_feature_id not in [g[0] for g in self.preselcted_gst_mci]:
+                    # gst_feature_id = feat.id()
+                    # if gst_feature_id not in [g[0] for g in self.preselcted_gst_mci]:
 
-                        self.preselcted_gst_mci.append([
-                            gst_feature_id,
-                            feat.attribute('gst_id'),
-                            feat.attribute('gst'),
-                            feat.attribute('ez'),
-                            feat.attribute('kgnr'),
-                            feat.attribute('kgname')
-                            ])
+                    if feat['gst_mci'][0].kg_gst not in [g.kg_gst for g in self.preselcted_gst_mci]:
+
+                        self.preselcted_gst_mci.append(feat['gst_mci'][0])
+                        # self.preselcted_gst_mci.append([
+                        #     gst_feature_id,
+                        #     feat.attribute('gst_id'),
+                        #     feat.attribute('gst'),
+                        #     feat.attribute('ez'),
+                        #     feat.attribute('kgnr'),
+                        #     feat.attribute('kgname')
+                        #     ])
 
                     print(f'vorgemerkte gst: {self.preselcted_gst_mci}')
 
             self.updatePreSelTable(self.preselcted_gst_mci)
 
-            self.preselcted_gst_mci.clear()
+            # self.preselcted_gst_mci.clear()
 
             self.guiGstTable._gis_layer.commitChanges()
 
@@ -380,18 +386,25 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         :param gst_list:
         :return:
         """
-        self.guiGstPreSelTview._gis_layer.startEditing()
+        print(f'updatePreSelTable')
 
-        # self.guiGstPreSelTview._gis_layer.data_provider.truncate()
+        self.guiGstPreSelTview._mci_list = gst_list
 
-        self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
-        self.guiGstPreSelTview.setFeaturesFromMci()
-
-        self.guiGstPreSelTview._gis_layer.commitChanges()
-
-        self.guiGstPreSelTview._gis_layer.data_provider.dataChanged.emit()
-
+        self.guiGstPreSelTview.view.model().sourceModel().layoutChanged.emit()
         self.guiGstPreSelTview.updateFooter()
+
+        # self.guiGstPreSelTview._gis_layer.startEditing()
+
+        # # self.guiGstPreSelTview._gis_layer.data_provider.truncate()
+        #
+        # # self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
+        # self.guiGstPreSelTview.setFeaturesFromMci()
+        #
+        # self.guiGstPreSelTview._gis_layer.commitChanges()
+        #
+        # self.guiGstPreSelTview._gis_layer.data_provider.dataChanged.emit()
+        #
+        # self.guiGstPreSelTview.updateFooter()
 
     def loadGdbDaten(self):
         """
@@ -1095,30 +1108,63 @@ class GstTableModel(GisTableModel):
     #         return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
 
-class GstPreSelTableModel(GisTableModel):
+class GstPreSelTableModel(TableModel):
 
-    def __init__(self, layerCache, parent=None):
-        super(GstPreSelTableModel, self).__init__(layerCache, parent)
+    header = [
+        'Gst',
+        'EZ',
+        'KgNr',
+        'KgName'
+    ]
+
+    # def __init__(self, layerCache, parent=None):
+    #     super(GstPreSelTableModel, self).__init__(layerCache, parent)
 
     def data(self, index: QModelIndex, role: int = ...):
 
         # feat = self.feature(index)
+        row = index.row()
 
         if role == Qt.TextAlignmentRole:
 
-            if index.column() in [4]:
+            if index.column() in [2]:
 
                 return Qt.AlignRight | Qt.AlignVCenter
 
-            if index.column() in [2, 3]:
+            if index.column() in [0, 1]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
-        if index.column() == 4:
+        if index.column() == 0:
 
             if role == Qt.DisplayRole:
+                return self.mci_list[row].gst
 
-                return str(self.feature(index).attribute('kgnr'))
+        if index.column() == 1:
+
+            if role == Qt.DisplayRole:
+                """last_gst"""
+                gst_versionen_list = self.mci_list[row].rel_alm_gst_version
+                last_gst = max(gst_versionen_list,
+                               key=attrgetter('rel_alm_gst_ez.datenstand'))
+                """"""
+                return last_gst.rel_alm_gst_ez.ez
+
+        if index.column() == 2:
+
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].kgnr
+
+        if index.column() == 3:
+
+            if role == Qt.DisplayRole:
+                return self.mci_list[row].rel_kat_gem.kgname
+
+        # if index.column() == 4:
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         return str(self.feature(index).attribute('kgnr'))
 
         # if index.column() == 9:  # gis_area
         #
@@ -1212,7 +1258,7 @@ class GstTable(DataView):
         importzeit_fld = QgsField("importzeit", QVariant.String)
         importzeit_fld.setAlias('Importzeit')
 
-        # gst_mci_fld = QgsField("gst_mci", QVariant.List)
+        gst_mci_fld = QgsField("gst_mci", QVariant.List)
 
         self.feature_fields.append(gst_id_fld)
         self.feature_fields.append(gst_fld)
@@ -1223,7 +1269,7 @@ class GstTable(DataView):
         self.feature_fields.append(zugeordnet_zu_fld)
         self.feature_fields.append(datenstand_fld)
         self.feature_fields.append(importzeit_fld)
-        # self.feature_fields.append(gst_mci_fld)
+        self.feature_fields.append(gst_mci_fld)
 
     def setFeaturesFromMci(self):
         super().setFeaturesFromMci()
@@ -1280,7 +1326,7 @@ class GstTable(DataView):
         feature['zugeordnet_zu'] = zugeordnet_zu
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
         feature['importzeit'] = last_gst.rel_alm_gst_ez.import_time
-        # feature['gst_mci'] = [mci]
+        feature['gst_mci'] = [mci]
 
     def setLayer(self):
 
@@ -1758,7 +1804,23 @@ class GstPreSelTable(DataView):
 
         self.parent = parent
 
-        self._model_gis_class = GstPreSelTableModel
+        # QAbstractButton * cornerButton = tableWidget->findChild < QAbstractButton * > ();
+        # // Since
+        # it
+        # 's not part of the API, there is no guarantee it exists
+        # if (cornerButton)
+        #     {
+        #         cornerButton->disconnect();
+        #     connect(cornerButton, SIGNAL(clicked()), ..., ...);
+        #     }
+
+        # # # self.__nw_heading = nw_heading
+        # btn = self.findChild(QAbstractButton)
+        # btn.setText("-")
+        # btn.setToolTip('Toggle selecting all table cells')
+        # btn.clicked.disconnect()
+
+        self._model_class = GstPreSelTableModel
 
         # self.available_filters = ''
         self.title = 'vorgemerkte Grundstücke:'
@@ -1956,8 +2018,8 @@ class GstPreSelTable(DataView):
     def finalInit(self):
         super().finalInit()
 
-        self.view.setColumnHidden(0, True)
-        self.view.setColumnHidden(1, True)
+        # self.view.setColumnHidden(0, True)
+        # self.view.setColumnHidden(1, True)
 
         # """setzt bestimmte spaltenbreiten"""
         # self.view.setColumnWidth(2, 80)
@@ -1970,9 +2032,9 @@ class GstPreSelTable(DataView):
 
         self.setStretchMethod(2)
 
+        self.view.setColumnWidth(0, 60)
+        self.view.setColumnWidth(1, 50)
         self.view.setColumnWidth(2, 60)
-        self.view.setColumnWidth(3, 50)
-        self.view.setColumnWidth(4, 60)
 
         self.signals()
 
@@ -1982,9 +2044,9 @@ class GstPreSelTable(DataView):
         self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
         self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
 
-        self._gis_layer.data_provider.dataChanged.connect(self.preselChangend)
+        # self._gis_layer.data_provider.dataChanged.connect(self.preselChangend)
 
-        self._gis_layer.selectionChanged.connect(self.selectGst)
+        # self._gis_layer.selectionChanged.connect(self.selectGst)
 
         # self.uiDeleteDataTbtn.clicked.disconnect()
         #
