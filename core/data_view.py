@@ -6,7 +6,7 @@ from qgis.PyQt.QtCore import QAbstractTableModel, Qt, QModelIndex, \
 from qgis.PyQt.QtGui import QPalette, QColor, QIcon
 from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
     QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
-    QDialog, QPushButton
+    QDialog, QPushButton, QAbstractButton
 
 from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
                       QgsAttributeTableFilterModel, QgsMapCanvas)
@@ -26,6 +26,19 @@ class GisTableView(QgsAttributeTableView):
 
     def __init__(self, parent):
         super(GisTableView, self).__init__(parent)
+
+        self.parent = parent
+
+        """declare the corner-button of the table-view"""
+        self.uiCornerButton = self.findChild(QAbstractButton)
+        self.uiCornerButton.setToolTip('markiere alle Zeilen')
+        self.uiCornerButton.setStyleSheet(
+            "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
+            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "image: url(:/svg/resources/icons/mActionSelectAllRows.svg);}")
+        self.uiCornerButton.clicked.disconnect()
+        self.uiCornerButton.clicked.connect(self.clickedCornerButton)
+        """"""
 
         # self.setSelectionMode(QAbstractItemView.MultiSelection)
         # self.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -47,6 +60,49 @@ class GisTableView(QgsAttributeTableView):
     # def selectionBehavior(self):
     #
     #     return QAbstractItemView.SelectRows
+
+    def clickedCornerButton(self):
+        """
+        the corner-button of the tableview is clicked
+        """
+
+        if self.parent._gis_layer.selectedFeatureIds() == []:
+
+            self.parent._gis_layer.selectAll()
+            self.setCornerButtonDeselectAll()
+        else:
+            self.parent._gis_layer.removeSelection()
+            self.setCornerButtonSelectAll()
+
+
+        # if self.parent.getSelectedRows() == []:
+        #     self.parent.selectAllRows()
+        #     self.setCornerButtonDeselectAll()
+        # else:
+        #     self.parent.clearSelectedRows()
+        #     self.setCornerButtonSelectAll()
+
+    def setCornerButtonSelectAll(self):
+        """
+        set the corner-button of the table-view to select all rows
+        """
+
+        self.uiCornerButton.setToolTip('markiere alle Zeilen')
+        self.uiCornerButton.setStyleSheet(
+            "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
+            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "image: url(:/svg/resources/icons/mActionSelectAllRows.svg);}")
+
+    def setCornerButtonDeselectAll(self):
+        """
+        set the corner-button of the table-view to deselect all rows
+        """
+
+        self.uiCornerButton.setToolTip('hebe alle Markierungen auf')
+        self.uiCornerButton.setStyleSheet(
+            "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
+            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "image: url(:/svg/resources/icons/mActionDeselectAllRows.svg);}")
 
 
 class GisTableModel(QgsAttributeTableModel):
