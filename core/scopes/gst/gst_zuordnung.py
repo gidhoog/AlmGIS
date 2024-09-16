@@ -2041,8 +2041,10 @@ class GstPreSelTable(DataView):
     def signals(self):
         # super().signals()
 
-        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
-        self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
+        pass
+
+        # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+        # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
 
         # self._gis_layer.data_provider.dataChanged.connect(self.preselChangend)
 

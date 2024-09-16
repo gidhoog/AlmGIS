@@ -34,7 +34,7 @@ class GisTableView(QgsAttributeTableView):
         self.uiCornerButton.setToolTip('markiere alle Zeilen')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
-            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
             "image: url(:/svg/resources/icons/mActionSelectAllRows.svg);}")
         self.uiCornerButton.clicked.disconnect()
         self.uiCornerButton.clicked.connect(self.clickedCornerButton)
@@ -90,7 +90,7 @@ class GisTableView(QgsAttributeTableView):
         self.uiCornerButton.setToolTip('markiere alle Zeilen')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
-            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
             "image: url(:/svg/resources/icons/mActionSelectAllRows.svg);}")
 
     def setCornerButtonDeselectAll(self):
@@ -101,7 +101,7 @@ class GisTableView(QgsAttributeTableView):
         self.uiCornerButton.setToolTip('hebe alle Markierungen auf')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
-            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
             "image: url(:/svg/resources/icons/mActionDeselectAllRows.svg);}")
 
 
@@ -218,7 +218,7 @@ class TableView(QTableView):
         self.uiCornerButton.setToolTip('markiere alle Zeilen')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
-            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
             "image: url(:/svg/resources/icons/mActionSelectAllRows.svg);}")
         self.uiCornerButton.clicked.disconnect()
         self.uiCornerButton.clicked.connect(self.clickedCornerButton)
@@ -244,7 +244,7 @@ class TableView(QTableView):
         self.uiCornerButton.setToolTip('markiere alle Zeilen')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
-            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
             "image: url(:/svg/resources/icons/mActionSelectAllRows.svg);}")
 
     def setCornerButtonDeselectAll(self):
@@ -255,7 +255,7 @@ class TableView(QTableView):
         self.uiCornerButton.setToolTip('hebe alle Markierungen auf')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
-            "border: 0px solid rgba(0,0,0,0); border-width: 5px; "
+            "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
             "image: url(:/svg/resources/icons/mActionDeselectAllRows.svg);}")
 
     def nothing(self, index):
@@ -792,8 +792,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if self._gis_layer is not None:
             self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
 
-        self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
-        self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
+        # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
+        # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
         #
         # self.uiActionExportCsv.triggered.connect(self.export_csv)
 
