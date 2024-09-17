@@ -793,8 +793,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # self.view.selectionModel().selectionChanged \
         #     .connect(self.selectedRowsChanged)
         #
-        if self._gis_layer is not None:
-            self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
+        # if self._gis_layer is not None:
+        #     self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
 
         # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
         # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
@@ -848,10 +848,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         print(f'--- selection changed -----------------------')
         self.updateFooter()
 
-        if self.getSelectedRows() == []:
-            self.view.setCornerButtonSelectAll()
+        if self.gis_mode:
+            if self._gis_layer.selectedFeatureIds() == []:
+                self.view.setCornerButtonSelectAll()
+            else:
+                self.view.setCornerButtonDeselectAll()
         else:
-            self.view.setCornerButtonDeselectAll()
+            if self.getSelectedRows() == []:
+                self.view.setCornerButtonSelectAll()
+            else:
+                self.view.setCornerButtonDeselectAll()
 
     def getProxyIndex(self, index):
         """
