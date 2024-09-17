@@ -56,7 +56,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.akt_id = akt_id
 
         self.checked_gst_instances = []  # liste mit den vorgemerkten gst-instanzen
-        self.preselcted_gst_mci = []  # list der vorgemerkten gst-mci'S
+        self.preselected_gst_mci = []  # list der vorgemerkten gst-mci'S
 
         self.guiGisDock = GisDock(self)
         self.guiMainGis = MainGis(self.guiGisDock, self, akt_id)
@@ -356,12 +356,12 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                     """"""
 
                     # gst_feature_id = feat.id()
-                    # if gst_feature_id not in [g[0] for g in self.preselcted_gst_mci]:
+                    # if gst_feature_id not in [g[0] for g in self.preselected_gst_mci]:
 
-                    if feat['gst_mci'][0].kg_gst not in [g.kg_gst for g in self.preselcted_gst_mci]:
+                    if feat['gst_mci'][0].kg_gst not in [g.kg_gst for g in self.preselected_gst_mci]:
 
-                        self.preselcted_gst_mci.append(feat['gst_mci'][0])
-                        # self.preselcted_gst_mci.append([
+                        self.preselected_gst_mci.append(feat['gst_mci'][0])
+                        # self.preselected_gst_mci.append([
                         #     gst_feature_id,
                         #     feat.attribute('gst_id'),
                         #     feat.attribute('gst'),
@@ -370,11 +370,11 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                         #     feat.attribute('kgname')
                         #     ])
 
-                    print(f'vorgemerkte gst: {self.preselcted_gst_mci}')
+                    print(f'vorgemerkte gst: {self.preselected_gst_mci}')
 
-            self.updatePreSelTable(self.preselcted_gst_mci)
+            self.updatePreSelTable(self.preselected_gst_mci)
 
-            # self.preselcted_gst_mci.clear()
+            # self.preselected_gst_mci.clear()
 
             self.guiGstTable._gis_layer.commitChanges()
 
@@ -1119,6 +1119,11 @@ class GstPreSelTableModel(TableModel):
 
     # def __init__(self, layerCache, parent=None):
     #     super(GstPreSelTableModel, self).__init__(layerCache, parent)
+
+    # def layoutChanged(self, *args, **kwargs):
+    #     super().layoutChanged()
+    #
+    #     print(f'data changed here!!!')
 
     def data(self, index: QModelIndex, role: int = ...):
 
@@ -1867,130 +1872,154 @@ class GstPreSelTable(DataView):
 
     def loadData(self, session=None):
 
-        self._mci_list = self.parent.preselcted_gst_mci
+        self._mci_list = self.parent.preselected_gst_mci
         # self._mci_list = [[1, '314/3', 136, 19321, 'Mitterbachseerotte'],
         #                   [2, '314/4', 136, 19321, 'Mitterbachseerotte']]
 
-    def setFeatureFields(self):
+    # def setFeatureFields(self):
+    #
+    #     feat_id_fld = QgsField("feat_id", QVariant.Int)
+    #
+    #     gst_id_fld = QgsField("gst_id", QVariant.Int)
+    #
+    #     gst_fld = QgsField("gst", QVariant.String)
+    #     gst_fld.setAlias('Gst')
+    #
+    #     ez_fld = QgsField("ez", QVariant.Int)
+    #     ez_fld.setAlias('EZ')
+    #
+    #     kgnr_fld = QgsField("kgnr", QVariant.Int)
+    #     kgnr_fld.setAlias('KG-Nr')
+    #
+    #     kgname_fld = QgsField("kgname", QVariant.String)
+    #     kgname_fld.setAlias('KG-Name')
+    #
+    #     self.feature_fields.append(feat_id_fld)
+    #     self.feature_fields.append(gst_id_fld)
+    #     self.feature_fields.append(gst_fld)
+    #     self.feature_fields.append(ez_fld)
+    #     self.feature_fields.append(kgnr_fld)
+    #     self.feature_fields.append(kgname_fld)
 
-        feat_id_fld = QgsField("feat_id", QVariant.Int)
+    # def setFeaturesFromMci(self):
+    #     super().setFeaturesFromMci()
+    #
+    #     for gst in self._mci_list:
+    #
+    #         feat = Feature(self._gis_layer.fields(), self)
+    #
+    #         self.setFeatureAttributes(feat, gst)
+    #
+    #         # """last_gst"""
+    #         # gst_versionen_list = gst.rel_alm_gst_version
+    #         # last_gst = max(gst_versionen_list,
+    #         #                key=attrgetter('rel_alm_gst_ez.datenstand'))
+    #         # """"""
+    #
+    #         # geom_wkt = to_shape(last_gst.geometry).wkt
+    #         # geom_new = QgsGeometry()
+    #         # geom = geom_new.fromWkt(geom_wkt)
+    #         #
+    #         # feat.setGeometry(geom)
+    #
+    #         self._gis_layer.data_provider.addFeatures([feat])
 
-        gst_id_fld = QgsField("gst_id", QVariant.Int)
+    # def setFeatureAttributes(self, feature, mci):
+    #
+    #     # """last_gst"""
+    #     # gst_versionen_list = mci.rel_alm_gst_version
+    #     # last_gst = max(gst_versionen_list,
+    #     #                key=attrgetter('rel_alm_gst_ez.datenstand'))
+    #     # """"""
+    #     #
+    #     # zugeordnet = '--'
+    #     #
+    #     # zugeordnet_list = []
+    #     # if mci.rel_gst_zuordnung != []:
+    #     #     for gst_zuord in mci.rel_gst_zuordnung:
+    #     #         zugeordnet_list.append(gst_zuord.rel_akt.name)
+    #     #
+    #     #         if gst_zuord.rel_akt.id == self.parent.akt_id:
+    #     #             zugeordnet = 'X'
+    #     #
+    #     #
+    #     #     zugeordnet_zu = ", ".join(str(z) for z in zugeordnet_list)
+    #     # else:
+    #     #     zugeordnet_zu = '---'
+    #
+    #     feature['feat_id'] = mci[0]
+    #     feature['gst_id'] = mci[1]
+    #     feature['gst'] = mci[2]
+    #     feature['ez'] = mci[3]
+    #     feature['kgnr'] = mci[4]
+    #     feature['kgname'] = mci[5]
 
-        gst_fld = QgsField("gst", QVariant.String)
-        gst_fld.setAlias('Gst')
-
-        ez_fld = QgsField("ez", QVariant.Int)
-        ez_fld.setAlias('EZ')
-
-        kgnr_fld = QgsField("kgnr", QVariant.Int)
-        kgnr_fld.setAlias('KG-Nr')
-
-        kgname_fld = QgsField("kgname", QVariant.String)
-        kgname_fld.setAlias('KG-Name')
-
-        self.feature_fields.append(feat_id_fld)
-        self.feature_fields.append(gst_id_fld)
-        self.feature_fields.append(gst_fld)
-        self.feature_fields.append(ez_fld)
-        self.feature_fields.append(kgnr_fld)
-        self.feature_fields.append(kgname_fld)
-
-    def setFeaturesFromMci(self):
-        super().setFeaturesFromMci()
-
-        for gst in self._mci_list:
-
-            feat = Feature(self._gis_layer.fields(), self)
-
-            self.setFeatureAttributes(feat, gst)
-
-            # """last_gst"""
-            # gst_versionen_list = gst.rel_alm_gst_version
-            # last_gst = max(gst_versionen_list,
-            #                key=attrgetter('rel_alm_gst_ez.datenstand'))
-            # """"""
-
-            # geom_wkt = to_shape(last_gst.geometry).wkt
-            # geom_new = QgsGeometry()
-            # geom = geom_new.fromWkt(geom_wkt)
-            #
-            # feat.setGeometry(geom)
-
-            self._gis_layer.data_provider.addFeatures([feat])
-
-    def setFeatureAttributes(self, feature, mci):
-
-        # """last_gst"""
-        # gst_versionen_list = mci.rel_alm_gst_version
-        # last_gst = max(gst_versionen_list,
-        #                key=attrgetter('rel_alm_gst_ez.datenstand'))
-        # """"""
-        #
-        # zugeordnet = '--'
-        #
-        # zugeordnet_list = []
-        # if mci.rel_gst_zuordnung != []:
-        #     for gst_zuord in mci.rel_gst_zuordnung:
-        #         zugeordnet_list.append(gst_zuord.rel_akt.name)
-        #
-        #         if gst_zuord.rel_akt.id == self.parent.akt_id:
-        #             zugeordnet = 'X'
-        #
-        #
-        #     zugeordnet_zu = ", ".join(str(z) for z in zugeordnet_list)
-        # else:
-        #     zugeordnet_zu = '---'
-
-        feature['feat_id'] = mci[0]
-        feature['gst_id'] = mci[1]
-        feature['gst'] = mci[2]
-        feature['ez'] = mci[3]
-        feature['kgnr'] = mci[4]
-        feature['kgname'] = mci[5]
-
-    def setLayer(self):
-
-        layer = ZVectorLayer(
-            "None",
-            "GstPreSelLay",
-            "memory",
-            feature_fields=self.feature_fields
-        )
-        return layer
+    # def setLayer(self):
+    #
+    #     layer = ZVectorLayer(
+    #         "None",
+    #         "GstPreSelLay",
+    #         "memory",
+    #         feature_fields=self.feature_fields
+    #     )
+    #     return layer
 
     def undoPreSelGst(self):
         """
         entferne alle selektierten vorgemerkten Grundstücke
         :return:
         """
+        self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-        self.parent.guiGstTable._gis_layer.removeSelection()
-
-        feat_ids = [f.attribute('feat_id') for f in self._gis_layer.selectedFeatures()]
-
-        # for feat in self._gis_layer.selectedFeatures():
-        #
-        #     pass
-        #     feat_id = feat.attribute('feat_id')
-        self.parent.guiGstTable._gis_layer.select(feat_ids)
-
-
-        # todo: suche hier nach dem feature in der gst-tabelle und entferne
-        #  dort die 'neu' markierung in spalte 5
+        del_indexes = [d.row() for d in self.getSelectedRows()]
+        # sort_indexes = del_indexes.sort(reverse=True)
 
         self.parent.guiGstTable._gis_layer.startEditing()
-        for feat in self.parent.guiGstTable._gis_layer.selectedFeatures():
-            feat.setAttribute(5, '--')
-            self.parent.guiGstTable._gis_layer.updateFeature(feat)
+
+        for i in sorted(del_indexes, reverse=True):
+
+            for feat in self.parent.guiGstTable._gis_layer.getFeatures():
+                if feat.attribute('gst_id') == self.parent.preselected_gst_mci[i].id:
+                    feat.setAttribute(5, '--')
+                    self.parent.guiGstTable._gis_layer.updateFeature(feat)
+
+            del self.parent.preselected_gst_mci[i]
+
         self.parent.guiGstTable._gis_layer.commitChanges()
         self.parent.guiGstTable._gis_layer.data_provider.dataChanged.emit()
 
+        self.view.model().sourceModel().layoutChanged.emit()
 
-        self._gis_layer.data_provider.deleteFeatures(
-            self._gis_layer.selectedFeatureIds())
+        self.clearSelectedRows()
 
-        self._gis_layer.data_provider.dataChanged.emit()
+        print(f'remove row')
+
+        # self.parent.guiGstTable._gis_layer.removeSelection()
+        #
+        # feat_ids = [f.attribute('feat_id') for f in self._gis_layer.selectedFeatures()]
+        #
+        # # for feat in self._gis_layer.selectedFeatures():
+        # #
+        # #     pass
+        # #     feat_id = feat.attribute('feat_id')
+        # self.parent.guiGstTable._gis_layer.select(feat_ids)
+        #
+        #
+        # # todo: suche hier nach dem feature in der gst-tabelle und entferne
+        # #  dort die 'neu' markierung in spalte 5
+        #
+        # self.parent.guiGstTable._gis_layer.startEditing()
+        # for feat in self.parent.guiGstTable._gis_layer.selectedFeatures():
+        #     feat.setAttribute(5, '--')
+        #     self.parent.guiGstTable._gis_layer.updateFeature(feat)
+        # self.parent.guiGstTable._gis_layer.commitChanges()
+        # self.parent.guiGstTable._gis_layer.data_provider.dataChanged.emit()
+        #
+        #
+        # self._gis_layer.data_provider.deleteFeatures(
+        #     self._gis_layer.selectedFeatureIds())
+        #
+        # self._gis_layer.data_provider.dataChanged.emit()
 
         self.updateFooter()
 
@@ -2038,10 +2067,31 @@ class GstPreSelTable(DataView):
 
         self.signals()
 
+    def selectedRowsChanged(self):
+        
+        print(f'--> connect to gst-table')
+
+        self.parent.guiGstTable._gis_layer.removeSelection()
+
+        gst_id_list = [self.parent.preselected_gst_mci[g.row()].id for g in self.getSelectedRows()]
+
+        self.parent.guiGstTable._gis_layer.select(
+            [f.id() for f in self.parent.guiGstTable._gis_layer.getFeatures() if f['gst_id'] in gst_id_list])
+
+        # for idx in self.getSelectedRows():
+        #     gst_id = self.parent.preselected_gst_mci[idx.row()].id
+        #
+        #     self.parent.guiGstTable._gis_layer.selectByExpression(f"\"gst_id\"={gst_id}")
+        
+        super().selectedRowsChanged()
+
     def signals(self):
         # super().signals()
 
-        pass
+        self.view.selectionModel().selectionChanged.connect(
+            self.selectedRowsChanged)
+
+        self.view.model().layoutChanged.connect(self.preselChangend)
 
         # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
         # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
@@ -2065,6 +2115,10 @@ class GstPreSelTable(DataView):
         self.parent.guiGstTable._gis_layer.select(feat_ids)
 
     def preselChangend(self):
+        """
+        die daten im model ändern sich
+        :return:
+        """
 
         if self.view.model().rowCount() > 0:
             self.parent.guiMatchPreSelGstPbtn.setEnabled(True)
