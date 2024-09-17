@@ -29,9 +29,11 @@ class GisTableView(QgsAttributeTableView):
 
         self.parent = parent
 
+        self.verticalHeader().setMinimumWidth(25)
+
         """declare the corner-button of the table-view"""
         self.uiCornerButton = self.findChild(QAbstractButton)
-        self.uiCornerButton.setToolTip('markiere alle Zeilen')
+        self.uiCornerButton.setToolTip('wähle alle Zeilen aus')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
             "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
@@ -87,7 +89,7 @@ class GisTableView(QgsAttributeTableView):
         set the corner-button of the table-view to select all rows
         """
 
-        self.uiCornerButton.setToolTip('markiere alle Zeilen')
+        self.uiCornerButton.setToolTip('wähle alle Zeilen aus')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
             "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
@@ -98,7 +100,7 @@ class GisTableView(QgsAttributeTableView):
         set the corner-button of the table-view to deselect all rows
         """
 
-        self.uiCornerButton.setToolTip('hebe alle Markierungen auf')
+        self.uiCornerButton.setToolTip('hebe Auswahl auf')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
             "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
@@ -181,6 +183,8 @@ class TableView(QTableView):
         self.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.setSortingEnabled(True)
 
+        self.verticalHeader().setMinimumWidth(20)
+
         # self.verticalHeader().viewport().installEventFilter(self)
 
         #todo: implement here 'selectRow' (see c++ code):
@@ -215,7 +219,7 @@ class TableView(QTableView):
 
         """declare the corner-button of the table-view"""
         self.uiCornerButton = self.findChild(QAbstractButton)
-        self.uiCornerButton.setToolTip('markiere alle Zeilen')
+        self.uiCornerButton.setToolTip('wähle alle Zeilen aus')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
             "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
@@ -241,7 +245,7 @@ class TableView(QTableView):
         set the corner-button of the table-view to select all rows
         """
 
-        self.uiCornerButton.setToolTip('markiere alle Zeilen')
+        self.uiCornerButton.setToolTip('wähle alle Zeilen aus')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
             "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
@@ -252,7 +256,7 @@ class TableView(QTableView):
         set the corner-button of the table-view to deselect all rows
         """
 
-        self.uiCornerButton.setToolTip('hebe alle Markierungen auf')
+        self.uiCornerButton.setToolTip('hebe Auswahl auf')
         self.uiCornerButton.setStyleSheet(
             "QTableView QTableCornerButton::section{background: rgba(0,0,0,0); "
             "border: 0px solid rgba(0,0,0,0); border-width: 2px; "
@@ -843,6 +847,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         print(f'--- selection changed -----------------------')
         self.updateFooter()
+
+        if self.getSelectedRows() == []:
+            self.view.setCornerButtonSelectAll()
+        else:
+            self.view.setCornerButtonDeselectAll()
 
     def getProxyIndex(self, index):
         """
