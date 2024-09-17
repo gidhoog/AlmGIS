@@ -1,10 +1,9 @@
-import csv, sys, webbrowser, os
+import csv, webbrowser, os
 from _operator import attrgetter
 
 from datetime import datetime
 from pathlib import Path
 
-from PyQt5.QtWidgets import QAbstractButton
 from geoalchemy2 import WKTElement
 from sqlalchemy import desc, text, select
 from sqlalchemy.orm import joinedload
@@ -12,29 +11,22 @@ from sqlalchemy.orm import joinedload
 from geoalchemy2.shape import to_shape
 
 from core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
-    BGstVersion, BSys, BKatGem, BGstZuordnung, BGstZuordnungMain, \
-    BGisScopeLayer
-# from core.gis_control import GisControl
-from core.gis_layer import ZVectorLayer, Feature, ZVectorLayer, setLayerStyle
+    BGstVersion, BSys, BGstZuordnung, BGisScopeLayer
+from core.gis_layer import Feature, ZVectorLayer, setLayerStyle
 from core.main_gis import MainGis
-from core.data_view import DataView, TableModel, TableView, \
-    SortFilterProxyModel, GisTableModel
+from core.data_view import DataView, TableModel, TableView,  GisTableModel
 
 import zipfile
 from io import TextIOWrapper
 from os import listdir
 from os.path import isfile, join
 
-from qgis.PyQt.QtCore import (QModelIndex, Qt, QAbstractTableModel,
-                          QSortFilterProxyModel, QItemSelectionModel, QSize,
-                              QVariant)
-from qgis.PyQt.QtGui import QColor, QIcon
-from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QComboBox, QHeaderView, \
-    QDockWidget, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QTableView,
-                             QSplitter, QVBoxLayout, QWidget, QLineEdit)
+from qgis.PyQt.QtCore import (QModelIndex, Qt, QItemSelectionModel, QVariant)
+from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, \
+    QDockWidget, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit)
+from qgis.PyQt.QtGui import QFont
 from qgis.core import QgsVectorLayer, QgsProject, \
-    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry, \
-    edit
+    QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
 
 from core import db_session_cm, config, main_dialog, settings
 from core.scopes.gst import gst_zuordnung_UI
@@ -55,7 +47,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.parent = parent
         self.akt_id = akt_id
 
-        self.checked_gst_instances = []  # liste mit den vorgemerkten gst-instanzen
+        # self.checked_gst_instances = []  # liste mit den vorgemerkten gst-instanzen
         self.preselected_gst_mci = []  # list der vorgemerkten gst-mci'S
 
         self.guiGisDock = GisDock(self)
@@ -138,26 +130,6 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         # self.linked_gis_widgets[108] = self.guiGstTable
         # self.activateGisControl()
 
-    def loadData(self):
-
-        pass
-
-        # self.getZugeordneteGst()
-        #
-        # """initialisiere die grundstückstabelle"""
-        # with db_session_cm() as session:
-        #     self.guiGstTable.initDataView(session)
-        # """"""
-        #
-        # self.setPreSelModel()
-        #
-        # """da in diesem Maintabel die 'initDataView' Methode nicht verwendet
-        # wird muss neben dem data_view_model auch dem view direkt das
-        # model mit den daten übergeben werden"""
-        # self.guiGstPreSelTview.data_view.setModel(self.presel_proxy_model)
-        # self.guiGstPreSelTview.data_view_model = self.presel_proxy_model
-        # """"""
-
     def setPreSelModel(self):
         """
         setzte das model für die vorgemerkte Tabelle
@@ -173,36 +145,16 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
     def initUi(self):
 
-        self.presel_wid = QWidget(self)
-        self.guiMatchPreSelGstPbtn = QPushButton(self)
-        self.guiMatchPreSelGstPbtn.setText('Grundstücke zuordnen')
-        self.guiMatchPreSelGstPbtn.setIcon(QIcon(":/svg/resources/icons/tick_green.svg"))
-        self.guiMatchPreSelGstPbtn.setToolTip('übernehme die <p>vorgemerkten</p> Grundstücke<br>'
-                                              'in den aktuellen Akt')
-        self.guiMatchPreSelGstPbtn.setIconSize(QSize(30, 30))
-        self.guiMatchPreSelGstPbtn.setEnabled(False)
+        self.uiTableSplitter.setStyleSheet(
+            'QSplitter::handle {background: grey; }')
 
-        self.presel_layout = QHBoxLayout(self)
-        self.presel_layout.setContentsMargins(0, 0, 0, 0)
-        self.presel_wid.setLayout(self.presel_layout)
+        self.uiMatchGstPbtn.setEnabled(False)
 
-        self.presel_layout.insertWidget(0, self.guiGstPreSelTview)
-        self.presel_layout.insertWidget(1, self.guiMatchPreSelGstPbtn)
-
-        self.table_splitter = QSplitter()
-        self.table_splitter.setOrientation(Qt.Vertical)
-        self.table_splitter.setStyleSheet('QSplitter::handle {background: grey; }')
-        self.table_splitter.addWidget(self.guiGstTable)
-        self.table_splitter.addWidget(self.presel_wid)
-
-        self.uiCentralLayout.addWidget(self.table_splitter)
-
-        """richte self.guiGstPreSelTview ein"""
-        # self.guiGstPreSelTview.initUi()
-        # self.guiGstPreSelTview.finalInit()
-        # self.guiGstPreSelTview.updateMaintableNew()
-        # self.guiGstPreSelTview.data_view.selectionModel().selectionChanged.connect(self.selPreChanged)
-        """"""
+        self.uiInfoBtnImport.initInfoButton(1101)
+        self.uiInfoBtnGstTable.initInfoButton(1102)
+        self.uiInfoBtnSelectGst.initInfoButton(1103)
+        self.uiInfoBtnRemoveGst.initInfoButton(1104)
+        self.uiInfoBtnMatchGst.initInfoButton(1105)
 
     def initWidget(self):
 
@@ -214,11 +166,6 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         self.initUi()
 
-        # self.linked_gis_widgets[108] = self.guiGstTable
-        # self.activateGisControl()
-
-        # self.linked_gis_widgets[108] = self.guiGstTable
-        # self.activateGisControl()
         self.dialog_widget._guiApplyDbtn.setEnabled(False)
 
         self.signals()
@@ -252,9 +199,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         #     self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
 
         self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
-        self.guiGstTable.guiPreSelectPbtn.clicked.connect(self.reserveSelectedGst)
+        self.uiSelectGstPbtn.clicked.connect(self.reserveSelectedGst)
 
-        self.guiMatchPreSelGstPbtn.clicked.connect(self.matchGstMultiple)
+        self.uiMatchGstPbtn.clicked.connect(self.matchGstMultiple)
 
         # self.guiGstPreSelTview._gis_layer.data_provider.dataChanged.connect(self.preselChangend)
 
@@ -264,7 +211,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
     def loadSubWidgets(self):
 
         self.guiGstTable = GstTable(self, gis_mode=True)
+        self.uiGstTableVLay.addWidget(self.guiGstTable)
+
         self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=False)
+        self.uiPreSelGstTableVLay.addWidget(self.guiGstPreSelTview)
 
         with db_session_cm(name='query tables in gst-zuordung',
                            expire_on_commit=False) as session:
@@ -1105,20 +1055,16 @@ class GstTable(DataView):
     def initUi(self):
         super().initUi()
 
+        self.uiTitleLbl.setVisible(False)
+
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
         self.uiDeleteDataTbtn.setVisible(False)
 
         self.uiSeparator01.setVisible(False)
+        self.uiSeparator03.setVisible(False)
 
-        self.guiPreSelectPbtn = QPushButton()
-        self.guiPreSelectPbtn.setText('Auswahl übernehmen')
-        self.guiPreSelectPbtn.setIcon(QIcon(":/svg/resources/icons/arrow_down_blue.svg"))
-        self.guiPreSelectPbtn.setToolTip('merke die ausgewählten Grundstücke vor')
-        self.guiPreSelectPbtn.setIconSize(QSize(30, 30))
-        self.guiPreSelectPbtn.setEnabled(False)
-
-        self.uiFooterHlay.addWidget(self.guiPreSelectPbtn)
+        self.parent.uiSelectGstPbtn.setEnabled(False)
 
         self.guiGstChecked = QLabel()
         self.uiFooterSubVlay.addWidget(self.guiGstChecked)
@@ -1170,9 +1116,9 @@ class GstTable(DataView):
         Grundstücke"""
 
         if self._gis_layer.selectedFeatureIds() != []:
-            self.guiPreSelectPbtn.setEnabled(True)
+            self.parent.uiSelectGstPbtn.setEnabled(True)
         else:
-            self.guiPreSelectPbtn.setEnabled(False)
+            self.parent.uiSelectGstPbtn.setEnabled(False)
         """"""
 
     def setFilterUI(self):
@@ -1375,29 +1321,27 @@ class GstPreSelTable(DataView):
 
         self._model_class = GstPreSelTableModel
 
+        """setzte den tabellen-titel"""
         self.title = 'vorgemerkte Grundstücke:'
-
         self.uicTitleLbl = QLabel(self)
         self.uicTitleLbl.setText(self.title)
+
+        self.title_font = QFont("Calibri", 15, QFont.Bold)
+        self.uicTitleLbl.setFont(self.title_font)
+        """"""
+
         self.uiHeaderHley.insertWidget(1, self.uicTitleLbl)
 
         self.maintable_text = ["vorgemerktesGrundstück",
                                "vorgemerkte Grundstücke",
                                "kein vorgemerktes Grundstück"]
 
-        self.guiUndoPreSelPbtn = QPushButton(self)
-        self.guiUndoPreSelPbtn.setIcon(
-            QIcon(":/svg/resources/icons/white_cross_in_red_circle.svg"))
-        self.guiUndoPreSelPbtn.setIconSize(QSize(25, 25))
-        self.guiUndoPreSelPbtn.setFixedSize(32, 31)
-        self.guiUndoPreSelPbtn.setFlat(True)
-        self.guiUndoPreSelPbtn.setEnabled(False)
-        self.guiUndoPreSelPbtn.setToolTip(
+        self.parent.uiRemoveGstPbtn.setEnabled(False)
+        self.parent.uiRemoveGstPbtn.setToolTip(
             'entferne alle ausgewählten Grundstücke aus der Liste der '
             'vorgemerkten Grundstücke')
-        self.uiHeaderHley.insertWidget(3, self.guiUndoPreSelPbtn)
 
-        self.guiUndoPreSelPbtn.clicked.connect(self.removePreSelGst)
+        self.parent.uiRemoveGstPbtn.clicked.connect(self.removePreSelGst)
 
     def loadData(self, session=None):
 
@@ -1450,6 +1394,7 @@ class GstPreSelTable(DataView):
         self.uiDeleteDataTbtn.setVisible(False)
         self.uiToolsTbtn.setVisible(False)
 
+        self.uiSeparator01.setVisible(False)
         self.uiSeparator03.setVisible(False)
 
         self.uiFilterLbl.setVisible(False)
@@ -1501,11 +1446,11 @@ class GstPreSelTable(DataView):
         """
 
         if self.view.model().rowCount() > 0:
-            self.parent.guiMatchPreSelGstPbtn.setEnabled(True)
-            self.guiUndoPreSelPbtn.setEnabled(True)
+            self.parent.uiMatchGstPbtn.setEnabled(True)
+            self.parent.uiRemoveGstPbtn.setEnabled(True)
         else:
-            self.parent.guiMatchPreSelGstPbtn.setEnabled(False)
-            self.guiUndoPreSelPbtn.setEnabled(False)
+            self.parent.uiMatchGstPbtn.setEnabled(False)
+            self.parent.uiRemoveGstPbtn.setEnabled(False)
 
 
 class GstGemWerteMainDialog(main_dialog.MainDialog):

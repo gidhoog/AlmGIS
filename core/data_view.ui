@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>791</width>
-    <height>374</height>
+    <height>110</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,9 +41,6 @@
      <property name="topMargin">
       <number>0</number>
      </property>
-     <item>
-      <layout class="QHBoxLayout" name="uiAdditionalLayout1"/>
-     </item>
      <item>
       <layout class="QHBoxLayout" name="uiHeaderHley">
        <property name="spacing">

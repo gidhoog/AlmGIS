@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DataView(object):
     def setupUi(self, DataView):
         DataView.setObjectName("DataView")
-        DataView.resize(791, 374)
+        DataView.resize(791, 110)
         self.verticalLayout = QtWidgets.QVBoxLayout(DataView)
         self.verticalLayout.setContentsMargins(4, 4, 4, 4)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -26,9 +26,6 @@ class Ui_DataView(object):
         self.uiMainVlay.setContentsMargins(-1, 0, -1, -1)
         self.uiMainVlay.setSpacing(6)
         self.uiMainVlay.setObjectName("uiMainVlay")
-        self.uiAdditionalLayout1 = QtWidgets.QHBoxLayout()
-        self.uiAdditionalLayout1.setObjectName("uiAdditionalLayout1")
-        self.uiMainVlay.addLayout(self.uiAdditionalLayout1)
         self.uiHeaderHley = QtWidgets.QHBoxLayout()
         self.uiHeaderHley.setContentsMargins(-1, 0, -1, -1)
         self.uiHeaderHley.setSpacing(3)

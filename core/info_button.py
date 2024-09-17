@@ -39,18 +39,20 @@ class InfoButton(QWidget):
     @info_element.setter
     def info_element(self, value):
 
+        id_str = str(self.info_id)
+
         if value:
 
             self._info_element = value
 
             title = self._info_element.title
             content = self._info_element.content
-            id_str = str(self._info_element.id)
+            # id_str = str(self._info_element.id)
 
         else:
             title = "Info"
             content = "Keine Information vorhanden."
-            id_str = '---'
+            # id_str = '---'
 
         html = '''<!DOCTYPE html>'''\
                '''<html lang="en">'''\
