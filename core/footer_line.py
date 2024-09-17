@@ -209,13 +209,26 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
     def calc_all_values(self, amount):
 
+        # if self.gis_mode:
+        #     for feature in self.data_view._gis_layer.getFeatures():
+        #         amount = amount + feature.attribute(self.attribute)
+        # else:
+        #     for i in range(self.data_view.model.rowCount()):
+        #         value = self.data_view.model.data(
+        #             self.data_view.model.index(
+        #                 i, self.column_id),
+        #             Qt.EditRole)
+        #         if value:
+        #             amount = amount + self.column_type(value)
+        #
+        # return amount
         if self.gis_mode:
             for feature in self.data_view._gis_layer.getFeatures():
                 amount = amount + feature.attribute(self.attribute)
         else:
             for i in range(self.data_view.model.rowCount()):
-                value = self.data_view.model.data(
-                    self.data_view.model.index(
+                value = self.data_view.filter_proxy.data(
+                    self.data_view.filter_proxy.index(
                         i, self.column_id),
                     Qt.EditRole)
                 if value:
