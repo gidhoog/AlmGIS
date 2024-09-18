@@ -46,106 +46,57 @@
       </property>
       <widget class="QWidget" name="gridLayoutWidget_3">
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="2" column="0" colspan="4">
-         <layout class="QVBoxLayout" name="uiGstTableVLay">
-          <property name="topMargin">
-           <number>73</number>
-          </property>
-         </layout>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="uiOpenImpPathPbtn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../../../resources.qrc">
-            <normaloff>:/svg/resources/icons/mActionFileOpen.svg</normaloff>:/svg/resources/icons/mActionFileOpen.svg</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>25</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="uiLoadGdbPbtn">
-          <property name="maximumSize">
-           <size>
-            <width>160</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Calibri</family>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>GDB-Daten einlesen</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="InfoButton" name="uiInfoBtnGstTable" native="true"/>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Calibri</family>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>GDB-Daten zuletzt eingelesen:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="5">
+        <item row="1" column="0" colspan="4">
          <widget class="Line" name="line">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="0" column="4">
-         <widget class="InfoButton" name="uiInfoBtnImport" native="true"/>
+        <item row="4" column="3">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="InfoButton" name="uiInfoBtnGstTable" native="true"/>
+          </item>
+         </layout>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="uiGdbDataTimeLbl">
+        <item row="2" column="0" colspan="2">
+         <widget class="QLabel" name="label_2">
           <property name="font">
            <font>
             <family>Calibri</family>
-            <pointsize>11</pointsize>
+            <pointsize>15</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>TextLabel</string>
+           <string>Grundstücke die diesem Akt zugeordnet werden können:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="InfoButton" name="uiInfoBtnImport" native="true"/>
+        </item>
+        <item row="4" column="0" colspan="3">
+         <layout class="QVBoxLayout" name="uiGstTableVLay">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+         </layout>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <family>Calibri</family>
+            <pointsize>22</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Grundstückszuordnung:</string>
           </property>
          </widget>
         </item>

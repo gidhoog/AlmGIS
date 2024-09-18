@@ -22,9 +22,9 @@ from os import listdir
 from os.path import isfile, join
 
 from qgis.PyQt.QtCore import (QModelIndex, Qt, QItemSelectionModel, QVariant)
-from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, \
+from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QAction, \
     QDockWidget, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit)
-from qgis.PyQt.QtGui import QFont
+from qgis.PyQt.QtGui import QFont, QIcon
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
 
@@ -199,14 +199,14 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         # if self._gis_layer is not None:
         #     self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
 
-        self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
+        # self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
         self.uiSelectGstPbtn.clicked.connect(self.reserveSelectedGst)
         self.uiRemoveGstPbtn.clicked.connect(self.guiGstPreSelTview.removePreSelGst)
         self.uiMatchGstPbtn.clicked.connect(self.matchGstMultiple)
 
         # self.guiGstPreSelTview._gis_layer.data_provider.dataChanged.connect(self.preselChangend)
 
-        self.uiOpenImpPathPbtn.clicked.connect(self.openImpPath)
+        # self.uiOpenImpPathPbtn.clicked.connect(self.openImpPath)
 
 
     def loadSubWidgets(self):
@@ -267,7 +267,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         setze die import-zeit im zuordnungsformular
         """
 
-        self.uiGdbDataTimeLbl.setText(self.getLoadTime())
+        # self.uiGdbDataTimeLbl.setText(self.getLoadTime())
+        self.guiGstTable.uiImportTimeLbl.setText(self.getLoadTime())
 
     def getZugeordneteGst(self):
         """
@@ -803,16 +804,16 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
             self.dialog_widget.reject()  # schliesse  zuordungs-dialog
 
-    def openImpPath(self):
-        """
-        öffne das BEV-Import-Verzeichnis
-
-        :return:
-        """
-
-        path = settings.getSettingValue("bev_imp_path")
-
-        webbrowser.open(os.path.realpath(path))
+    # def openImpPath(self):
+    #     """
+    #     öffne das BEV-Import-Verzeichnis
+    #
+    #     :return:
+    #     """
+    #
+    #     path = settings.getSettingValue("bev_imp_path")
+    #
+    #     webbrowser.open(os.path.realpath(path))
 
     def deleteUnusedGst(self):
         """
@@ -943,6 +944,35 @@ class GstTable(DataView):
 
         self.uiTitleLbl.setText('Grundstücke die zugeordnet werden können:')
         self.maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
+
+        self.actionOpenImportPath = QAction(self.uiToolsTbtn)
+        self.actionOpenImportPath.setText('öffne Importpfad')
+        self.actionOpenImportPath.setIcon(
+            QIcon(':/svg/resources/icons/mActionFileOpen.svg'))
+        self.uiToolsTbtn.addAction(self.actionOpenImportPath)
+
+        self.actionLoadGdb = QAction(self.uiToolsTbtn)
+        self.actionLoadGdb.setText('GDB-Daten neu einlesen')
+        self.actionLoadGdb.setIcon(
+            QIcon(':/svg/resources/icons/import.svg'))
+        self.uiToolsTbtn.addAction(self.actionLoadGdb)
+
+        self.uiImportTimeLabelLbl = QLabel(self)
+        self.uiImportTimeLabelLbl.setText('GDB-Daten zuletzt eingelesen:')
+        self.uiImportTimeLabelLbl_font = QFont('Calibri', 9, QFont.Normal)
+        self.uiImportTimeLabelLbl.setFont(self.uiImportTimeLabelLbl_font)
+
+        self.uiImportTimeLbl = QLabel(self)
+        self.uiImportTimeLbl.setText('-- Importzeit --')
+        self.uiImportTimeLbl_font = QFont('Calibri', 9, QFont.Bold)
+        self.uiImportTimeLbl.setFont(self.uiImportTimeLbl_font)
+        # self.uiFooterLinesVlay.insertWidget(0, self.uiImportTimeLbl)
+
+        import_time_layout = QHBoxLayout(self)
+        import_time_layout.setSpacing(4)
+        import_time_layout.addWidget(self.uiImportTimeLabelLbl)
+        import_time_layout.addWidget(self.uiImportTimeLbl)
+        self.uiFooterLinesVlay.insertLayout(0, import_time_layout)
 
     def setFeatureFields(self):
 
@@ -1111,6 +1141,22 @@ class GstTable(DataView):
         self.view.setColumnWidth(5, 80)
         self.view.setColumnWidth(6, 100)
         """"""
+
+    def signals(self):
+
+        self.actionOpenImportPath.triggered.connect(self.openImpPath)
+        self.actionLoadGdb.triggered.connect(self.parent.loadGdbDaten)
+
+    def openImpPath(self):
+        """
+        öffne das BEV-Import-Verzeichnis
+
+        :return:
+        """
+
+        path = settings.getSettingValue("bev_imp_path")
+
+        webbrowser.open(os.path.realpath(path))
 
     def selectedRowsChanged(self):
         super().selectedRowsChanged()
