@@ -1320,10 +1320,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if self.gis_mode:
             if purpose == 'add':
 
-                for instance in DataView.instance_list:
-                    # if instance != self and instance._commit_entity == True:
-                    if instance._commit_entity == True:
-                        self.updateInstance(instance)
+                # for instance in DataView.instance_list:
+                #     # if instance != self and instance._commit_entity == True:
+                #     if instance._commit_entity == True:
+                self.updateInstanceNew()
 
                 # self._gis_layer.startEditing()
                 # self.addFeaturesFromMciList(args)
@@ -1373,6 +1373,30 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.view.model().sourceModel().layoutChanged.emit()
 
         # self.updateFooter()
+
+    def updateInstanceNew(self):
+        """
+        update the given data_view instance
+        :param instance:
+        :return:
+        """
+
+        self._gis_layer.startEditing()
+
+        self._gis_layer.data_provider.truncate()
+
+        with db_session_cm(name='update data_view') as session:
+            self.loadData(session)
+
+            # instance.addFeaturesFromMciList(instance._mci_list)
+            self.setFeaturesFromMci()
+        self._gis_layer.commitChanges()
+
+        # instance._gis_layer.data_provider.dataChanged.emit()
+        self._gis_layer.data_provider.reloadData()
+        self._gis_layer.triggerRepaint()
+
+        self.updateFooter()
 
     def updateInstance(self, instance):
         """
@@ -1694,7 +1718,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def deleteCheck(self, mci):
         """
-        return True if the given mci can be deleted
+        return True if the given mci can be deleted; e.g. check if the mci is
+        used in some relations
         :param mci:
         :return:
         """

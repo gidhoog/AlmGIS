@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from geoalchemy2 import WKTElement
-from sqlalchemy import desc, text, select
+from sqlalchemy import desc, text, select, inspect
 from sqlalchemy.orm import joinedload
 
 from geoalchemy2.shape import to_shape
@@ -31,6 +31,7 @@ from qgis.core import QgsVectorLayer, QgsProject, \
 from core import db_session_cm, config, main_dialog, settings
 from core.scopes.gst import gst_zuordnung_UI
 from core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
+from core.tools import getMciState
 
 
 class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
@@ -200,7 +201,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         self.uiLoadGdbPbtn.clicked.connect(self.loadGdbDaten)
         self.uiSelectGstPbtn.clicked.connect(self.reserveSelectedGst)
-
+        self.uiRemoveGstPbtn.clicked.connect(self.guiGstPreSelTview.removePreSelGst)
         self.uiMatchGstPbtn.clicked.connect(self.matchGstMultiple)
 
         # self.guiGstPreSelTview._gis_layer.data_provider.dataChanged.connect(self.preselChangend)
@@ -367,6 +368,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         #  dargestellt!!
 
         """entferne alle vorgemerkten Grundstücke"""
+        self.guiGstPreSelTview.selectAllRows()  # wähle zuerst alle zeilen aus!
         self.guiGstPreSelTview.removePreSelGst()
         """"""
 
@@ -383,8 +385,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         self.ez_import_path = []  # liste der ez's im import-pfad (ez als base-class)
 
-        with db_session_cm() as session:
-            session.expire_on_commit = False
+        with db_session_cm(expire_on_commit = False) as session:
 
             """hole alle Gst die aktuell einem Akt zugeordnet sind"""
             alle_zugeordnete_gst = session.query(BGst.kg_gst).join(BGstZuordnung).all()
@@ -423,8 +424,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.setLoadTimeLabel()
         """"""
 
-        self.guiGstTable.loadData()  # lade die Daten in der Gst-Tabelle neu
-        """setzte das model für den Filter erneut, damit dieser korrekt 
+        with db_session_cm(name='lade gst in die gst-zuordnung') as session_2:
+            self.guiGstTable.loadData(session_2)  # lade die Daten in der Gst-Tabelle neu
+
+        """setzte das model für den Filter erneut, damit dieser korrekt
         funktioniert"""
         # self.setPreSelModel()
         """"""
@@ -1341,7 +1344,7 @@ class GstPreSelTable(DataView):
             'entferne alle ausgewählten Grundstücke aus der Liste der '
             'vorgemerkten Grundstücke')
 
-        self.parent.uiRemoveGstPbtn.clicked.connect(self.removePreSelGst)
+        # self.parent.uiRemoveGstPbtn.clicked.connect(self.removePreSelGst)
 
     def loadData(self, session=None):
 

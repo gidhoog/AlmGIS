@@ -1,4 +1,5 @@
 import os
+from sqlalchemy import inspect
 
 def convertMtoHa(m, decimal=4):
     """
@@ -17,3 +18,26 @@ def getUser():
     :return: str
     """
     return os.getlogin()
+
+def getMciState(mci):
+
+    insp = inspect(mci)
+
+    if insp.transient:
+        return "transient"
+
+    if insp.pending:
+        return "pending"
+
+    if insp.persistent:
+        return "persistent"
+
+    if insp.deleted:
+        return "deleted"
+
+    if insp.detached:
+        return "detached"
+
+def getMciSession(mci):
+
+    return inspect(mci).session

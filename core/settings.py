@@ -16,7 +16,7 @@ def getSettingValue(code):
     :param code: str
     :return: value
     """
-    with db_session_cm() as session:
+    with db_session_cm(expire_on_commit=False) as session:
         stmt = select(BSettings).filter(BSettings.code == code)
         query = session.scalars(stmt).first()
 
@@ -74,7 +74,7 @@ class SettingsWdg(settings_UI.Ui_Settings, QWidget):
 
     def acceptEntity(self):
 
-        aaa = self.setSettingValue("bev_imp_path", self.uiGstImportLedit.text())
+        aaa = self.setSettingValue("bev_imp_path", self.uiGstImportLbl.text())
 
         print(f'speichern')
 
@@ -82,8 +82,7 @@ class SettingsWdg(settings_UI.Ui_Settings, QWidget):
 
     def loadData(self):
 
-        # self.uiGstImportLedit.setText(self.getSettingValue("bev_imp_path"))
-        self.uiGstImportLedit.setText(getSettingValue("bev_imp_path"))
+        self.uiGstImportLbl.setText(getSettingValue("bev_imp_path"))
 
 
     # @staticmethod
@@ -141,5 +140,5 @@ class SettingsWdg(settings_UI.Ui_Settings, QWidget):
         print(f'{directory}')
 
         if directory:
-            self.uiGstImportLedit.setText(directory)
+            self.uiGstImportLbl.setText(directory)
 
