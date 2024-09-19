@@ -5,7 +5,7 @@ from qgis.PyQt.QtCore import Qt
 
 from sqlalchemy import select, inspect
 
-from core import db_session_cm, LOGGER
+from core import db_session_cm, LOGGER, DbSession
 from core.main_dialog import MainDialog
 
 
@@ -99,6 +99,8 @@ class Entity(QMainWindow):
 
         self.parent = parent
 
+        self.entity_session = DbSession()
+
         self.purpose = 'edit'  # or 'add'
 
         """"""
@@ -173,6 +175,8 @@ class Entity(QMainWindow):
 
         if entity_mci is not None:
             self._entity_mci = entity_mci
+            # self.entity_session.add(self._entity_mci)
+            self.entity_session.merge(self._entity_mci)
 
         if entity_id is not None:
             self.entity_id = entity_id
@@ -188,14 +192,12 @@ class Entity(QMainWindow):
 
         self.mapData()
 
-        # if hasattr(self._entity_mci, 'rel_type'):
-        #     # if self._type_mci is not None:
-        self.setTypeProperties()
-
-        self.post_data_set()
-
-        self.signals()
-        self.finalInit()
+        # self.setTypeProperties()
+        #
+        # self.post_data_set()
+        #
+        # self.signals()
+        # self.finalInit()
 
         print(f'...')
 
@@ -215,14 +217,14 @@ class Entity(QMainWindow):
 
         return mci
 
-    def getCustomEntityMci(self, session):
-        """
-        frage individuelle mci's ab, die für diese Entity notwendig sind (
-        z.B. mci's für die Dateneingabe)
-        :param session: sqlalchemy session
-        :return:
-        """
-        pass
+    # def getCustomEntityMci(self, session):
+    #     """
+    #     frage individuelle mci's ab, die für diese Entity notwendig sind (
+    #     z.B. mci's für die Dateneingabe)
+    #     :param session: sqlalchemy session
+    #     :return:
+    #     """
+    #     pass
 
     def post_data_set(self):
         """
@@ -350,42 +352,34 @@ class Entity(QMainWindow):
         """
         'commit' die daten der entity_session in die datenbank
         """
-        # with db_session_cm(name='commit_entity') as session:
+
+        # if self._entity_mci in self.entity_session:
+
+        self.entity_session.commit()
+        # self.entity_session.close()
+
+
+        # entity_inspect = inspect(self._entity_mci)
         #
-        #     try:
-        #         session.add(self._entity_mci)
-        #     except:
-        #         print(f'cannot add {self._entity_mci} to session')
+        # print(f'entity to commit is detached: {entity_inspect.detached}')
+        # print(f'entity to commit is transient: {entity_inspect.transient}')
+        # print(f'entity to commit is pending: {entity_inspect.pending}')
+        # print(f'entity to commit is persistent: {entity_inspect.persistent}')
+        # print(f'entity to commit is deleted: {entity_inspect.deleted}')
+        #
+        # if entity_inspect.detached or entity_inspect.transient:
+        # # if entity_inspect.transient:
+        #
+        #     with db_session_cm(name='commit_entity',
+        #                        expire_on_commit=False) as session:
+        #
+        #         try:
+        #             session.add(self._entity_mci)
+        #             # session.add(self._entity_mci.rel_type)
+        #         except:
+        #             LOGGER.exception("Cannot add entity_mci to new session "
+        #                              "in Entity.commitEntity")
 
-        entity_inspect = inspect(self._entity_mci)
-
-        print(f'entity to commit is detached: {entity_inspect.detached}')
-        print(f'entity to commit is transient: {entity_inspect.transient}')
-        print(f'entity to commit is pending: {entity_inspect.pending}')
-        print(f'entity to commit is persistent: {entity_inspect.persistent}')
-        print(f'entity to commit is deleted: {entity_inspect.deleted}')
-
-        if entity_inspect.detached or entity_inspect.transient:
-        # if entity_inspect.transient:
-
-            with db_session_cm(name='commit_entity',
-                               expire_on_commit=False) as session:
-
-                try:
-                    session.add(self._entity_mci)
-                    # session.add(self._entity_mci.rel_type)
-                except:
-                    LOGGER.exception("Cannot add entity_mci to new session "
-                                     "in Entity.commitEntity")
-
-        # else:
-        #     session = inspect(self._entity_mci).session
-        #     try:
-        #         session.add(self._entity_mci)
-        #         session.commit()
-        #     except:
-        #         LOGGER.exception("Cannot add entity_mci to existing session "
-        #                          "in Entity.commitEntity")
 
     def rejectEntity(self):
         """

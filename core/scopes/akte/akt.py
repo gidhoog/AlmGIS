@@ -357,14 +357,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
     def initEntityWidget(self):
 
-        self.setStatusComboData()
-
-        """init bewirtschafter_combo"""
-        self.setBewirtschafterCombo()
-        # self.uiBewirtschafterCombo.loadData()
-        # self.uiBewirtschafterCombo.combo_widget_form = Kontakt
-        # self.uiBewirtschafterCombo.initCombo()
-        """"""
+        # self.setStatusComboData()
+        #
+        # """init bewirtschafter_combo"""
+        # self.setBewirtschafterCombo()
+        # # self.uiBewirtschafterCombo.loadData()
+        # # self.uiBewirtschafterCombo.combo_widget_form = Kontakt
+        # # self.uiBewirtschafterCombo.initCombo()
+        # """"""
 
         self.uiInfoBtnAlmBnr.initInfoButton(1001)
         self.uiInfoBtnStatus.initInfoButton(1002)
@@ -390,10 +390,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.bewirtschafter_id = self._entity_mci.bewirtschafter_id
 
-        # self.guiMainGis.entity_id = self._entity_mci.id
-
-        # self.uiVersionTv.setModel(self.komplex_model)
-        self.loadSubWidgets()
+        # self.loadSubWidgets()
 
     def displayBewirtschafterAdresse(self):
 
@@ -444,16 +441,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         return mci
 
-    def getCustomEntityMci(self, session):
-        # super().getCustomEntityMci(session)
-
-        gst_awb_status = session.scalars(select(BGstAwbStatus)).all()
-        gst_recht_status = session.scalars(select(BRechtsgrundlage)).all()
-        bearbeitungsstatus = session.scalars(select(BBearbeitungsstatus)).all()
-
-        self._custom_entity_data['gst_awb_status'] = gst_awb_status
-        self._custom_entity_data['gst_recht_status'] = gst_recht_status
-        self._custom_entity_data['bearbeitungsstatus'] = bearbeitungsstatus
+    # def getCustomEntityMci(self, session):
+    #     # super().getCustomEntityMci(session)
+    #
+    #     gst_awb_status = session.scalars(select(BGstAwbStatus)).all()
+    #     gst_recht_status = session.scalars(select(BRechtsgrundlage)).all()
+    #     bearbeitungsstatus = session.scalars(select(BBearbeitungsstatus)).all()
+    #
+    #     self._custom_entity_data['gst_awb_status'] = gst_awb_status
+    #     self._custom_entity_data['gst_recht_status'] = gst_recht_status
+    #     self._custom_entity_data['bearbeitungsstatus'] = bearbeitungsstatus
 
     def loadSubWidgets(self):
         super().loadSubWidgets()
@@ -863,15 +860,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.alias = self.alias
         self._entity_mci.alm_bnr = self.alm_bnr
         self._entity_mci.anm = self.anm
-        self._entity_mci.bearbeitungsstatus_id = self.status_id
-        self._entity_mci.rel_bearbeitungsstatus = self.status_mci
+        # self._entity_mci.bearbeitungsstatus_id = self.status_id
+        # self._entity_mci.rel_bearbeitungsstatus = self.status_mci
 
         self._entity_mci.wwp = self.wwp
         self._entity_mci.wwp_exist = self.wwp_exist
         self._entity_mci.wwp_jahr = self.wwp_jahr
 
-        self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
-        self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
+        # self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
+        # self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
 
     # def get_abgrenzung_di(self):
     #     """

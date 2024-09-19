@@ -19,6 +19,9 @@ from core import data_view_UI, db_session_cm, color
 from core.entity import EntityDialog
 from core.footer_line import FooterLine
 from core.gis_layer import Feature
+from core.tools import getMciState, getMciSession
+
+
 # from core.main_widget import MainWidget
 
 
@@ -1631,6 +1634,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         if entity_mci:
             self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+            mci_state = getMciState(entity_mci)
+            if mci_state == 'persistent':
+                mci_session = getMciSession(entity_mci)
+                # mci_session.expunge(entity_mci)
+                mci_session.expunge_all()
             entity_widget.editEntity(entity_mci=entity_mci)
 
         """open the entity_widget_class in a dialog"""
