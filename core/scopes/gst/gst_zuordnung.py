@@ -773,12 +773,14 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
             # accept_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             """übernehme die markierten Gst in die GDB-Tabelle (inkl. EZ, Eigentuemer u. Nutzungen)"""
-            for feat in self.guiGstPreSelTview._gis_layer.getFeatures():
+            # for feat in self.guiGstPreSelTview._gis_layer.getFeatures():
+            #
+            #     gst_feat = self.guiGstTable._gis_layer.getFeature(feat.attribute('feat_id'))
+            #
+            #     gst_mci = self.guiGstTable._mci_list[
+            #         self.guiGstTable.model.idToIndex(gst_feat.id()).row()]
 
-                gst_feat = self.guiGstTable._gis_layer.getFeature(feat.attribute('feat_id'))
-
-                gst_mci = self.guiGstTable._mci_list[
-                    self.guiGstTable.model.idToIndex(gst_feat.id()).row()]
+            for gst_mci in self.guiGstPreSelTview._mci_list:
 
                 new_gst_zuordnung = BGstZuordnung()
                 new_gst_zuordnung.akt_id = self.parent.parent.entity_id

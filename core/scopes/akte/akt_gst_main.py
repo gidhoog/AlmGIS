@@ -14,7 +14,7 @@ from geoalchemy2.shape import to_shape
 
 from sqlalchemy import func
 
-from core import config
+from core import config, color
 from core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt, BKoppel, BAbgrenzung
@@ -31,6 +31,7 @@ from operator import attrgetter
 
 from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
+from core.tools import getMciState, getMciSession
 
 
 class GstDialog(EntityDialog):
@@ -56,7 +57,7 @@ class GstDialog(EntityDialog):
 
             new_mci = self.dialogWidget.acceptEntity()
 
-            self.parent.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
+            self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
 
         QDialog.accept(self)
 
@@ -391,6 +392,10 @@ class GstTableModel(GisTableModel):
         #
         #     return self.parent._mci_list[index.row()]
 
+        if role == Qt.BackgroundRole and getMciState(self.feature(index).attribute('mci')[0]) == "transient":
+
+            return color.added_data
+
         if role == Qt.TextAlignmentRole:
 
             if index.column() in [3]:
@@ -404,6 +409,15 @@ class GstTableModel(GisTableModel):
         if index.column() == 3:
 
             if role == Qt.DisplayRole:
+
+                print(f'mci-state: {getMciState(self.feature(index).attribute('mci')[0])}')
+
+                # sess = getMciSession(self.feature(index).attribute('mci')[0])
+                # print(f'sess: {sess}')
+                # if sess is not None:
+                #     mod = sess.is_modified(self.feature(index).attribute('mci')[0])
+                #     print(
+                #         f'{self.feature(index).attribute('mci')[0]} is modified: {mod}')
 
                 return str(self.feature(index).attribute('kgnr'))
 
@@ -666,6 +680,8 @@ class GstAktDataView(DataView):
         datenstand_fld = QgsField("datenstand", QVariant.String)
         datenstand_fld.setAlias('Datenstand')
 
+        mci_fld = QgsField("mci", QVariant.List)
+
         self.feature_fields.append(gst_version_id_fld)
         self.feature_fields.append(gst_fld)
         self.feature_fields.append(ez_fld)
@@ -678,6 +694,7 @@ class GstAktDataView(DataView):
         self.feature_fields.append(gis_area_fld)
         self.feature_fields.append(gb_area_fld)
         self.feature_fields.append(datenstand_fld)
+        self.feature_fields.append(mci_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
@@ -706,6 +723,7 @@ class GstAktDataView(DataView):
         feature['gis_area'] = last_gst.gst_gis_area
         feature['gb_area'] = gb_area
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
+        feature['mci'] = [mci]
 
     def changeAttributes(self, feature, mci):
 
@@ -732,7 +750,8 @@ class GstAktDataView(DataView):
                   8: mci.rel_rechtsgrundlage.name,
                   9: last_gst.gst_gis_area,
                   10: gb_area,
-                  11: last_gst.rel_alm_gst_ez.datenstand
+                  11: last_gst.rel_alm_gst_ez.datenstand,
+                  12: [mci]
                   }
 
         self._gis_layer.changeAttributeValues(feature.id(),
