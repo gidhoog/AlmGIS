@@ -1151,6 +1151,11 @@ class GstTable(DataView):
         self.actionOpenImportPath.triggered.connect(self.openImpPath)
         self.actionLoadGdb.triggered.connect(self.parent.loadGdbDaten)
 
+        self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
+
+        # self.view.selectionModel().selectionChanged.connect(
+        #     self.selectedRowsChanged)
+
     def openImpPath(self):
         """
         öffne das BEV-Import-Verzeichnis
@@ -1167,6 +1172,8 @@ class GstTable(DataView):
 
         """aktiviere oder deaktiviere den Button zum zuordnen vorgemerkter
         Grundstücke"""
+
+        print(f'   select row')
 
         if self._gis_layer.selectedFeatureIds() != []:
             self.parent.uiSelectGstPbtn.setEnabled(True)
