@@ -137,3 +137,4 @@ dmypy.json
 
 import_gdb/
 /import_gdb
+/import_gdb_temp
