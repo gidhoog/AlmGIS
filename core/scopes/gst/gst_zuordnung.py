@@ -66,6 +66,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         self.signals()
 
+        """passe die splitter-größe an"""
+        self.uiTableSplitter.setSizes([376])
+        """"""
+
         # self.presel_proxy_model = GstPreSelFilter(self)
 
         # self.getZugeordneteGst()
