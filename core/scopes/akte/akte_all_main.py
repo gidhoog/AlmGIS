@@ -41,13 +41,18 @@ class AktDialog(EntityDialog):
     def accept(self):
         super().accept()
 
-        if self.dialogWidget.acceptEntity() is not None:
+        if self.accepted_mci is not None:
 
-            new_mci = self.dialogWidget.acceptEntity()
+            self.parent.updateMaintableNew(self.dialogWidget.purpose,
+                                           self.accepted_mci)
 
-            self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
-
-        QDialog.accept(self)
+        # if self.dialogWidget.acceptEntity() is not None:
+        #
+        #     new_mci = self.dialogWidget.acceptEntity()
+        #
+        #     self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
+        #
+        # QDialog.accept(self)
 
 
 # class AkteAllMainTableModel(GisTableModel):
@@ -167,9 +172,9 @@ class AkteAllMainWidget(MainWidget):
 
         self.akt_all_table = AkteAllMain(self)
 
-        with db_session_cm(name='main-widget - akte alle',
-                           expire_on_commit=False) as session:
-            self.akt_all_table.initDataView(dataview_session=session)
+        # with db_session_cm(name='main-widget - akte alle',
+        #                    expire_on_commit=False) as session:
+        self.akt_all_table.initDataView()
 
     def initMainWidget(self):
         super().initMainWidget()
@@ -424,7 +429,7 @@ class AkteAllMain(DataView):
         self._entity_mc = BAkt
         self._model_class = AktAllModel
 
-        self.edit_entity_by = 'mci'
+        # self.edit_entity_by = 'mci'
         """"""
         # self.setFeatureFields()
         # self.setFilterUI()

@@ -268,6 +268,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
+        self._entity_mc = BAkt
+
         self.filter_koppel_from_abgr_string = ''
         self.filter_koppel_from_komplex_string = ''
         self.filter_komplex_from_abgr_string = ''

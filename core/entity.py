@@ -174,12 +174,19 @@ class Entity(QMainWindow):
         self.feature = feature
 
         if entity_mci is not None:
+            self.commit_on_accept = False
             self._entity_mci = entity_mci
-            # self.entity_session.add(self._entity_mci)
-            self.entity_session.merge(self._entity_mci)
+            # self._entity_mci = entity_mci
+            # mmm = self.entity_session.merge(self._entity_mci)
+            # self.entity_session.add(mmm)
+            # # self.entity_session.add(self._entity_mci)
 
         if entity_id is not None:
             self.entity_id = entity_id
+            self.commit_on_accept = True
+
+            self._entity_mci = self.entity_session.get(self._entity_mc,
+                                                       self.entity_id)
 
             # with db_session_cm() as session:
             #
@@ -356,7 +363,7 @@ class Entity(QMainWindow):
         # if self._entity_mci in self.entity_session:
 
         self.entity_session.commit()
-        # self.entity_session.close()
+        self.entity_session.close()
 
 
         # entity_inspect = inspect(self._entity_mci)

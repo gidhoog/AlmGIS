@@ -123,7 +123,7 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
         füge das widget unten im layout ein
         """
         self.dialogWidget = widg
-        self.dialogWidget.adjustSize()
+        # self.dialogWidget.adjustSize()
 
         self.uiWidgetsVlay.addWidget(self.dialogWidget)
 
