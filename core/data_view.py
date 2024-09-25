@@ -1769,9 +1769,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
                                 if self.deleteCheck(mci):
                                     try:
-                                        with db_session_cm() as session:
-                                            session.add(mci)
-                                            session.delete(mci)
+                                        # with db_session_cm() as session:
+                                        # self.dataview_session.add(mci)
+                                        self.dataview_session.delete(mci)
                                     except IntegrityError:  # mci is used
                                         self.can_not_delete_msg(
                                             self.getFeatureDeleteInfo(feat))
