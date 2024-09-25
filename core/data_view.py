@@ -661,6 +661,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.dataview_session = DbSession()
 
+        self.sel_entity_mci = None
+
         """"""
         self.entity_dialog_class = DataViewEntityDialog
         self.entity_widget_class = None
@@ -821,11 +823,15 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         :return: list of QModelIndex
         """
+        if self.gis_mode:
+            return self._gis_layer.selectedFeatureIds()
+        else:
+            return self.view.selectionModel().selectedRows()
 
-        if self.view.selectionModel():
-            indexes = self.view.selectionModel().selectedRows()
-
-            return indexes
+        # if self.view.selectionModel():
+        #     indexes = self.view.selectionModel().selectedRows()
+        #
+        #     return indexes
 
     def selectAllRows(self):
 
@@ -1323,7 +1329,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere das table_view
         :return:
         """
-        # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
         if self.gis_mode:
             if purpose == 'add':
@@ -1371,23 +1376,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         else:  # no gis-mode
 
             self.view.model().sourceModel().layoutAboutToBeChanged.emit()
-            # self.view.model().layoutAboutToBeChanged.emit()
             if self.edit_entity_by == 'id':
-                # self.dataview_session.expire_all()
-                # self.dataview_session.expire(self.edit_entity)
                 self.dataview_session.refresh(self.edit_entity)
             self.view.model().sourceModel().layoutChanged.emit()
-            # self.view.model().layoutChanged.emit()
-
-            # if purpose == 'add':
-            #
-            #     self._mci_list.append(args[0])
-            #
-            # # with db_session_cm(name='update data_view') as session:
-            # #
-            # #     session.add_all(self._mci_list)
-            #
-            # self.view.model().sourceModel().layoutChanged.emit()
 
         self.updateFooter()
 
@@ -1524,16 +1515,13 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def doubleClickedRow(self, index):
 
-        print(f'::::::::doubleclicke: row: {index.row()} - col: {index.column()}')
-
-        self.model_index = index
+        # self.model_index = index
 
         if self.edit_behaviour == 'dialog':
 
             proxy_index = self.getProxyIndex(index)
 
             self.indexBasedRowEdit(proxy_index)
-            # self.indexBasedRowEdit(index)
 
     def indexBasedRowEdit(self, index):
         """
@@ -1543,8 +1531,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
 
         if 0 <= index.column() <= 9999:  # all columns of the model
-
-            # entity_index = self.getProxyIndex(index)
 
             if self.gis_mode:
                 self.current_feature = self.model.feature(index)
@@ -1561,9 +1547,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if self.edit_entity_by == 'mci':
 
-                # entity_mci = self.getEntityMci(entity_index)
-                # entity_wdg = self.get_entity_widget_class(entity_mci)
-
                 self.editRow(entity_wdg(self),
                              entity_mci=entity_mci,
                              feature=self.current_feature)
@@ -1575,8 +1558,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :param index: QModelIndex
         :return: int (z.B.: self._mci_list[self.getProxyIndex(index).row()].id)
         """
-        # return self.model.mci_list[self.getProxyIndex(index).row()].id
-        # return self.model.data(self.model.index(index.row(), 0), Qt.EditRole)
 
         if self.gis_mode:
             id = self.model.data(self.model.index(index.row(), 0), Qt.EditRole)

@@ -217,36 +217,25 @@ class KoppelAktDataView(DataView):
     def loadData(self, session=None):
 
         # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
+        self._mci_list = self.parent.komplex_table._mci_list[0].rel_komplex[0].rel_koppel
 
-        # with (db_session_cm() as session):
-
-            # stmt = select(
-            #     BAbgrenzung
-            # ).options(
-            #     joinedload(BAbgrenzung.rel_komplex)
-            #          .joinedload(BKomplex.rel_koppel)
-            # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
-
-        """verwende hier .join() um verknüpfte tabellen abzufragen"""
-        stmt = select(
-            BKoppel
-        ).join(
-            BKoppel.rel_komplex
-        ).join(
-            BKomplex.rel_abgrenzung
-        ).options(
-            joinedload(BKoppel.rel_komplex)
-                 .joinedload(BKomplex.rel_abgrenzung)
-        ).options(
-            joinedload(BKoppel.rel_komplex)
-                 .joinedload(BKomplex.rel_komplex_name)
-        ).where(BAbgrenzung.akt_id == self.parent._entity_id)
-        """"""
-
-        self._mci_list = session.scalars(stmt).unique().all()
-
-        print(f'---')
-
+        # """verwende hier .join() um verknüpfte tabellen abzufragen"""
+        # stmt = select(
+        #     BKoppel
+        # ).join(
+        #     BKoppel.rel_komplex
+        # ).join(
+        #     BKomplex.rel_abgrenzung
+        # ).options(
+        #     joinedload(BKoppel.rel_komplex)
+        #          .joinedload(BKomplex.rel_abgrenzung)
+        # ).options(
+        #     joinedload(BKoppel.rel_komplex)
+        #          .joinedload(BKomplex.rel_komplex_name)
+        # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
+        # """"""
+        #
+        # self._mci_list = session.scalars(stmt).unique().all()
 
     def setLayer(self):
 

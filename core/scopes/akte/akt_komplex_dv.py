@@ -200,31 +200,21 @@ class KomplexAktDataView(DataView):
 
     def loadData(self, session=None):
 
-        # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
+        # self._mci_list = self.parent._entity_mci.rel_abgrenzung.rel_komplex
+        # self._mci_list = self.parent.abgrenzung_table._mci_list[0].rel_komplex
+        self._mci_list = self.parent._entity_mci.rel_komplex_name
 
-        # with db_session_cm() as session:
-
-            # stmt = select(
-            #     BAbgrenzung
-            # ).options(
-            #     joinedload(BAbgrenzung.rel_komplex)
-            #          .joinedload(BKomplex.rel_koppel)
-            # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
-
-        stmt = select(
-            BKomplexName
-        ).options(
-            joinedload(BKomplexName.rel_komplex)
-                 .joinedload(BKomplex.rel_koppel)
-        ).options(
-            joinedload(BKomplexName.rel_komplex)
-                 .joinedload(BKomplex.rel_komplex_name)
-        ).where(BKomplexName.akt_id == self.parent._entity_id)
-
-        self._mci_list = session.scalars(stmt).unique().all()
-
-        print(f'---')
-
+        # stmt = select(
+        #     BKomplexName
+        # ).options(
+        #     joinedload(BKomplexName.rel_komplex)
+        #          .joinedload(BKomplex.rel_koppel)
+        # ).options(
+        #     joinedload(BKomplexName.rel_komplex)
+        #          .joinedload(BKomplex.rel_komplex_name)
+        # ).where(BKomplexName.akt_id == self.parent._entity_id)
+        #
+        # self._mci_list = session.scalars(stmt).unique().all()
 
     def setLayer(self):
 

@@ -217,31 +217,27 @@ class AbgrenzungDataView(DataView):
 
     def loadData(self, session=None):
 
-        # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
+        self._mci_list = self.parent._entity_mci.rel_abgrenzung
 
-        # with (db_session_cm() as session):
+        # stmt = select(
+        #     BAbgrenzung
+        # ).options(
+        #     joinedload(BAbgrenzung.rel_status)
+        # ).options(
+        #     joinedload(BAbgrenzung.rel_erfassungsart)
+        # ).where(BAbgrenzung.akt_id == self.parent._entity_id
+        #         ).order_by(desc(BAbgrenzung.jahr))
+        #
+        # self._mci_list = session.scalars(stmt).unique().all()
 
-            # stmt = select(
-            #     BAbgrenzung
-            # ).options(
-            #     joinedload(BAbgrenzung.rel_komplex)
-            #          .joinedload(BKomplex.rel_koppel)
-            # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
+    def selectedRowsChanged(self):
+        super().selectedRowsChanged()
 
-        stmt = select(
-            BAbgrenzung
-        ).options(
-            joinedload(BAbgrenzung.rel_status)
-        ).options(
-            joinedload(BAbgrenzung.rel_erfassungsart)
-        ).where(BAbgrenzung.akt_id == self.parent._entity_id
-                ).order_by(desc(BAbgrenzung.jahr))
+        sel_rows = self.getSelectedRows()
 
-        # .order_by(desc(BAbgrenzung.jahr))
+        self.sel_entity_mci = self._gis_layer.getFeature(sel_rows[0]).attribute('mci')
 
-        self._mci_list = session.scalars(stmt).unique().all()
 
-        print(f'---')
 
     def getIstAbgrenzungId(self):
         """
@@ -339,6 +335,8 @@ class AbgrenzungDataView(DataView):
 
         erfassungsart_name_fld = QgsField("erfassungsart_name", QVariant.String)
 
+        mci_fld = QgsField("mci", QVariant.List)
+
         self.feature_fields.append(abgrenzung_id_fld)
         self.feature_fields.append(jahr_fld)
         self.feature_fields.append(status_id_fld)
@@ -346,6 +344,7 @@ class AbgrenzungDataView(DataView):
         self.feature_fields.append(bearbeiter_fld)
         self.feature_fields.append(erfassungsart_id_fld)
         self.feature_fields.append(erfassungsart_name_fld)
+        self.feature_fields.append(mci_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
@@ -357,6 +356,7 @@ class AbgrenzungDataView(DataView):
         feature['bearbeiter'] = mci.bearbeiter
         feature['erfassungsart_id'] = mci.erfassungsart_id
         feature['erfassungsart_name'] = mci.rel_erfassungsart.name
+        feature['mci'] = [mci]
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)

@@ -392,7 +392,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.bewirtschafter_id = self._entity_mci.bewirtschafter_id
 
-        # self.loadSubWidgets()
+        self.loadSubWidgets()
 
     def displayBewirtschafterAdresse(self):
 
@@ -461,31 +461,32 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         """lade die gst-tabelle"""
         self.gst_table = GstAktDataView(self, gis_mode=True)
-        with db_session_cm(name='query gst-table in akt',
-                           expire_on_commit=False) as session:
-            self.gst_table.initDataView(dataview_session=session)
+        # self.gst_table.dataview_session = self.entity_session
+        # with db_session_cm(name='query gst-table in akt',
+        #                    expire_on_commit=False) as session:
+        #     self.gst_table.initDataView(dataview_session=session)
+        self.gst_table.initDataView()
         self.uiGstListeVlay.addWidget(self.gst_table)
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
         """"""
 
         """lade die abgrenzungen"""
         self.abgrenzung_table = AbgrenzungDataView(self, gis_mode=True)
-        self.koppel_table = KoppelAktDataView(self, gis_mode=True)
-        self.komplex_table = KomplexAktDataView(self, gis_mode=True)
+        self.abgrenzung_table.initDataView()
 
-        with db_session_cm(name='query abgrenzungen in akt',
-                           expire_on_commit=False) as session:
-            self.abgrenzung_table.initDataView(dataview_session=session)
-            self.koppel_table.initDataView(dataview_session=session)
-            self.komplex_table.initDataView(dataview_session=session)
+        self.komplex_table = KomplexAktDataView(self, gis_mode=True)
+        self.komplex_table.initDataView()
+
+        self.koppel_table = KoppelAktDataView(self, gis_mode=True)
+        self.koppel_table.initDataView()
 
         self.uiAbgrenzungVlay.addWidget(self.abgrenzung_table)
-        self.uiKoppelVlay.addWidget(self.koppel_table)
         self.uiKomplexVlay.addWidget(self.komplex_table)
+        self.uiKoppelVlay.addWidget(self.koppel_table)
 
-        self.guiMainGis.project_instance.addMapLayer(self.koppel_table._gis_layer)
         self.guiMainGis.project_instance.addMapLayer(
             self.komplex_table._gis_layer)
+        self.guiMainGis.project_instance.addMapLayer(self.koppel_table._gis_layer)
         """"""
 
         """setzte die karte auf die ausdehnung des gst-layers"""
@@ -494,29 +495,29 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.guiMainGis.uiCanvas.setExtent(extent)
         """"""
 
-        if self.abgrenzung_table._gis_layer.hasFeatures():
-
-            current_feat = None
-
-            for feat in self.abgrenzung_table._gis_layer.getFeatures():
-
-                jahr = feat.attribute('jahr')
-                status_id = feat.attribute('status_id')
-
-                if status_id == 0:
-
-                    if current_feat == None:
-                        current_feat = feat
-
-            self.abgrenzung_table._gis_layer.select(current_feat.id())
-
-            # abgr_id = self.abgrenzung_table.model.data(self.abgrenzung_table.model.index(0, 0), Qt.EditRole)
-            abgr_id = current_feat.attribute('abgrenzung_id')
-
-            # print(f'abgrenzung_id: {abgr_id}')
-            filter_string = f"\"abgrenzung_id\" = {str(abgr_id)}"
-            self.koppel_table._gis_layer.setSubsetString(filter_string)
-            self.komplex_table._gis_layer.setSubsetString(filter_string)
+        # if self.abgrenzung_table._gis_layer.hasFeatures():
+        #
+        #     current_feat = None
+        #
+        #     for feat in self.abgrenzung_table._gis_layer.getFeatures():
+        #
+        #         jahr = feat.attribute('jahr')
+        #         status_id = feat.attribute('status_id')
+        #
+        #         if status_id == 0:
+        #
+        #             if current_feat == None:
+        #                 current_feat = feat
+        #
+        #     self.abgrenzung_table._gis_layer.select(current_feat.id())
+        #
+        #     # abgr_id = self.abgrenzung_table.model.data(self.abgrenzung_table.model.index(0, 0), Qt.EditRole)
+        #     abgr_id = current_feat.attribute('abgrenzung_id')
+        #
+        #     # print(f'abgrenzung_id: {abgr_id}')
+        #     filter_string = f"\"abgrenzung_id\" = {str(abgr_id)}"
+        #     self.koppel_table._gis_layer.setSubsetString(filter_string)
+        #     self.komplex_table._gis_layer.setSubsetString(filter_string)
 
 
     def selectedAbgrenzungChanged(self):
