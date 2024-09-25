@@ -161,21 +161,21 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.uiInfoBtnRemoveGst.initInfoButton(1104)
         self.uiInfoBtnMatchGst.initInfoButton(1105)
 
-    def initWidget(self):
-
-        self.loadData()
-
-        self.setLoadTimeLabel()
-
-        self.loadGisLayer()
-
-        self.initUi()
-
-        self.dialog_widget._guiApplyDbtn.setEnabled(False)
-
-        self.signals()
-
-        self.guiGstTable.updateMaintableNew()
+    # def initWidget(self):
+    #
+    #     self.loadData()
+    #
+    #     self.setLoadTimeLabel()
+    #
+    #     self.loadGisLayer()
+    #
+    #     self.initUi()
+    #
+    #     self.dialog_widget._guiApplyDbtn.setEnabled(False)
+    #
+    #     self.signals()
+    #
+    #     self.guiGstTable.updateMaintableNew()
 
     def selPreChanged(self):
         """wenn die Auswahl im presel_view geändert wird"""
@@ -215,16 +215,20 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
     def loadSubWidgets(self):
 
-        self.guiGstTable = GstTable(self, gis_mode=True)
+        self.session = self.parent.dataview_session
+
+        self.guiGstTable = GstTable(self, gis_mode=True,
+                                    session=self.session)
         self.uiGstTableVLay.addWidget(self.guiGstTable)
 
-        self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=False)
+        self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=False,
+                                                session=self.session)
         self.uiPreSelGstTableVLay.addWidget(self.guiGstPreSelTview)
 
-        with db_session_cm(name='query tables in gst-zuordung',
-                           expire_on_commit=False) as session:
-            self.guiGstTable.initDataView(dataview_session=session)
-            self.guiGstPreSelTview.initDataView(dataview_session=session)
+        # with db_session_cm(name='query tables in gst-zuordung',
+        #                    expire_on_commit=False) as session:
+        self.guiGstTable.initDataView()
+        self.guiGstPreSelTview.initDataView()
 
         self.guiMainGis.project_instance.addMapLayer(self.guiGstTable._gis_layer)
 
@@ -234,17 +238,17 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.guiMainGis.uiCanvas.setExtent(extent)
 
 
-    def loadGisLayer(self):
-
-        with db_session_cm() as session:
-            session.expire_on_commit = False
-
-            scope_layer_inst = session.query(BGisScopeLayer) \
-                .filter(BGisScopeLayer.gis_scope_id == 2) \
-                .order_by(desc(BGisScopeLayer.order)) \
-                .all()
-
-        self.guiMainGis.loadLayer(scope_layer_inst)
+    # def loadGisLayer(self):
+    #
+    #     with db_session_cm() as session:
+    #         session.expire_on_commit = False
+    #
+    #         scope_layer_inst = session.query(BGisScopeLayer) \
+    #             .filter(BGisScopeLayer.gis_scope_id == 2) \
+    #             .order_by(desc(BGisScopeLayer.order)) \
+    #             .all()
+    #
+    #     self.guiMainGis.loadLayer(scope_layer_inst)
 
 
     def setLoadTime(self, time):
@@ -274,24 +278,24 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         # self.uiGdbDataTimeLbl.setText(self.getLoadTime())
         self.guiGstTable.uiImportTimeLbl.setText(self.getLoadTime())
 
-    def getZugeordneteGst(self):
-        """
-        erstelle eine liste mit den Gst, die bereits diesem Akt zugeordnet sind;
-        --> bereits zugeordnete Gst können dann farblich gekennzeichnet werden
-        --> es kann verhindert werden, das eine Zuordnung an dieser Stelle entfernt wird
-        """
-
-        self.akt_id = self.parent.parent.entity_id
-
-        with db_session_cm() as session:
-
-            zuord_query = session.query(BGst.id) \
-                .join(BGstZuordnung) \
-                .filter(BGstZuordnung.akt_id == self.akt_id) \
-                .all()
-        """erzeuge eine liste mit den id's aus dem query (=list in list)"""
-        self.akt_zugeordnete_gst = [r[0] for r in zuord_query]
-        """"""
+    # def getZugeordneteGst(self):
+    #     """
+    #     erstelle eine liste mit den Gst, die bereits diesem Akt zugeordnet sind;
+    #     --> bereits zugeordnete Gst können dann farblich gekennzeichnet werden
+    #     --> es kann verhindert werden, das eine Zuordnung an dieser Stelle entfernt wird
+    #     """
+    #
+    #     self.akt_id = self.parent.parent.entity_id
+    #
+    #     with db_session_cm() as session:
+    #
+    #         zuord_query = session.query(BGst.id) \
+    #             .join(BGstZuordnung) \
+    #             .filter(BGstZuordnung.akt_id == self.akt_id) \
+    #             .all()
+    #     """erzeuge eine liste mit den id's aus dem query (=list in list)"""
+    #     self.akt_zugeordnete_gst = [r[0] for r in zuord_query]
+    #     """"""
 
     def reserveSelectedGst(self):
         """übernehme ausgewählte Grundstücke der Gst-Tabelle in die Tabelle mit
@@ -753,7 +757,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         """öffne den dialog 'GemeinsameWerte' und ordne die gst dem akt zu
         wenn 'accept' geklickt wird"""
-        gemeinsame_werte = GstGemeinsameWerte(self)
+        gemeinsame_werte = GstGemeinsameWerte(self, session=self.session)
         gem_dialog = GstGemWerteMainDialog(self)
         gem_dialog.initDialog(gemeinsame_werte, center_in=self)
         result = gem_dialog.exec()
@@ -941,8 +945,8 @@ class GstTable(DataView):
     zugeordnet sind
     """
 
-    def __init__(self, parent, gis_mode=False):
-        super(__class__, self).__init__(parent, gis_mode)
+    def __init__(self, parent, gis_mode=False, session=None):
+        super(__class__, self).__init__(parent, gis_mode, session)
 
         self.parent = parent
 
@@ -1376,8 +1380,8 @@ class GstPreSelTable(DataView):
 
     _data_view = TableView
 
-    def __init__(self, parent, gis_mode=False):
-        super(__class__, self).__init__(parent, gis_mode)
+    def __init__(self, parent, gis_mode=False, session=None):
+        super(__class__, self).__init__(parent, gis_mode, session)
 
         self.parent = parent
 

@@ -204,8 +204,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     #
     #     self._last_edit = value
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, session=None):
+        super(__class__, self).__init__(parent, session)
         self.setupUi(self)
 
         """lade die listenelemente für die comboboxen"""
@@ -289,11 +289,11 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         # status_items = sorted(self._custom_entity_data['bearbeitungsstatus'],
         #                       key=lambda x:x.sort)
 
-        with db_session_cm(name='query akt bearbeitungsstatuse',
-                           expire_on_commit=False) as session:
+        # with db_session_cm(name='query akt bearbeitungsstatuse',
+        #                    expire_on_commit=False) as session:
 
-            status_stmt = select(BGstAwbStatus)
-            status_mci_list = session.scalars(status_stmt).all()
+        status_stmt = select(BGstAwbStatus)
+        status_mci_list = self.entity_session.scalars(status_stmt).all()
 
             # for item in status_items:
             #     self.uiStatusCombo.addItem(item.name, item.id)

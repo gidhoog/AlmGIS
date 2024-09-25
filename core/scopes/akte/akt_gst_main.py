@@ -483,8 +483,8 @@ class GstAktDataView(DataView):
     gst_zuordnung_wdg_class = GstZuordnung
     gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
-    def __init__(self, parent=None, gis_mode=False):
-        super(__class__, self).__init__(parent, gis_mode)
+    def __init__(self, parent=None, gis_mode=False, session=None):
+        super(__class__, self).__init__(parent, gis_mode, session)
 
         self.entity_dialog_class = GstDialog
         self.entity_widget_class = GstZuordnungDataForm

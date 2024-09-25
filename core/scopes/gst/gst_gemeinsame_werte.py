@@ -12,12 +12,15 @@ from core.scopes.gst import gst_gemeinsame_werte_UI
 class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget):
     """mit diesem Formular können ein oder mehrere Gst zugeordnet werden"""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, session=None):
         super(__class__, self).__init__()
 
         self.setupUi(self)
 
         self.parent = parent
+
+        if session:
+            self.session = session
 
         self.initWidget()
 
@@ -29,11 +32,11 @@ class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget)
     def setAwbStatusCombo(self):
 
         try:
-            with db_session_cm() as session:
-                session.expire_on_commit = False
-                awb_status_query = session.query(BGstAwbStatus)\
-                    .order_by(BGstAwbStatus.sort)\
-                    .all()
+            # with db_session_cm() as session:
+            #     session.expire_on_commit = False
+            awb_status_query = self.session.query(BGstAwbStatus)\
+                .order_by(BGstAwbStatus.sort)\
+                .all()
 
             """erstelle ein model mit 2 spalten für das awb-status_id-combo"""
             self.awb_status_model = QStandardItemModel(len(awb_status_query), 2)
@@ -59,11 +62,11 @@ class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget)
     def setRechtsgrundlageCombo(self):
 
         try:
-            with db_session_cm() as session:
-                session.expire_on_commit = False
-                rechtsgrunglage_query = session.query(BRechtsgrundlage)\
-                    .order_by(BRechtsgrundlage.sort)\
-                    .all()
+            # with db_session_cm() as session:
+            #     session.expire_on_commit = False
+            rechtsgrunglage_query = self.session.query(BRechtsgrundlage)\
+                .order_by(BRechtsgrundlage.sort)\
+                .all()
 
             self.rechtsgrundlage_model = QStandardItemModel(len(rechtsgrunglage_query), 2)
 

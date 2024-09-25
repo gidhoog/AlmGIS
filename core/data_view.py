@@ -650,7 +650,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     #     self.uiTitleLbl.setText(value)
     #     self._title = value
 
-    def __init__(self, parent=None, gis_mode=False):
+    def __init__(self, parent=None, gis_mode=False, session=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
@@ -659,7 +659,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.gis_mode = gis_mode
         self.current_feature = None
 
-        self.dataview_session = DbSession()
+        if session:
+            self.dataview_session = session
+        else:
+            self.dataview_session = DbSession()
 
         self.sel_entity_mci = None
 
@@ -731,6 +734,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.uiTableVlay.addWidget(self.view)
 
     def initDataView(self):
+
+        # if dataview_session is not None:
+        #     self._dataview_session = dataview_session
 
         # with db_session_cm(expire_on_commit=False) as session:
         # # with db_session_cm() as session:
@@ -1537,17 +1543,24 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             entity_mci = self.getEntityMci(index)
             self.edit_entity = entity_mci
-            entity_wdg = self.get_entity_widget_class(entity_mci)
+
+            entity_wdg_cls = self.get_entity_widget_class(entity_mci)
 
             if self.edit_entity_by == 'id':
 
-                self.editRow(entity_wdg(self),
+                entity_wdg = entity_wdg_cls(self)
+                entity_wdg.initEntityWidget()
+
+                self.editRow(entity_wdg,
                              entity_id=self.getEntityId(index),
                              feature=self.current_feature)
 
             if self.edit_entity_by == 'mci':
 
-                self.editRow(entity_wdg(self),
+                entity_wdg = entity_wdg_cls(self, self.dataview_session)
+                entity_wdg.initEntityWidget()
+
+                self.editRow(entity_wdg,
                              entity_mci=entity_mci,
                              feature=self.current_feature)
 

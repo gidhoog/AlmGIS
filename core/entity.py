@@ -94,12 +94,15 @@ class Entity(QMainWindow):
 
         self.rejectEntity()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, session=None):
         super(Entity, self).__init__(parent)
 
         self.parent = parent
 
-        self.entity_session = DbSession()
+        if session:
+            self.entity_session = session
+        else:
+            self.entity_session = DbSession()
 
         self.purpose = 'edit'  # or 'add'
 
@@ -114,32 +117,32 @@ class Entity(QMainWindow):
 
         self.entity_dialog = None
 
-    def __init_subclass__(cls, *args, **kwargs):
-        """
-        um die methode __post_init__ direkt nach __init__ aufzurufen
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        super().__init_subclass__(*args, **kwargs)
+    # def __init_subclass__(cls, *args, **kwargs):
+    #     """
+    #     um die methode __post_init__ direkt nach __init__ aufzurufen
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     super().__init_subclass__(*args, **kwargs)
+    #
+    #     def new_init(self, *args, init=cls.__init__, **kwargs):
+    #         init(self, *args, **kwargs)
+    #
+    #         if cls is type(self):
+    #             self.__post_init__()
+    #     cls.__init__ = new_init
 
-        def new_init(self, *args, init=cls.__init__, **kwargs):
-            init(self, *args, **kwargs)
-
-            if cls is type(self):
-                self.__post_init__()
-        cls.__init__ = new_init
-
-    def __post_init__(self):
-        """
-        methode die nach __init__ aufgerufen wird
-
-        :return:
-        """
-
-        self.insertEntityHeader()
-        self.initUi()
-        self.setEntityTabOrder()
+    # def __post_init__(self):
+    #     """
+    #     methode die nach __init__ aufgerufen wird
+    #
+    #     :return:
+    #     """
+    #
+    #     self.insertEntityHeader()
+    #     self.initUi()
+    #     self.setEntityTabOrder()
 
     def setDefaultValues(self, **kwargs):
         """
@@ -195,7 +198,7 @@ class Entity(QMainWindow):
             #
             #     self.getCustomEntityMci(session)
 
-        self.initEntityWidget()
+        # self.initEntityWidget()
 
         self.mapData()
 
@@ -291,28 +294,30 @@ class Entity(QMainWindow):
         # if hasattr(self, 'uiHeaderWdgt'):
         #     self.guiHeaderTextLbl.setText(str(self._entity_mci.rel_type.name))
 
-    def insertEntityHeader(self):
-        """
-        definiere hier den kopfbereich für diese entity
-        """
-
-        if hasattr(self, 'uiHeaderWdgt'):
-            self.uiHeaderWdgt.setStyleSheet("background-color: rgb(70,70,70);")
-
-            self.guiHeaderTextLbl = QLabel(self.entity_header_text)
-
-            self.header_label_font = QFont("Verdana", 15, QFont.Bold)
-            self.header_label_style = "color: rgb(246,246,246);"
-
-            self.guiHeaderTextLbl.setStyleSheet(self.header_label_style)
-            self.guiHeaderTextLbl.setFont(self.header_label_font)
-            self.uiHeaderHlay.addWidget(self.guiHeaderTextLbl)
-
-            self.uiHeaderHlay.setContentsMargins(10, 10, 10, 10)
+    # def insertEntityHeader(self):
+    #     """
+    #     definiere hier den kopfbereich für diese entity
+    #     """
+    #
+    #     if hasattr(self, 'uiHeaderWdgt'):
+    #         self.uiHeaderWdgt.setStyleSheet("background-color: rgb(70,70,70);")
+    #
+    #         self.guiHeaderTextLbl = QLabel(self.entity_header_text)
+    #
+    #         self.header_label_font = QFont("Verdana", 15, QFont.Bold)
+    #         self.header_label_style = "color: rgb(246,246,246);"
+    #
+    #         self.guiHeaderTextLbl.setStyleSheet(self.header_label_style)
+    #         self.guiHeaderTextLbl.setFont(self.header_label_font)
+    #         self.uiHeaderHlay.addWidget(self.guiHeaderTextLbl)
+    #
+    #         self.uiHeaderHlay.setContentsMargins(10, 10, 10, 10)
 
     def initEntityWidget(self):
 
-        pass
+        # self.insertEntityHeader()
+        self.initUi()
+        self.setEntityTabOrder()
 
     def setPreMapData(self):
 

@@ -358,6 +358,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         # self.uiKKTv.setColumnHidden(4, True)
 
     def initEntityWidget(self):
+        super().initEntityWidget()
 
         # self.setStatusComboData()
         #
@@ -460,7 +461,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """definiere notwendige tabellen und füge sie ein"""
 
         """lade die gst-tabelle"""
-        self.gst_table = GstAktDataView(self, gis_mode=True)
+        self.gst_table = GstAktDataView(self, gis_mode=True,
+                                        session=self.entity_session)
         # self.gst_table.dataview_session = self.entity_session
         # with db_session_cm(name='query gst-table in akt',
         #                    expire_on_commit=False) as session:
@@ -934,9 +936,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.menu_prints.addAction(self.actionPrintGstList)
         self.actionPrintGstList.setEnabled(False)
 
-    def insertEntityHeader(self):
-
-        pass
+    # def insertEntityHeader(self):
+    #
+    #     pass
 
     def setBewirtschafterCombo(self):
 
