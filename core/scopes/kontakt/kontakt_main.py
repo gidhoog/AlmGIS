@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QVariant
-from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QDialog, QLineEdit,
+from PyQt5.QtCore import Qt
+from qgis.PyQt.QtWidgets import (QLabel, QComboBox,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
                                  QMenu, QAction, QToolButton)
 from qgis.PyQt.QtGui import QIcon
@@ -7,15 +7,12 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from core import db_session_cm, config
-from core.data_view import DataView, TableModel, DataViewEntityDialog
+from core.data_view import DataView, TableModel
 from core.entity import EntityDialog
-from core.gis_layer import ZVectorLayer, Feature
 from core.main_widget import MainWidget
 
 from core.data_model import BKontakt, BKontaktTyp
 from core.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
-
-from qgis.core import QgsField
 
 
 class KontaktEntityDialog(EntityDialog):
@@ -34,14 +31,6 @@ class KontaktEntityDialog(EntityDialog):
 
             self.parent.updateMaintableNew(self.dialogWidget.purpose,
                                            self.accepted_mci)
-
-        # self.accepted_entity = self.dialogWidget.acceptEntity()
-        #
-        # if self.accepted_entity is not False:
-        #
-        #     self.parent.updateMaintableNew(self.dialogWidget.purpose,
-        #                                    self.accepted_entity)
-        #     QDialog.accept(self)
 
 
 class KontaktMainWidget(MainWidget):
@@ -144,101 +133,12 @@ class KontaktMain(DataView):
         super(__class__, self).__init__(parent)
 
         self.entity_dialog_class = KontaktEntityDialog
-        # self.entity_widget_class = Kontakt
         self.entity_widget_class = KontaktEinzel
 
         self._entity_mc = BKontakt
 
         self._model_class = KontaktModel
-
-        # self.edit_entity_by = 'mci'
         """"""
-
-        # self.setFeatureFields()
-        # self.loadData()
-        # self.setFilterUI()
-        #
-        # self._gis_layer = self.setLayer()
-        #
-        # self.addFeaturesFromMciList(self._mci_list)
-        # self.setTableView()
-        #
-        # self.initUi()
-        #
-        # self.finalInit()
-        #
-        # self.updateFooter()
-        #
-        # self.signals()
-
-    # def setLayer(self):
-    #
-    #     layer = ZVectorLayer(
-    #         "None",
-    #         "KontaktAllLay",
-    #         "memory",
-    #         feature_fields=self.feature_fields
-    #     )
-    #     return layer
-
-    # def addFeaturesFromMciList(self):
-    #     super().addFeaturesFromMciList()
-    #
-    #     for contact in self._mci_list:
-    #
-    #         feat = Feature(self._gis_layer.fields(), self)
-    #
-    #         self.setFeatureAttributes(feat, contact)
-    #
-    #         self._gis_layer.data_provider.addFeatures([feat])
-
-    # def setFeatureFields(self):
-    #     super().setFeatureFields()
-    #
-    #     mci_id_fld = QgsField("id", QVariant.Int)
-    #
-    #     typ_id_fld = QgsField("typ_id", QVariant.String)
-    #
-    #     typ_name_fld = QgsField("typ_name", QVariant.String)
-    #     typ_name_fld.setAlias('Typ')
-    #
-    #     typ_color_fld = QgsField("typ_color", QVariant.String)
-    #
-    #     name_fld = QgsField("name", QVariant.String)
-    #     name_fld.setAlias('Name')
-    #
-    #     adresse_fld = QgsField("adresse", QVariant.String)
-    #     adresse_fld.setAlias('Adresse')
-    #
-    #     telefon_fld = QgsField("telefon", QVariant.String)
-    #     telefon_fld.setAlias('Telefon')
-    #
-    #     mail_fld = QgsField("mail", QVariant.String)
-    #     mail_fld.setAlias('e-Mail')
-    #
-    #     self.feature_fields.append(mci_id_fld)
-    #     self.feature_fields.append(typ_id_fld)
-    #     self.feature_fields.append(typ_name_fld)
-    #     self.feature_fields.append(typ_color_fld)
-    #     self.feature_fields.append(name_fld)
-    #     self.feature_fields.append(adresse_fld)
-    #     self.feature_fields.append(telefon_fld)
-    #     self.feature_fields.append(mail_fld)
-
-    # def changeAttributes(self, feature, mci):
-    #
-    #     attrib = {0: mci.id,
-    #               1: mci.type_id,
-    #               2: mci.rel_type.name,
-    #               3: mci.rel_type.color,
-    #               4: mci.name,
-    #               5: mci.adresse,
-    #               6: mci.telefon_all,
-    #               7: mci.mail_all
-    #               }
-    #
-    #     self._gis_layer.changeAttributeValues(feature.id(),
-    #                                           attrib)
 
     def deleteCheck(self, mci):
 
@@ -253,36 +153,6 @@ class KontaktMain(DataView):
         else:
             return True
 
-    # def setFeatureAttributes(self, feature, mci):
-    #     super().setFeatureAttributes(feature, mci)
-    #
-    #     feature['id'] = mci.id
-    #
-    #     # if mci.type_id != 0:  # keine Einzelperson
-    #     feature['typ_id'] = mci.type_id
-    #     feature['typ_name'] = mci.rel_type.name
-    #     feature['typ_color'] = mci.rel_type.color
-    #
-    #     feature['name'] = mci.name
-    #     feature['adresse'] = mci.adresse
-    #     feature['telefon'] = mci.telefon_all
-    #     feature['mail'] = mci.mail_all
-
-    # def updateFeatureAttributes(self, *args):
-    #     super().updateFeatureAttributes(args)
-    #
-    #     mci = args[0][0]
-    #
-    #     with db_session_cm() as session:
-    #
-    #         session.add(mci)
-    #
-    #         self.setFeatureAttributes(self.current_feature, mci)
-
-    # def getFeatureDeleteInfo(self, feature):
-    #
-    #     return feature.attribute('name')
-
     def initUi(self):
         super().initUi()
 
@@ -295,13 +165,9 @@ class KontaktMain(DataView):
         action_gemeinschaft = QAction(QIcon(":/svg/resources/icons/group.svg"),
                                       'Gemeinschaft', self)
 
-        # action_einzel.triggered.connect(self.addEinzelperson)
         action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
-        # action_gemeinschaft.triggered.connect(self.addGemeinschaft)
         action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
 
-        # self.uiAkteAllAction.triggered.connect(
-        #     lambda: self._setMainWidget("akte_alle"))
 
         self.add_menu.addAction(action_einzel)
         self.add_menu.addAction(action_gemeinschaft)
@@ -326,34 +192,6 @@ class KontaktMain(DataView):
 
         self.editRow(entity_widget=entity_widget,
                      entity_mci=mci)
-
-    # def addEinzelperson(self):
-    #
-    #     entity_widget = KontaktEinzel(self)
-    #     entity_widget.initEntityWidget()
-    #
-    #     mci = BKontakt()
-    #
-    #     entity_widget.purpose = 'add'
-    #
-    #     self.edit_entity = mci
-    #
-    #     self.editRow(entity_widget=entity_widget,
-    #                  entity_mci=mci)
-    #
-    # def addGemeinschaft(self):
-    #
-    #     entity_widget = Kontakt(self)
-    #     entity_widget.initEntityWidget()
-    #
-    #     mci = BKontakt()
-    #
-    #     entity_widget.purpose = 'add'
-    #
-    #     self.edit_entity = mci
-    #
-    #     self.editRow(entity_widget=entity_widget,
-    #                  entity_mci=mci)
 
     def finalInit(self):
         super().finalInit()

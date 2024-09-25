@@ -976,7 +976,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         # self.uiTypCombo.setModelColumn(1)
         """"""
 
-        # self.uiBewirtschafterCombo.loadData()
+        # self.uiBewirtschafterCombo.loadComboData()
         self.uiBewirtschafterCombo.combo_widget_form = Kontakt
         self.uiBewirtschafterCombo.initCombo()
 

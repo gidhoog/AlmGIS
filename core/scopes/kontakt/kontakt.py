@@ -314,9 +314,9 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         print(f'init entity widget')
 
         self.setTypeCombo()
-        self.setVertrKontaktCombo()
+        # self.setVertrKontaktCombo()
 
-        self.uiVertreterCombo.loadData()
+        self.uiVertreterCombo.loadComboData(self.entity_session)
         self.uiVertreterCombo.combo_widget_form = KontaktEinzel
         self.uiVertreterCombo.initCombo()
 
@@ -330,13 +330,13 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         # type_items = sorted(self._custom_entity_data['typ'],
         #                       key=lambda x:x.sort)
 
-        with db_session_cm(name='set contact-type in contact',
-                           expire_on_commit=False) as session:
+        # with db_session_cm(name='set contact-type in contact',
+        #                    expire_on_commit=False) as session:
 
-            stmt = select(BKontaktTyp).where(BKontaktTyp.gemeinschaft == 1
-                                             ).order_by(BKontaktTyp.sort)
+        stmt = select(BKontaktTyp).where(BKontaktTyp.gemeinschaft == 1
+                                         ).order_by(BKontaktTyp.sort)
 
-            type_mci = session.scalars(stmt).all()
+        type_mci = self.entity_session.scalars(stmt).all()
 
         # for type in type_items:
         #     self.uiTypCombo.addItem(type.name, type.id)
@@ -365,14 +365,14 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         # vertr_kontakt_items = sorted(self._custom_entity_data['vertr_kontakte'],
         #                       key=lambda x:x.name)
 
-        with db_session_cm(name='set vertreter in kontakt',
-                           expire_on_commit=False) as session:
+        # with db_session_cm(name='set vertreter in kontakt',
+        #                    expire_on_commit=False) as session:
 
-            vertreter_stmt = select(
-                BKontakt).where(
-                BKontakt.type_id == 0).order_by(
-                func.lower(BKontakt.name))
-            vertreter_mci_list = session.scalars(vertreter_stmt).all()
+        vertreter_stmt = select(
+            BKontakt).where(
+            BKontakt.type_id == 0).order_by(
+            func.lower(BKontakt.name))
+        vertreter_mci_list = self.entity_session.scalars(vertreter_stmt).all()
 
         # # for kontakt in vertr_kontakt_items:
         # for kontakt in vertreter_mci_list:

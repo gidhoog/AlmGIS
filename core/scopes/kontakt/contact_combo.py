@@ -37,15 +37,18 @@ class ContactCombo(ExtendedCombo):
         self.combo_proxy_model.sort(0, Qt.AscendingOrder)
         """"""
 
-    def loadData(self):
+    def loadComboData(self, session=None):
 
-        with db_session_cm(name='load contact-type in contact',
-                           expire_on_commit=False) as session:
+        if session is not None:
+            self.combo_session = session
 
-            stmt = select(BKontakt).join(BKontakt.rel_type).where(
-                BKontaktTyp.gemeinschaft == False)
+        # with db_session_cm(name='load contact-type in contact',
+        #                    expire_on_commit=False) as session:
 
-            self._mci_list = session.scalars(stmt).unique().all()
+        stmt = select(BKontakt).join(BKontakt.rel_type).where(
+            BKontaktTyp.gemeinschaft == False)
+
+        self._mci_list = self.combo_session.scalars(stmt).unique().all()
 
 
 class ContactComboModel(ComboModel):
