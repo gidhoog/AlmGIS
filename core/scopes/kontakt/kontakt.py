@@ -287,8 +287,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self.uiAnmPedit.setPlainText(value)
         self._anm = value
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, session=None):
+        super(__class__, self).__init__(parent, session)
         self.setupUi(self)
 
         self._entity_mc = BKontakt
@@ -548,8 +548,8 @@ class KontaktEinzel(Kontakt):
     klasse für die Kontaktdaten einer Einzelperson
     """
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, session=None):
+        super(__class__, self).__init__(parent, session)
 
     def initUi(self):
         super().initUi()
@@ -572,10 +572,10 @@ class KontaktEinzel(Kontakt):
 
     def submitEntity(self):
 
-        with db_session_cm(name='get einzelkontakt-typ') as session:
+        # with db_session_cm(name='get einzelkontakt-typ') as session:
 
-            einzel_typ_mci = session.get(BKontaktTyp, 0)
-            leerer_kontakt = session.get(BKontakt, 0)
+        einzel_typ_mci = self.entity_session.get(BKontaktTyp, 0)
+        leerer_kontakt = self.entity_session.get(BKontakt, 0)
 
         self._entity_mci.type_id = 0
         self._entity_mci.rel_type = einzel_typ_mci

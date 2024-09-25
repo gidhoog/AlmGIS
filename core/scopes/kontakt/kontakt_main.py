@@ -28,14 +28,20 @@ class KontaktEntityDialog(EntityDialog):
         self.dialog_window_title = 'Kontakt'
 
     def accept(self):
+        super().accept()
 
-        self.accepted_entity = self.dialogWidget.acceptEntity()
-
-        if self.accepted_entity is not False:
+        if self.accepted_mci is not None:
 
             self.parent.updateMaintableNew(self.dialogWidget.purpose,
-                                           self.accepted_entity)
-            QDialog.accept(self)
+                                           self.accepted_mci)
+
+        # self.accepted_entity = self.dialogWidget.acceptEntity()
+        #
+        # if self.accepted_entity is not False:
+        #
+        #     self.parent.updateMaintableNew(self.dialogWidget.purpose,
+        #                                    self.accepted_entity)
+        #     QDialog.accept(self)
 
 
 class KontaktMainWidget(MainWidget):
@@ -47,10 +53,10 @@ class KontaktMainWidget(MainWidget):
 
         self.kontakt_table = KontaktMain(self)
 
-        with db_session_cm(name='main-widget - kontakt',
-                           expire_on_commit=False) as session:
+        # with db_session_cm(name='main-widget - kontakt',
+        #                    expire_on_commit=False) as session:
 
-            self.kontakt_table.initDataView(dataview_session=session)
+        self.kontakt_table.initDataView()
 
     def initMainWidget(self):
         super().initMainWidget()
@@ -145,7 +151,7 @@ class KontaktMain(DataView):
 
         self._model_class = KontaktModel
 
-        self.edit_entity_by = 'mci'
+        # self.edit_entity_by = 'mci'
         """"""
 
         # self.setFeatureFields()
@@ -286,10 +292,16 @@ class KontaktMain(DataView):
 
         action_einzel = QAction(QIcon(":/svg/resources/icons/person.svg"),
                                 'Einzelperson', self)
-        action_einzel.triggered.connect(self.addEinzelperson)
         action_gemeinschaft = QAction(QIcon(":/svg/resources/icons/group.svg"),
                                       'Gemeinschaft', self)
-        action_gemeinschaft.triggered.connect(self.addGemeinschaft)
+
+        # action_einzel.triggered.connect(self.addEinzelperson)
+        action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
+        # action_gemeinschaft.triggered.connect(self.addGemeinschaft)
+        action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
+
+        # self.uiAkteAllAction.triggered.connect(
+        #     lambda: self._setMainWidget("akte_alle"))
 
         self.add_menu.addAction(action_einzel)
         self.add_menu.addAction(action_gemeinschaft)
@@ -297,27 +309,51 @@ class KontaktMain(DataView):
         self.uiAddDataTbtn.setMenu(self.add_menu)
         self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
 
-    def addEinzelperson(self):
+    def addKontakt(self, type):
 
-        entity_widget = KontaktEinzel(self)
+        if type == 'einzel':
+            entity_widget = KontaktEinzel(self)
+        elif type == 'gem':
+            entity_widget = Kontakt(self)
 
-        mci = BKontakt()
-
-        entity_widget.purpose = 'add'
-
-        self.editRow(entity_widget=entity_widget,
-                     entity_mci=mci)
-
-    def addGemeinschaft(self):
-
-        entity_widget = Kontakt(self)
+        entity_widget.initEntityWidget()
 
         mci = BKontakt()
 
         entity_widget.purpose = 'add'
 
+        self.edit_entity = mci
+
         self.editRow(entity_widget=entity_widget,
                      entity_mci=mci)
+
+    # def addEinzelperson(self):
+    #
+    #     entity_widget = KontaktEinzel(self)
+    #     entity_widget.initEntityWidget()
+    #
+    #     mci = BKontakt()
+    #
+    #     entity_widget.purpose = 'add'
+    #
+    #     self.edit_entity = mci
+    #
+    #     self.editRow(entity_widget=entity_widget,
+    #                  entity_mci=mci)
+    #
+    # def addGemeinschaft(self):
+    #
+    #     entity_widget = Kontakt(self)
+    #     entity_widget.initEntityWidget()
+    #
+    #     mci = BKontakt()
+    #
+    #     entity_widget.purpose = 'add'
+    #
+    #     self.edit_entity = mci
+    #
+    #     self.editRow(entity_widget=entity_widget,
+    #                  entity_mci=mci)
 
     def finalInit(self):
         super().finalInit()
