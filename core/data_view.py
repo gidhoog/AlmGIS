@@ -815,7 +815,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
         # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
         #
-        # self.uiActionExportCsv.triggered.connect(self.export_csv)
+        self.uiActionExportCsv.triggered.connect(self.export_csv)
 
         if self.gis_mode:
             self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
@@ -945,27 +945,46 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
                 writer = csv.writer(f, delimiter=";")
 
-                """hole die spaltenüberschriften"""
-                header_list = []
-                for column_name in self.model.header:
-                    header_list.append(column_name)
-                """"""
+                if self.gis_mode:
+                    # todo: gis-tabellen werden noch nicht korrekt exportiert
+                    """hole die spaltenüberschriften"""
+                    header_list = []
+                    for field in self._gis_layer.fields():
+                        if field.alias() == '':
+                            header_list.append(field.name())
+                        else:
+                            header_list.append(field.alias())
+                    """"""
 
-                """schreibe die spaltenüberschriften in die datei"""
-                writer.writerow(list(header_list))
-                """"""
+                    """schreibe die spaltenüberschriften in die datei"""
+                    writer.writerow(list(header_list))
+                    """"""
 
-                """hole die zellenwerte"""
-                for row in range(self.view.model().rowCount()):
-                    row_text = []
-                    for col in range(self.view.model().columnCount()):
-                        value = self.view.model().data(
-                            self.view.model().index(
-                                row, col),
-                            Qt.DisplayRole)
-                        row_text.append(str(value))
-                    writer.writerow(row_text)  # schreibe zeile in datei
-                """"""
+                    for feature in self._gis_layer.getFeatures():
+                        writer.writerow(feature.attributes())  # schreibe zeile in datei
+
+                else:
+                    """hole die spaltenüberschriften"""
+                    header_list = []
+                    for column_name in self.model.header:
+                        header_list.append(column_name)
+                    """"""
+
+                    """schreibe die spaltenüberschriften in die datei"""
+                    writer.writerow(list(header_list))
+                    """"""
+
+                    """hole die zellenwerte"""
+                    for row in range(self.view.model().rowCount()):
+                        row_text = []
+                        for col in range(self.view.model().columnCount()):
+                            value = self.view.model().data(
+                                self.view.model().index(
+                                    row, col),
+                                Qt.DisplayRole)
+                            row_text.append(str(value))
+                        writer.writerow(row_text)  # schreibe zeile in datei
+                    """"""
         except:
             print(f"cannot create csv")
 
@@ -987,11 +1006,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # self.uiAddFilterDetailRowPbtn.setVisible(False)
         # self.uiDelFilterDetailRowPbtn.setVisible(False)
         # """"""
-        #
-        # self.uiActionExportCsv = QAction(self.uiToolsTbtn)
-        # self.uiActionExportCsv.setText('exportiere csv-Datei')
-        # self.uiToolsTbtn.addAction(self.uiActionExportCsv)
-        #
+
+        self.uiActionExportCsv = QAction(self.uiToolsTbtn)
+        self.uiActionExportCsv.setText('exportiere csv-Datei')
+        self.uiToolsTbtn.addAction(self.uiActionExportCsv)
+
         """definiere für eine alternative zeilen farbe"""
         data_view_palette = self.view.palette()
         data_view_palette.setColor(QPalette.AlternateBase, QColor(205, 202, 28, 20))
