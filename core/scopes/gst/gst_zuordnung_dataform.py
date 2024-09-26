@@ -2,11 +2,9 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QStandardItemModel
 from sqlalchemy import select
 
-from core import entity, db_session_cm
-from core.data_model import BGstAwbStatus, BRechtsgrundlage
-from core.gis_tools import cut_koppel_gstversion
+from core import entity
+from core.data_model import BGstAwbStatus, BRechtsgrundlage, BKatGem
 from core.scopes.gst import gst_zuordnung_dataform_UI
-from core.scopes.gst.gst import Gst
 
 
 class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
@@ -20,7 +18,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     _kg = ''
     _awb_status_id = 0
     _awb_status_mci = None
-    _rechtsgrundlage = 0
+    _rechtsgrundlage_id = 0
+    _rechtsgrundlage_mci = None
 
     _anmerkung = ''
     _probleme = ''
@@ -65,7 +64,9 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     @kg.setter
     def kg(self, value):
 
-        self.uiKgLbl.setText(str(value))
+        kg_mci = self.entity_session.get(BKatGem, value)
+
+        self.uiKgLbl.setText(str(value) + ' ' + kg_mci.kgname)
         self._kg = value
 
     @property  # getter
@@ -76,10 +77,6 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
     @awb_status_id.setter
     def awb_status_id(self, value):
-
-        # self.uiAwbStatusCombo.setCurrentIndex(
-        #     self.uiAwbStatusCombo.findText(value.name))
-        # self._awb_status_id = value
 
         """finde den status_id im model des uiAwbStatusCombo"""
         match_index = self.uiAwbStatusCombo.model().match(
@@ -104,20 +101,39 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         return status_mci
 
     @property  # getter
-    def rechtsgrundlage(self):
+    def rechtsgrundlage_id(self):
 
-        self._rechtsgrundlage = self.uiRechtsgrundlageCombo.currentData(Qt.UserRole)
-        return self._rechtsgrundlage
+        self._rechtsgrundlage_id = self.uiRechtsgrundlageCombo.currentData(
+            Qt.UserRole + 1)
+        return self._rechtsgrundlage_id
 
-    @rechtsgrundlage.setter
-    def rechtsgrundlage(self, value):
+    @rechtsgrundlage_id.setter
+    def rechtsgrundlage_id(self, value):
 
-        # self.uiRechtsgrundlageCombo.setCurrentIndex(
-        #     self.uiRechtsgrundlageCombo.findData(value, Qt.UserRole)
-        # )
-        self.uiRechtsgrundlageCombo.setCurrentIndex(
-            self.uiRechtsgrundlageCombo.findText(value.name))
-        self._rechtsgrundlage = value
+        """finde den rechtsgrundlage_id im model des uiRechtsgrundlageCombo"""
+        match_index = self.uiRechtsgrundlageCombo.model().match(
+            self.uiRechtsgrundlageCombo.model().index(0, 0),
+            Qt.UserRole + 1,
+            value,
+            -1,
+            Qt.MatchExactly)
+        """"""
+
+        if match_index:
+
+            self.uiRechtsgrundlageCombo.setCurrentIndex(match_index[0].row())
+            self._rechtsgrundlage_id = value
+        else:
+            self._rechtsgrundlage_id = 0
+
+
+        self._rechtsgrundlage_id = value
+
+    @property  # getter
+    def rechtsgrundlage_mci(self):
+
+        rg_mci = self.uiRechtsgrundlageCombo.currentData(Qt.UserRole)
+        return rg_mci
 
     @property  # getter
     def anmerkung(self):
@@ -189,47 +205,26 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
         self._awb_wrong = value
 
-    # @property  # getter
-    # def last_edit(self):
-    #     return self._last_edit
-    #
-    # @last_edit.setter
-    # def last_edit(self, value):
-    #
-    #     if value and self._entity_mci.time_edit:
-    #         user = value
-    #         time = self._entity_mci.time_edit[0:19]
-    #         le = user + '/' + str(time)
-    #         self.uiLastEditedLbl.setText(le)
-    #
-    #     self._last_edit = value
+    @property  # getter
+    def last_edit(self):
+        return self._last_edit
+
+    @last_edit.setter
+    def last_edit(self, value):
+
+        try:
+            if value and self._entity_mci.time_edit:
+                user = value
+                time = self._entity_mci.time_edit[0:19]
+                self._last_edit = user + '/' + str(time)
+        except:
+            self._last_edit = 'n.b.'
+
+        self.uiLastEditedLbl.setText(self._last_edit)
 
     def __init__(self, parent=None, session=None):
         super(__class__, self).__init__(parent, session)
         self.setupUi(self)
-
-        """lade die listenelemente für die comboboxen"""
-        # with db_session_cm() as session:
-        #
-        #     status_items = session.query(BGstAwbStatus).\
-        #         order_by(BGstAwbStatus.sort).\
-        #         all()
-        #     recht_items = session.query(BRechtsgrundlage).\
-        #         order_by(BRechtsgrundlage.sort).\
-        #         all()
-
-        # for item in status_items:
-        #     self.uiAwbStatusCombo.addItem(item.name, item)
-        # for r_item in recht_items:
-        #     self.uiRechtsgrundlageCombo.addItem(r_item.name, r_item)
-        """"""
-
-    def loadSubWidgets(self):
-        super().loadSubWidgets()
-
-        # self.gst_info = Gst(self)
-        # self.gst_info.editEntity(self._entity_mci.rel_gst, None)
-        # self.addGstInfo()
 
     def addGstInfo(self):
 
@@ -238,28 +233,23 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def initEntityWidget(self):
 
         self.setStatusComboData()
+        self.setRechtsgrundComboData()
 
     def mapData(self):
         super().mapData()
-
-        # for item in self._custom_entity_data['awb_status']:
-        #     self.uiAwbStatusCombo.addItem(item.name, item)
-        #
-        # for item in self._custom_entity_data['recht_status']:
-        #     self.uiRechtsgrundlageCombo.addItem(item.name, item)
 
         self.akt = self._entity_mci.rel_akt.name
         self.gst_nr = self._entity_mci.rel_gst.gst
         self.kg = self._entity_mci.rel_gst.kgnr
         self.awb_status_id = self._entity_mci.awb_status_id
-        # self.rechtsgrundlage = self._entity_mci.rel_rechtsgrundlage
+        self.rechtsgrundlage_id = self._entity_mci.rechtsgrundlage_id
 
         self.anmerkung = self._entity_mci.anmerkung
         self.probleme = self._entity_mci.probleme
         self.aufgaben = self._entity_mci.aufgaben
         self.gb_wrong = self._entity_mci.gb_wrong
         self.awb_wrong = self._entity_mci.awb_wrong
-        # self.last_edit = self._entity_mci.user_edit
+        self.last_edit = self._entity_mci.user_edit
 
     def submitEntity(self):
         super().submitEntity()
@@ -269,8 +259,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self._entity_mci.awb_status_id = self.awb_status_id
         self._entity_mci.rel_awb_status = self.awb_status_mci
 
-        # self._entity_mci.rechtsgrundlage_id = self.rechtsgrundlage.id
-        # self._entity_mci.rel_rechtsgrundlage = self.rechtsgrundlage
+        self._entity_mci.rechtsgrundlage_id = self.rechtsgrundlage_id
+        self._entity_mci.rel_rechtsgrundlage = self.rechtsgrundlage_mci
         """"""
 
         self._entity_mci.anmerkung = self.anmerkung
@@ -279,30 +269,17 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self._entity_mci.gb_wrong = self.gb_wrong
         self._entity_mci.awb_wrong = self.awb_wrong
 
-        print(f'...')
-
     def setStatusComboData(self):
         """
         hole die daten für die status_id-combobox aus der datenbank und füge
         sie in die combobox ein
         """
-        # status_items = sorted(self._custom_entity_data['bearbeitungsstatus'],
-        #                       key=lambda x:x.sort)
-
-        # with db_session_cm(name='query akt bearbeitungsstatuse',
-        #                    expire_on_commit=False) as session:
-
         status_stmt = select(BGstAwbStatus)
         status_mci_list = self.entity_session.scalars(status_stmt).all()
-
-            # for item in status_items:
-            #     self.uiStatusCombo.addItem(item.name, item.id)
 
         """erstelle ein model mit 1 spalten für das type-combo"""
         status_model = QStandardItemModel(len(status_mci_list), 1)
         for i in range(len(status_mci_list)):
-            # id = type_items[i].id
-            # name = type_items[i].name
             status_model.setData(status_model.index(i, 0),
                                           status_mci_list[i].name, Qt.DisplayRole)
             status_model.setData(status_model.index(i, 0),
@@ -313,5 +290,27 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
         """weise dem combo das model zu"""
         self.uiAwbStatusCombo.setModel(status_model)
-        # self.uiTypCombo.setModelColumn(1)
+        """"""
+
+    def setRechtsgrundComboData(self):
+        """
+        hole die daten für die rechtsgrundlage_id-combobox aus der datenbank
+        und füge sie in die combobox ein
+        """
+        rechtsgrund_stmt = select(BRechtsgrundlage)
+        rg_mci_list = self.entity_session.scalars(rechtsgrund_stmt).all()
+
+        """erstelle ein model mit 1 spalten für das type-combo"""
+        rg_model = QStandardItemModel(len(rg_mci_list), 1)
+        for i in range(len(rg_mci_list)):
+            rg_model.setData(rg_model.index(i, 0),
+                                          rg_mci_list[i].name, Qt.DisplayRole)
+            rg_model.setData(rg_model.index(i, 0),
+                                          rg_mci_list[i].id, Qt.UserRole + 1)
+            rg_model.setData(rg_model.index(i, 0),
+                                          rg_mci_list[i], Qt.UserRole)
+        """"""
+
+        """weise dem combo das model zu"""
+        self.uiRechtsgrundlageCombo.setModel(rg_model)
         """"""
