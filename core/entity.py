@@ -203,11 +203,11 @@ class Entity(QMainWindow):
         self.mapData()
 
         # self.setTypeProperties()
-        #
-        # self.post_data_set()
-        #
-        # self.signals()
-        # self.finalInit()
+
+        self.post_data_set()
+
+        self.signals()
+        self.finalInit()
 
         print(f'...')
 

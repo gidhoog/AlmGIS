@@ -677,6 +677,8 @@ class GstAktDataView(DataView):
         gb_area_fld = QgsField("gb_area", QVariant.Double)
         gb_area_fld.setAlias('GB-Fläche')
 
+
+
         datenstand_fld = QgsField("datenstand", QVariant.String)
         datenstand_fld.setAlias('Datenstand')
 

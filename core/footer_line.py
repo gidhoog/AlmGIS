@@ -209,22 +209,17 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
 
     def calc_all_values(self, amount):
 
-        # if self.gis_mode:
-        #     for feature in self.data_view._gis_layer.getFeatures():
-        #         amount = amount + feature.attribute(self.attribute)
-        # else:
-        #     for i in range(self.data_view.model.rowCount()):
-        #         value = self.data_view.model.data(
-        #             self.data_view.model.index(
-        #                 i, self.column_id),
-        #             Qt.EditRole)
-        #         if value:
-        #             amount = amount + self.column_type(value)
-        #
-        # return amount
+        # todo: aktuell funktioniert nur ein 'gleich' filter; event. diese
+        #  funktion mit 'calc_sel_values' zusammenführen
+
         if self.gis_mode:
             for feature in self.data_view._gis_layer.getFeatures():
-                amount = amount + feature.attribute(self.attribute)
+                if self.filter_col is not None:
+                    print(f'self.filter_col: {self.filter_col} ::feature.attribute(self.filter_col){feature.attribute(self.filter_col)} - self.filter_criterion{self.filter_criterion}')
+                    if feature.attribute(self.filter_col) is self.filter_criterion:
+                        amount = amount + feature.attribute(self.attribute)
+                else:
+                    amount = amount + feature.attribute(self.attribute)
         else:
             for i in range(self.data_view.model.rowCount()):
                 value = self.data_view.filter_proxy.data(
@@ -241,8 +236,14 @@ class FooterLine(QWidget, footer_line_UI.Ui_FooterLine):
         if self.gis_mode:
 
             for feat_id in sel_feature_ids:
-                feat = self.data_view._gis_layer.getFeature(feat_id)
-                amount_sel = amount_sel + feat.attribute(self.attribute)
+                feature = self.data_view._gis_layer.getFeature(feat_id)
+                # amount_sel = amount_sel + feat.attribute(self.attribute)
+                if self.filter_col is not None:
+                    print(f'self.filter_col: {self.filter_col} ::feature.attribute(self.filter_col){feature.attribute(self.filter_col)} - self.filter_criterion{self.filter_criterion}')
+                    if feature.attribute(self.filter_col) is self.filter_criterion:
+                        amount_sel = amount_sel + feature.attribute(self.attribute)
+                else:
+                    amount_sel = amount_sel + feature.attribute(self.attribute)
 
         else:
             for model_index in sel_feature_ids:
