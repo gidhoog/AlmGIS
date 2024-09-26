@@ -19,8 +19,6 @@ from core.tools import convertMtoHa
 
 class AwbAuszug(QgsPrintLayout):
 
-    # todo: füge einen layer mit den gst von nögis ein!!!
-
     def __init__(self, akt_instance=None):
         """
         baseclass für die erstellung eines alm- und weidebuch auszuges
@@ -101,37 +99,63 @@ class AwbAuszug(QgsPrintLayout):
         """
         füge einen Kopf mit Logo, Adresse und Datenstand ein
         """
-        abb_name = 'NÖ Agrarbezirksbehörde'
+        """füge das ABB-Logo ein"""
+        logo = QgsLayoutItemPicture(self)
+        logo.setPicturePath(':/logo/resources/icons/abb_logo_ohne_schrift.svg')
+        logo.attemptSetSceneRect(QRectF(self.left_margin, self.hoch, 14, 10))
+        self.addLayoutItem(logo)
+        """"""
+
+        abb_name = "NÖ Agrarbezirksbehörde"
+        # abb_name = r"My long one line label"
         abb_name_font = QFont('Arial', 14)
         abb_name_font.setBold(True)
         abb_name_label = QgsLayoutItemLabel(self)
         abb_name_label.setText(abb_name)
-        abb_name_label.setPos(self.left_margin + 63, self.hoch)
 
         abb_name_format = QgsTextFormat()
         abb_name_format.setFont(abb_name_font)
         # abb_name_label.setFont(abb_name_font)
         abb_name_label.setTextFormat(abb_name_format)
 
-        abb_name_label.adjustSizeToText()
+        abb_name_label.setPos(self.left_margin + 20, self.hoch)
+
+        # abb_name_label.adjustSizeToText()
+        abb_name_label.update(self.left_margin + 20, self.hoch, 400, 20)
         self.addLayoutItem(abb_name_label)
+
+        """"""
 
         abb_adresse = '3109 St. Pölten, Landhausplatz 1/12'
         abb_adresse_font = QFont('Arial', 10)
         abb_adresse_label = QgsLayoutItemLabel(self)
         abb_adresse_label.setText(abb_adresse)
-        abb_adresse_label.setPos(self.left_margin + 63, self.hoch + 5.5)
+
         abb_adresse_format = QgsTextFormat()
         abb_adresse_format.setFont(abb_adresse_font)
         abb_adresse_label.setTextFormat(abb_adresse_format)
-        abb_adresse_label.adjustSizeToText()
+
+        abb_adresse_label.setPos(self.left_margin + 20, self.hoch + 5.5)
+        # abb_adresse_label.adjustSizeToText()
+        abb_adresse_label.update(self.left_margin + 20, self.hoch + 5.5, 400, 20)
+
         self.addLayoutItem(abb_adresse_label)
 
-        """füge das ABB-Logo ein"""
-        logo = QgsLayoutItemPicture(self)
-        logo.setPicturePath(':/logo/resources/icons/abb_logo_ohne_schrift.svg')
-        logo.attemptSetSceneRect(QRectF(self.left_margin + 47, self.hoch, 14, 10))
-        self.addLayoutItem(logo)
+        """füge das Datum für den Datenstand ein"""
+        today = datetime.now().strftime('%d. %B %Y')
+        datenstand_string = 'erstellt am:  ' + today
+        datenstand_font = QFont('Arial', 8)
+
+        datenstand = QgsLayoutItemLabel(self)
+
+        datenstand.setText(datenstand_string)
+        datenstand_format = QgsTextFormat()
+        datenstand_format.setFont(datenstand_font)
+        datenstand.setTextFormat(datenstand_format)
+        datenstand.adjustSizeToText()
+        datenstand_width = datenstand.sizeForText().width()
+        datenstand.setPos(self.page_with - self.right_margin - datenstand_width - 2, self.hoch + 5.5)
+        self.addLayoutItem(datenstand)
         """"""
 
         """füge eine Linie unterhalb der Adresse ein"""
@@ -142,52 +166,72 @@ class AwbAuszug(QgsPrintLayout):
         self.addLayoutItem(adress_line)
         """"""
 
-        """füge das Datum für den Datenstand ein"""
-        today = datetime.now().strftime('%d. %B %Y')
-        datenstand_string = 'erstellt am:  ' + today
-        datenstand_font = QFont('Arial', 9)
-
-        datenstand = QgsLayoutItemLabel(self)
-
-        datenstand.setText(datenstand_string)
-        datenstand_format = QgsTextFormat()
-        datenstand_format.setFont(datenstand_font)
-        datenstand.setTextFormat(datenstand_format)
-        datenstand.adjustSizeToText()
-        datenstand_width = datenstand.sizeForText().width()
-        datenstand.setPos(self.page_with - self.right_margin - datenstand_width - 5, self.hoch + 12)
-        self.addLayoutItem(datenstand)
-        """"""
-
-        self.hoch += 32
+        self.hoch += 20
 
     def insertTitel(self):
         """
         füge den Seitentitel ein
         """
 
-        titel_string = 'NÖ Alm- und Weidebuch'
+        titel_string = 'Auszug aus dem NÖ Alm- und Weidebuch'
         titel = QgsLayoutItemLabel(self)
-        titel_font = QFont('Arial', 20)
+        titel_font = QFont('Arial', 40)
         titel_font.setBold(True)
         titel.setText(titel_string)
         titel_format = QgsTextFormat()
         titel_format.setFont(titel_font)
         titel.setTextFormat(titel_format)
-        titel.adjustSizeToText()
+        # titel.adjustSizeToText()
         titel_width = titel.sizeForText().width()
         titel.setPos((self.page_with / 2) - (titel_width / 2), self.hoch)
+        titel.update((self.page_with / 2) - (titel_width / 2), self.hoch, 600, 40)
+
         self.addLayoutItem(titel)
 
-        self.hoch += 20
+        self.hoch += 8
+
+        fuer_die_string = 'für die'
+        fuer_die = QgsLayoutItemLabel(self)
+        fuer_die_font = QFont('Arial', 12)
+        # fuer_die_font.setBold(True)
+        fuer_die.setText(fuer_die_string)
+        fuer_die_format = QgsTextFormat()
+        fuer_die_format.setFont(fuer_die_font)
+        fuer_die.setTextFormat(fuer_die_format)
+        # titel.adjustSizeToText()
+        fuer_die_width = fuer_die.sizeForText().width()
+        fuer_die.setPos((self.page_with / 2) - (fuer_die_width / 2), self.hoch)
+        fuer_die.update((self.page_with / 2) - (fuer_die_width / 2), self.hoch, 600, 40)
+
+        self.addLayoutItem(fuer_die)
+
+        self.hoch += 8
+
+        name_value_string = str(self.akt_instance.name)
+        name_value = QgsLayoutItemLabel(self)
+        name_value.setText(name_value_string)
+        name_value_format = QgsTextFormat()
+        name_value_font = QFont('Arial', 32)
+        name_value_font.setBold(True)
+        name_value_format.setFont(name_value_font)
+        name_value.setTextFormat(name_value_format)
+
+        # name_value.adjustSizeToText()
+        name_value_width = name_value.sizeForText().width()
+        name_value.setPos((self.page_with / 2) - (name_value_width / 2), self.hoch)
+        name_value.update((self.page_with / 2) - (name_value_width / 2), self.hoch, 400, 40)
+
+        self.addLayoutItem(name_value)
+
+        self.hoch += 15
 
     def insertAwbDetails(self):
         """
         füge die Detailinfos für den AWB-Auszug ein
         """
         label_font = QFont('Arial', 10)
-        value_font = QFont('Arial', 12)
-        value_font.setBold(True)
+        value_font = QFont('Arial', 10)
+        # value_font.setBold(True)
 
         az_string = 'Aktenzahl:'
         az = QgsLayoutItemLabel(self)
@@ -201,37 +245,37 @@ class AwbAuszug(QgsPrintLayout):
 
         az_label_width = az.sizeForText().width()
 
-        az_value_string = str(self.akt_instance.az)
+        az_value_string = 'ABB-AW-' + str(self.akt_instance.az)
         az_value = QgsLayoutItemLabel(self)
         az_value.setText(az_value_string)
         az_value_format = QgsTextFormat()
         az_value_format.setFont(value_font)
         az_value.setTextFormat(az_value_format)
         az_value.adjustSizeToText()
-        az_value.setPos(self.left_margin + az_label_width + 5, self.hoch - 0.5)
+        az_value.setPos(self.left_margin + az_label_width + 5, self.hoch)
         self.addLayoutItem(az_value)
 
-        name_string = 'Name:'
-        name = QgsLayoutItemLabel(self)
-        name.setText(name_string)
-        name_format = QgsTextFormat()
-        name_format.setFont(label_font)
-        name.setTextFormat(name_format)
-        name.adjustSizeToText()
-        name_label_width = name.sizeForText().width()
+        # name_string = 'Name:'
+        # name = QgsLayoutItemLabel(self)
+        # name.setText(name_string)
+        # name_format = QgsTextFormat()
+        # name_format.setFont(label_font)
+        # name.setTextFormat(name_format)
+        # name.adjustSizeToText()
+        # name_label_width = name.sizeForText().width()
+        #
+        # name.setPos(self.left_margin + az_label_width - name_label_width, self.hoch + 10)
+        # self.addLayoutItem(name)
 
-        name.setPos(self.left_margin + az_label_width - name_label_width, self.hoch + 10)
-        self.addLayoutItem(name)
-
-        name_value_string = str(self.akt_instance.name)
-        name_value = QgsLayoutItemLabel(self)
-        name_value.setText(name_value_string)
-        name_value_format = QgsTextFormat()
-        name_value_format.setFont(value_font)
-        name_value.setTextFormat(name_value_format)
-        name_value.adjustSizeToText()
-        name_value.setPos(self.left_margin + az_label_width + 5, self.hoch + 9.5)
-        self.addLayoutItem(name_value)
+        # name_value_string = str(self.akt_instance.name)
+        # name_value = QgsLayoutItemLabel(self)
+        # name_value.setText(name_value_string)
+        # name_value_format = QgsTextFormat()
+        # name_value_format.setFont(value_font)
+        # name_value.setTextFormat(name_value_format)
+        # name_value.adjustSizeToText()
+        # name_value.setPos(self.left_margin + az_label_width + 5, self.hoch + 9.5)
+        # self.addLayoutItem(name_value)
 
     def insertSeitennummer(self):
         """füge die Seitennummer ein"""
