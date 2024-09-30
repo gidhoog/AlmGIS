@@ -408,14 +408,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     def initEntityWidget(self):
         super().initEntityWidget()
 
-        # self.setStatusComboData()
-        #
-        # """init bewirtschafter_combo"""
-        # self.setBewirtschafterCombo()
-        # # self.uiBewirtschafterCombo.loadData()
-        # # self.uiBewirtschafterCombo.combo_widget_form = Kontakt
-        # # self.uiBewirtschafterCombo.initCombo()
-        # """"""
+        self.setStatusComboData()
+
+        """init bewirtschafter_combo"""
+        self.setBewirtschafterCombo()
+        # self.uiBewirtschafterCombo.loadData()
+        # self.uiBewirtschafterCombo.combo_widget_form = Kontakt
+        # self.uiBewirtschafterCombo.initCombo()
+        """"""
 
         self.uiInfoBtnAlmBnr.initInfoButton(1001)
         self.uiInfoBtnStatus.initInfoButton(1002)
@@ -916,8 +916,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.alias = self.alias
         self._entity_mci.alm_bnr = self.alm_bnr
         self._entity_mci.anm = self.anm
-        # self._entity_mci.bearbeitungsstatus_id = self.status_id
-        # self._entity_mci.rel_bearbeitungsstatus = self.status_mci
+        self._entity_mci.bearbeitungsstatus_id = self.status_id
+        self._entity_mci.rel_bearbeitungsstatus = self.status_mci
 
         self._entity_mci.wwp = self.wwp
         self._entity_mci.wwp_exist = self.wwp_exist
@@ -926,8 +926,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.weidedauer = self.weidedauer
         self._entity_mci.max_gve = self.max_gve
 
-        # self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
-        # self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
+        self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
+        self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
 
     # def get_abgrenzung_di(self):
     #     """
@@ -999,13 +999,14 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         # vertr_kontakt_items = sorted(self._custom_entity_data['vertr_kontakte'],
         #                       key=lambda x:x.name)
 
-        with db_session_cm(name='set bewirtschafter_combo in akt',
-                           expire_on_commit=False) as session:
+        # with db_session_cm(name='set bewirtschafter_combo in akt',
+        #                    expire_on_commit=False) as session:
 
-            bewirtschafter_stmt = select(
-                BKontakt).order_by(
-                func.lower(BKontakt.name))
-            self.uiBewirtschafterCombo._mci_list = session.scalars(bewirtschafter_stmt).all()
+        bewirtschafter_stmt = select(
+            BKontakt).order_by(func.lower(BKontakt.name)
+                               )
+        self.uiBewirtschafterCombo._mci_list = self.entity_session.scalars(
+            bewirtschafter_stmt).all()
 
         # # for kontakt in vertr_kontakt_items:
         # for kontakt in vertreter_mci_list:
@@ -1042,11 +1043,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         # status_items = sorted(self._custom_entity_data['bearbeitungsstatus'],
         #                       key=lambda x:x.sort)
 
-        with db_session_cm(name='query akt bearbeitungsstatuse',
-                           expire_on_commit=False) as session:
+        # with db_session_cm(name='query akt bearbeitungsstatuse',
+        #                    expire_on_commit=False) as session:
 
-            status_stmt = select(BBearbeitungsstatus)
-            status_mci_list = session.scalars(status_stmt).all()
+        status_stmt = select(BBearbeitungsstatus)
+        status_mci_list = self.entity_session.scalars(status_stmt).all()
 
             # for item in status_items:
             #     self.uiStatusCombo.addItem(item.name, item.id)
