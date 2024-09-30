@@ -1,7 +1,7 @@
 import math
 from datetime import datetime
 
-from qgis.PyQt.QtCore import Qt, QRectF, QPointF
+from qgis.PyQt.QtCore import Qt, QRectF, QPointF, QDate
 from qgis.PyQt.QtGui import QFont, QPolygonF
 from qgis.core import QgsPrintLayout, QgsUnitTypes, QgsLayoutItemPage,\
     QgsLayoutItemLabel, QgsProject, QgsLayoutItemPicture, QgsLayoutItemPolygon, \
@@ -84,6 +84,25 @@ class AwbAuszug(QgsPrintLayout):
             'A3', QgsLayoutItemPage.Orientation.Landscape)
 
         self.insertMapPage()
+
+    def getBewAwbArea(self):
+        """
+        erhalte die bewirtschaftete Fläche die für das awb gültig ist
+        :return:
+        """
+
+        area = 0.0
+
+        for abgrenzung in self.akt_instance.rel_abgrenzung:
+
+            if abgrenzung.awb == 1:
+                for komplex in abgrenzung.rel_komplex:
+                    for koppel in komplex.rel_koppel:
+                        area = area + koppel.koppel_area
+
+        area_ha = '{:.4f}'.format(
+            round(float(area) / 10000, 4)).replace(".", ",") + ' ha'
+        return area_ha
 
     def insertDeckblatt(self):
         """
@@ -392,32 +411,109 @@ class AwbAuszug(QgsPrintLayout):
 
                 gst_count_label = QgsLayoutItemLabel(self)
 
-                if len(self.gst_query) == 1:
-                    gst_count_string = '1 Grundstück eingetragen'
-                else:
-                    gst_count_string = str(len(self.gst_query)) + \
-                                       ' Grundstücke eingetragen'
+                # if len(self.gst_query) == 1:
+                #     gst_count_string = '1 Grundstück eingetragen'
+                # else:
+                gst_count_string = ('eingetragene Grundstücke:    '
+                                    + str(len(self.gst_query)))
 
                 gst_count_label.setText(gst_count_string)
                 gst_count_label_format = QgsTextFormat()
                 gst_count_label_format.setFont(table_footer_font)
                 gst_count_label.setTextFormat(gst_count_label_format)
-                gst_count_label.adjustSizeToText()
+                # gst_count_label.adjustSizeToText()
                 gst_count_label.setPos(self.left_margin, self.hoch)
+                gst_count_label.update(self.left_margin, self.hoch, 400, 10)
                 self.addItem(gst_count_label)
                 """"""
 
-                """füge die Flächensumme ein"""
+                """füge die Gst-Flächensumme ein"""
                 area_sum_label = QgsLayoutItemLabel(self)
-                area_sum_label_string = 'eingetragene Gesamtfläche:    ' + \
+                area_sum_label_string = 'eingetragene Gesamtfläche (lt. GB):    ' + \
                                         str(convertMtoHa(float(area_sum))) + ' ha'
                 area_sum_label.setText(area_sum_label_string)
                 area_sum_label_format = QgsTextFormat()
                 area_sum_label_format.setFont(table_footer_font)
                 area_sum_label.setTextFormat(area_sum_label_format)
-                area_sum_label.adjustSizeToText()
-                area_sum_label.setPos(self.left_margin, self.hoch + 9.5)
+                # area_sum_label.adjustSizeToText()
+                area_sum_label.setPos(self.left_margin, self.hoch + 5)
+                area_sum_label.update(self.left_margin, self.hoch + 5, 400, 10)
                 self.addItem(area_sum_label)
+                """"""
+
+                """füge die bew-Fläche ein"""
+                bew_area_label = QgsLayoutItemLabel(self)
+                bew_area_label_string = ('bewirtschaftete Fläche (GIS):    '
+                                         + self.getBewAwbArea())
+                #                         str(convertMtoHa(float(area_sum))) + ' ha'
+                bew_area_label.setText(bew_area_label_string)
+                bew_area_label_format = QgsTextFormat()
+                bew_area_label_format.setFont(table_footer_font)
+                bew_area_label.setTextFormat(bew_area_label_format)
+                # bew_area_label.adjustSizeToText()
+                bew_area_label.setPos(self.left_margin, self.hoch + 15)
+                bew_area_label.update(self.left_margin, self.hoch + 15, 400, 10)
+                self.addItem(bew_area_label)
+                """"""
+
+                """füge die Weidedauer ein"""
+                weidedauer_label = QgsLayoutItemLabel(self)
+                weidedauer_label_string = ('Weidedauer:    '
+                                           + str(self.akt_instance.weidedauer)
+                                           + ' Tage')
+
+                #                         str(convertMtoHa(float(area_sum))) + ' ha'
+                weidedauer_label.setText(weidedauer_label_string)
+                weidedauer_label_format = QgsTextFormat()
+                weidedauer_label_format.setFont(table_footer_font)
+                weidedauer_label.setTextFormat(weidedauer_label_format)
+                # weidedauer_label.adjustSizeToText()
+                weidedauer_label.setPos(self.left_margin, self.hoch + 20)
+                weidedauer_label.update(self.left_margin, self.hoch + 20, 400, 10)
+                self.addItem(weidedauer_label)
+                """"""
+
+                """füge die max. GVE ein"""
+                max_gve_label = QgsLayoutItemLabel(self)
+                max_gve_label_string = (('Anzahl der maximal aufzutreibenden '
+                                           'Großvieheinheiten:    ')
+                                        + str(self.akt_instance.max_gve).replace(".", ",")
+                                        + ' GVE')
+
+                #                         str(convertMtoHa(float(area_sum))) + ' ha'
+                max_gve_label.setText(max_gve_label_string)
+                max_gve_label_format = QgsTextFormat()
+                max_gve_label_format.setFont(table_footer_font)
+                max_gve_label.setTextFormat(max_gve_label_format)
+                # max_gve_label.adjustSizeToText()
+                max_gve_label.setPos(self.left_margin, self.hoch + 25)
+                max_gve_label.update(self.left_margin, self.hoch + 25, 400, 10)
+                self.addItem(max_gve_label)
+                """"""
+
+                """füge die wwp_date ein"""
+
+                date = self.akt_instance.wwp_date
+                year = date[:4]
+                month = date[5:7]
+                day = date[8:]
+                q_date = QDate(int(year), int(month), int(day))
+
+                date_str = q_date.toString('d. MMMM yyyy')
+
+                wwp_date_label = QgsLayoutItemLabel(self)
+                wwp_date_label_string = ('Datum der Geltung des '
+                                         'Wirtschaftsplanes:    ') + date_str
+
+                #                         str(convertMtoHa(float(area_sum))) + ' ha'
+                wwp_date_label.setText(wwp_date_label_string)
+                wwp_date_label_format = QgsTextFormat()
+                wwp_date_label_format.setFont(table_footer_font)
+                wwp_date_label.setTextFormat(max_gve_label_format)
+                # wwp_date_label.adjustSizeToText()
+                wwp_date_label.setPos(self.left_margin, self.hoch + 30)
+                wwp_date_label.update(self.left_margin, self.hoch + 30, 400, 10)
+                self.addItem(wwp_date_label)
                 """"""
 
         else:
@@ -491,7 +587,7 @@ class AwbAuszug(QgsPrintLayout):
         abb_name_label = QgsLayoutItemLabel(self)
         abb_name_label.setText(abb_name)
         abb_name_label.attemptMove(
-            QgsLayoutPoint(self.rechts + 22, self.hoch + 4.5,
+            QgsLayoutPoint(self.rechts + 20, self.hoch + 4.5,
                            QgsUnitTypes.LayoutMillimeters), page=self.page)
         abb_name_format = QgsTextFormat()
         abb_name_format.setFont(abb_name_font)
@@ -507,7 +603,7 @@ class AwbAuszug(QgsPrintLayout):
         abb_adresse_label = QgsLayoutItemLabel(self)
         abb_adresse_label.setText(abb_adresse)
         abb_adresse_label.attemptMove(
-            QgsLayoutPoint(self.rechts + 22, self.hoch + 10.5,
+            QgsLayoutPoint(self.rechts + 20, self.hoch + 10.5,
                            QgsUnitTypes.LayoutMillimeters), page=self.page)
         abb_adresse_format = QgsTextFormat()
         abb_adresse_format.setFont(abb_adresse_font)

@@ -393,6 +393,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.displayBewirtschafterAdresse()
 
+        self.uiBewAwbAreaLbl.setText(self.getBewAwbArea())
+
         # self.uiVersionTv.setColumnHidden(0, True)
         # self.uiVersionTv.setColumnHidden(5, True)
         # self.uiVersionTv.setColumnHidden(6, True)
@@ -494,6 +496,25 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         ).unique().first()
 
         return mci
+
+    def getBewAwbArea(self):
+        """
+        erhalte die bewirtschaftete Fläche die für das awb gültig ist
+        :return:
+        """
+
+        area = 0.0
+
+        for abgrenzung in self._entity_mci.rel_abgrenzung:
+
+            if abgrenzung.awb == 1:
+                for komplex in abgrenzung.rel_komplex:
+                    for koppel in komplex.rel_koppel:
+                        area = area + koppel.koppel_area
+
+        area_ha = '{:.4f}'.format(
+            round(float(area) / 10000, 4)).replace(".", ",") + ' ha'
+        return area_ha
 
     # def getCustomEntityMci(self, session):
     #     # super().getCustomEntityMci(session)
