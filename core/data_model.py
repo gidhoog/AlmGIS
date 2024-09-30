@@ -18,31 +18,42 @@ class BAkt(Base):
     """
     __tablename__ = "a_alm_akt"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    alias = Column(String)
-    az = Column(Integer)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+    alias: Mapped[str]
+    az: Mapped[int]
     bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("a_alm_kontakt.id"))
-    bearbeitungsstatus_id = Column(Integer, ForeignKey('a_alm_bearbeitungsstatus.id'))
-    alm_bnr = Column(Integer)
-    anm = Column(String)
-    stz = Column(String)
-    wwp = Column(Boolean)
-    wwp_exist = Column(Boolean)
-    wwp_jahr = Column(Integer)
+    bearbeitungsstatus_id: Mapped[int] = mapped_column(ForeignKey("a_alm_bearbeitungsstatus.id"))
+    # bearbeitungsstatus_id = Column(Integer, ForeignKey('a_alm_bearbeitungsstatus.id'))
+    alm_bnr: Mapped[int]
+    anm: Mapped[str]
+    stz: Mapped[str]
+    wwp: Mapped[bool]
+    wwp_exist: Mapped[bool]
+    wwp_date: Mapped[str]
+    weidedauer: Mapped[int]
+    max_gve: Mapped[float]
 
-    rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
-    rel_gst_zuordnung = relationship(
-        'BGstZuordnung',
+    # rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
+    rel_bearbeitungsstatus: Mapped["BBearbeitungsstatus"] = relationship(lazy='joined')
+    rel_bewirtschafter: Mapped["BKontakt"] = relationship(lazy='joined')
+
+    # rel_gst_zuordnung = relationship(
+    #     'BGstZuordnung',
+    #     back_populates='rel_akt')
+    rel_gst_zuordnung: Mapped[List["BGstZuordnung"]] = relationship(
         back_populates='rel_akt')
 
-    rel_komplex_name = relationship('BKomplexName', back_populates='rel_akt')
+    # rel_komplex_name = relationship('BKomplexName', back_populates='rel_akt')
+    rel_komplex_name: Mapped[List["BKomplexName"]] = relationship(
+        back_populates='rel_akt')
 
-    rel_abgrenzung = relationship('BAbgrenzung',
-                                  back_populates='rel_akt',
-                                  cascade="all, delete, delete-orphan")
-
-    rel_bewirtschafter: Mapped["BKontakt"] = relationship(lazy='joined')
+    # rel_abgrenzung = relationship('BAbgrenzung',
+    #                               back_populates='rel_akt',
+    #                               cascade="all, delete, delete-orphan")
+    rel_abgrenzung: Mapped[List["BAbgrenzung"]] = relationship(
+        back_populates='rel_akt',
+        cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return "<BAkt(id='%s', name='%s', az='%s')>" % (

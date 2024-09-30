@@ -273,8 +273,8 @@ class AktAllModel(TableModel):
         if index.column() == 6:
             if role == Qt.DisplayRole:
                 if self.mci_list[row].wwp == 1:
-                    if self.mci_list[row].wwp_jahr is not None:
-                        return self.mci_list[row].wwp_jahr
+                    if self.mci_list[row].wwp_date is not None:
+                        return self.mci_list[row].wwp_date
                     else:
                         return '---'
                 return ''

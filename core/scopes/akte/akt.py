@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from PyQt5.QtCore import QDate
 from qgis.PyQt.QtGui import (QFont, QIntValidator, QIcon, QStandardItem, QColor,
                              QStandardItemModel)
 from qgis.PyQt.QtWidgets import (QLabel, QSpacerItem, QDockWidget, QToolButton, \
@@ -17,7 +18,7 @@ from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import desc, select, text, func
 from sqlalchemy.orm import joinedload
 
-from core import entity, db_session_cm
+from core import entity, db_session_cm, LOGGER
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
     BGstZuordnung, BGstAwbStatus, BRechtsgrundlage, BKontakt
@@ -58,7 +59,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     _status_mci = None
     _wwp = 0
     _wwp_exist = 0
-    _wwp_jahr = 0
+    _wwp_date = ''
+    _weidedauer = 0
+    _max_gve = 0.0
 
     @property  # getter
     def bewirtschafter_id(self):
@@ -250,19 +253,64 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._wwp_exist = value
 
     @property  # getter
-    def wwp_jahr(self):
+    def wwp_date(self):
 
-        self._wwp_jahr = self.uiWwpJahrSBox.value()
+        date = self.uiWwpDateDedit.date()
+        self._wwp_date = date.toString('yyyy-MM-dd')
 
-        return self._wwp_jahr
+        return self._wwp_date
 
-    @wwp_jahr.setter
-    def wwp_jahr(self, value):
+    @wwp_date.setter
+    def wwp_date(self, value):
 
-        if value is not None:
-            self.uiWwpJahrSBox.setValue(value)
+        if value is not None and value != '':
 
-        self._wwp_jahr = value
+            year = value[:4]
+            month = value[5:7]
+            day = value[8:]
+
+            date = QDate(int(year), int(month), int(day))
+            self.uiWwpDateDedit.setDate(date)
+
+        # if value is not None:
+        #     self.uiWwpJahrSBox.setValue(value)
+
+        self._wwp_date = value
+
+    @property  # getter
+    def weidedauer(self):
+
+        self._weidedauer = self.uiWeidedauerSbox.value()
+
+        return self._weidedauer
+
+    @weidedauer.setter
+    def weidedauer(self, value):
+
+        try:
+            self.uiWeidedauerSbox.setValue(value)
+        except:
+            LOGGER.warning("!!! --> Cannot set 'weidedauer' in Akt")
+
+        self._weidedauer = value
+
+    @property  # getter
+    def max_gve(self):
+
+        self._max_gve = self.uiGveDsbox.value()
+
+        return self._max_gve
+
+    @max_gve.setter
+    def max_gve(self, value):
+
+        try:
+            self.uiGveDsbox.setValue(value)
+        except:
+            LOGGER.warning("!!! --> Cannot set 'max_gve' in Akt")
+
+        self._max_gve = value
+
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
@@ -389,7 +437,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.wwp = self._entity_mci.wwp
         self.wwp_exist = self._entity_mci.wwp_exist
-        self.wwp_jahr = self._entity_mci.wwp_jahr
+        self.wwp_date = self._entity_mci.wwp_date
+
+        self.weidedauer = self._entity_mci.weidedauer
+        self.max_gve = self._entity_mci.max_gve
 
         self.bewirtschafter_id = self._entity_mci.bewirtschafter_id
 
@@ -870,7 +921,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self._entity_mci.wwp = self.wwp
         self._entity_mci.wwp_exist = self.wwp_exist
-        self._entity_mci.wwp_jahr = self.wwp_jahr
+        self._entity_mci.wwp_date = self.wwp_date
+
+        self._entity_mci.weidedauer = self.weidedauer
+        self._entity_mci.max_gve = self.max_gve
 
         # self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
         # self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
