@@ -4,8 +4,8 @@ from qgis.PyQt.QtCore import QAbstractTableModel, Qt, QModelIndex, \
     QSortFilterProxyModel, QItemSelectionModel, QItemSelection, \
     QItemSelectionRange, QSize
 from qgis.PyQt.QtGui import QPalette, QColor, QIcon
-from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, QToolButton, \
-    QAbstractItemView, QFileDialog, QMessageBox, QTableView, QLabel, QLineEdit, \
+from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, \
+    QAbstractItemView, QFileDialog, QMessageBox, QTableView, \
     QDialog, QPushButton, QAbstractButton
 
 from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
@@ -13,16 +13,12 @@ from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
 from qgis.core import QgsVectorLayerCache, edit
 
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, inspect
+from sqlalchemy import select
 
 from core import data_view_UI, db_session_cm, color, DbSession
 from core.entity import EntityDialog
 from core.footer_line import FooterLine
 from core.gis_layer import Feature
-from core.tools import getMciState, getMciSession
-
-
-# from core.main_widget import MainWidget
 
 
 class GisTableView(QgsAttributeTableView):
@@ -45,27 +41,6 @@ class GisTableView(QgsAttributeTableView):
         self.uiCornerButton.clicked.connect(self.clickedCornerButton)
         """"""
 
-        # self.setSelectionMode(QAbstractItemView.MultiSelection)
-        # self.setSelectionBehavior(QAbstractItemView.SelectRows)
-
-    #     self.doubleClicked.connect(self.test_click)
-    #
-    # def test_click(self):
-    #
-    #     print(f'++++++ double clicked +++++++')
-
-        # self.verticalHeader().setSectionsClickable(True)
-        #
-        # self.setAlternatingRowColors(True)
-
-    # def selectionMode(self):
-    #
-    #     return QAbstractItemView.ExtendedSelection
-    #
-    # def selectionBehavior(self):
-    #
-    #     return QAbstractItemView.SelectRows
-
     def clickedCornerButton(self):
         """
         the corner-button of the tableview is clicked
@@ -78,14 +53,6 @@ class GisTableView(QgsAttributeTableView):
         else:
             self.parent._gis_layer.removeSelection()
             self.setCornerButtonSelectAll()
-
-
-        # if self.parent.getSelectedRows() == []:
-        #     self.parent.selectAllRows()
-        #     self.setCornerButtonDeselectAll()
-        # else:
-        #     self.parent.clearSelectedRows()
-        #     self.setCornerButtonSelectAll()
 
     def setCornerButtonSelectAll(self):
         """
@@ -130,44 +97,6 @@ class GisTableModel(QgsAttributeTableModel):
             else:
                 return header_alias
 
-    # def data(self, index: QModelIndex, role: int = ...):
-    #
-    #     """
-    #     erzeuge ein basis-model
-    #     """
-    #     # row = index.row()
-    #     # col = index.column()
-    #     #
-    #     # if role == Qt.TextAlignmentRole:
-    #     #
-    #     #     if index.column() in [2, 6, 7, 8, 9]:
-    #     #
-    #     #         return Qt.AlignRight | Qt.AlignVCenter
-    #     #
-    #     #     if index.column() in [1, 10]:
-    #     #
-    #     #         return Qt.AlignHCenter | Qt.AlignVCenter
-    #
-    #     if index.column() == 7:
-    #
-    #         val = self.layer().getFeature(index.row()+1).geometry().area()
-    #
-    #         if role == Qt.DisplayRole:
-    #
-    #             # attr = self.layer().getFeature(index.row()+1).attributes()[index.column()]
-    #
-    #             print(f'val: {val}')
-    #             # return self.mci_list[row].rel_gst.gst
-    #             return val
-    #
-    #         if role == Qt.DisplayRole:
-    #
-    #             return val
-    #
-    #     return super().data(index, role)
-
-
-
 
 class TableView(QTableView):
     """
@@ -188,25 +117,8 @@ class TableView(QTableView):
 
         self.verticalHeader().setMinimumWidth(20)
 
-        # self.verticalHeader().viewport().installEventFilter(self)
-
         #todo: implement here 'selectRow' (see c++ code):
         self.verticalHeader().sectionPressed.connect(self.nothing)
-        # self.verticalHeader().sectionEntered.connect(self.nothing)
-        # self.horizontalHeader().sectionResized.connect(self.nothing)
-        # self.horizontalHeader().sortIndicatorChanged.connect(self.nothing)
-
-
-        # self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        # self.setSelectionMode(QAbstractItemView.NoSelection)
-        # self.setSelectionBehavior(QAbstractItemView.SelectRows)
-
-        # self.setFocusPolicy(Qt.ClickFocus)
-
-        # self.horizontalHeader().setStretchLastSection(True)
-        # self.resizeColumnsToContents()
-
-        # self.clicked.connect(self.view_clicked)
 
         # highlight_focus_string = 'QTableView::item:focus {border: 2px solid #00FF7F}; '
 
@@ -335,7 +247,6 @@ class DataViewEntityDialog(EntityDialog):
 
 
 class TableModel(QAbstractTableModel):
-# class TableModel(QgsAttributeTableModel):
 
     header = ['g',
               'f']
@@ -412,28 +323,13 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     """
     instance_list = []
 
-    """klasse des entity_widgets"""
-    # entity_widget_class = None
-    """"""
-    """klasse des dialoges"""
-    # entity_dialog_class = DataViewEntityDialog
-    # _type_mc = None
-    # _entity_mc = None
-
-    # _model_class = TableModel
     _main_table_model_class = None
-
-    # _gis_table_model_class = GisTableModel
 
     _data_view_mc = None
 
     _mci_list = []
-    # _custom_dataview_data = {}
 
     _gis_layer = None
-    # _canvas = None
-
-    # current_feature = None
 
     filter_proxy_gis_class = None
     vector_layer_cache_class = None
@@ -443,10 +339,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     _view_class = TableView
     _model_class = None
-
-    # """verfügbare filter für diese tabelle"""
-    # _available_filters = 'g'
-    # """"""
 
     """standardeinstellung für den filter"""
     filter_activated = False
@@ -463,8 +355,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     _delete_text = ["Der Eintrag", "kann nicht gelöscht werden, da er "
                                    "verwendet wird!"]
 
-    # _commit_entity = True
-    # edit_entity_by = 'id'  # or 'mci'
 
     """einige einstellungen für diese klasse"""
     _select_behaviour = 'row'  # standardverhalten was ausgewählt werden soll
@@ -520,31 +410,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def entity_widget(self, entity_widget):
 
         self._entity_widget = entity_widget
-
-    # @property  # getter
-    # def available_filters(self):
-    #     return self._available_filters
-
-    # @available_filters.setter
-    # def available_filters(self, available_filters):
-    #     """
-    #     definiere die verfügbaren filtertypen
-    #     (derzeit ist nur der 'g' und 's' filter verfügbar)
-    #
-    #     possible options:
-    #     g = general (ein suchfeld filter alle spalten in der tabelle)
-    #     s = scope   (ein oder mehrere filter-widgets filter definierte spalten;
-    #                  die filter-widget müssen speziell angelegt werden)
-    #     d = detail  (ein spezieller filter mit dem individuell ein oder mehrere
-    #                  spalten nach 'and' oder 'or' gefiltert weden können)
-    #     c = custom  (ein vordefinieter und komplexer filter der aktiviert oder
-    #                  deaktiviert werden kann)
-    #
-    #     es können auch mehrere filtertypen verwendet werden
-    #     z.b.: 'gs' or 'gc' or 'gsd'
-    #     """
-    #
-    #     self._available_filters = available_filters
 
     @property  # getter
     def displayed_rows(self):
@@ -640,19 +505,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self._selected_rows_number = value
 
-    # @property  # getter
-    # def title(self):
-    #     return self._title
-    #
-    # @title.setter
-    # def title(self, value):
-    #
-    #     self.uiTitleLbl.setText(value)
-    #     self._title = value
-
     def __init__(self, parent=None, gis_mode=False, session=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
+
+        self.parent = parent
 
         DataView.instance_list.append(self)
 
@@ -679,17 +536,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.custom_entity_data = {}
         """"""
 
-        self.parent = parent
-        # self._mci_list = mci_list
-        # self._gis_layer = gis_layer
-        # self._canvas = canvas
-
         self._commit_entity = True
         self.feature_fields = []
         self._model_gis_class = GisTableModel
         self._model_class = TableModel
-
-        # self.canvas = QgsMapCanvas()
 
         """liste mit den widgets im fußbereich der tabelle (zum anzeigen 
         verschiedener spaltensummen"""
@@ -700,13 +550,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         z.b. unterschiedliche typen in der gleichen tabelle dargestellt werden"""
         self.add_entity_menu = QMenu(self)
         """"""
-
-        # selection_color = color.data_view_selection
-        # color_string = (f'rgb({str(selection_color.red())}, '
-        #                 f'{str(selection_color.green())}, '
-        #                 f'{str(selection_color.blue())})')
-        #
-        # self.view.setStyleSheet(f"selection-background-color: {color_string};")
 
         """"setzt die farbe der selection von zeilen"""
         selection_color = color.data_view_selection
@@ -728,20 +571,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         else:
             self.view = self._view_class(self)
-            # self.model = self._model_class(self)
             self._model_class = TableModel
 
         self.uiTableVlay.addWidget(self.view)
 
     def initDataView(self):
-
-        # if dataview_session is not None:
-        #     self._dataview_session = dataview_session
-
-        # with db_session_cm(expire_on_commit=False) as session:
-        # # with db_session_cm() as session:
-
-        # self.dataview_session = dataview_session
 
         self.loadData(self.dataview_session)
 
@@ -806,15 +640,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.view.doubleClicked.connect(self.doubleClickedRow)
 
-        # self.view.selectionModel().selectionChanged \
-        #     .connect(self.selectedRowsChanged)
-        #
-        # if self._gis_layer is not None:
-        #     self._gis_layer.selectionChanged.connect(self.selectedRowsChanged)
-
-        # self.uiClearSelectionPbtn.clicked.connect(self.clearSelectedRows)
-        # self.uiSelectAllTbtn.clicked.connect(self.selectAllRows)
-        #
         self.uiActionExportCsv.triggered.connect(self.export_csv)
 
         if self.gis_mode:
@@ -834,11 +659,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         else:
             return self.view.selectionModel().selectedRows()
 
-        # if self.view.selectionModel():
-        #     indexes = self.view.selectionModel().selectedRows()
-        #
-        #     return indexes
-
     def selectAllRows(self):
 
         if self.gis_mode:
@@ -852,8 +672,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         hebe die auswahl der zeilen auf
         """
-        # self.view.selectionModel().clear()
-
         if self.gis_mode:
             self._gis_layer.removeSelection()
         else:
@@ -893,7 +711,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if self.gis_mode:
             number = self._gis_layer.featureCount()
         else:
-            # number = len(self._mci_list)
             number = self.filter_proxy.rowCount()
 
         return number
@@ -995,18 +812,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
 
-        # self.setSelectBehaviour()
-        # self.setEditBehaviour()
-        # self.setSorting()
-        # self.setDisplayVetricalHeader()
-        # self.setFilterUI()
-        #
-        # """setze detail-filter buttons unsichtbar"""
-        # self.uiEnableFilterDetailPbtn.setVisible(False)
-        # self.uiAddFilterDetailRowPbtn.setVisible(False)
-        # self.uiDelFilterDetailRowPbtn.setVisible(False)
-        # """"""
-
         self.uiActionExportCsv = QAction(self.uiToolsTbtn)
         self.uiActionExportCsv.setText('exportiere csv-Datei')
         self.uiToolsTbtn.addAction(self.uiActionExportCsv)
@@ -1079,40 +884,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         wende die definierten filter_strings an
         :return:
         """
-
-
-        # if 'g' in self.available_filters:
-        #     self.setFilterGeneralUI()
-        #
-        # if 's' in self.available_filters:
-        #     self.setFilterScopeUI()
-
-    # def setFilterGeneralUI(self):
-    #     """
-    #     setze das layout für den generellen filter
-    #     :return:
-    #     """
-    #     self.guiFiltGeneralLbl = QLabel("Suche:")
-    #     self.guiFiltGeneralLedit = QLineEdit(self)
-    #     self.guiFiltGeneralLedit.setClearButtonEnabled(True)
-    #
-    #     self.uiTableFilterHLay.insertWidget(0, self.guiFiltGeneralLbl)
-    #     self.uiTableFilterHLay.insertWidget(1, self.guiFiltGeneralLedit)
-    #
-    #     self.guiFiltGeneralLedit.textChanged.connect(self.applyFilter)
+        pass
 
     def testGeneralFilter(self):
 
         expression = '"status_id"=2'
         self._gis_layer.setSubsetString(expression)
-
-    # def setFilterScopeUI(self):
-    #     """
-    #     setze das layout für den scope-filter;
-    #     subclass in child-widgets falls der scope-filter verwendet wird
-    #     :return:
-    #     """
-    #     pass
 
     def setSelectBehaviour(self):
         """
@@ -1137,27 +914,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.filter_proxy.setSortCaseSensitivity(Qt.CaseInsensitive)
         """"""
 
-    # def setFilter(self):
-    #     """
-    #     aktiviere die vorgesehenen filter
-    #     """
-    #
-    #     if 's' in self.available_filters:
-    #         self.setFilterScope()
-    #
-    #     if self.filter_activated is False:
-    #         self.filter_proxy.invalidateFilter()
-    #         self.filter_activated = True
-
-    # def setFilterScope(self):
-    #     """
-    #     aktiviere den scope-filter;
-    #     subclass in child-widget falls verwendet
-    #     (z.b. core.scopes.gst.gst_zuordnung.GstTable)
-    #     :return:
-    #     """
-    #     pass
-
     def applyFilter(self):
         """
         methode die aufgrrufen wird wenn der filter angewendet werden soll
@@ -1178,15 +934,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         pass
 
-    # def updateFilterElements(self):
-    #     """
-    #     aktualisiere die filter-elemete
-    #     :return:
-    #     """
-    #
-    #     if 's' in self.available_filters:
-    #         self.updateFilterElementsScope()
-
     def updateFilterElementsScope(self):
         """
         aktualisiere die filter-elemete des scope-filter (z.b. das filter widget
@@ -1194,40 +941,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
         pass
-
-    # def setTableView(self):
-    #
-    #     self.vector_layer_cache = QgsVectorLayerCache(self._gis_layer,
-    #                                              10000)
-    #     self.model = self._gis_table_model_class(
-    #         self.vector_layer_cache, self)
-    #     self.model.loadLayer()
-    #
-    #     self.filter_proxy = GisSortFilterProxyModel(
-    #         self.canvas,
-    #         self.model,
-    #         self
-    #     )
-    #
-    #     self.view.setModel(self.filter_proxy)
-
-    # def initDataView(self):
-    #     """
-    #     initialisiere maintable
-    #
-    #     :param parent_id:
-    #     :param
-    #     :return:
-    #     """
-    #     self.setFilter()
-    #
-    #     # self.setAddEntityMenu()
-    #     self.setDataViewLayout()
-    #
-    #     self.signals()
-    #
-    #     self.updateFooter()
-    #     self.finalInit()
 
     def setMciList(self, mci_list):
 
@@ -1307,16 +1020,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def loadData(self, session=None):
 
         self._mci_list = self.getMciList(session)
-        # self._custom_dataview_data = self.getCustomData(session)
-
-        # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
-        #
-        # self.view.model().sourceModel().mci_list.clear()
-        #
-        # for mci in mci_list:
-        #     self.view.model().sourceModel().mci_list.append(mci)
-        #
-        # self.view.model().sourceModel().layoutChanged.emit()
 
     def finalInit(self):
         """
@@ -1358,16 +1061,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if self.gis_mode:
             if purpose == 'add':
 
-                # for instance in DataView.instance_list:
-                #     # if instance != self and instance._commit_entity == True:
-                #     if instance._commit_entity == True:
                 self.updateInstanceNew()
-
-                # self._gis_layer.startEditing()
-                # self.addFeaturesFromMciList(args)
-                # self._gis_layer.commitChanges()
-                #
-                # self._gis_layer.data_provider.dataChanged.emit()
 
             elif purpose == 'edit':
 
@@ -1380,24 +1074,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                     self.changeAttributes(self.current_feature,
                                           args[0])
 
-                    # update = self._gis_layer.updateFeature(self.current_feature)
                     self._gis_layer.commitChanges()
 
                     self.loadData()
 
-                    # self.parent.guiMainGis.uiCanvas.refresh()
-
-                    # self._gis_layer.data_provider.dataChanged.emit()
-
             self.view.model().sourceModel().modelChanged.emit()
-            # self.view.model().sourceModel().layoutChanged.emit()
 
-            # """aktualisiere auch alle derzeit existierenden instanzen
-            # dieser klasse außer dieser instanz"""
-            # for instance in DataView.instance_list:
-            #     if instance != self and instance._commit_entity == True:
-            #         self.updateInstance(instance)
-            # """"""
         else:  # no gis-mode
 
             self.view.model().sourceModel().layoutAboutToBeChanged.emit()
@@ -1501,11 +1183,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.displayed_rows = self.getDisplayedRowsNumber()
         self.selected_rows_number = self.getSelectedRowsNumber()
 
-        # if self.getSelectedRows():
-        #     self.selected_rows_number = len(self.getSelectedRows())
-        # else:
-        #     self.selected_rows_number = 0
-
     def get_selected_type_id(self, index):
         """
         erhalte den type_id von der ausgewählten zeile
@@ -1539,8 +1216,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         return entity_id
 
     def doubleClickedRow(self, index):
-
-        # self.model_index = index
 
         if self.edit_behaviour == 'dialog':
 
@@ -1626,10 +1301,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """"""
         return sel_rows[0]
 
-    # def editEntity(self):
-    #
-    #     pass
-
     def clickedEditRow(self):
         """
         die Schaltfläche zum einfügen/anlegen eines neuen Datensatzes wird
@@ -1672,39 +1343,11 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                                      feature=feature)
 
         if entity_mci:
-            # self.view.model().sourceModel().layoutAboutToBeChanged.emit()
-            # mci_state = getMciState(entity_mci)
-            # if mci_state == 'persistent':
-            #     mci_session = getMciSession(entity_mci)
-            #     # mci_session.expunge(entity_mci)
-            #     mci_session.expunge_all()
             entity_widget.editEntity(entity_mci=entity_mci)
 
         """open the entity_widget_class in a dialog"""
         self.openDialog(entity_widget)
         """"""
-
-    # def get_entity_widget(self, sel_index):
-    #     """
-    #     hole das entity-widget; brücksichtige, dass es typ-abhängig sein kann;
-    #     in diesem fall wird die widget-klasse aus der entsprechenden tabelle mit
-    #     den typ-date geholt und eine entity-widget instanz erzeugt"""
-    #
-    #     if self.entity_typ_column:  #: if there are entity_type set
-    #         """hole die modul und widget_class infos von der type_data_instance"""
-    #         module, widget_class = self.get_entity_widget_class(
-    #             self.get_selected_type_id(sel_index))
-    #         """"""
-    #
-    #         """hole die widget_class erzeuge eine instance"""
-    #         entity_module = __import__(module, fromlist=[widget_class])
-    #         wid = getattr(entity_module, widget_class)
-    #         entity_widget = wid(self)
-    #         """"""
-    #     else:  # es gibt keine unterschiedlichen entity-typen
-    #         entity_widget = self.entity_widget(self)
-    #
-    #     return entity_widget
 
     def get_entity_widget_class(self, entity_mci=None):
         """
@@ -1717,7 +1360,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
 
-        # return self.getEntityTypeWdgCls(entity_mci)
         return self.entity_widget_class
 
     def getEntityTypeWdgCls(self, entity_mci):
@@ -1788,8 +1430,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
                                 if self.deleteCheck(mci):
                                     try:
-                                        # with db_session_cm() as session:
-                                        # self.dataview_session.add(mci)
                                         self.dataview_session.delete(mci)
                                     except IntegrityError:  # mci is used
                                         self.can_not_delete_msg(
@@ -1812,9 +1452,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             sel_rows_idx = self.getSelectedRows()
 
-            # test_idx = [self._mci_list[self.getProxyIndex(i).row()].id for i in sel_rows_idx]
-
-            # sel_rows = sorted([self.getProxyIndex(r).row() for r in sel_rows_idx], reverse=True)
             del_mci = [self._mci_list[self.getProxyIndex(r).row()]
                        for r in sel_rows_idx]
 
@@ -1824,7 +1461,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 self.delMci(mci)
 
             self.view.model().sourceModel().layoutChanged.emit()
-            print(f'....')
 
         self.clearSelectedRows()
         self.updateFooter()
@@ -1835,7 +1471,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             with db_session_cm(name='delete mci from data_view') as session:
                 session.delete(mci)
         except IntegrityError:  # mci is used
-            # self.can_not_delete_msg('cannot delete')
             print('...........................................cannot delete')
             raise
         else:
@@ -1961,11 +1596,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.editRow(entity_widget=entity_widget,
                      entity_mci=mci)
 
-        # """öffne das entity-widget in einem dialog"""
-        # self.openDialog(entity_widget)
-        # """"""
-        # entity_widget.focusFirst()
-
     def openDialog(self, entity_widget):
         """
         öffne einen dialog mit dem entity_widget
@@ -2006,29 +1636,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
 
-    # def setAddEntityMenu(self):
-    #     """
-    #     erzeuge ein typ basiertes add-entity menü falls eine 'entity_typ_column'
-    #     vorhanden ist
-    #     :return:
-    #     """
-    #     if self.entity_typ_column:
-    #         with db_session_cm() as session:
-    #             session.expire_on_commit = False
-    #             type_class = list(self.entity_typ_column.values())[0]
-    #             type_list = session.query(type_class) \
-    #                 .filter(type_class.blank_value != 1) \
-    #                 .all()
-    #
-    #             for type_instance in type_list:
-    #                 action = QAction(type_instance.name, self)
-    #                 action.triggered.connect(
-    #                     lambda a_id, key=type_instance: self.add_row(typ=key))
-    #                 self.add_entity_menu.addAction(action)
-    #
-    #             self.uiAddDataTbtn.setMenu(self.add_entity_menu)
-    #             self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
-
     def updateMaintable(self):
         """
         aktualisiere den maintable;
@@ -2042,44 +1649,6 @@ class GisSortFilterProxyModel(QgsAttributeTableFilterModel):
         super().__init__(canvas, sourceModel, parent)
 
         self.parent = parent
-
-    # def filterAcceptsRow(self, source_row, source_parent):
-    #     """
-    #     diese methode überwacht ob ein filtereintrag mit einem datensatzeintrag
-    #     übereinstimmt
-    #
-    #     return True to display the row
-    #     return False to hide the row
-    #
-    #     :param source_row:
-    #     :param source_parent:
-    #     :return:
-    #     """
-    #     """filter general"""
-    #     if 'g' in self.parent.available_filters:
-    #         if self.parent.guiFiltGeneralLedit.text() != '':
-    #             found = False
-    #             """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
-    #             for col in range(len(self.parent.feature_fields)):
-    #                 col_value = self.sourceModel().data(
-    #                             self.sourceModel().index(source_row,
-    #                                                      col), Qt.DisplayRole)
-    #                 if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
-    #                         col_value).lower():
-    #                     found = True
-    #             """"""
-    #             if found == False:  # kein treffer in der zeile
-    #                 return False
-    #     """"""
-    #
-    #     """filter scope"""
-    #     if 's' in self.parent.available_filters:
-    #         if self.parent.useFilterScope(source_row, source_parent) == False:
-    #             return False
-    #     """"""
-    #
-    #     return True
-
 
 
 class SortFilterProxyModel(QSortFilterProxyModel):
@@ -2115,28 +1684,6 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         :param source_parent:
         :return:
         """
-        # """filter general"""
-        # if 'g' in self.parent.available_filters:
-        #     if self.parent.guiFiltGeneralLedit.text() != '':
-        #         found = False
-        #         """vergleiche den Zelleninhalt mit dem Text aus dem Suchfeld"""
-        #         for col in range(len(self.parent.model.header)):
-        #             col_value = self.sourceModel().data(
-        #                         self.sourceModel().index(source_row,
-        #                                                  col), Qt.DisplayRole)
-        #             if str(self.parent.guiFiltGeneralLedit.text().lower()) in str(
-        #                     col_value).lower():
-        #                 found = True
-        #         """"""
-        #         if found == False:  # kein treffer in der zeile
-        #             return False
-        # """"""
-
-        # """filter scope"""
-        # if 's' in self.parent.available_filters:
-        #     if self.parent.useFilterScope(source_row, source_parent) == False:
-        #         return False
-        # """"""
         if self.parent.useFilterScope(source_row, source_parent) == False:
             return False
 
