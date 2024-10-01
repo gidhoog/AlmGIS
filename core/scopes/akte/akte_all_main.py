@@ -1,23 +1,18 @@
-import sys
 from _operator import attrgetter
 
-from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel, QVariant
+from qgis.PyQt.QtCore import Qt, QModelIndex
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QDialog, QLineEdit,
-                                 QSpacerItem, QSizePolicy, QHBoxLayout)
-from qgis.core import QgsGeometry, QgsField
+from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
+                                 QSpacerItem, QSizePolicy)
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from core import db_session_cm, config
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
-    BGstEz, BCutKoppelGstAktuell, BBearbeitungsstatus, BAbgrenzung, \
-    BGstAwbStatus
+    BBearbeitungsstatus, BAbgrenzung
 from core.entity import EntityDialog
-from core.data_view import DataView, TableModel, TableView, GisTableModel
-from core.filter_element import FilterElement
-from core.gis_layer import ZVectorLayer, Feature
+from core.data_view import DataView, TableModel
 from core.main_widget import MainWidget
 from core.scopes.akte.akt import Akt
 
@@ -31,12 +26,8 @@ class AktDialog(EntityDialog):
         super(__class__, self).__init__(parent)
 
         # self.parent = parent
-        #
-        # self.enableApply = True
 
         self.dialog_window_title = 'Alm- und Weidebuchakt'
-        # self.set_apply_button_text('&Speichern und Schließen')
-
 
     def accept(self):
         super().accept()
@@ -45,119 +36,6 @@ class AktDialog(EntityDialog):
 
             self.parent.updateMaintableNew(self.dialogWidget.purpose,
                                            self.accepted_mci)
-
-        # if self.dialogWidget.acceptEntity() is not None:
-        #
-        #     new_mci = self.dialogWidget.acceptEntity()
-        #
-        #     self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
-        #
-        # QDialog.accept(self)
-
-
-# class AkteAllMainTableModel(GisTableModel):
-#
-#     def __init__(self, layerCache, parent=None):
-#         super(__class__, self).__init__(layerCache, parent)
-#
-#     def data(self, index: QModelIndex, role: int = ...):
-#
-#         """
-#         erzeuge ein basis-model
-#         """
-#         row = index.row()
-#         # col = index.column()
-#         #
-#         if role == Qt.TextAlignmentRole:
-#
-#             # if index.column() in [2, 6, 7, 8, 9]:
-#             #
-#             #     return Qt.AlignRight | Qt.AlignVCenter
-#
-#             if index.column() in [1, 6, 7, 8]:
-#
-#                 return Qt.AlignHCenter | Qt.AlignVCenter
-#
-#         if role == Qt.BackgroundRole:
-#             if index.column() == 4:
-#
-#                 color_str = self.feature(index).attribute('status_color')
-#                 color_list = color_str.split(", ")
-#
-#                 return QColor(int(color_list[0]),
-#                               int(color_list[1]),
-#                               int(color_list[2]))
-#                 # status_id = self.feature('status_id')
-#                 # if status_id == 'eingetragen':
-#                 #     return QColor(189, 239, 255)
-#                 # if status_id == 'nicht eingetragen':
-#                 #     return QColor(234, 216, 54)
-#                 # if status_id == 'gelöscht':
-#                 #     return QColor(234, 163, 165)
-#                 # if status_id == 'historisch':
-#                 #     return QColor(170, 170, 170)
-#
-#         if index.column() == 7:
-#
-#             if role == Qt.DisplayRole:
-#
-#                 if self.feature(index).attribute('wwp') == 1:
-#
-#                     return 'X'
-#
-#                 else:
-#                     return ''
-#
-#         if index.column() == 8:
-#
-#             if role == Qt.DisplayRole:
-#
-#                 return str(self.feature(index).attribute('wwp_jahr'))
-#
-#         if index.column() == 9:
-#
-#             if role == Qt.DisplayRole:
-#
-#                 area = self.feature(index).attribute('awb_area_gb')
-#                 area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(
-#                     ".", ",")
-#                 return area_r + ' ha'
-#
-#         if index.column() == 10:
-#
-#             if role == Qt.DisplayRole:
-#
-#                 area = self.feature(index).attribute('awb_area_beweidet')
-#                 area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(
-#                     ".", ",")
-#                 return area_r + ' ha'
-#
-#         if index.column() == 11:
-#
-#             if role == Qt.DisplayRole:
-#
-#                 area = self.feature(index).attribute('weide_area')
-#                 area_r = '{:.4f}'.format(round(float(area) / 10000, 4)).replace(
-#                     ".", ",")
-#                 return area_r + ' ha'
-#
-#         # if index.column() == 7:
-#         #
-#         #     val = self.layer().getFeature(index.row()+1).geometry().area()
-#         #
-#         #     if role == Qt.DisplayRole:
-#         #
-#         #         # attr = self.layer().getFeature(index.row()+1).attributes()[index.column()]
-#         #
-#         #         print(f'val: {val}')
-#         #         # return self.mci_list[row].rel_gst.gst
-#         #         return val
-#         #
-#         #     if role == Qt.DisplayRole:
-#         #
-#         #         return val
-#
-#         return super().data(index, role)
 
 
 class AkteAllMainWidget(MainWidget):
@@ -172,17 +50,12 @@ class AkteAllMainWidget(MainWidget):
 
         self.akt_all_table = AkteAllMain(self)
 
-        # with db_session_cm(name='main-widget - akte alle',
-        #                    expire_on_commit=False) as session:
         self.akt_all_table.initDataView()
 
     def initMainWidget(self):
         super().initMainWidget()
 
         self.uiMainVLay.addWidget(self.akt_all_table)
-
-        # self.akt_all_table.loadData()
-        # self.akt_all_table.initDataView()
 
 
 class AktAllModel(TableModel):
@@ -356,12 +229,6 @@ class AktAllModel(TableModel):
 
 class AkteAllMain(DataView):
 
-    # entity_widget_class = Akt
-    # _entity_mc = BAkt
-
-    # entity_dialog_class = AktDialog
-
-    # _model_class = AktAllModel
 
     _maintable_text = ["Akt", "Akte", "kein Akt"]
     _delete_window_title = ["Akt löschen", "Akte löschen"]
@@ -369,14 +236,6 @@ class AkteAllMain(DataView):
                                  "wirklich gelöscht werden?"
     _delete_window_text_plural = ["Sollen die ausgewählten",
                                   "Akte wirklich gelöscht werden?"]
-
-
-    # _main_table_model_class = AktAllModel
-    # _gis_table_model_class = AkteAllMainTableModel
-
-    # """verfügbare filter für diese tabelle"""
-    # _available_filters = 'gs'
-    # """"""
 
     def get_weide_area(self, mci):
         weide_area = 0.00
@@ -429,32 +288,8 @@ class AkteAllMain(DataView):
         self._entity_mc = BAkt
         self._model_class = AktAllModel
 
-        # self.edit_entity_by = 'mci'
-        """"""
-        # self.setFeatureFields()
-        # self.setFilterUI()
-        #
-        # self._gis_layer = self.setLayer()
-        #
-        # self.loadData()
-        # self.setFeaturesFromMci()
-        # self.setTableView()
-        #
-        # self.finalInit()
-        #
-        # # self.testGeneralFilter()
-        # # self.setFilter()
-        #
-        # self.updateFooter()
-        #
-        # self.signals()
-
-        print(f'...')
-
     def initUi(self):
         super().initUi()
-
-        # self.title = 'alle Akte'
 
         self.setStretchMethod(2)
 
@@ -463,15 +298,10 @@ class AkteAllMain(DataView):
 
     def getMciList(self, session):
 
-        # with db_session_cm() as session:
         stmt = (select(BAkt)
         .options(
             joinedload(BAkt.rel_bearbeitungsstatus)
         )
-        # .options(
-        #     joinedload(BAkt.rel_gst_zuordnung)
-        #     .joinedload(BGstZuordnung.rel_awb_status)
-        # )
         .options(
             joinedload(BAkt.rel_gst_zuordnung)
             .joinedload(BGstZuordnung.rel_rechtsgrundlage)
@@ -516,27 +346,6 @@ class AkteAllMain(DataView):
 
         return mci
 
-    # def setLayer(self):
-    #
-    #     layer = ZVectorLayer(
-    #         "None",
-    #         "AktAllLay",
-    #         "memory",
-    #         feature_fields=self.feature_fields
-    #     )
-    #     return layer
-    #
-    # def setFeaturesFromMci(self):
-    #     super().setFeaturesFromMci()
-    #
-    #     for akt in self._mci_list:
-    #
-    #         feat = Feature(self._gis_layer.fields(), self)
-    #
-    #         self.setFeatureAttributes(feat, akt)
-    #
-    #         self._gis_layer.data_provider.addFeatures([feat])
-
     def finalInit(self):
 
         self.insertFooterLine('Gesamtweidefläche',
@@ -560,10 +369,6 @@ class AkteAllMain(DataView):
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
-    # def updateMainWidget(self):
-    #
-    #     self.updateMaintable()
-
     def setFilterUI(self):
         """
         setze das layout für die filter
@@ -571,8 +376,6 @@ class AkteAllMain(DataView):
         """
 
         """filter name"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
         self.filter_name_lbl = QLabel(self)
 
         name_lbl_font = self.filter_name_lbl.font()
@@ -592,18 +395,12 @@ class AkteAllMain(DataView):
         self.filter_name_input_wdg.setPlaceholderText('Aktenname')
         self.filter_name_input_wdg.setClearButtonEnabled(True)
         self.filter_name_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
 
         self.filter_name_input_wdg.textChanged.connect(
             self.applyFilter)
-
-        # filter_lay.addWidget(filter_name)
         """"""
 
         """filter az"""
-        # filter_az = FilterElement(self)
-        # filter_az.uiLabelLbl.setText('AZ:')
-
         self.filter_az_lbl = QLabel(self)
 
         az_lbl_font = self.filter_az_lbl.font()
@@ -621,7 +418,6 @@ class AkteAllMain(DataView):
         self.filter_az_input_wdg.setFont(az_input_wdg_font)
         self.filter_az_input_wdg.setClearButtonEnabled(True)
         self.filter_az_input_wdg.setMaximumWidth(80)
-        # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
 
         self.filter_az_input_wdg.textChanged.connect(
             self.applyFilter)
@@ -676,9 +472,6 @@ class AkteAllMain(DataView):
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.uiFilterHlay.addItem(spacerItem)
         """"""
-
-        # spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        # self.uiFilterGLay.addItem(spacerItem2, 0, 2)
 
     def applyFilter(self):
 
@@ -746,101 +539,10 @@ class AkteAllMain(DataView):
         status = self.filter_proxy.sourceModel() \
             .data(self.filter_proxy.sourceModel().index(source_row, 2),
                   Qt.EditRole)
-        # if self.filter_type_input_wdg.currentText() != "--- alle Typen ---":
         if self.filter_status_input_wdg.currentData(Qt.UserRole) != -1:
-            # return False
             if status != self.filter_status_input_wdg.currentData(Qt.UserRole):
                 return False
         """"""
-
-    # def useFilter(self):
-    #
-    #     name_text = self.filter_name_input_wdg.text()
-    #     az_text = self.filter_az_input_wdg.text()
-    #
-    #     name_expr = f"lower(\"name\") LIKE '%{name_text}%'"
-    #     az_expr = f"to_string(\"az\") LIKE '%{az_text}%'"
-    #
-    #     expr_list = []
-    #
-    #     if name_text != '':
-    #         self.filter_name_lbl.setVisible(True)
-    #         expr_list.append(name_expr)
-    #     else:
-    #         self.filter_name_lbl.setVisible(False)
-    #
-    #     if az_text != '':
-    #         self.filter_az_lbl.setVisible(True)
-    #         expr_list.append(az_expr)
-    #     else:
-    #         self.filter_az_lbl.setVisible(False)
-    #
-    #     if expr_list == []:
-    #         self._gis_layer.setSubsetString('')
-    #     else:
-    #
-    #         expr_string = " and ".join(expr for expr in expr_list)
-    #         print(f'expression string: {expr_string}')
-    #         self._gis_layer.setSubsetString(expr_string)
-    #
-    #     self.updateFooter()
-
-
-    # def setFilterScopeUI(self):
-    #     super().setFilterScopeUI()
-    #
-    #     self.uicAktStatusFilterLbl = QLabel(self)
-    #     self.uicAktStatusFilterLbl.setText('Status:')
-    #
-    #     self.uicAktStatusFilterCombo = QComboBox(self)
-    #
-    #     self.uiTableFilterHLay.insertWidget(2, self.uicAktStatusFilterLbl)
-    #     self.uiTableFilterHLay.insertWidget(3, self.uicAktStatusFilterCombo)
-    #
-    # def setFilterScope(self):
-    #     super().setFilterScope()
-    #
-    #     self.setFilterStatus()
-    #
-    # def setFilterStatus(self):
-    #
-    #     try:
-    #         self.uicAktStatusFilterCombo.currentTextChanged.disconnect(
-    #             self.filterMaintable)
-    #     except:
-    #         pass
-    #     finally:
-    #         prev_typ = self.uicAktStatusFilterCombo.currentText()
-    #         self.uicAktStatusFilterCombo.clear()
-    #
-    #         self.uicAktStatusFilterCombo.addItem('- Alle -')
-    #
-    #         status_list = self._custom_entity_data['status_id']
-    #         status_sorted = sorted(status_list,
-    #                                 key=lambda x: x.sort)
-    #
-    #         for status_id in status_sorted:
-    #             self.uicAktStatusFilterCombo.addItem(str(status_id.name))
-    #
-    #         self.uicAktStatusFilterCombo.setCurrentText(prev_typ)
-    #
-    #         self.uicAktStatusFilterCombo.currentTextChanged.connect(
-    #             self.applyFilter)
-    #
-    # def useFilterScope(self, source_row, source_parent):
-    #     super().useFilterScope(source_row, source_parent)
-    #
-    #     try:
-    #         """filter status_id"""
-    #         table_value = self.filter_proxy.sourceModel() \
-    #             .data(self.filter_proxy.sourceModel().index(source_row, 2),
-    #         Qt.DisplayRole)
-    #         if self.uicAktStatusFilterCombo.currentText() != "- Alle -":
-    #             if str(table_value) != self.uicAktStatusFilterCombo.currentText():
-    #                 return False
-    #         """"""
-    #     except:
-    #         print("Filter Error:", sys.exc_info())
 
     def signals(self):
         super().signals()
