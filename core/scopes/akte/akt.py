@@ -2,43 +2,33 @@ import os
 from pathlib import Path
 
 from PyQt5.QtCore import QDate
-from qgis.PyQt.QtGui import (QFont, QIntValidator, QIcon, QStandardItem, QColor,
-                             QStandardItemModel)
-from qgis.PyQt.QtWidgets import (QLabel, QSpacerItem, QDockWidget, QToolButton, \
-    QMenu, QAction, QTreeView, QHBoxLayout, QComboBox, QAbstractItemView,
-                                 QPushButton)
+from qgis.PyQt.QtGui import (QIntValidator, QIcon, QStandardItem, QStandardItemModel)
+from qgis.PyQt.QtWidgets import QDockWidget
 
-from qgis.PyQt.QtCore import (QSortFilterProxyModel, Qt, QSize,
-                              QAbstractItemModel, QModelIndex, pyqtSlot)
+from qgis.PyQt.QtCore import Qt, QModelIndex, pyqtSlot
 
 from geoalchemy2.shape import to_shape
-from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry, QgsVectorLayerCache, QgsVectorLayer, QgsField, QgsPointXY
-from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
-from qgis.PyQt.QtCore import QVariant
+from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry
 from sqlalchemy import desc, select, text, func
 from sqlalchemy.orm import joinedload
 
 from core import entity, db_session_cm, LOGGER
 from core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
-    BGstZuordnung, BGstAwbStatus, BRechtsgrundlage, BKontakt
+    BGstZuordnung, BKontakt
 from core.entity_titel import EntityTitel
-# from core.gis_control import GisControl
 from core.gis_item import GisItem
-from core.gis_layer import KoppelLayer, KomplexLayer, ZVectorLayer, \
-    setLayerStyle
+from core.gis_layer import KoppelLayer, KomplexLayer
 from core.gis_tools import cut_koppel_gstversion
 from core.main_gis import MainGis
 from core.print_layouts.awb_auszug import AwbAuszug
 from core.scopes.akte import akt_UI
-from core.scopes.akte.abgrenzung import Abgrenzung, AbgrenzungDialog
 from core.scopes.akte.akt_abgrenzung_dv import AbgrenzungDataView
 from core.scopes.akte.akt_gst_main import GstAktDataView
 from core.scopes.akte.akt_komplex_dv import KomplexAktDataView
 from core.scopes.akte.akt_koppel_dv import KoppelAktDataView
 from core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
 from core.scopes.kontakt.kontakt import Kontakt, KontaktNewSelector
-from core.scopes.koppel.koppel import KoppelDialog, Koppel
 from core.scopes.koppel.koppel_item import KoppelItem
 
 import resources_rc
@@ -66,21 +56,11 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     @property  # getter
     def bewirtschafter_id(self):
 
-        # type_mci = self.uiTypCombo.currentData(Qt.UserRole)
-
-        # self._type_id = type_mci.id
         self._bewirtschafter_id = self.uiBewirtschafterCombo.currentData(Qt.UserRole + 1)
-        # self.rel_type = type_mci
         return self._bewirtschafter_id
 
     @bewirtschafter_id.setter
     def bewirtschafter_id(self, value):
-
-        # self.uiVertreterCombo.setCurrentIndex(
-        #     self.uiVertreterCombo.findData(value, Qt.UserRole)
-        # )
-        # self._vertreter_id = value
-
 
         """finde den type_id im model des uiTypeCombo"""
         match_index = self.uiBewirtschafterCombo.model().match(
@@ -101,8 +81,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     @property  # getter
     def bewirtschafter_mci(self):
 
-        bewirtschafter_mci = self.uiBewirtschafterCombo.currentData(Qt.UserRole + 2)
-        # self.rel_type = type_mci
+        bewirtschafter_mci = self.uiBewirtschafterCombo.currentData(
+            Qt.UserRole + 2)
         return bewirtschafter_mci
 
     @property  # getter
@@ -155,7 +135,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     @az.setter
     def az(self, value):
 
-        # self.uicAzLbl.setText(f'AZ {str(value)}')
         self._az = value
 
     @property  # getter
@@ -166,7 +145,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     @name.setter
     def name(self, value):
 
-        # self.guiHeaderTextLbl.setText(value)
         self.uicTitleWdg.uiTitelLbl.setText(f'{value}   -   AZ {str(self.az)}')
         self._name = value
 
@@ -272,9 +250,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             date = QDate(int(year), int(month), int(day))
             self.uiWwpDateDedit.setDate(date)
 
-        # if value is not None:
-        #     self.uiWwpJahrSBox.setValue(value)
-
         self._wwp_date = value
 
     @property  # getter
@@ -340,25 +315,16 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.guiMainGis.scope_id = 1
         """"""
 
-        # """definiere notwendige tabellen und füge sie ein"""
-        # self.gst_table = GstAktDataView(self)
-        #
-        # self.uiGstListeVlay.addWidget(self.gst_table)
-        # """"""
-
-        # self.komplex_model = KomplexModel(self)
-        # self.komplex_root_item = self.komplex_model.invisibleRootItem()
-        #
-        # self.current_abgrenzung_item = None
-
         """setzte neuen slot für die add_action"""
         self.uiBewirtschafterCombo.action_add.triggered.disconnect()
         self.uiBewirtschafterCombo.action_add.triggered.connect(self.add_new_kontakt)
         """"""
 
     def add_new_kontakt(self):
-
-        print(f'new kontakt')
+        """
+        lege einen neuen kontakt an
+        :return:
+        """
 
         self.kt = KontaktNewSelector()
         self.kt.show()
@@ -369,16 +335,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """füge das Titel-Widget in die Titel-Toolbar ein"""
         self.uicTitleWdg = EntityTitel(self)
         self.uiTitleToolBar.addWidget(self.uicTitleWdg)
-
-        """zentriere den Header-Text"""
-        # self.uiKKTv.header().setDefaultAlignment(Qt.AlignHCenter|Qt.AlignVCenter)
-        """"""
-
-        # """mache den Header-Text 'bold'"""
-        # header_font = self.uiKKTv.header().font()
-        # header_font.setBold(True)
-        # self.uiKKTv.header().setFont(header_font)
-        # """"""
 
     def finalInit(self):
         super().finalInit()
@@ -395,18 +351,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.uiBewAwbAreaLbl.setText(self.getBewAwbArea())
 
-        # self.uiVersionTv.setColumnHidden(0, True)
-        # self.uiVersionTv.setColumnHidden(5, True)
-        # self.uiVersionTv.setColumnHidden(6, True)
-        # self.uiVersionTv.setColumnHidden(7, True)
-        # self.uiVersionTv.setColumnHidden(8, True)
-
-        # self.uiKKTv.setColumnWidth(0, 400)
-        # self.uiKKTv.setColumnHidden(1, True)
-        # self.uiKKTv.setColumnHidden(2, True)
-        # self.uiKKTv.setColumnHidden(3, True)
-        # self.uiKKTv.setColumnHidden(4, True)
-
     def initEntityWidget(self):
         super().initEntityWidget()
 
@@ -414,9 +358,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         """init bewirtschafter_combo"""
         self.setBewirtschafterCombo()
-        # self.uiBewirtschafterCombo.loadData()
-        # self.uiBewirtschafterCombo.combo_widget_form = Kontakt
-        # self.uiBewirtschafterCombo.initCombo()
         """"""
 
         self.uiInfoBtnAlmBnr.initInfoButton(1001)
@@ -450,7 +391,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
     def displayBewirtschafterAdresse(self):
 
-        # vertreter = self.uiVertreterCombo.currentData(ComboModel.MciRole)
         bewirtschafter = self.uiBewirtschafterCombo.currentData(Qt.UserRole + 2)
 
         if bewirtschafter is None:
@@ -516,17 +456,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             round(float(area) / 10000, 4)).replace(".", ",") + ' ha'
         return area_ha
 
-    # def getCustomEntityMci(self, session):
-    #     # super().getCustomEntityMci(session)
-    #
-    #     gst_awb_status = session.scalars(select(BGstAwbStatus)).all()
-    #     gst_recht_status = session.scalars(select(BRechtsgrundlage)).all()
-    #     bearbeitungsstatus = session.scalars(select(BBearbeitungsstatus)).all()
-    #
-    #     self._custom_entity_data['gst_awb_status'] = gst_awb_status
-    #     self._custom_entity_data['gst_recht_status'] = gst_recht_status
-    #     self._custom_entity_data['bearbeitungsstatus'] = bearbeitungsstatus
-
     def loadSubWidgets(self):
         super().loadSubWidgets()
 
@@ -535,10 +464,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """lade die gst-tabelle"""
         self.gst_table = GstAktDataView(self, gis_mode=True,
                                         session=self.entity_session)
-        # self.gst_table.dataview_session = self.entity_session
-        # with db_session_cm(name='query gst-table in akt',
-        #                    expire_on_commit=False) as session:
-        #     self.gst_table.initDataView(dataview_session=session)
         self.gst_table.initDataView()
         self.uiGstListeVlay.addWidget(self.gst_table)
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
@@ -568,31 +493,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         extent = self.gst_table._gis_layer.extent()
         self.guiMainGis.uiCanvas.setExtent(extent)
         """"""
-
-        # if self.abgrenzung_table._gis_layer.hasFeatures():
-        #
-        #     current_feat = None
-        #
-        #     for feat in self.abgrenzung_table._gis_layer.getFeatures():
-        #
-        #         jahr = feat.attribute('jahr')
-        #         status_id = feat.attribute('status_id')
-        #
-        #         if status_id == 0:
-        #
-        #             if current_feat == None:
-        #                 current_feat = feat
-        #
-        #     self.abgrenzung_table._gis_layer.select(current_feat.id())
-        #
-        #     # abgr_id = self.abgrenzung_table.model.data(self.abgrenzung_table.model.index(0, 0), Qt.EditRole)
-        #     abgr_id = current_feat.attribute('abgrenzung_id')
-        #
-        #     # print(f'abgrenzung_id: {abgr_id}')
-        #     filter_string = f"\"abgrenzung_id\" = {str(abgr_id)}"
-        #     self.koppel_table._gis_layer.setSubsetString(filter_string)
-        #     self.komplex_table._gis_layer.setSubsetString(filter_string)
-
 
     def selectedAbgrenzungChanged(self):
 
@@ -707,8 +607,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             """"""
 
             session.commit()
-
-        print(f'...')
 
     def currentAbgenzungJahr(self):
         """
@@ -865,19 +763,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             else:
                 abgr_item.setData(0, GisItem.Current_Role)
 
-    # def selectFirstAbgrenzung(self):
-    #     """
-    #     wenn eine Abgrenzung vorhanden ist, dann zeige die erste an
-    #
-    #     :return:
-    #     """
-    #
-    #     if self.komplex_root_item.rowCount() > 0:
-    #
-    #         self._selected_version_item = self.komplex_root_item.child(0)
-    #         self.setKKTv(self._selected_version_item.index())
-    #         self.uiVersionTv.selectRow(0)
-
     def loadGisLayer(self):
         """hole die infos der zu ladenden gis-layer aus der datenbank und
         übergebe sie dem main_gis widget"""
@@ -950,78 +835,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
         self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
 
-    # def get_abgrenzung_di(self):
-    #     """
-    #     erzeuge eine Liste mit den BAbgrenzung-Datenmodellen basierend auf die
-    #     aktuelle 'Abgrenzung/Komplex/Koppel'-Stuktur
-    #
-    #     :return: List [BAbgrenzung]
-    #     """
-    #
-    #     abgrenzungen = []
-    #
-    #     rootKkItem = self.uiVersionTv.model().invisibleRootItem()
-    #
-    #     for a in range(rootKkItem.rowCount()):
-    #
-    #         abgr_item = rootKkItem.child(a)
-    #         abgr_di = BAbgrenzung()
-    #         abgr_item.getItemData(abgr_di)
-    #
-    #         for k in range(abgr_item.rowCount()):
-    #
-    #             komplex_item = abgr_item.child(k)
-    #             komplex_di = BKomplex()
-    #             komplex_item.getItemData(komplex_di)
-    #
-    #             for kk in range(komplex_item.rowCount()):
-    #
-    #                 koppel_item = komplex_item.child(kk)
-    #                 koppel_di = BKoppel()
-    #                 koppel_item.getItemData(koppel_di)
-    #
-    #                 komplex_di.rel_koppel.append(koppel_di)
-    #             abgr_di.rel_komplex.append(komplex_di)
-    #         abgrenzungen.append(abgr_di)
-    #
-    #     return abgrenzungen
-
-
     def post_data_set(self):
         super().post_data_set()
 
         self.uiGisDock.setWindowTitle(
             f'Kartenansicht {self.name} (AZ {str(self.az)})')
 
-        # self.tool_menu = QMenu(self)
-        # self.uicEntityTools.setMenu(self.tool_menu)
-        # self.uicTitleWdg.uiEntityTools.setMenu(self.tool_menu)
-
-        # self.menu_prints = QMenu('Ausdrucke')
-        # self.tool_menu.addMenu(self.menu_prints)
-
-        # self.actionPrintAWB = QAction('NÖ Alm- und Weidebuch Auszug')
-        # self.menu_prints.addAction(self.actionPrintAWB)
-
-        # self.actionPrintAktInfo = QAction('allgemeine Akteninformation')
-        # self.menu_prints.addAction(self.actionPrintAktInfo)
-        # self.actionPrintAktInfo.setEnabled(False)
-        #
-        # self.actionPrintGstList = QAction('Grundstücksliste')
-        # self.menu_prints.addAction(self.actionPrintGstList)
-        # self.actionPrintGstList.setEnabled(False)
-
-    # def insertEntityHeader(self):
-    #
-    #     pass
-
     def setBewirtschafterCombo(self):
-
-        # vertr_kontakt_items = sorted(self._custom_entity_data['vertr_kontakte'],
-        #                       key=lambda x:x.name)
-
-        # with db_session_cm(name='set bewirtschafter_combo in akt',
-        #                    expire_on_commit=False) as session:
 
         bewirtschafter_stmt = select(
             BKontakt).order_by(func.lower(BKontakt.name)
@@ -1029,15 +849,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.uiBewirtschafterCombo._mci_list = self.entity_session.scalars(
             bewirtschafter_stmt).all()
 
-        # # for kontakt in vertr_kontakt_items:
-        # for kontakt in vertreter_mci_list:
-        #     self.uiVertreterCombo.addItem(kontakt.name, kontakt.id)
-
         """erstelle ein model mit 1 spalten für das type-combo"""
         bew_model = QStandardItemModel(len(self.uiBewirtschafterCombo._mci_list), 1)
         for i in range(len(self.uiBewirtschafterCombo._mci_list)):
-            # id = type_items[i].id
-            # name = type_items[i].name
             bew_model.setData(bew_model.index(i, 0),
                                           self.uiBewirtschafterCombo._mci_list[i].name, Qt.DisplayRole)
             bew_model.setData(bew_model.index(i, 0),
@@ -1049,10 +863,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         """weise dem combo das model zu"""
         self.uiBewirtschafterCombo.setModel(bew_model)
-        # self.uiTypCombo.setModelColumn(1)
         """"""
 
-        # self.uiBewirtschafterCombo.loadComboData()
         self.uiBewirtschafterCombo.combo_widget_form = Kontakt
         self.uiBewirtschafterCombo.initCombo()
 
@@ -1061,23 +873,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         hole die daten für die status_id-combobox aus der datenbank und füge sie in
         die combobox ein
         """
-        # status_items = sorted(self._custom_entity_data['bearbeitungsstatus'],
-        #                       key=lambda x:x.sort)
-
-        # with db_session_cm(name='query akt bearbeitungsstatuse',
-        #                    expire_on_commit=False) as session:
 
         status_stmt = select(BBearbeitungsstatus)
         status_mci_list = self.entity_session.scalars(status_stmt).all()
 
-            # for item in status_items:
-            #     self.uiStatusCombo.addItem(item.name, item.id)
-
         """erstelle ein model mit 1 spalten für das type-combo"""
         status_model = QStandardItemModel(len(status_mci_list), 1)
         for i in range(len(status_mci_list)):
-            # id = type_items[i].id
-            # name = type_items[i].name
             status_model.setData(status_model.index(i, 0),
                                           status_mci_list[i].name, Qt.DisplayRole)
             status_model.setData(status_model.index(i, 0),
@@ -1088,14 +890,12 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         """weise dem combo das model zu"""
         self.uiStatusCombo.setModel(status_model)
-        # self.uiTypCombo.setModelColumn(1)
         """"""
 
     def signals(self):
         super().signals()
 
         self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
-        # self.actionPrintAWB.triggered.connect(self.createAwbPrint)
         self.actionAwbAuszug.triggered.connect(self.createAwbPrint)
 
         self.abgrenzung_table._gis_layer.selectionChanged.connect(
@@ -1106,110 +906,6 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.uiBewirtschafterCombo.currentIndexChanged.connect(
             self.displayBewirtschafterAdresse)
-
-        # self.uicCollapsNodesPbtn.clicked.connect(self.collapsKKTree)
-        # self.uicExpandNodesPbtn.clicked.connect(self.expandKKTree)
-
-        # self.uiKKTv.selectionModel().selectionChanged.connect(
-        #     self.changedSelectedKK)
-
-        # self.uiEditVersionPbtn.clicked.connect(self.editAbgrenzung)
-        # self.uiVersionTv.doubleClicked.connect(self.editAbgrenzung)
-
-        # self.uiKKTv.doubleClicked.connect(self.editKoppel)
-
-        # self.komplex_model.dataChanged.connect(self.changedKKModel)
-
-    # def editAbgrenzung(self):
-    #
-    #     for idx in self.uiVersionTv.selectionModel().selectedIndexes():
-    #         if idx.column() == 0:  # wähle nur indexe der ersten spalte!
-    #
-    #             item = self.komplex_model.itemFromIndex(idx)
-    #             self.abgr = Abgrenzung(parent=self, item=item)
-    #             self.abgr_dialog = AbgrenzungDialog(self)
-    #             self.abgr_dialog.insertWidget(self.abgr)
-    #             self.abgr_dialog.resize(self.minimumSizeHint())
-    #
-    #             if self.abgr_dialog.exec():
-    #
-    #                 self.updateAkt()
-
-    # def editKoppel(self):
-    #
-    #     for idx in self.uiKKTv.selectionModel().selectedIndexes():
-    #         if idx.column() == 0:  # wähle nur indexe der ersten spalte!
-    #
-    #             item = self.komplex_model.itemFromIndex(idx)
-    #             self.abgr = Koppel(parent=self, item=item)
-    #             self.abgr_dialog = KoppelDialog(self)
-    #             self.abgr_dialog.insertWidget(self.abgr)
-    #             self.abgr_dialog.resize(self.minimumSizeHint())
-    #
-    #             if self.abgr_dialog.exec():
-    #                 self.komplex_model.layoutChanged.emit()
-    #                 feat_id = item.data(GisItem.Feature_Role).id()
-    #                 layer = item.data(GisItem.Layer_Role)
-    #                 koppel_id = item.data(GisItem.Instance_Role).id
-    #                 koppel_name = item.data(GisItem.Name_Role)
-    #                 attrs = {0: koppel_id,
-    #                          1: koppel_name,
-    #                          2: None,
-    #                          3: None,
-    #                          4: None,
-    #                          5: '0,123'}
-    #                 layer.dataProvider().changeAttributeValues({feat_id: attrs})
-    #                 self.guiMainGis.uiCanvas.refresh()
-
-    # def changedSelectedAbgrenzung(self, selected):
-    #
-    #     self._selected_version_index = selected[0].indexes()[0]
-    #     self._selected_version_item = self.uiVersionTv.model()\
-    #         .itemFromIndex(self._selected_version_index)
-    #
-    #     self.setKKTv(self._selected_version_index)
-
-    # def setKKTv(self, index):
-    #     """
-    #     lade die Komplexe und Koppeln entsprechend der Auswahl im
-    #     Abgrenzungs-View
-    #
-    #     :param index:
-    #     :return:
-    #     """
-    #
-    #     self.uiKKTv.setModel(self.komplex_model)
-    #     self.uiKKTv.expandAll()
-    #
-    #     self.uiKKTv.setRootIndex(index)
-
-    # def changedSelectedKK(self):
-    #     """
-    #     die Auswahl im KK-View ändert sich; die Selection im Kartenfenster
-    #     wird daran angepasst
-    #     :return:
-    #     """
-    #
-    #     """erzeuge eine Liste mit den selectierten Items"""
-    #     sel_item = []
-    #     for idx in self.uiKKTv.selectionModel().selectedIndexes():
-    #         if idx.column() == 0:  # wähle nur indexe der ersten spalte!
-    #             item = self.komplex_model.itemFromIndex(idx)
-    #             sel_item.append(item)
-    #     """"""
-    #
-    #     """setze den Layer als aktiven Layer, auf dem sich die ausgewählten
-    #     KK-Item-Features befinden"""
-    #     if sel_item != []:
-    #         self.guiMainGis.layer_tree_view.setCurrentLayer(
-    #             sel_item[0].data(GisItem.Layer_Role))
-    #         """"""
-    #
-    #     """Selektiere die ausgewählten KK-Item-Features auf dem eben als aktiv
-    #     gesetzten Layer"""
-    #     self.selectFeatures(
-    #         [s.data(GisItem.Feature_Role).id() for s in sel_item])
-    #     """"""
 
     def selectFeatures(self, feat_id_list):
         """
@@ -1328,21 +1024,6 @@ class GisDock(QDockWidget):
         self.setWindowTitle('Kartenansicht')
 
 
-# class AbgrenzungProxyModel(QSortFilterProxyModel):
-#     def __init__(self, *args, **kwargs):
-#         QSortFilterProxyModel.__init__(self, *args, **kwargs)
-#         self.labels = ['ab Jahr', 'Status', 'Erfassungsart']
-#
-#     def setHeaderLabels(self, labels):
-#         self.labels = labels
-#
-#     def headerData(self, section,orientation, role = Qt.DisplayRole):
-#         if (orientation == Qt.Horizontal and 0 <= section < self.columnCount()
-#                 and role==Qt.DisplayRole and section < len(self.labels)) :
-#             return self.labels[section]
-#         return QSortFilterProxyModel.headerData(self, section, orientation, role)
-
-
 class KomplexModel(QStandardItemModel):
 
     def __init__(self, parent=None) -> None:
@@ -1362,14 +1043,6 @@ class KomplexModel(QStandardItemModel):
                                         'Koppelfläche'])  # 8
 
     def flags(self, index):
-
-        # if not index.isValid():
-        #     return None
-        #
-        # if index.column() == self.col_with_checkbox:
-        #     return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
-        # else:
-        #     return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
         first_index = index.sibling(index.row(), 0)
         first_item = self.itemFromIndex(first_index)
@@ -1499,27 +1172,5 @@ class KomplexModel(QStandardItemModel):
                     return area_r +  ' ha'
                 if role == Qt.TextAlignmentRole:
                     return Qt.AlignRight | Qt.AlignVCenter
-
-        # if index.column() == 3:
-        #
-        #     if role == Qt.DisplayRole:
-        #
-        #         if type(first_item) == KoppelItem:
-        #             k_area = to_shape(first_item.data(GisItem.Instance_Role).geometry).area
-        #             k_area_rounded = '{:.4f}'.format(
-        #                 round(float(k_area) / 10000, 4)).replace(".", ",")
-        #
-        #             return f'{str(k_area_rounded)} ha'
-        #
-        #         if type(first_item) == KomplexItem:
-        #             komp_area = 0.00
-        #             for k in range(first_item.rowCount()):
-        #                 kop_area = to_shape(first_item.child(k).data(GisItem.Instance_Role).geometry).area
-        #                 komp_area = komp_area + kop_area
-        #
-        #             komp_area_rounded = '{:.4f}'.format(
-        #                 round(float(komp_area) / 10000, 4)).replace(".", ",")
-        #
-        #             return f'{str(komp_area_rounded)} ha'
 
         return QStandardItemModel.data(self, index, role)
