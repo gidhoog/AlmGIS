@@ -1,11 +1,10 @@
 from functools import wraps
-from qgis.PyQt.QtGui import QFont
-from qgis.PyQt.QtWidgets import QLabel, QMessageBox, QMainWindow, QDialog
+from qgis.PyQt.QtWidgets import QMessageBox, QMainWindow, QDialog
 from qgis.PyQt.QtCore import Qt
 
-from sqlalchemy import select, inspect
+from sqlalchemy import select
 
-from core import db_session_cm, LOGGER, DbSession
+from core import DbSession
 from core.main_dialog import MainDialog
 
 
@@ -117,33 +116,6 @@ class Entity(QMainWindow):
 
         self.entity_dialog = None
 
-    # def __init_subclass__(cls, *args, **kwargs):
-    #     """
-    #     um die methode __post_init__ direkt nach __init__ aufzurufen
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     super().__init_subclass__(*args, **kwargs)
-    #
-    #     def new_init(self, *args, init=cls.__init__, **kwargs):
-    #         init(self, *args, **kwargs)
-    #
-    #         if cls is type(self):
-    #             self.__post_init__()
-    #     cls.__init__ = new_init
-
-    # def __post_init__(self):
-    #     """
-    #     methode die nach __init__ aufgerufen wird
-    #
-    #     :return:
-    #     """
-    #
-    #     self.insertEntityHeader()
-    #     self.initUi()
-    #     self.setEntityTabOrder()
-
     def setDefaultValues(self, **kwargs):
         """
         definiere hier standardwerte die beim anlegen einer neuen entity
@@ -179,10 +151,6 @@ class Entity(QMainWindow):
         if entity_mci is not None:
             self.commit_on_accept = False
             self._entity_mci = entity_mci
-            # self._entity_mci = entity_mci
-            # mmm = self.entity_session.merge(self._entity_mci)
-            # self.entity_session.add(mmm)
-            # # self.entity_session.add(self._entity_mci)
 
         if entity_id is not None:
             self.entity_id = entity_id
@@ -190,13 +158,6 @@ class Entity(QMainWindow):
 
             self._entity_mci = self.entity_session.get(self._entity_mc,
                                                        self.entity_id)
-
-            # with db_session_cm() as session:
-            #
-            #     # self._entity_mci = session.get(self._entity_mc, self.entity_id)
-            #     self._entity_mci = self.getEntityMci(session, entity_id)
-            #
-            #     self.getCustomEntityMci(session)
 
         # self.initEntityWidget()
 
@@ -208,8 +169,6 @@ class Entity(QMainWindow):
 
         self.signals()
         self.finalInit()
-
-        print(f'...')
 
     def getEntityMci(self, session, entity_id):
         """
@@ -226,15 +185,6 @@ class Entity(QMainWindow):
         ).unique().first()
 
         return mci
-
-    # def getCustomEntityMci(self, session):
-    #     """
-    #     frage individuelle mci's ab, die für diese Entity notwendig sind (
-    #     z.B. mci's für die Dateneingabe)
-    #     :param session: sqlalchemy session
-    #     :return:
-    #     """
-    #     pass
 
     def post_data_set(self):
         """
@@ -291,28 +241,6 @@ class Entity(QMainWindow):
 
         pass
 
-        # if hasattr(self, 'uiHeaderWdgt'):
-        #     self.guiHeaderTextLbl.setText(str(self._entity_mci.rel_type.name))
-
-    # def insertEntityHeader(self):
-    #     """
-    #     definiere hier den kopfbereich für diese entity
-    #     """
-    #
-    #     if hasattr(self, 'uiHeaderWdgt'):
-    #         self.uiHeaderWdgt.setStyleSheet("background-color: rgb(70,70,70);")
-    #
-    #         self.guiHeaderTextLbl = QLabel(self.entity_header_text)
-    #
-    #         self.header_label_font = QFont("Verdana", 15, QFont.Bold)
-    #         self.header_label_style = "color: rgb(246,246,246);"
-    #
-    #         self.guiHeaderTextLbl.setStyleSheet(self.header_label_style)
-    #         self.guiHeaderTextLbl.setFont(self.header_label_font)
-    #         self.uiHeaderHlay.addWidget(self.guiHeaderTextLbl)
-    #
-    #         self.uiHeaderHlay.setContentsMargins(10, 10, 10, 10)
-
     def initEntityWidget(self):
 
         # self.insertEntityHeader()
@@ -365,33 +293,8 @@ class Entity(QMainWindow):
         'commit' die daten der entity_session in die datenbank
         """
 
-        # if self._entity_mci in self.entity_session:
-
         self.entity_session.commit()
         self.entity_session.close()
-
-
-        # entity_inspect = inspect(self._entity_mci)
-        #
-        # print(f'entity to commit is detached: {entity_inspect.detached}')
-        # print(f'entity to commit is transient: {entity_inspect.transient}')
-        # print(f'entity to commit is pending: {entity_inspect.pending}')
-        # print(f'entity to commit is persistent: {entity_inspect.persistent}')
-        # print(f'entity to commit is deleted: {entity_inspect.deleted}')
-        #
-        # if entity_inspect.detached or entity_inspect.transient:
-        # # if entity_inspect.transient:
-        #
-        #     with db_session_cm(name='commit_entity',
-        #                        expire_on_commit=False) as session:
-        #
-        #         try:
-        #             session.add(self._entity_mci)
-        #             # session.add(self._entity_mci.rel_type)
-        #         except:
-        #             LOGGER.exception("Cannot add entity_mci to new session "
-        #                              "in Entity.commitEntity")
-
 
     def rejectEntity(self):
         """
