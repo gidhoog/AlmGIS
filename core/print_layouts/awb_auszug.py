@@ -161,7 +161,7 @@ class AwbAuszug(QgsPrintLayout):
         self.addLayoutItem(abb_adresse_label)
 
         """füge das Datum für den Datenstand ein"""
-        today = datetime.now().strftime('%d. %B %Y')
+        today = datetime.now().strftime('%d. %m. %Y')
         datenstand_string = 'erstellt am:  ' + today
         datenstand_font = QFont('Arial', 8)
 
@@ -385,7 +385,7 @@ class AwbAuszug(QgsPrintLayout):
                         stand = datetime.strptime(str(col), '%Y-%m-%d %H:%M:%S')
                         # erzeuge fromatierten string aus dem datetime-objekt
                         gst_row.append(
-                            stand.strftime('%d. %B %Y'))
+                            stand.strftime('%d. %m. %Y'))
                     else:
                         gst_row.append(str(col))
                     col_id += 1

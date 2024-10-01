@@ -993,23 +993,23 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.uiGisDock.setWindowTitle(
             f'Kartenansicht {self.name} (AZ {str(self.az)})')
 
-        self.tool_menu = QMenu(self)
+        # self.tool_menu = QMenu(self)
         # self.uicEntityTools.setMenu(self.tool_menu)
-        self.uicTitleWdg.uiEntityTools.setMenu(self.tool_menu)
+        # self.uicTitleWdg.uiEntityTools.setMenu(self.tool_menu)
 
-        self.menu_prints = QMenu('Ausdrucke')
-        self.tool_menu.addMenu(self.menu_prints)
+        # self.menu_prints = QMenu('Ausdrucke')
+        # self.tool_menu.addMenu(self.menu_prints)
 
-        self.actionPrintAWB = QAction('NÖ Alm- und Weidebuch Auszug')
-        self.menu_prints.addAction(self.actionPrintAWB)
+        # self.actionPrintAWB = QAction('NÖ Alm- und Weidebuch Auszug')
+        # self.menu_prints.addAction(self.actionPrintAWB)
 
-        self.actionPrintAktInfo = QAction('allgemeine Akteninformation')
-        self.menu_prints.addAction(self.actionPrintAktInfo)
-        self.actionPrintAktInfo.setEnabled(False)
-
-        self.actionPrintGstList = QAction('Grundstücksliste')
-        self.menu_prints.addAction(self.actionPrintGstList)
-        self.actionPrintGstList.setEnabled(False)
+        # self.actionPrintAktInfo = QAction('allgemeine Akteninformation')
+        # self.menu_prints.addAction(self.actionPrintAktInfo)
+        # self.actionPrintAktInfo.setEnabled(False)
+        #
+        # self.actionPrintGstList = QAction('Grundstücksliste')
+        # self.menu_prints.addAction(self.actionPrintGstList)
+        # self.actionPrintGstList.setEnabled(False)
 
     # def insertEntityHeader(self):
     #
@@ -1095,7 +1095,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         super().signals()
 
         self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
-        self.actionPrintAWB.triggered.connect(self.createAwbPrint)
+        # self.actionPrintAWB.triggered.connect(self.createAwbPrint)
+        self.actionAwbAuszug.triggered.connect(self.createAwbPrint)
 
         self.abgrenzung_table._gis_layer.selectionChanged.connect(
             self.selectedAbgrenzungChanged)
