@@ -7,6 +7,7 @@
   </qresource>
   <qresource prefix="html_info"/>
   <qresource prefix="svg">
+    <file>resources/icons/awb.svg</file>
     <file>resources/icons/awb_auszug.svg</file>
     <file>resources/icons/import.svg</file>
     <file>resources/icons/reset_blue.svg</file>

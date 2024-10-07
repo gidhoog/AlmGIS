@@ -36,21 +36,45 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg4" />
   <rect
-     style="fill:#f1f0e4;fill-opacity:1;stroke:#000000;stroke-width:0.265918;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
      id="rect343"
      width="33.536961"
      height="49.883591"
-     x="3.3811412"
+     x="3.1941381"
      y="3.0582047" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     d="m 8.0411485,10.659196 c 23.8429395,0 23.8429395,0 23.8429395,0"
+     id="path5379" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     d="m 8.0411485,17.597024 c 23.8429395,0 23.8429395,0 23.8429395,0"
+     id="path5379-2" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     d="m 8.0411485,45.348336 c 23.8429395,0 23.8429395,0 23.8429395,0"
+     id="path5379-2-7" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     d="m 8.0411485,38.410508 c 23.8429395,0 23.8429395,0 23.8429395,0"
+     id="path5379-2-7-4" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     d="m 8.0411485,31.47268 c 23.8429395,0 23.8429395,0 23.8429395,0"
+     id="path5379-2-7-4-2" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     d="m 8.0411485,24.534852 c 23.8429395,0 23.8429395,0 23.8429395,0"
+     id="path5379-2-7-4-2-5" />
   <text
      xml:space="preserve"
-     style="font-weight:900;font-size:19.8377px;font-family:Arial;-inkscape-font-specification:'Arial, Heavy';fill:#db0909;fill-opacity:1;stroke:#000000;stroke-width:0.210607;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
+     style="font-weight:900;font-size:19.8377px;font-family:Arial;-inkscape-font-specification:'Arial, Heavy';fill:#db0909;fill-opacity:1;stroke:#000000;stroke-width:0.7;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none"
      x="4.1973152"
      y="35.100113"
      id="text2773"><tspan
        sodipodi:role="line"
        id="tspan2771"
-       style="fill:#db0909;fill-opacity:1;stroke-width:0.210607"
+       style="fill:#db0909;fill-opacity:1;stroke-width:0.7;stroke-dasharray:none"
        x="4.1973152"
        y="35.100113">AWB</tspan></text>
 </svg>

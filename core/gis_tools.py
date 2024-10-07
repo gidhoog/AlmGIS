@@ -1,12 +1,11 @@
 from datetime import datetime
 from qgis.PyQt.QtWidgets import QMessageBox
 
-from qgis import processing
-# from qgis.processing.core.Processing import Processing
+# from qgis import processing
 
-# import processing
-# from processing.core.Processing import Processing
-# from processing.tools import dataobjects
+import processing
+from processing.core.Processing import Processing
+from processing.tools import dataobjects
 
 from qgis.core import QgsVectorLayer, edit, QgsFeature, \
     QgsProcessingFeatureSourceDefinition, QgsFeatureRequest
@@ -24,7 +23,7 @@ def cut_koppel_gstversion(koppel_layer):
 
     """init 'Processing' um 'processing' in einer standalone-anwendung zu 
     ermöglichen"""
-    # Processing.initialize()
+    Processing.initialize()
     """"""
 
     """aktuelle Zeit"""

@@ -1059,12 +1059,13 @@ class FeatureInfoTool(QgsMapToolIdentifyFeature):
                     # print(f'--------koppel from model: {self.parent.parent.parent().koppel_table.view.model().sourceModel().data(self.parent.parent.parent().koppel_table.view.model().sourceModel().index(self.parent.parent.parent().koppel_table.view.model().sourceModel().idToIndex(feat.mFeature.id()).row(), 8), Qt.DisplayRole)}')
                     # print(f'--------koppel from mci: {self.parent.parent.parent().gst_table._mci_list[self.parent.parent.parent().gst_table.view.model().sourceModel().idToRow(feat.mFeature.id()) + 1].gst}')
 
-                    gst_mci = self.parent.parent.parent().guiGstTable._mci_list[self.parent.parent.parent().guiGstTable.view.model().sourceModel().idToRow(feat.mFeature.id())]
+                    gst_mci = self.parent.parent.parent().gst_table._mci_list[self.parent.parent.parent().gst_table.view.model().sourceModel().idToRow(feat.mFeature.id())]
                     print(f'>>> gst_mci: {gst_mci}')
                     self.wid = self.parent.current_layer.entity_form(self.parent)
                     self.dlg = self.parent.current_layer.entity_dialog(self.parent)
-                    self.wid.editEntity(entity_mci=gst_mci,
-                                        custom_data=self.parent.parent.parent().guiGstTable.getCustomEntityData())
+                    # self.wid.editEntity(entity_mci=gst_mci,
+                    #                     custom_data=self.parent.parent.parent().gst_table.getCustomEntityData())
+                    self.wid.editEntity(entity_mci=gst_mci)
                     self.wid.entity_dialog = self.dlg
                     self.dlg.insertWidget(self.wid)
                     # self.dlg.resize(self.minimumSizeHint())

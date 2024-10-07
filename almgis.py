@@ -19,9 +19,9 @@ if sys.version < '3.0':
 def run():
 
     # QgsApplication.setPrefixPath("C:/PROGRA~1/OSGeo4W/apps/qgis-ltr", True)
-    # QgsApplication.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr", True)
+    QgsApplication.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr", True)
     app = QgsApplication([], True)
-    app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis", True)
+    # app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis", True)
     app.initQgis()
 
     main_window = AlmgisMainWindow()

@@ -89,10 +89,14 @@ class AbgrenzungModel(GisTableModel):
 
             if role == Qt.DecorationRole:
 
-                if self.feature(index).attribute(
-                        'abgrenzung_id') == self.parent().getIstAbgrenzungId().id:
+                # if self.feature(index).attribute(
+                #         'abgrenzung_id') == self.parent().getIstAbgrenzungId().id:
+                #
+                #     return QIcon(':/svg/resources/icons/awb.svg')
 
-                    return QIcon(':/svg/resources/icons/tick_green.svg')
+                if self.feature(index).attribute('awb') == 1:
+
+                    return QIcon(':/svg/resources/icons/awb.svg')
 
         # if index.column() == 3:
         #
@@ -152,7 +156,7 @@ class AbgrenzungDataView(DataView):
         super(__class__, self).__init__(parent, gis_mode)
 
         self.entity_dialog_class = AbgrenzungDialog
-        # self.entity_widget_class = GstZuordnungDataForm
+        self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BAbgrenzung
         self._model_gis_class = AbgrenzungModel
@@ -337,6 +341,8 @@ class AbgrenzungDataView(DataView):
 
         mci_fld = QgsField("mci", QVariant.List)
 
+        awb_fld = QgsField("awb", QVariant.Int)
+
         self.feature_fields.append(abgrenzung_id_fld)
         self.feature_fields.append(jahr_fld)
         self.feature_fields.append(status_id_fld)
@@ -345,6 +351,7 @@ class AbgrenzungDataView(DataView):
         self.feature_fields.append(erfassungsart_id_fld)
         self.feature_fields.append(erfassungsart_name_fld)
         self.feature_fields.append(mci_fld)
+        self.feature_fields.append(awb_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
@@ -357,6 +364,7 @@ class AbgrenzungDataView(DataView):
         feature['erfassungsart_id'] = mci.erfassungsart_id
         feature['erfassungsart_name'] = mci.rel_erfassungsart.name
         feature['mci'] = [mci]
+        feature['awb'] = mci.awb
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
@@ -650,6 +658,8 @@ class AbgrenzungDataView(DataView):
         self.view.setColumnHidden(0, True)
         self.view.setColumnHidden(2, True)
         self.view.setColumnHidden(5, True)
+        self.view.setColumnHidden(7, True)
+        self.view.setColumnHidden(8, True)
 
         self.view.sortByColumn(1, Qt.DescendingOrder)
 
