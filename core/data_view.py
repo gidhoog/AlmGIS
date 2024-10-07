@@ -1251,7 +1251,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if self.edit_entity_by == 'mci':
 
-                entity_wdg = entity_wdg_cls(self, self.dataview_session)
+                entity_wdg = entity_wdg_cls(self)
+                entity_wdg.entity_session = self.dataview_session
                 entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,

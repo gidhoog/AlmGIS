@@ -222,8 +222,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
         self.uiLastEditedLbl.setText(self._last_edit)
 
-    def __init__(self, parent=None, session=None):
-        super(__class__, self).__init__(parent, session)
+    def __init__(self, parent=None):
+        super(__class__, self).__init__(parent)
         self.setupUi(self)
 
     def addGstInfo(self):

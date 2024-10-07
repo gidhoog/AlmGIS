@@ -657,6 +657,7 @@ class BAbgrenzung(Base):
     erfassungsart_id: Mapped[int] = mapped_column(ForeignKey("a_alm_erfassungsart.id"))
     status_id: Mapped[int] = mapped_column(ForeignKey("a_alm_abgrenzung_status.id"))
     awb: Mapped[bool]
+    bezeichnung: Mapped[str]
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 

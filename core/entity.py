@@ -93,21 +93,21 @@ class Entity(QMainWindow):
 
         self.rejectEntity()
 
-    def __init__(self, parent=None, session=None):
+    def __init__(self, parent=None):
         super(Entity, self).__init__(parent)
 
         self.parent = parent
 
-        if session:
-            self.entity_session = session
-        else:
-            self.entity_session = DbSession()
+        # if session:
+        #     self.entity_session = session
+        # else:
+        self.entity_session = DbSession()
 
         self.purpose = 'edit'  # or 'add'
 
         """"""
         self._entity_mc = None
-        self._custom_entity_data = {}
+        # self._custom_entity_data = {}
         """"""
 
         self.invalid_data_text = "Die Angaben sind ungültig"

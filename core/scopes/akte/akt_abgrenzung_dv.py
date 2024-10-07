@@ -30,6 +30,7 @@ import typing
 
 from operator import attrgetter
 
+from core.scopes.akte.abgrenzung import Abgrenzung
 from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
 
@@ -48,7 +49,6 @@ class AbgrenzungDialog(EntityDialog):
 
         self.dialog_window_title = 'Abgrenzung'
         # self.set_apply_button_text('&Speichern und Schließen')
-
 
     def accept(self):
         super().accept()
@@ -156,7 +156,7 @@ class AbgrenzungDataView(DataView):
         super(__class__, self).__init__(parent, gis_mode)
 
         self.entity_dialog_class = AbgrenzungDialog
-        self.entity_widget_class = GstZuordnungDataForm
+        self.entity_widget_class = Abgrenzung
 
         self._entity_mc = BAbgrenzung
         self._model_gis_class = AbgrenzungModel
@@ -365,6 +365,34 @@ class AbgrenzungDataView(DataView):
         feature['erfassungsart_name'] = mci.rel_erfassungsart.name
         feature['mci'] = [mci]
         feature['awb'] = mci.awb
+
+    def changeAttributes(self, feature, mci):
+
+        # """last_gst"""
+        # gst_versionen_list = mci.rel_gst.rel_alm_gst_version
+        # last_gst = max(gst_versionen_list,
+        #                key=attrgetter('rel_alm_gst_ez.datenstand'))
+        # """"""
+        #
+        # """gb_area"""
+        # gb_area = 0
+        # for nutz in last_gst.rel_alm_gst_nutzung:
+        #     gb_area = gb_area + nutz.area
+        # """"""
+
+        attrib = {0: mci.id,
+                  1: mci.jahr,
+                  2: mci.status_id,
+                  3: mci.rel_status.name_short,
+                  4: mci.bearbeiter,
+                  5: mci.erfassungsart_id,
+                  6: mci.rel_erfassungsart.name,
+                  7: [mci],
+                  8: mci.awb
+                  }
+
+        self._gis_layer.changeAttributeValues(feature.id(),
+                                              attrib)
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
