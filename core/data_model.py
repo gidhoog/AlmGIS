@@ -145,7 +145,8 @@ class BErfassungsart(Base):
     name: Mapped[str]
     name_short: Mapped[str]
 
-    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_erfassungsart')
+    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(
+        back_populates='rel_erfassungsart')
 
     def __repr__(self):
         return f"<BErfassungsart(id: {self.id}, " \
@@ -685,7 +686,8 @@ class BAbgrenzungStatus(Base):
     name: Mapped[str]
     name_short: Mapped[str]
 
-    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_status')
+    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(
+        back_populates='rel_status')
 
     def __repr__(self):
         return f"<BAbgrenzungStatus(id: {self.id}, " \

@@ -527,86 +527,86 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.koppel_table.useSubsetString()
 
-    def updateKomplexe(self):
-        """
-        temporäre und nur einmal verwendete funktion für den Import der Daten
-        zum aktualisieren der Tabellenstruktur
-
-        :return:
-        """
-        alm_new = []
-
-        with db_session_cm() as session:
-
-            akt_instances = session.scalars(select(BAkt)
-                                            .options(joinedload(BAkt.rel_abgrenzung)
-                                                     .joinedload(BAbgrenzung.rel_komplex)
-                                                     .joinedload(BKomplex.rel_koppel))
-                                            ).unique().all()
-
-            for akt in akt_instances:
-                akt_new = BAkt(name=akt.name,
-                               alias=akt.alias,
-                               az=akt.az,
-                               bearbeitungsstatus_id=akt.bearbeitungsstatus_id,
-                               alm_bnr=akt.alm_bnr,
-                               anm=akt.anm,
-                               stz=akt.stz)
-                alm_new.append(akt_new)
-                akt_abgrenzungen_new = {}
-                for abgrenzung in akt.rel_abgrenzung:
-
-                    abgr_key = str(abgrenzung.jahr) + abgrenzung.bearbeiter + str(abgrenzung.erfassungsart_id)
-
-                    if abgr_key in akt_abgrenzungen_new:
-                        abgr_new = akt_abgrenzungen_new[abgr_key]
-                    else:
-                        abgr_new = BAbgrenzung(akt_id=abgrenzung.akt_id,
-                                               jahr=abgrenzung.jahr,
-                                               bearbeiter=abgrenzung.bearbeiter,
-                                               erfassungsart_id=abgrenzung.erfassungsart_id,
-                                               status_id=abgrenzung.status_id,
-                                               anmerkung=abgrenzung.anmerkung,
-                                               inaktiv=abgrenzung.inaktiv)
-                        akt_abgrenzungen_new[abgr_key] = abgr_new
-                        akt_new.rel_abgrenzung.append(abgr_new)
-
-                    for komplex in abgrenzung.rel_komplex:
-                        komplex_new = BKomplex(abgrenzung_id=komplex.abgrenzung_id,
-                                               komplex_name_id=komplex.komplex_name_id)
-                        abgr_new.rel_komplex.append(komplex_new)
-
-                        for koppel in komplex.rel_koppel:
-                            koppel_new =BKoppel(komplex_id=koppel.komplex_id,
-                                                nr=koppel.nr,
-                                                name=koppel.name,
-                                                nicht_weide=koppel.nicht_weide,
-                                                bearbeiter=koppel.bearbeiter,
-                                                seehoehe=koppel.seehoehe,
-                                                domes_id=koppel.domes_id,
-                                                heuertrag_ha=koppel.heuertrag_ha,
-                                                anmerkung=koppel.anmerkung,
-                                                geometry=koppel.geometry)
-                            komplex_new.rel_koppel.append(koppel_new)
-
-                session.add(akt_new)
-
-            """aktiviere foreign_key-Support in der datenbank"""
-            session.execute(text('pragma foreign_keys=ON'))
-            """"""
-
-            """delete the farmitem (version) witch will be submitted (including deleting all
-            children by using the cascaded 'delete' in the datamodel)"""
-            for akt_inst in akt_instances:
-                session.delete(akt_inst)
-            """"""
-
-            """remove the sequence of the row-id's to begin at 1 on setting
-            the new row-id """
-            session.execute(text("""delete from sqlite_sequence where name='a_alm_akt';"""))
-            """"""
-
-            session.commit()
+    # def updateKomplexe(self):
+    #     """
+    #     temporäre und nur einmal verwendete funktion für den Import der Daten
+    #     zum aktualisieren der Tabellenstruktur
+    #
+    #     :return:
+    #     """
+    #     alm_new = []
+    #
+    #     with db_session_cm() as session:
+    #
+    #         akt_instances = session.scalars(select(BAkt)
+    #                                         .options(joinedload(BAkt.rel_abgrenzung)
+    #                                                  .joinedload(BAbgrenzung.rel_komplex)
+    #                                                  .joinedload(BKomplex.rel_koppel))
+    #                                         ).unique().all()
+    #
+    #         for akt in akt_instances:
+    #             akt_new = BAkt(name=akt.name,
+    #                            alias=akt.alias,
+    #                            az=akt.az,
+    #                            bearbeitungsstatus_id=akt.bearbeitungsstatus_id,
+    #                            alm_bnr=akt.alm_bnr,
+    #                            anm=akt.anm,
+    #                            stz=akt.stz)
+    #             alm_new.append(akt_new)
+    #             akt_abgrenzungen_new = {}
+    #             for abgrenzung in akt.rel_abgrenzung:
+    #
+    #                 abgr_key = str(abgrenzung.jahr) + abgrenzung.bearbeiter + str(abgrenzung.erfassungsart_id)
+    #
+    #                 if abgr_key in akt_abgrenzungen_new:
+    #                     abgr_new = akt_abgrenzungen_new[abgr_key]
+    #                 else:
+    #                     abgr_new = BAbgrenzung(akt_id=abgrenzung.akt_id,
+    #                                            jahr=abgrenzung.jahr,
+    #                                            bearbeiter=abgrenzung.bearbeiter,
+    #                                            erfassungsart_id=abgrenzung.erfassungsart_id,
+    #                                            status_id=abgrenzung.status_id,
+    #                                            anmerkung=abgrenzung.anmerkung,
+    #                                            inaktiv=abgrenzung.inaktiv)
+    #                     akt_abgrenzungen_new[abgr_key] = abgr_new
+    #                     akt_new.rel_abgrenzung.append(abgr_new)
+    #
+    #                 for komplex in abgrenzung.rel_komplex:
+    #                     komplex_new = BKomplex(abgrenzung_id=komplex.abgrenzung_id,
+    #                                            komplex_name_id=komplex.komplex_name_id)
+    #                     abgr_new.rel_komplex.append(komplex_new)
+    #
+    #                     for koppel in komplex.rel_koppel:
+    #                         koppel_new =BKoppel(komplex_id=koppel.komplex_id,
+    #                                             nr=koppel.nr,
+    #                                             name=koppel.name,
+    #                                             nicht_weide=koppel.nicht_weide,
+    #                                             bearbeiter=koppel.bearbeiter,
+    #                                             seehoehe=koppel.seehoehe,
+    #                                             domes_id=koppel.domes_id,
+    #                                             heuertrag_ha=koppel.heuertrag_ha,
+    #                                             anmerkung=koppel.anmerkung,
+    #                                             geometry=koppel.geometry)
+    #                         komplex_new.rel_koppel.append(koppel_new)
+    #
+    #             session.add(akt_new)
+    #
+    #         """aktiviere foreign_key-Support in der datenbank"""
+    #         session.execute(text('pragma foreign_keys=ON'))
+    #         """"""
+    #
+    #         """delete the farmitem (version) witch will be submitted (including deleting all
+    #         children by using the cascaded 'delete' in the datamodel)"""
+    #         for akt_inst in akt_instances:
+    #             session.delete(akt_inst)
+    #         """"""
+    #
+    #         """remove the sequence of the row-id's to begin at 1 on setting
+    #         the new row-id """
+    #         session.execute(text("""delete from sqlite_sequence where name='a_alm_akt';"""))
+    #         """"""
+    #
+    #         session.commit()
 
     def currentAbgenzungJahr(self):
         """
@@ -622,126 +622,126 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         return max(jahre)
 
-    def loadKKModel(self):
-
-        def addKoppelFeature(koppel_item, koppel_layer):
-
-            koppel_feat = QgsFeature(koppel_layer.fields())
-            koppel_feat.setAttributes(
-                [koppel_item.data(GisItem.Instance_Role).id,
-                 koppel_item.data(GisItem.Name_Role),
-                 None,
-                 None,
-                 None,
-                 '0,123'])
-            koppel_feat.setGeometry(QgsGeometry.fromWkt(
-                to_shape(
-                    koppel_item.data(GisItem.Geometry_Role)).wkt)
-            )
-            (result,
-             added_kop_feat) = koppel_layer.data_provider.addFeatures(
-                [koppel_feat])
-
-            return added_kop_feat
-
-        with db_session_cm() as session:
-
-            abgrenzungs_instances = session.scalars(select(BAbgrenzung)
-                                    .where(BAbgrenzung.akt_id == self._entity_mci.id)
-                                    .order_by(desc(BAbgrenzung.jahr))
-                                                    ).unique().all()
-
-            for abgrenzung in abgrenzungs_instances:
-
-                abgrenzung_item = AbgrenzungItem(abgrenzung)
-                self.komplex_root_item.appendRow(abgrenzung_item)
-
-                """erzeuge Layer für die Komplexe und Koppeln"""
-                koppel_layer = KoppelLayer(
-                    "Polygon?crs=epsg:31259",
-                    "Koppeln " + str(abgrenzung.jahr),
-                    "memory"
-                )
-                abgrenzung_item.setData(koppel_layer, GisItem.KoppelLayer_Role)
-
-                komplex_layer = KomplexLayer(
-                    "Polygon?crs=epsg:31259",
-                    "Komplexe " + str(abgrenzung.jahr),
-                    "memory"
-                )
-                abgrenzung_item.setData(komplex_layer, GisItem.KomplexLayer_Role)
-                """"""
-
-                for komplex in abgrenzung.rel_komplex:
-
-                    komplex_geom = None
-
-                    komplex_item = KomplexItem(komplex)
-
-                    """füge die items der einzelnen Spalten ein; Leerwerte als
-                    Platzhalter, in der Funktion 'data()' des Models werden
-                    dann die Werte für die Anzeige gesteuert"""
-                    abgrenzung_item.appendRow([komplex_item,
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem()])
-                    """"""
-
-                    for koppel in komplex.rel_koppel:
-
-                        koppel_item = KoppelItem(koppel)
-                        komplex_item.appendRow([koppel_item,
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem(),
-                                               QStandardItem()])
-                        new_koppel_feat = addKoppelFeature(koppel_item, koppel_layer)
-
-                        koppel_item.setData(new_koppel_feat[0], GisItem.Feature_Role)
-                        koppel_item.setData(koppel_layer, GisItem.Layer_Role)
-
-                        if komplex_geom == None:
-                            komplex_geom = new_koppel_feat[0].geometry()
-                        else:
-                            komplex_geom = komplex_geom.combine(
-                                new_koppel_feat[0].geometry())
-
-                    komplex_feat = QgsFeature(komplex_layer.fields())
-
-                    komplex_feat.setAttributes([
-                        komplex_item.data(GisItem.Instance_Role).id,
-                        1,
-                        komplex_item.data(GisItem.Name_Role)
-                    ])
-
-                    komplex_feat.setGeometry(komplex_geom)
-
-                    (result,
-                     added_komp_feat) = komplex_layer.data_provider.addFeatures(
-                        [komplex_feat])
-
-                    komplex_item.setData(added_komp_feat[0],
-                                        GisItem.Feature_Role)
-                    komplex_item.setData(komplex_layer, GisItem.Layer_Role)
-
-                    """füge die erstellten Layer in die Projekt-Instance ein
-                    um einen gültigen Layer zu erhalten; in den Layer-Tree-View
-                    wird er hier noch nicht eingefügt"""
-                    self.guiMainGis.project_instance.addMapLayer(koppel_layer,
-                                                                 False)
-
-                self.guiMainGis.project_instance.addMapLayer(komplex_layer,
-                                                             False)
-                """"""
+    # def loadKKModel(self):
+    #
+    #     def addKoppelFeature(koppel_item, koppel_layer):
+    #
+    #         koppel_feat = QgsFeature(koppel_layer.fields())
+    #         koppel_feat.setAttributes(
+    #             [koppel_item.data(GisItem.Instance_Role).id,
+    #              koppel_item.data(GisItem.Name_Role),
+    #              None,
+    #              None,
+    #              None,
+    #              '0,123'])
+    #         koppel_feat.setGeometry(QgsGeometry.fromWkt(
+    #             to_shape(
+    #                 koppel_item.data(GisItem.Geometry_Role)).wkt)
+    #         )
+    #         (result,
+    #          added_kop_feat) = koppel_layer.data_provider.addFeatures(
+    #             [koppel_feat])
+    #
+    #         return added_kop_feat
+    #
+    #     with db_session_cm() as session:
+    #
+    #         abgrenzungs_instances = session.scalars(select(BAbgrenzung)
+    #                                 .where(BAbgrenzung.akt_id == self._entity_mci.id)
+    #                                 .order_by(desc(BAbgrenzung.jahr))
+    #                                                 ).unique().all()
+    #
+    #         for abgrenzung in abgrenzungs_instances:
+    #
+    #             abgrenzung_item = AbgrenzungItem(abgrenzung)
+    #             self.komplex_root_item.appendRow(abgrenzung_item)
+    #
+    #             """erzeuge Layer für die Komplexe und Koppeln"""
+    #             koppel_layer = KoppelLayer(
+    #                 "Polygon?crs=epsg:31259",
+    #                 "Koppeln " + str(abgrenzung.jahr),
+    #                 "memory"
+    #             )
+    #             abgrenzung_item.setData(koppel_layer, GisItem.KoppelLayer_Role)
+    #
+    #             komplex_layer = KomplexLayer(
+    #                 "Polygon?crs=epsg:31259",
+    #                 "Komplexe " + str(abgrenzung.jahr),
+    #                 "memory"
+    #             )
+    #             abgrenzung_item.setData(komplex_layer, GisItem.KomplexLayer_Role)
+    #             """"""
+    #
+    #             for komplex in abgrenzung.rel_komplex:
+    #
+    #                 komplex_geom = None
+    #
+    #                 komplex_item = KomplexItem(komplex)
+    #
+    #                 """füge die items der einzelnen Spalten ein; Leerwerte als
+    #                 Platzhalter, in der Funktion 'data()' des Models werden
+    #                 dann die Werte für die Anzeige gesteuert"""
+    #                 abgrenzung_item.appendRow([komplex_item,
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem()])
+    #                 """"""
+    #
+    #                 for koppel in komplex.rel_koppel:
+    #
+    #                     koppel_item = KoppelItem(koppel)
+    #                     komplex_item.appendRow([koppel_item,
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem(),
+    #                                            QStandardItem()])
+    #                     new_koppel_feat = addKoppelFeature(koppel_item, koppel_layer)
+    #
+    #                     koppel_item.setData(new_koppel_feat[0], GisItem.Feature_Role)
+    #                     koppel_item.setData(koppel_layer, GisItem.Layer_Role)
+    #
+    #                     if komplex_geom == None:
+    #                         komplex_geom = new_koppel_feat[0].geometry()
+    #                     else:
+    #                         komplex_geom = komplex_geom.combine(
+    #                             new_koppel_feat[0].geometry())
+    #
+    #                 komplex_feat = QgsFeature(komplex_layer.fields())
+    #
+    #                 komplex_feat.setAttributes([
+    #                     komplex_item.data(GisItem.Instance_Role).id,
+    #                     1,
+    #                     komplex_item.data(GisItem.Name_Role)
+    #                 ])
+    #
+    #                 komplex_feat.setGeometry(komplex_geom)
+    #
+    #                 (result,
+    #                  added_komp_feat) = komplex_layer.data_provider.addFeatures(
+    #                     [komplex_feat])
+    #
+    #                 komplex_item.setData(added_komp_feat[0],
+    #                                     GisItem.Feature_Role)
+    #                 komplex_item.setData(komplex_layer, GisItem.Layer_Role)
+    #
+    #                 """füge die erstellten Layer in die Projekt-Instance ein
+    #                 um einen gültigen Layer zu erhalten; in den Layer-Tree-View
+    #                 wird er hier noch nicht eingefügt"""
+    #                 self.guiMainGis.project_instance.addMapLayer(koppel_layer,
+    #                                                              False)
+    #
+    #             self.guiMainGis.project_instance.addMapLayer(komplex_layer,
+    #                                                          False)
+    #             """"""
 
     def setCurrentRoleToKK(self):
         """
@@ -763,32 +763,32 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             else:
                 abgr_item.setData(0, GisItem.Current_Role)
 
-    def loadGisLayer(self):
-        """hole die infos der zu ladenden gis-layer aus der datenbank und
-        übergebe sie dem main_gis widget"""
-
-        """füge die Abgrenzungslayer ein (Komplex und Koppel)"""
-        self.insertKKLayerToLTV()
-        """"""
-
-        """setzte den base_id für das main_gis widget"""
-        self.guiMainGis.base_id = self.entity_id
-        """"""
-
-        """hole die daten für die gis-layer aus der datenbank"""
-        with db_session_cm() as session:
-            session.expire_on_commit = False
-
-            akt_gis_scope_layer = session.query(BGisScopeLayer)\
-                .join(BGisStyle) \
-                .outerjoin(BGisStyleLayerVar) \
-                .filter(BGisScopeLayer.gis_scope_id == self.guiMainGis.scope_id)\
-                .order_by(desc(BGisScopeLayer.order))\
-                .all()
-        """"""
-
-        """lade die gis-layer"""
-        self.guiMainGis.loadLayer(akt_gis_scope_layer)
+    # def loadGisLayer(self):
+    #     """hole die infos der zu ladenden gis-layer aus der datenbank und
+    #     übergebe sie dem main_gis widget"""
+    #
+    #     """füge die Abgrenzungslayer ein (Komplex und Koppel)"""
+    #     self.insertKKLayerToLTV()
+    #     """"""
+    #
+    #     """setzte den base_id für das main_gis widget"""
+    #     self.guiMainGis.base_id = self.entity_id
+    #     """"""
+    #
+    #     """hole die daten für die gis-layer aus der datenbank"""
+    #     with db_session_cm() as session:
+    #         session.expire_on_commit = False
+    #
+    #         akt_gis_scope_layer = session.query(BGisScopeLayer)\
+    #             .join(BGisStyle) \
+    #             .outerjoin(BGisStyleLayerVar) \
+    #             .filter(BGisScopeLayer.gis_scope_id == self.guiMainGis.scope_id)\
+    #             .order_by(desc(BGisScopeLayer.order))\
+    #             .all()
+    #     """"""
+    #
+    #     """lade die gis-layer"""
+    #     self.guiMainGis.loadLayer(akt_gis_scope_layer)
 
     def insertKKLayerToLTV(self):
         """

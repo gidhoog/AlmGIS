@@ -93,15 +93,15 @@ class Entity(QMainWindow):
 
         self.rejectEntity()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, session=None):
         super(Entity, self).__init__(parent)
 
         self.parent = parent
 
-        # if session:
-        #     self.entity_session = session
-        # else:
-        self.entity_session = DbSession()
+        if session:
+            self.entity_session = session
+        else:
+            self.entity_session = DbSession()
 
         self.purpose = 'edit'  # or 'add'
 

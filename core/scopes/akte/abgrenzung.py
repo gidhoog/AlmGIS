@@ -166,8 +166,8 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
 
         return status_mci
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, session=None):
+        super(Abgrenzung, self).__init__(parent, session)
         self.setupUi(self)
 
     def initEntityWidget(self):
