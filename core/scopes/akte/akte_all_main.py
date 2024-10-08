@@ -8,7 +8,7 @@ from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from core import db_session_cm, config
+from core import db_session_cm, config, DbSession
 from core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BBearbeitungsstatus, BAbgrenzung
 from core.entity import EntityDialog
@@ -50,6 +50,7 @@ class AkteAllMainWidget(MainWidget):
 
         self.akt_all_table = AkteAllMain(self)
 
+        self.akt_all_table.setDataviewSession(DbSession())
         self.akt_all_table.initDataView()
 
     def initMainWidget(self):

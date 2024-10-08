@@ -6,6 +6,7 @@ from sqlalchemy import select
 
 from core import DbSession
 from core.main_dialog import MainDialog
+from core.tools import getMciState
 
 
 def set_data(func):
@@ -93,15 +94,15 @@ class Entity(QMainWindow):
 
         self.rejectEntity()
 
-    def __init__(self, parent=None, session=None):
+    def __init__(self, parent=None):
         super(Entity, self).__init__(parent)
 
         self.parent = parent
 
-        if session:
-            self.entity_session = session
-        else:
-            self.entity_session = DbSession()
+        # if session:
+        #     self.entity_session = session
+        # else:
+        self.entity_session = None
 
         self.purpose = 'edit'  # or 'add'
 
@@ -115,6 +116,10 @@ class Entity(QMainWindow):
         self.entity_header_text = ''  # wird in initUI gesetzt
 
         self.entity_dialog = None
+
+    def setEntitySession(self, session):
+
+        self.entity_session = session
 
     def setDefaultValues(self, **kwargs):
         """
@@ -150,6 +155,7 @@ class Entity(QMainWindow):
 
         if entity_mci is not None:
             self.commit_on_accept = False
+
             self._entity_mci = entity_mci
 
         if entity_id is not None:
@@ -275,7 +281,7 @@ class Entity(QMainWindow):
             self.submitEntity()
             if self._commit_on_apply:
                 self.commitEntity()
-            # return True
+
             return self._entity_mci
         elif self.valid == False:
             self.valid = True

@@ -28,6 +28,8 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
     _status_id = 0
     _status_mci = None
 
+    _commit_on_apply = False
+
     @property  # getter
     def jahr(self):
 
@@ -166,8 +168,8 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
 
         return status_mci
 
-    def __init__(self, parent=None, session=None):
-        super(Abgrenzung, self).__init__(parent, session)
+    def __init__(self, parent=None):
+        super(Abgrenzung, self).__init__(parent)
         self.setupUi(self)
 
     def initEntityWidget(self):
@@ -273,9 +275,9 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
         self._entity_mci.bezeichnung = self.bez
 
         self._entity_mci.erfassungsart_id = self.erfassungsart_id
-        # self._entity_mci.rel_erfassungsart = self.erfassungsart_mci
+        self._entity_mci.rel_erfassungsart = self.erfassungsart_mci
         self._entity_mci.status_id = self.status_id
-        # self._entity_mci.rel_status = self.status_mci
+        self._entity_mci.rel_status = self.status_mci
 
         # self.item.setData(self.uiJahrSbox.value(), GisItem.Jahr_Role)
         #

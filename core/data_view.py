@@ -19,6 +19,7 @@ from core import data_view_UI, db_session_cm, color, DbSession
 from core.entity import EntityDialog
 from core.footer_line import FooterLine
 from core.gis_layer import Feature
+from core.tools import getMciState
 
 
 class GisTableView(QgsAttributeTableView):
@@ -505,7 +506,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self._selected_rows_number = value
 
-    def __init__(self, parent=None, gis_mode=False, session=None):
+    def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
 
@@ -516,10 +517,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.gis_mode = gis_mode
         self.current_feature = None
 
-        if session:
-            self.dataview_session = session
-        else:
-            self.dataview_session = DbSession()
+        # if session:
+        #     self.dataview_session = session
+        # else:
+        self.dataview_session = None
 
         self.sel_entity_mci = None
 
@@ -574,6 +575,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self._model_class = TableModel
 
         self.uiTableVlay.addWidget(self.view)
+
+    def setDataviewSession(self, session):
+
+        self.dataview_session = session
 
     def initDataView(self):
 
@@ -1243,6 +1248,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             if self.edit_entity_by == 'id':
 
                 entity_wdg = entity_wdg_cls(self)
+                entity_wdg.setEntitySession(DbSession())
                 entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,
@@ -1251,12 +1257,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if self.edit_entity_by == 'mci':
 
-                entity_wdg = entity_wdg_cls(self, self.dataview_session)
-                # entity_wdg.entity_session = self.dataview_session
+                entity_wdg = entity_wdg_cls(self)
+                entity_wdg.setEntitySession(self.dataview_session)
                 entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,
-                             entity_mci=entity_mci,
+                             entity_mci=self.edit_entity,
                              feature=self.current_feature)
 
     def getEntityId(self, index):

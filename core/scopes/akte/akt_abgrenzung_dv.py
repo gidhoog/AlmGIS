@@ -33,6 +33,7 @@ from operator import attrgetter
 from core.scopes.akte.abgrenzung import Abgrenzung
 from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
+from core.tools import getMciState
 
 
 class AbgrenzungDialog(EntityDialog):

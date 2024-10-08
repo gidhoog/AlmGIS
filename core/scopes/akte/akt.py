@@ -462,8 +462,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """definiere notwendige tabellen und füge sie ein"""
 
         """lade die gst-tabelle"""
-        self.gst_table = GstAktDataView(self, gis_mode=True,
-                                        session=self.entity_session)
+        self.gst_table = GstAktDataView(self, gis_mode=True)
+        self.gst_table.setDataviewSession(self.entity_session)
         self.gst_table.initDataView()
         self.uiGstListeVlay.addWidget(self.gst_table)
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
@@ -471,12 +471,15 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         """lade die abgrenzungen"""
         self.abgrenzung_table = AbgrenzungDataView(self, gis_mode=True)
+        self.abgrenzung_table.setDataviewSession(self.entity_session)
         self.abgrenzung_table.initDataView()
 
         self.komplex_table = KomplexAktDataView(self, gis_mode=True)
+        self.komplex_table.setDataviewSession(self.entity_session)
         self.komplex_table.initDataView()
 
         self.koppel_table = KoppelAktDataView(self, gis_mode=True)
+        self.koppel_table.setDataviewSession(self.entity_session)
         self.koppel_table.initDataView()
 
         self.uiAbgrenzungVlay.addWidget(self.abgrenzung_table)
