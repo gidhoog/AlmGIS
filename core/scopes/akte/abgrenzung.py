@@ -1,6 +1,5 @@
-from core import db_session_cm, entity
+from core import entity
 from core.data_model import BErfassungsart, BAbgrenzungStatus
-from core.gis_item import GisItem
 from core.main_dialog import MainDialog
 from core.scopes.akte import abgrenzung_UI
 from qgis.PyQt.QtCore import Qt
@@ -11,11 +10,6 @@ from sqlalchemy import select
 
 class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
                  entity.Entity):
-
-    # _erfassungsart_id = None
-    # _erfassungsart_name = ''
-    # _status_id = None
-    # _status_name = ''
 
     _jahr = 2000
     _bearbeiter = ''
@@ -107,9 +101,6 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
     @erfassungsart_id.setter
     def erfassungsart_id(self, value):
 
-        # self.uiErfassCombo.setCurrentIndex(
-        #     self.uiErfassCombo.findData(value, Qt.UserRole)
-        # )
         """finde den status_id im model des uiAwbStatusCombo"""
         match_index = self.uiErfassCombo.model().match(
             self.uiErfassCombo.model().index(0, 0),
@@ -142,9 +133,6 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
     @status_id.setter
     def status_id(self, value):
 
-        # self.uiErfassCombo.setCurrentIndex(
-        #     self.uiErfassCombo.findData(value, Qt.UserRole)
-        # )
         """finde den status_id im model des uiAwbStatusCombo"""
         match_index = self.uiStatusCombo.model().match(
             self.uiStatusCombo.model().index(0, 0),
@@ -191,9 +179,12 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
         self.erfassungsart_id = self._entity_mci.erfassungsart_id
         self.status_id = self._entity_mci.status_id
 
-        # self.uiBezeichnungLedit.setText(self.item.data(GisItem.Bezeichnung_Role))
-
     def changedStatus(self):
+        """
+        steuere die sichtbarkeit des bezeichnungs-lineedit wenn der status der
+        abgrenzung geändert wird
+        :return:
+        """
 
         self.status_id = self.uiStatusCombo.currentData(Qt.UserRole)
 
@@ -204,21 +195,6 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
         if self.status_id == 0:  # ist
             self.uiBezeichnungLbl.setVisible(False)
             self.uiBezeichnungLedit.setVisible(False)
-
-    # def loadCombos(self):
-    #
-    #     with db_session_cm() as session:
-    #
-    #         stmt = select(BErfassungsart)
-    #         erfassungsart_di = session.scalars(stmt).all()
-    #
-    #         stmt_status = select(BAbgrenzungStatus)
-    #         status_di = session.scalars(stmt_status).all()
-    #
-    #         for erfass in erfassungsart_di:
-    #             self.uiErfassCombo.addItem(erfass.name, erfass.id)
-    #         for status in status_di:
-    #             self.uiStatusCombo.addItem(status.name_short, status.id)
 
     def setErfassungComboData(self):
         """
@@ -279,24 +255,6 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
         self._entity_mci.status_id = self.status_id
         self._entity_mci.rel_status = self.status_mci
 
-        # self.item.setData(self.uiJahrSbox.value(), GisItem.Jahr_Role)
-        #
-        #
-        # """um nach einer Änderung des Statues den richtigen Wert im
-        # Abgrenzungs-View darzustellen, muss zusätzlich zum id (=wichtig für
-        # das abspeichern) auch der Text des aktuellen Elements übergeben
-        # werden"""
-        # self.item.setData(self.status_id, GisItem.StatusId_Role)
-        # self.item.setData(self.status_name, GisItem.StatusName_Role)
-        #
-        # self.item.setData(self.erfassungsart_id, GisItem.ErfassungsArtId_Role)
-        # self.item.setData(self.erfassungsart_name, GisItem.ErfassungsArtName_Role)
-        # """"""
-        #
-        # self.item.setData(self.uiBearbeiterLedit.text(), GisItem.Bearbeiter_Role)
-        # self.item.setData(self.uiBezeichnungLedit.text(), GisItem.Bezeichnung_Role)
-        # self.item.setData(self.uiAnmerkungPtext.toPlainText(), GisItem.Anmerkung_Role)
-
     def signals(self):
 
         self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
@@ -322,8 +280,6 @@ class AbgrenzungDialog(MainDialog):
         wenn 'acceptEntity' des entity-widget True zurückgibt (die daten sind
         gültig) dann rufe QDialog.accept() auf
         """
-        # if self.dialogWidget.acceptEntity():
-        #     super().accept()
-        
+
         self.dialogWidget.submitData()
         super().accept()
