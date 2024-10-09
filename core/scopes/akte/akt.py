@@ -490,11 +490,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
         """"""
 
-        """lade die abgrenzungen"""
-        self.abgrenzung_table = AbgrenzungDataView(self, gis_mode=True)
-        self.abgrenzung_table.setDataviewSession(self.entity_session)
-        self.abgrenzung_table.initDataView()
-
+        """lade die abgrenzungen; wichtig ist hier, dass 'abgrenzung_table'
+        als letztes instanziert wird (da hier die 'awb'-abgrenzung ausgewählt
+        wird, und dazu muss zuerst koppel und komplex vorhanden sein"""
         self.komplex_table = KomplexAktDataView(self, gis_mode=True)
         self.komplex_table.setDataviewSession(self.entity_session)
         self.komplex_table.initDataView()
@@ -502,6 +500,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.koppel_table = KoppelAktDataView(self, gis_mode=True)
         self.koppel_table.setDataviewSession(self.entity_session)
         self.koppel_table.initDataView()
+
+        self.abgrenzung_table = AbgrenzungDataView(self, gis_mode=True)
+        self.abgrenzung_table.setDataviewSession(self.entity_session)
+        self.abgrenzung_table.initDataView()
 
         self.uiAbgrenzungVlay.addWidget(self.abgrenzung_table)
         self.uiKomplexVlay.addWidget(self.komplex_table)

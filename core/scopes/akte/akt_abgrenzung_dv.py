@@ -110,11 +110,9 @@ class AbgrenzungDataView(DataView):
     def selectedRowsChanged(self):
         super().selectedRowsChanged()
 
-        sel_rows = self.getSelectedRows()
-
-        self.sel_entity_mci = self._gis_layer.getFeature(sel_rows[0]).attribute('mci')
-
-
+        # sel_rows = self.getSelectedRows()
+        #
+        # self.sel_entity_mci = self._gis_layer.getFeature(sel_rows[0]).attribute('mci')
 
     def getIstAbgrenzungId(self):
         """
@@ -252,18 +250,25 @@ class AbgrenzungDataView(DataView):
 
         self.view.sortByColumn(1, Qt.DescendingOrder)
 
-        # """setzt bestimmte spaltenbreiten"""
-        # self.view.setColumnWidth(1, 70)
-        # self.view.setColumnWidth(2, 50)
-        # self.view.setColumnWidth(3, 70)
-        # self.view.setColumnWidth(4, 120)
-        # self.view.setColumnWidth(5, 120)
-        # self.view.setColumnWidth(6, 120)
-        # self.view.setColumnWidth(7, 80)
-        # """"""
+        """setzt bestimmte spaltenbreiten"""
+        self.view.setColumnWidth(4, 200)
+        """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
         # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        """"""
+
+        """durchsuche ob eine abgrenzung als 'awb' gesetzt ist und selektiere
+        diese dann"""
+        for feat in self._gis_layer.getFeatures():
+            if feat.attribute('awb') == 1:
+                self._gis_layer.select([feat.id()])
+                self.selectedRowsChanged()
+                self.parent.selectedAbgrenzungChanged()
+
+        """trenne das signal des corner-buttons und entferne das icon"""
+        self.view.uiCornerButton.clicked.disconnect()
+        self.view.uiCornerButton.setStyleSheet("")
         """"""
 
     def updateMaintable(self):

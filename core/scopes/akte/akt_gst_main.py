@@ -1086,15 +1086,15 @@ class GstAktDataView(DataView):
                               factor=0.0001, decimal=4)
 
         """setzt bestimmte spaltenbreiten"""
-        self.view.setColumnWidth(1, 60)
+        self.view.setColumnWidth(1, 55)
         self.view.setColumnWidth(2, 45)
         self.view.setColumnWidth(3, 50)
         self.view.setColumnWidth(4, 120)
         self.view.setColumnWidth(6, 100)
         self.view.setColumnWidth(8, 120)
-        self.view.setColumnWidth(9, 80)
-        self.view.setColumnWidth(10, 80)
-        self.view.setColumnWidth(11, 80)
+        self.view.setColumnWidth(9, 75)
+        self.view.setColumnWidth(10, 75)
+        self.view.setColumnWidth(11, 75)
         """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
