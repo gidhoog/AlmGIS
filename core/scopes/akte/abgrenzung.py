@@ -165,7 +165,7 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
         self.setErfassungComboData()
         self.setStatusComboData()
 
-    def mapData(self):
+    def mapEntityData(self):
 
         self.uiAktLbl.setText(self.parent.parent.name + ' (AZ '
                               + str(self.parent.parent.az) + ')')

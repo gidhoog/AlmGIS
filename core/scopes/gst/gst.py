@@ -60,8 +60,8 @@ class Gst(gst_UI.Ui_Gst, Entity):
 
         self.parent = parent
 
-    def mapData(self):
-        super().mapData()
+    def mapEntityData(self):
+        super().mapEntityData()
 
         self.gst = self._entity_mci.gst
         self.kgnr = self._entity_mci.kgnr

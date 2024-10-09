@@ -12,7 +12,7 @@ from core.tools import getMciState
 def set_data(func):
     """
     decorator-funktion um daten einzufügen oder zu bearbeiten;
-    es wird außerdem die methode 'post_data_set' aufgerufen um dinge zu erledigen,
+    es wird außerdem die methode 'postDataSet' aufgerufen um dinge zu erledigen,
     die danach durchgeführt werden sollen
 
     :param func:
@@ -31,9 +31,9 @@ def set_data(func):
         func(self, *args, **kwargs)
         self.setPreMapData()
         self.initEntityWidget()
-        self.mapData()
+        self.mapEntityData()
 
-        self.post_data_set()
+        self.postDataSet()
         # self.loadSubWidgets()
         self.signals()
         self.finalInit()
@@ -140,6 +140,45 @@ class Entity(QMainWindow):
 
         self.setDefaultValues()
 
+
+    def assembleEntityWidget(self):
+        """
+        put the entity-widget together
+        """
+        self.loadBackgroundData()
+
+        self.mapEntityData()
+
+        self.setupDataUi()
+
+        self.postDataSet()
+
+        self.focusFirst()
+
+        self.setElementTabOrder()
+
+        self.signals()
+
+    def loadBackgroundData(self):
+        """
+        define and configure data for elements in this entity-widget
+        (e.g. combo-data, ...)
+        """
+        pass
+
+    def setupDataUi(self):
+        """
+        define here data-based ui-settings
+        """
+        if hasattr(self._entity_mci, 'rel_type'):
+            self.setTypeProperties()
+
+    def setElementTabOrder(self):
+        """
+        definiere die Tab-order von widgets die im code eingefügt wurden
+        :return:
+        """
+
     # @set_data
     def editEntity(self, entity_mci=None, entity_id=None, feature=None):
         """
@@ -154,27 +193,18 @@ class Entity(QMainWindow):
         self.feature = feature
 
         if entity_mci is not None:
-            self.commit_on_accept = False
+            # self.commit_on_accept = False
 
             self._entity_mci = entity_mci
 
         if entity_id is not None:
             self.entity_id = entity_id
-            self.commit_on_accept = True
+            # self.commit_on_accept = True
 
             self._entity_mci = self.entity_session.get(self._entity_mc,
                                                        self.entity_id)
 
-        # self.initEntityWidget()
-
-        self.mapData()
-
-        # self.setTypeProperties()
-
-        self.post_data_set()
-
-        self.signals()
-        self.finalInit()
+        self.assembleEntityWidget()
 
     def getEntityMci(self, session, entity_id):
         """
@@ -192,7 +222,7 @@ class Entity(QMainWindow):
 
         return mci
 
-    def post_data_set(self):
+    def postDataSet(self):
         """
         methode die aufgerufen wird nachdem die daten geladen wurden
         """
@@ -257,7 +287,7 @@ class Entity(QMainWindow):
 
         pass
 
-    def mapData(self):
+    def mapEntityData(self):
         """
         mappe hier die werte der date_instance mit den entity-attributen
         """

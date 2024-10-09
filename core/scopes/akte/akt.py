@@ -366,8 +366,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.uiInfoBtnWwp.initInfoButton(1005)
         self.uiInfoBtnAlias.initInfoButton(1003)
 
-    def mapData(self):
-        super().mapData()
+    def mapEntityData(self):
+        super().mapEntityData()
 
         self.az = self._entity_mci.az
         self.name = self._entity_mci.name
@@ -838,8 +838,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self._entity_mci.bewirtschafter_id = self.bewirtschafter_id
         self._entity_mci.rel_bewirtschafter = self.bewirtschafter_mci
 
-    def post_data_set(self):
-        super().post_data_set()
+    def postDataSet(self):
+        super().postDataSet()
 
         self.uiGisDock.setWindowTitle(
             f'Kartenansicht {self.name} (AZ {str(self.az)})')

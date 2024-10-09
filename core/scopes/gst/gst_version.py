@@ -108,8 +108,8 @@ class GstVersion(gst_version_UI.Ui_GstVersion, Entity):
         self.setupUi(self)
 
 
-    def mapData(self):
-        super().mapData()
+    def mapEntityData(self):
+        super().mapEntityData()
 
         self.ez = self._entity_mci.rel_alm_gst_ez.ez
         self.ezkg = self._entity_mci.rel_alm_gst_ez.kgnr

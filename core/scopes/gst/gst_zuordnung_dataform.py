@@ -235,8 +235,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.setStatusComboData()
         self.setRechtsgrundComboData()
 
-    def mapData(self):
-        super().mapData()
+    def mapEntityData(self):
+        super().mapEntityData()
 
         self.akt = self._entity_mci.rel_akt.name
         self.gst_nr = self._entity_mci.rel_gst.gst

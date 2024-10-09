@@ -397,7 +397,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         # self.uiTypCombo.setModelColumn(1)
         """"""
 
-    def mapData(self, model=None):
+    def mapEntityData(self, model=None):
 
         if self._entity_mci.type_id != 0:  # keine Einzelperson
             self.type_id = self._entity_mci.type_id

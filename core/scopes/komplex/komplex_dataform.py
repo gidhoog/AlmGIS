@@ -91,8 +91,8 @@ class KomplexDataForm(komplex_dataform_UI.Ui_KomplexDataForm, entity.Entity):
 
         self.jahr = int(datetime.now().strftime('%Y'))
 
-    def mapData(self):
-        super().mapData()
+    def mapEntityData(self):
+        super().mapEntityData()
 
         self.nr = self._entity_mci.nr
         self.name = self._entity_mci.name
