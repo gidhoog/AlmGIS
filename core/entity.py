@@ -9,36 +9,36 @@ from core.main_dialog import MainDialog
 from core.tools import getMciState
 
 
-def set_data(func):
-    """
-    decorator-funktion um daten einzufügen oder zu bearbeiten;
-    es wird außerdem die methode 'postDataSet' aufgerufen um dinge zu erledigen,
-    die danach durchgeführt werden sollen
-
-    :param func:
-    :return:
-    """
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """
-        content-manager-function zu einfügen und bearbeiten von datensätzen
-        :param self:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-
-        func(self, *args, **kwargs)
-        self.setPreMapData()
-        self.initEntityWidget()
-        self.mapEntityData()
-
-        self.postDataSet()
-        # self.loadSubWidgets()
-        self.signals()
-        self.finalInit()
-
-    return wrapper
+# def set_data(func):
+#     """
+#     decorator-funktion um daten einzufügen oder zu bearbeiten;
+#     es wird außerdem die methode 'postDataSet' aufgerufen um dinge zu erledigen,
+#     die danach durchgeführt werden sollen
+#
+#     :param func:
+#     :return:
+#     """
+#     @wraps(func)
+#     def wrapper(self, *args, **kwargs):
+#         """
+#         content-manager-function zu einfügen und bearbeiten von datensätzen
+#         :param self:
+#         :param args:
+#         :param kwargs:
+#         :return:
+#         """
+#
+#         func(self, *args, **kwargs)
+#         self.setPreMapData()
+#         self.initEntityWidget()
+#         self.mapEntityData()
+#
+#         self.postDataSet()
+#         # self.loadSubWidgets()
+#         self.signals()
+#         self.finalEntitySettings()
+#
+#     return wrapper
 
 
 class Entity(QMainWindow):
@@ -128,7 +128,7 @@ class Entity(QMainWindow):
         """
         pass
 
-    @set_data
+    # @set_data
     def newEntity(self, new_instance=None):
         """
         lege eine neue entity an
@@ -157,6 +157,8 @@ class Entity(QMainWindow):
 
         self.setElementTabOrder()
 
+        self.finalEntitySettings()
+
         self.signals()
 
     def loadBackgroundData(self):
@@ -172,6 +174,14 @@ class Entity(QMainWindow):
         """
         if hasattr(self._entity_mci, 'rel_type'):
             self.setTypeProperties()
+
+    def setupCodeUi(self):
+        """
+        define code-based ui-settings
+
+        :return:
+        """
+        # self.insertEntityHeader()
 
     def setElementTabOrder(self):
         """
@@ -251,7 +261,7 @@ class Entity(QMainWindow):
         """
         pass
 
-    def finalInit(self):
+    def finalEntitySettings(self):
         """
         definiere hier dinge die ganz am ender der initialisierung dieser entity
         durchgeführt werden sollen

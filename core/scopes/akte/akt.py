@@ -286,10 +286,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self._max_gve = value
 
-
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
+        self.setupCodeUi()
 
         self._entity_mc = BAkt
 
@@ -329,15 +329,36 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.kt = KontaktNewSelector()
         self.kt.show()
 
-    def initUi(self):
-        super().initUi()
+    def loadBackgroundData(self):
+        super().loadBackgroundData()
+
+        self.setStatusComboData()
+
+        """init bewirtschafter_combo"""
+        # self.setBewirtschafterCombo()
+
+        self.uiBewirtschafterCombo.loadComboData(self.entity_session,
+                                                 gemeinschaft=True)
+        self.uiBewirtschafterCombo.combo_widget_form = Kontakt
+        self.uiBewirtschafterCombo.initCombo()
+
+        """"""
+
+        self.uiInfoBtnAlmBnr.initInfoButton(1001)
+        self.uiInfoBtnStatus.initInfoButton(1002)
+        self.uiInfoBtnBewirtschafter.initInfoButton(1004)
+        self.uiInfoBtnWwp.initInfoButton(1005)
+        self.uiInfoBtnAlias.initInfoButton(1003)
+
+    def setupCodeUi(self):
+        super().setupCodeUi()
 
         """füge das Titel-Widget in die Titel-Toolbar ein"""
         self.uicTitleWdg = EntityTitel(self)
         self.uiTitleToolBar.addWidget(self.uicTitleWdg)
 
-    def finalInit(self):
-        super().finalInit()
+    def finalEntitySettings(self):
+        super().finalEntitySettings()
 
         """stetze eine minimum widget-größe"""
         self.setMinimumWidth(1800)
@@ -351,20 +372,20 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.uiBewAwbAreaLbl.setText(self.getBewAwbArea())
 
-    def initEntityWidget(self):
-        super().initEntityWidget()
-
-        self.setStatusComboData()
-
-        """init bewirtschafter_combo"""
-        self.setBewirtschafterCombo()
-        """"""
-
-        self.uiInfoBtnAlmBnr.initInfoButton(1001)
-        self.uiInfoBtnStatus.initInfoButton(1002)
-        self.uiInfoBtnBewirtschafter.initInfoButton(1004)
-        self.uiInfoBtnWwp.initInfoButton(1005)
-        self.uiInfoBtnAlias.initInfoButton(1003)
+    # def initEntityWidget(self):
+    #     super().initEntityWidget()
+    #
+    #     self.setStatusComboData()
+    #
+    #     """init bewirtschafter_combo"""
+    #     self.setBewirtschafterCombo()
+    #     """"""
+    #
+    #     self.uiInfoBtnAlmBnr.initInfoButton(1001)
+    #     self.uiInfoBtnStatus.initInfoButton(1002)
+    #     self.uiInfoBtnBewirtschafter.initInfoButton(1004)
+    #     self.uiInfoBtnWwp.initInfoButton(1005)
+    #     self.uiInfoBtnAlias.initInfoButton(1003)
 
     def mapEntityData(self):
         super().mapEntityData()

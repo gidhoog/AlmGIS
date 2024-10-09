@@ -166,7 +166,7 @@ class KoppelAktDataView(DataView):
         # self.setFeaturesFromMci()
         # self.setTableView()
         #
-        # self.finalInit()
+        # self.finalEntitySettings()
         #
         # self.updateFooter()
         #

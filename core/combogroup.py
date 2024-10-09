@@ -305,6 +305,8 @@ class ActionEdit(ComboAction):
         current_mci = self.parent.currentData(ComboModel.MciRole)
 
         contact_wdg = self.parent.combo_widget_form()
+        contact_wdg._commit_on_apply = False
+        contact_wdg.setEntitySession(self.parent.combo_session)
         contact_wdg.editEntity(entity_mci=current_mci)
 
         self.entity_dialog = EntityDialog(parent=self.parent)

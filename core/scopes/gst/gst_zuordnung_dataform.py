@@ -230,7 +230,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
 
         self.uiCentralLayoutHbox.addWidget(self.gst_info)
 
-    def initEntityWidget(self):
+    def loadBackgroundData(self):
+        super().loadBackgroundData()
 
         self.setStatusComboData()
         self.setRechtsgrundComboData()

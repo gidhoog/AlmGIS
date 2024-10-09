@@ -6,7 +6,7 @@ from qgis.PyQt.QtGui import QIcon
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from core import db_session_cm, config
+from core import db_session_cm, config, DbSession
 from core.data_view import DataView, TableModel
 from core.entity import EntityDialog
 from core.main_widget import MainWidget
@@ -45,6 +45,7 @@ class KontaktMainWidget(MainWidget):
         # with db_session_cm(name='main-widget - kontakt',
         #                    expire_on_commit=False) as session:
 
+        self.kontakt_table.setDataviewSession(DbSession())
         self.kontakt_table.initDataView()
 
     def initMainWidget(self):
@@ -134,9 +135,7 @@ class KontaktMain(DataView):
 
         self.entity_dialog_class = KontaktEntityDialog
         self.entity_widget_class = KontaktEinzel
-
         self._entity_mc = BKontakt
-
         self._model_class = KontaktModel
         """"""
 

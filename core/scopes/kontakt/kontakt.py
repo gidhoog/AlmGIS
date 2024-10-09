@@ -287,8 +287,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self.uiAnmPedit.setPlainText(value)
         self._anm = value
 
-    def __init__(self, parent=None, session=None):
-        super(__class__, self).__init__(parent, session)
+    def __init__(self, parent=None):
+        super(__class__, self).__init__(parent)
         self.setupUi(self)
 
         self._entity_mc = BKontakt
@@ -303,49 +303,37 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         input_validator = QRegExpValidator(reg_ex, self.uiNachnameLedit)
         self.uiNachnameLedit.setValidator(input_validator)
 
-    def initUi(self):
+    def setupCodeUi(self):
+        super().setupCodeUi()
 
         self.uiVornameLedit.setVisible(False)
         self.uiVornameLbl.setVisible(False)
 
-    def initEntityWidget(self):
-        super().initEntityWidget()
-
-        print(f'init entity widget')
+    def loadBackgroundData(self):
+        super().loadBackgroundData()
 
         self.setTypeCombo()
-        # self.setVertrKontaktCombo()
 
         self.uiVertreterCombo.loadComboData(self.entity_session)
         self.uiVertreterCombo.combo_widget_form = KontaktEinzel
         self.uiVertreterCombo.initCombo()
 
-    def finalInit(self):
-        super().finalInit()
+    def finalEntitySettings(self):
+        super().finalEntitySettings()
 
         self.setMinimumWidth(650)
 
     def setTypeCombo(self):
-
-        # type_items = sorted(self._custom_entity_data['typ'],
-        #                       key=lambda x:x.sort)
-
-        # with db_session_cm(name='set contact-type in contact',
-        #                    expire_on_commit=False) as session:
 
         stmt = select(BKontaktTyp).where(BKontaktTyp.gemeinschaft == 1
                                          ).order_by(BKontaktTyp.sort)
 
         type_mci = self.entity_session.scalars(stmt).all()
 
-        # for type in type_items:
-        #     self.uiTypCombo.addItem(type.name, type.id)
 
         """erstelle ein model mit 1 spalten für das type-combo"""
         type_model = QStandardItemModel(len(type_mci), 1)
         for i in range(len(type_mci)):
-            # id = type_items[i].id
-            # name = type_items[i].name
             if type_mci[i].gemeinschaft == 1:
                 type_model.setData(type_model.index(i, 0),
                                               type_mci[i].name, Qt.DisplayRole)
@@ -357,16 +345,9 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
 
         """weise dem combo das model zu"""
         self.uiTypCombo.setModel(type_model)
-        # self.uiTypCombo.setModelColumn(1)
         """"""
 
     def setVertrKontaktCombo(self):
-
-        # vertr_kontakt_items = sorted(self._custom_entity_data['vertr_kontakte'],
-        #                       key=lambda x:x.name)
-
-        # with db_session_cm(name='set vertreter in kontakt',
-        #                    expire_on_commit=False) as session:
 
         vertreter_stmt = select(
             BKontakt).where(
@@ -374,27 +355,19 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
             func.lower(BKontakt.name))
         vertreter_mci_list = self.entity_session.scalars(vertreter_stmt).all()
 
-        # # for kontakt in vertr_kontakt_items:
-        # for kontakt in vertreter_mci_list:
-        #     self.uiVertreterCombo.addItem(kontakt.name, kontakt.id)
-
         """erstelle ein model mit 1 spalten für das type-combo"""
         vertreter_model = QStandardItemModel(len(vertreter_mci_list), 1)
         for i in range(len(vertreter_mci_list)):
-            # id = type_items[i].id
-            # name = type_items[i].name
             vertreter_model.setData(vertreter_model.index(i, 0),
                                           vertreter_mci_list[i].name, Qt.DisplayRole)
             vertreter_model.setData(vertreter_model.index(i, 0),
                                           vertreter_mci_list[i].id, Qt.UserRole + 1)
             vertreter_model.setData(vertreter_model.index(i, 0),
                                           vertreter_mci_list[i], Qt.UserRole + 2)
-            print(f'----vertreter_mci_list[i]: {vertreter_mci_list[i]}')
         """"""
 
         """weise dem combo das model zu"""
         self.uiVertreterCombo.setModel(vertreter_model)
-        # self.uiTypCombo.setModelColumn(1)
         """"""
 
     def mapEntityData(self, model=None):
@@ -501,12 +474,6 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
             .where(BKontakt.id == entity_id)
         ).unique().first()
 
-        # mci = session.scalars(
-        #     select(BKontakt)
-        #     .options(joinedload(BKontakt.rel_type))
-        #     .where(BKontakt.id == entity_id)
-        # ).unique().first()
-
         return mci
 
     def submitEntity(self):
@@ -535,8 +502,6 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
         self._entity_mci.vertreter_id = self.vertreter_id
         self._entity_mci.rel_vertreter = self.vertreter_mci
 
-        # super().submitEntity()
-
     def signals(self):
         super().signals()
 
@@ -548,11 +513,11 @@ class KontaktEinzel(Kontakt):
     klasse für die Kontaktdaten einer Einzelperson
     """
 
-    def __init__(self, parent=None, session=None):
-        super(__class__, self).__init__(parent, session)
+    def __init__(self, parent=None):
+        super(__class__, self).__init__(parent)
 
-    def initUi(self):
-        super().initUi()
+    def setupCodeUi(self):
+        super().setupCodeUi()
 
         self.uiTypLbl.setVisible(False)
         self.uiTypCombo.setVisible(False)
@@ -571,8 +536,6 @@ class KontaktEinzel(Kontakt):
         self.uiNachnameLbl.setText('Nachname')
 
     def submitEntity(self):
-
-        # with db_session_cm(name='get einzelkontakt-typ') as session:
 
         einzel_typ_mci = self.entity_session.get(BKontaktTyp, 0)
         leerer_kontakt = self.entity_session.get(BKontakt, 0)

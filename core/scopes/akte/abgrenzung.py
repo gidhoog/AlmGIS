@@ -160,7 +160,8 @@ class Abgrenzung(abgrenzung_UI.Ui_Abgrenzung,
         super(Abgrenzung, self).__init__(parent)
         self.setupUi(self)
 
-    def initEntityWidget(self):
+    def loadBackgroundData(self):
+        super().loadBackgroundData()
 
         self.setErfassungComboData()
         self.setStatusComboData()

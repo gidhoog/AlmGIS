@@ -1249,7 +1249,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
                 entity_wdg = entity_wdg_cls(self)
                 entity_wdg.setEntitySession(DbSession())
-                entity_wdg.initEntityWidget()
+                # entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,
                              entity_id=self.getEntityId(index),
@@ -1259,7 +1259,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
                 entity_wdg = entity_wdg_cls(self)
                 entity_wdg.setEntitySession(self.dataview_session)
-                entity_wdg.initEntityWidget()
+                # entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,
                              entity_mci=self.edit_entity,

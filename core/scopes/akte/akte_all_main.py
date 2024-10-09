@@ -285,7 +285,6 @@ class AkteAllMain(DataView):
 
         self.entity_dialog_class = AktDialog
         self.entity_widget_class = Akt
-
         self._entity_mc = BAkt
         self._model_class = AktAllModel
 

@@ -96,7 +96,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         # """richte self.guiGstPreSelTview ein"""
         # self.guiGstPreSelTview.initUi()
-        # self.guiGstPreSelTview.finalInit()
+        # self.guiGstPreSelTview.finalEntitySettings()
         # self.guiGstPreSelTview.updateMaintableNew()
         # self.guiGstPreSelTview.data_view.selectionModel().selectionChanged.connect(self.selPreChanged)
         # """"""
@@ -217,12 +217,14 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         self.session = self.parent.dataview_session
 
-        self.guiGstTable = GstTable(self, gis_mode=True,
-                                    session=self.session)
+        self.guiGstTable = GstTable(self, gis_mode=True,)
+        self.guiGstTable.setDataviewSession(self.session)
+
         self.uiGstTableVLay.addWidget(self.guiGstTable)
 
-        self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=False,
-                                                session=self.session)
+        self.guiGstPreSelTview = GstPreSelTable(self, gis_mode=False)
+        self.guiGstPreSelTview.setDataviewSession(self.session)
+
         self.uiPreSelGstTableVLay.addWidget(self.guiGstPreSelTview)
 
         # with db_session_cm(name='query tables in gst-zuordung',
@@ -945,8 +947,8 @@ class GstTable(DataView):
     zugeordnet sind
     """
 
-    def __init__(self, parent, gis_mode=False, session=None):
-        super(__class__, self).__init__(parent, gis_mode, session)
+    def __init__(self, parent, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.parent = parent
 
@@ -1380,8 +1382,8 @@ class GstPreSelTable(DataView):
 
     _data_view = TableView
 
-    def __init__(self, parent, gis_mode=False, session=None):
-        super(__class__, self).__init__(parent, gis_mode, session)
+    def __init__(self, parent, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
 
         self.parent = parent
 

@@ -37,7 +37,7 @@ class ContactCombo(ExtendedCombo):
         self.combo_proxy_model.sort(0, Qt.AscendingOrder)
         """"""
 
-    def loadComboData(self, session=None):
+    def loadComboData(self, session=None, gemeinschaft=False):
 
         if session is not None:
             self.combo_session = session
@@ -46,7 +46,7 @@ class ContactCombo(ExtendedCombo):
         #                    expire_on_commit=False) as session:
 
         stmt = select(BKontakt).join(BKontakt.rel_type).where(
-            BKontaktTyp.gemeinschaft == False)
+            BKontaktTyp.gemeinschaft == gemeinschaft)
 
         self._mci_list = self.combo_session.scalars(stmt).unique().all()
 

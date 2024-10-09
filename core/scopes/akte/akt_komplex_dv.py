@@ -154,7 +154,7 @@ class KomplexAktDataView(DataView):
         # self.setFeaturesFromMci()
         # self.setTableView()
         #
-        # self.finalInit()
+        # self.finalEntitySettings()
         #
         # self.updateFooter()
         #

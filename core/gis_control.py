@@ -38,7 +38,7 @@ class GisControl:
         aktiviere die verbindung der verbundenen elemente die im
         dict 'linked_gis_widgets' gelistet sind;
 
-        rufe diese methode am ende des widget-settings auf (e.g. 'finalInit');
+        rufe diese methode am ende des widget-settings auf (e.g. 'finalEntitySettings');
 
         ohne diesem aufruf funktioniert die verbindung zwischen datentabelle
         und gis-layer nicht!
