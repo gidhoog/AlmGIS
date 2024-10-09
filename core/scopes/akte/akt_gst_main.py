@@ -386,12 +386,6 @@ class GstTableModel(GisTableModel):
 
     def data(self, index: QModelIndex, role: int = ...):
 
-        # feat = self.feature(index)
-
-        # if role == Qt.UserRole:
-        #
-        #     return self.parent._mci_list[index.row()]
-
         if role == Qt.BackgroundRole and getMciState(self.feature(index).attribute('mci')[0]) == "transient":
 
             return color.added_data
@@ -410,15 +404,6 @@ class GstTableModel(GisTableModel):
 
             if role == Qt.DisplayRole:
 
-                print(f'mci-state: {getMciState(self.feature(index).attribute('mci')[0])}')
-
-                # sess = getMciSession(self.feature(index).attribute('mci')[0])
-                # print(f'sess: {sess}')
-                # if sess is not None:
-                #     mod = sess.is_modified(self.feature(index).attribute('mci')[0])
-                #     print(
-                #         f'{self.feature(index).attribute('mci')[0]} is modified: {mod}')
-
                 return str(self.feature(index).attribute('kgnr'))
 
         if index.column() == 9:  # gis_area
@@ -429,9 +414,6 @@ class GstTableModel(GisTableModel):
                 area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
                                          ).replace(".", ",")
                 return area_r + ' ha'
-
-            # if role == Qt.EditRole:
-            #     return area
 
         if index.column() == 10:  # gb_area
 
@@ -449,9 +431,6 @@ class GstTableModel(GisTableModel):
                 area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
                                          ).replace(".", ",")
                 return area_r + ' ha'
-
-            # if role == Qt.EditRole:
-            #     return area
 
         return super().data(index, role)
 
@@ -723,6 +702,12 @@ class GstAktDataView(DataView):
             gb_area = gb_area + nutz.area
         """"""
 
+        """summe der koppel-verschnitt-flächen pro gst"""
+        sum_cut = 0.00
+        for cut in last_gst.rel_cut_koppel_gst:
+            sum_cut = sum_cut + cut.cut_area
+        """"""
+
         feature['id'] = mci.id
         feature['gst'] = mci.rel_gst.gst
         feature['ez'] = last_gst.rel_alm_gst_ez.ez
@@ -734,7 +719,7 @@ class GstAktDataView(DataView):
         feature['recht_status'] = mci.rel_rechtsgrundlage.name
         feature['gis_area'] = last_gst.gst_gis_area
         feature['gb_area'] = gb_area
-        feature['bew_area'] = 0.00
+        feature['bew_area'] = sum_cut
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
         feature['mci'] = [mci]
 
@@ -752,6 +737,12 @@ class GstAktDataView(DataView):
             gb_area = gb_area + nutz.area
         """"""
 
+        """summe der koppel-verschnitt-flächen pro gst"""
+        sum_cut = 0.00
+        for cut in last_gst.rel_cut_koppel_gst:
+            sum_cut = sum_cut + cut.cut_area
+        """"""
+
         attrib = {0: mci.id,
                   1: mci.rel_gst.gst,
                   2: last_gst.rel_alm_gst_ez.ez,
@@ -763,8 +754,9 @@ class GstAktDataView(DataView):
                   8: mci.rel_rechtsgrundlage.name,
                   9: last_gst.gst_gis_area,
                   10: gb_area,
-                  11: last_gst.rel_alm_gst_ez.datenstand,
-                  12: [mci]
+                  11: sum_cut,
+                  12: last_gst.rel_alm_gst_ez.datenstand,
+                  13: [mci]
                   }
 
         self._gis_layer.changeAttributeValues(feature.id(),
@@ -1083,6 +1075,9 @@ class GstAktDataView(DataView):
                               'ha', 'gb_area', value_width=120,
                               factor=0.0001, decimal=4, filter_col='awb_id',
                               filter_operator='==', filter_criterion=1)
+        self.insertFooterLine('davon beweidet (GIS)',
+                              'ha', 'bew_area', value_width=120,
+                              factor=0.0001, decimal=4)
         self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
                               'ha', 'gis_area', value_width=120,
                               factor=0.0001, decimal=4)
@@ -1105,82 +1100,6 @@ class GstAktDataView(DataView):
         """passe die Zeilenhöhen an den Inhalt an"""
         # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
-
-        # self.view.resizeColumnsToContents()
-
-    # def setMaintableColumns(self):
-    #     super().setMaintableColumns()
-
-        # self.maintable_columns[0] = MaintableColumn(column_type='int',
-        #                                             visible=False)
-        # self.maintable_columns[1] = MaintableColumn(heading='Gst-Nr',
-        #                                             column_type='str',
-        #                                             alignment='c')
-        # self.maintable_columns[2] = MaintableColumn(heading='EZ',
-        #                                             column_type='str',
-        #                                             alignment='c')
-        # self.maintable_columns[3] = MaintableColumn(heading='KG-Nr',
-        #                                             column_type='int')
-        # self.maintable_columns[4] = MaintableColumn(heading='KG-Name',
-        #                                             column_type='str',
-        #                                             alignment='l')
-        # self.maintable_columns[5] = MaintableColumn(heading='AWB',
-        #                                             column_type='str')
-        # self.maintable_columns[6] = MaintableColumn(heading='Rechtsgrundlage',
-        #                                             column_type='str',
-        #                                             alignment='l')
-        # self.maintable_columns[7] = MaintableColumn(heading='beweidet (ha)',
-        #                                             column_type='float')
-        # self.maintable_columns[8] = MaintableColumn(heading='beweidet (%)',
-        #                                             column_type='float')
-        # self.maintable_columns[9] = MaintableColumn(heading='Gst-Fläche (ha)',
-        #                                             column_type='str')
-        # self.maintable_columns[10] = MaintableColumn(heading='Datenstand',
-        #                                              column_type='str')
-
-    # def getMainQuery(self, session):
-    #     super().getMainQuery(session)
-
-        # """subquery um die flaeche des verschnittes von koppel und
-        # gst-version zu bekommen"""
-        # sub_cutarea = session.query(
-        #     BCutKoppelGstAktuell.gst_version_id,
-        #     func.sum(func.ST_Area(BCutKoppelGstAktuell.geometry)).label("bew_area"),
-        #     func.max(BAbgrenzung.jahr)
-        # )\
-        #     .select_from(BCutKoppelGstAktuell)\
-        #     .join(BKoppel)\
-        #     .join(BKomplex)\
-        #     .join(BAbgrenzung)\
-        #     .join(BAkt)\
-        #     .filter(BAkt.id == self.parent._entity_mci.id)\
-        #     .group_by(BCutKoppelGstAktuell.gst_version_id)\
-        #     .subquery()
-        # """"""
-        #
-        # query = session.query(BGstZuordnung.id,
-        #                       BGst.gst,
-        #                       BGstEz.ez,
-        #                       BGst.kgnr,
-        #                       BKatGem.kgname,
-        #                       BGstAwbStatus.name,
-        #                       BRechtsgrundlage.name,
-        #                       sub_cutarea.c.bew_area,
-        #                       None,  # platzhalter für 'beweidet %'
-        #                       func.ST_Area(BGstVersion.geometry),
-        #                       func.max(BGstEz.datenstand)) \
-        #     .select_from(BGstZuordnung) \
-        #     .join(BGst) \
-        #     .join(BGstVersion) \
-        #     .join(BGstEz) \
-        #     .join(BKatGem) \
-        #     .join(BGstAwbStatus) \
-        #     .join(BRechtsgrundlage) \
-        #     .outerjoin(sub_cutarea, BGstVersion.id == sub_cutarea.c.gst_version_id) \
-        #     .filter(BGstZuordnung.akt_id == self.parent._entity_mci.id) \
-        #     .group_by(BGstZuordnung.id)
-        #
-        # return query
 
     def updateMaintable(self):
 

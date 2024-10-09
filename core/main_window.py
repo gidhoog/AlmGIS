@@ -3,6 +3,8 @@ import os
 # from PyQt5.QtCore import QSize, Qt, QEvent
 from qgis.PyQt.QtCore import QSize, Qt, QEvent
 # from PyQt5.QtGui import QIcon
+
+from qgis.core import QgsVectorLayer
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
@@ -10,6 +12,8 @@ from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget,
 #     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
 
 from core import main_window_UI, db_session_cm
+from core.config import alm_data_db_path
+from core.gis_tools import cut_koppel_gstversion
 # from core.data_model import BKomplex
 # from core.gis_tools import cut_koppel_gstversion
 from core.scopes.akte import akte_all_main
@@ -49,10 +53,23 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             lambda: self._setMainWidget("gst_match_all"))
 
         # Verschnitte:
-        # self.actionCutGstVersionKomplexe.triggered.connect(cut_koppel_gstversion)
+        self.actionCutGstVersionKomplexe.triggered.connect(self.cutGstKoppel)
 
         # Einstellungen:
         self.actionSettings.triggered.connect(self.openSettings)
+
+    def cutGstKoppel(self):
+        """
+        verschneide alle aktuellen gst mit den koppeln die mit 'awb' markiert
+        sind
+        :return:
+        """
+        awb_koppeln = QgsVectorLayer(
+            str(alm_data_db_path.absolute()) + '|layername=v_awb_koppeln',
+            'awb_koppeln',
+            'ogr'
+        )
+        cut_koppel_gstversion(awb_koppeln)
 
     def openSettings(self):
 

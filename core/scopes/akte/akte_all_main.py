@@ -176,25 +176,34 @@ class AktAllModel(TableModel):
 
         if index.column() == 8:  # davon beweidet
 
-            cut_area = 0
-            for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
-                # anz += 1
-                if gst_zuord.awb_status_id == 1:
-                    gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-                    last_gst = max(gst_versionen_list,
-                                   key=attrgetter('rel_alm_gst_ez.datenstand'))
+            if role in [Qt.DisplayRole, Qt.EditRole]:
 
-                    for cut in last_gst.rel_cut_koppel_gst:
-                        cut_area = cut_area + last_gst.rel_cut_koppel_gst.cutarea
-                    # print(f'last gst: {last_gst.import_time}')
-                    # gst_m = 0
-                    # for ba in last_gst.rel_alm_gst_nutzung:
-                    #     gst_m = gst_m + ba.area
-                    # gst_area = gst_area + gst_m
+                cut_area = 0
+                for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
+                    # anz += 1
+                    if gst_zuord.awb_status_id == 1:
+                        gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+                        last_gst = max(gst_versionen_list,
+                                       key=attrgetter('rel_alm_gst_ez.datenstand'))
 
-            if role == Qt.DisplayRole:
-                cut_area_ha = '{:.4f}'.format(round(float(cut_area) / 10000, 4)).replace(".", ",") + ' ha'
-                return cut_area_ha
+                        for cut in last_gst.rel_cut_koppel_gst:
+                            # cut_area = cut_area + last_gst.rel_cut_koppel_gst.cutarea
+                            cut_area = cut_area + cut.cut_area
+                        # print(f'last gst: {last_gst.import_time}')
+                        # gst_m = 0
+                        # for ba in last_gst.rel_alm_gst_nutzung:
+                        #     gst_m = gst_m + ba.area
+                        # gst_area = gst_area + gst_m
+
+                if role == Qt.DisplayRole:
+                    # cut_area_str = '{:.4f}'.format(round(float(cut_area) / 10000, 4))
+                    cut_area_ha = '{:.4f}'.format(round(float(cut_area) / 10000, 4)).replace(".", ",") + ' ha'
+                    # cut_area_ha = cut_area_str.replace(".", ",") + ' ha'
+                    return cut_area_ha
+
+                if role == Qt.EditRole:
+
+                    return cut_area
 
         if index.column() == 9:  # weideflaeche
 

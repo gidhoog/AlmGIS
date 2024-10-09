@@ -126,7 +126,10 @@ class BCutKoppelGstAktuell(Base):
     @hybrid_property
     def cut_area(self):
 
-        return func.ST_Area(self.geometry)
+        cc = to_shape(self.geometry).area
+
+        # return func.ST_Area(self.geometry)
+        return cc
 
     def __repr__(self):
         return f"{self.__class__.__name__}(" \
