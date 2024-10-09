@@ -442,6 +442,14 @@ class GstTableModel(GisTableModel):
                                          ).replace(".", ",")
                 return area_r + ' ha'
 
+        if index.column() == 11:  # bew_area
+
+            if role == Qt.DisplayRole:
+                area = self.feature(index).attribute('bew_area')
+                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+                                         ).replace(".", ",")
+                return area_r + ' ha'
+
             # if role == Qt.EditRole:
             #     return area
 
@@ -677,7 +685,8 @@ class GstAktDataView(DataView):
         gb_area_fld = QgsField("gb_area", QVariant.Double)
         gb_area_fld.setAlias('GB-Fläche')
 
-
+        bew_area_fld = QgsField("bew_area", QVariant.Double)
+        bew_area_fld.setAlias('beweidet')
 
         datenstand_fld = QgsField("datenstand", QVariant.String)
         datenstand_fld.setAlias('Datenstand')
@@ -695,6 +704,7 @@ class GstAktDataView(DataView):
         self.feature_fields.append(recht_status_fld)
         self.feature_fields.append(gis_area_fld)
         self.feature_fields.append(gb_area_fld)
+        self.feature_fields.append(bew_area_fld)
         self.feature_fields.append(datenstand_fld)
         self.feature_fields.append(mci_fld)
 
@@ -724,6 +734,7 @@ class GstAktDataView(DataView):
         feature['recht_status'] = mci.rel_rechtsgrundlage.name
         feature['gis_area'] = last_gst.gst_gis_area
         feature['gb_area'] = gb_area
+        feature['bew_area'] = 0.00
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
         feature['mci'] = [mci]
 
@@ -1059,9 +1070,12 @@ class GstAktDataView(DataView):
     def finalInit(self):
         super().finalInit()
 
+        self.setStretchMethod(2)
+
         self.view.setColumnHidden(0, True)
         self.view.setColumnHidden(5, True)
         self.view.setColumnHidden(7, True)
+        self.view.setColumnHidden(13, True)
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
@@ -1076,15 +1090,17 @@ class GstAktDataView(DataView):
                               'ha', 'gb_area', value_width=120,
                               factor=0.0001, decimal=4)
 
-        # """setzt bestimmte spaltenbreiten"""
-        # self.view.setColumnWidth(1, 70)
-        # self.view.setColumnWidth(2, 50)
-        # self.view.setColumnWidth(3, 70)
-        # self.view.setColumnWidth(4, 120)
-        # self.view.setColumnWidth(5, 120)
-        # self.view.setColumnWidth(6, 120)
-        # self.view.setColumnWidth(7, 80)
-        # """"""
+        """setzt bestimmte spaltenbreiten"""
+        self.view.setColumnWidth(1, 60)
+        self.view.setColumnWidth(2, 45)
+        self.view.setColumnWidth(3, 50)
+        self.view.setColumnWidth(4, 120)
+        self.view.setColumnWidth(6, 100)
+        self.view.setColumnWidth(8, 120)
+        self.view.setColumnWidth(9, 80)
+        self.view.setColumnWidth(10, 80)
+        self.view.setColumnWidth(11, 80)
+        """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
         # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
