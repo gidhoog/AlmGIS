@@ -1057,18 +1057,24 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
 
-    def updateMaintableNew(self, purpose, *args):
+    def updateMaintableNew(self, widget_purpose, *args):
         """
         aktualisiere das table_view
         :return:
         """
+        # todo: find a better way to check args:
+        try:
+            accepted_mci = args[0]
+            edited_mci = args[1]
+        except:
+            pass
 
         if self.gis_mode:
-            if purpose == 'add':
+            if widget_purpose == 'add':
 
                 self.updateInstanceNew()
 
-            elif purpose == 'edit':
+            elif widget_purpose == 'edit':
 
                 if self.current_feature is not None:
 
@@ -1087,58 +1093,91 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         else:  # no gis-mode
 
-            self.view.model().sourceModel().layoutAboutToBeChanged.emit()
-            if self.edit_entity_by == 'id':
-                self.dataview_session.refresh(self.edit_entity)
-            self.view.model().sourceModel().layoutChanged.emit()
+            if widget_purpose == 'add':
 
-        self.updateFooter()
+                if self.edit_entity_by == 'mci':
+                    self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+                    self._mci_list.append(accepted_mci)
+                    self.view.model().sourceModel().layoutChanged.emit()
 
-    def updateInstanceNew(self):
-        """
-        update the given data_view instance
-        :param instance:
-        :return:
-        """
+                elif self.edit_entity_by == 'id':
 
-        self._gis_layer.startEditing()
+                    for inst in DataView.instance_list:
+                        inst.view.model().sourceModel().layoutAboutToBeChanged.emit()
+                        inst.loadData()
+                        inst.view.model().sourceModel().mci_list = inst._mci_list
+                        inst.view.model().sourceModel().layoutChanged.emit()
 
-        self._gis_layer.data_provider.truncate()
+            elif widget_purpose == 'edit':
 
-        with db_session_cm(name='update data_view') as session:
-            self.loadData(session)
+                self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-            # instance.addFeaturesFromMciList(instance._mci_list)
-            self.setFeaturesFromMci()
-        self._gis_layer.commitChanges()
+                if self.edit_entity_by == 'id':
+                    self.dataview_session.refresh(edited_mci)
 
-        # instance._gis_layer.data_provider.dataChanged.emit()
-        self._gis_layer.data_provider.reloadData()
-        self._gis_layer.triggerRepaint()
+                self.view.model().sourceModel().layoutChanged.emit()
 
-        self.updateFooter()
+                for inst in DataView.instance_list:
+                    self.updateDataviewInstances(inst)
 
-    def updateInstance(self, instance):
-        """
-        update the given data_view instance
-        :param instance:
-        :return:
-        """
+        #     self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+        #     if self.edit_entity_by == 'id':
+        #         self.dataview_session.refresh(self.edit_entity)
+        #     self.view.model().sourceModel().layoutChanged.emit()
+        #
+        # self.updateFooter()
 
-        instance._gis_layer.startEditing()
+    def updateDataviewInstances(self, instance):
 
-        instance._gis_layer.data_provider.truncate()
+        instance.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-        instance.loadData()
-        # instance.addFeaturesFromMciList(instance._mci_list)
-        instance.setFeaturesFromMci()
-        instance._gis_layer.commitChanges()
+        instance.view.model().sourceModel().layoutChanged.emit()
 
-        # instance._gis_layer.data_provider.dataChanged.emit()
-        instance._gis_layer.data_provider.reloadData()
-        instance._gis_layer.triggerRepaint()
-
-        instance.updateFooter()
+    # def updateInstanceNew(self):
+    #     """
+    #     update the given data_view instance
+    #     :param instance:
+    #     :return:
+    #     """
+    #
+    #     self._gis_layer.startEditing()
+    #
+    #     self._gis_layer.data_provider.truncate()
+    #
+    #     with db_session_cm(name='update data_view') as session:
+    #         self.loadData(session)
+    #
+    #         # instance.addFeaturesFromMciList(instance._mci_list)
+    #         self.setFeaturesFromMci()
+    #     self._gis_layer.commitChanges()
+    #
+    #     # instance._gis_layer.data_provider.dataChanged.emit()
+    #     self._gis_layer.data_provider.reloadData()
+    #     self._gis_layer.triggerRepaint()
+    #
+    #     self.updateFooter()
+    #
+    # def updateInstance(self, instance):
+    #     """
+    #     update the given data_view instance
+    #     :param instance:
+    #     :return:
+    #     """
+    #
+    #     instance._gis_layer.startEditing()
+    #
+    #     instance._gis_layer.data_provider.truncate()
+    #
+    #     instance.loadData()
+    #     # instance.addFeaturesFromMciList(instance._mci_list)
+    #     instance.setFeaturesFromMci()
+    #     instance._gis_layer.commitChanges()
+    #
+    #     # instance._gis_layer.data_provider.dataChanged.emit()
+    #     instance._gis_layer.data_provider.reloadData()
+    #     instance._gis_layer.triggerRepaint()
+    #
+    #     instance.updateFooter()
 
     def setDataViewLayout(self):
         """
@@ -1243,24 +1282,24 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             else:
                 entity_mci = self.getEntityMci(index)
 
-            self.edit_entity = entity_mci
+            # self.edit_entity = entity_mci
 
             entity_wdg_cls = self.get_entity_widget_class(entity_mci)
+            entity_wdg = entity_wdg_cls(self)
 
             if self.edit_entity_by == 'id':
 
-                entity_wdg = entity_wdg_cls(self)
-                entity_wdg.setEntitySession(DbSession())
+                # entity_wdg.setEntitySession(DbSession())
                 # entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,
                              entity_id=self.getEntityId(index),
+                             entity_mci=entity_mci,
                              feature=self.current_feature)
 
             if self.edit_entity_by == 'mci':
 
-                entity_wdg = entity_wdg_cls(self)
-                entity_wdg.setEntitySession(self.dataview_session)
+                # entity_wdg.setEntitySession(self.dataview_session)
                 # entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,
@@ -1358,10 +1397,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :return:
         """
         if entity_id:
+            entity_widget.setEntitySession(DbSession())
             entity_widget.editEntity(entity_id=entity_id,
-                                     feature=feature)
+                                     feature=feature,
+                                     edited_mci=entity_mci)
 
-        if entity_mci:
+        # if entity_mci:
+        else:
+            entity_widget.setEntitySession(self.dataview_session)
             entity_widget.editEntity(entity_mci=entity_mci)
 
         """open the entity_widget_class in a dialog"""
@@ -1679,6 +1722,13 @@ class SortFilterProxyModel(QSortFilterProxyModel):
 
         self.parent = parent
         self.filter_rows_with_elements = {}
+
+        self.layoutChanged.connect(self.selectionChanged)
+
+    def selectionChanged(self):
+
+        self.parent.updateFooter()
+        print(f'layout changed!')
 
     def headerData(self, section: int, orientation: Qt.Orientation,
                    role: int = ...):

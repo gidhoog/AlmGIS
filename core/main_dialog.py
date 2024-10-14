@@ -146,12 +146,13 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
             self.reject()
 
     def accept(self) -> None:
-
-        # """if parent is a main_table, then update"""
-        # if hasattr(self._parent, 'acceptEditingInDialog'):
-        #     self._parent.acceptEditingInDialog()
-
-        QDialog.accept(self)
+        """
+        subclass in subclassed classes; important to call
+        'QDialog.accept(self)' in the 'top'-subclass
+        (e.g. AktDialog) to finish (z.g. close) the dialog
+        """
+        pass
+        # QDialog.accept(self)
 
     def reject(self):
 

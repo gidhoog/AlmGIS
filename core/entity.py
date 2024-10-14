@@ -98,6 +98,7 @@ class Entity(QMainWindow):
         super(Entity, self).__init__(parent)
 
         self.parent = parent
+        self.edited_mci = None
 
         # if session:
         #     self.entity_session = session
@@ -198,7 +199,8 @@ class Entity(QMainWindow):
         """
 
     # @set_data
-    def editEntity(self, entity_mci=None, entity_id=None, feature=None):
+    def editEntity(self, entity_mci=None, entity_id=None, feature=None,
+                   edited_mci=None, **kwargs):
         """
         instance der entity die bearbeitet werden soll
 
@@ -207,20 +209,16 @@ class Entity(QMainWindow):
         :param **kwargs: z.b. mci's für die Dateneingabe (die in der gleichen
             session wie die entity_mci erstellt werden sollten
         """
-
+        self.edited_mci = edited_mci
         self.feature = feature
-
-        if entity_mci is not None:
-            # self.commit_on_accept = False
-
-            self._entity_mci = entity_mci
 
         if entity_id is not None:
             self.entity_id = entity_id
-            # self.commit_on_accept = True
-
             self._entity_mci = self.entity_session.get(self._entity_mc,
                                                        self.entity_id)
+
+        else:
+            self._entity_mci = entity_mci
 
         self.assembleEntityWidget()
 
@@ -384,13 +382,19 @@ class EntityDialog(MainDialog):
         super(EntityDialog, self).__init__(parent)
 
         self.parent = parent
+
+        self.accepted_mci = None
+        self.edited_mci = None
+
         self.enableApply = True
         self.set_apply_button_text('&Speichern und Schließen')
 
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
 
     def accept(self):
-        # super().accept()
+        super().accept()
 
         self.accepted_mci = self.dialogWidget.acceptEntity()
-        QDialog.accept(self)
+        self.edited_mci = self.dialogWidget.edited_mci
+
+        # QDialog.accept(self)

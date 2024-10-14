@@ -1,5 +1,6 @@
 from _operator import attrgetter
 
+from PyQt5.QtWidgets import QDialog
 from qgis.PyQt.QtCore import Qt, QModelIndex
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
@@ -35,7 +36,10 @@ class AktDialog(EntityDialog):
         if self.accepted_mci is not None:
 
             self.parent.updateMaintableNew(self.dialogWidget.purpose,
-                                           self.accepted_mci)
+                                           self.accepted_mci,
+                                           self.edited_mci)
+
+        QDialog.accept(self)
 
 
 class AkteAllMainWidget(MainWidget):
