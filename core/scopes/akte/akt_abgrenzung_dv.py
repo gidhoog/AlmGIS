@@ -258,18 +258,18 @@ class AbgrenzungDataView(DataView):
         # self.view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         """"""
 
-        """durchsuche ob eine abgrenzung als 'awb' gesetzt ist und selektiere
-        diese dann"""
-        for feat in self._gis_layer.getFeatures():
-            if feat.attribute('awb') == 1:
-                self._gis_layer.select([feat.id()])
-                self.selectedRowsChanged()
-                self.parent.selectedAbgrenzungChanged()
-
-        """trenne das signal des corner-buttons und entferne das icon"""
-        self.view.uiCornerButton.clicked.disconnect()
-        self.view.uiCornerButton.setStyleSheet("")
-        """"""
+        # """durchsuche ob eine abgrenzung als 'awb' gesetzt ist und selektiere
+        # diese dann"""
+        # for feat in self._gis_layer.getFeatures():
+        #     if feat.attribute('awb') == 1:
+        #         self._gis_layer.select([feat.id()])
+        #         self.selectedRowsChanged()
+        #         self.parent.selectedAbgrenzungChanged()
+        #
+        # """trenne das signal des corner-buttons und entferne das icon"""
+        # self.view.uiCornerButton.clicked.disconnect()
+        # self.view.uiCornerButton.setStyleSheet("")
+        # """"""
 
     def updateMaintable(self):
 

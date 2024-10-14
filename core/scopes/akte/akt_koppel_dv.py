@@ -217,7 +217,8 @@ class KoppelAktDataView(DataView):
     def loadData(self, session=None):
 
         # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
-        self._mci_list = self.parent.komplex_table._mci_list[0].rel_komplex[0].rel_koppel
+        # self._mci_list = self.parent.komplex_table._mci_list[0].rel_komplex[1].rel_koppel
+        self._mci_list = self.parent.abgrenzung_table._mci_list
 
         # """verwende hier .join() um verknüpfte tabellen abzufragen"""
         # stmt = select(
@@ -267,29 +268,33 @@ class KoppelAktDataView(DataView):
     def setFeaturesFromMci(self):
         super().setFeaturesFromMci()
 
-        for koppel in self._mci_list:
+        for abgrenzung in self._mci_list:
 
-            feat = Feature(self._gis_layer.fields(), self)
+            for komplex in abgrenzung.rel_komplex:
 
-            self.setFeatureAttributes(feat, koppel)
+                for koppel in komplex.rel_koppel:
 
-            # feat.setAttributes([gst_version.id,
-            #                     gst_zuor.rel_gst.gst,
-            #                     gst_version.rel_alm_gst_ez.ez,
-            #                     gst_version.rel_alm_gst_ez.kgnr,
-            #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-            #                     gst_zuor.awb_status_id,
-            #                     gst_zuor.rechtsgrundlage_id,
-            #                     '',
-            #                     gst_version.rel_alm_gst_ez.datenstand])
+                    feat = Feature(self._gis_layer.fields(), self)
 
-            geom_wkt = to_shape(koppel.geometry).wkt
-            geom_new = QgsGeometry()
-            geom = geom_new.fromWkt(geom_wkt)
+                    self.setFeatureAttributes(feat, koppel)
 
-            feat.setGeometry(geom)
+                    # feat.setAttributes([gst_version.id,
+                    #                     gst_zuor.rel_gst.gst,
+                    #                     gst_version.rel_alm_gst_ez.ez,
+                    #                     gst_version.rel_alm_gst_ez.kgnr,
+                    #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+                    #                     gst_zuor.awb_status_id,
+                    #                     gst_zuor.rechtsgrundlage_id,
+                    #                     '',
+                    #                     gst_version.rel_alm_gst_ez.datenstand])
 
-            self._gis_layer.data_provider.addFeatures([feat])
+                    geom_wkt = to_shape(koppel.geometry).wkt
+                    geom_new = QgsGeometry()
+                    geom = geom_new.fromWkt(geom_wkt)
+
+                    feat.setGeometry(geom)
+
+                    self._gis_layer.data_provider.addFeatures([feat])
 
     def setFeatureFields(self):
         # super().setFeatureFields()

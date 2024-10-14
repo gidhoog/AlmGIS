@@ -27,6 +27,8 @@ def run():
     main_window = AlmgisMainWindow()
     # aaa = QWidget()
 
+    main_window.setupMainWindow()
+
     main_window.show()
 
     LOGGER.debug("almgis started! + + + + + + + + + + + + + + + + ")

@@ -43,14 +43,14 @@ class AkteAllMainWidget(MainWidget):
     MainWidget für die Darstellung eines DataView's mit allen Akten
     """
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, parent=None, session=None):
+        super().__init__(parent, session)
 
         self.uiTitleLbl.setText('alle Akte')
 
         self.akt_all_table = AkteAllMain(self)
 
-        self.akt_all_table.setDataviewSession(DbSession())
+        self.akt_all_table.setDataviewSession(session)
         self.akt_all_table.initDataView()
 
     def initMainWidget(self):

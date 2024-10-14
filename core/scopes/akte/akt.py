@@ -372,6 +372,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         self.uiBewAwbAreaLbl.setText(self.getBewAwbArea())
 
+        """durchsuche ob eine abgrenzung als 'awb' gesetzt ist und selektiere
+        diese dann"""
+        for feat in self.abgrenzung_table._gis_layer.getFeatures():
+            if feat.attribute('awb') == 1:
+                self.abgrenzung_table._gis_layer.select([feat.id()])
+                self.abgrenzung_table.selectedRowsChanged()
+                self.selectedAbgrenzungChanged()
+
+        """trenne das signal des corner-buttons und entferne das icon"""
+        self.abgrenzung_table.view.uiCornerButton.clicked.disconnect()
+        self.abgrenzung_table.view.uiCornerButton.setStyleSheet("")
+        """"""
+
     # def initEntityWidget(self):
     #     super().initEntityWidget()
     #
@@ -493,6 +506,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """lade die abgrenzungen; wichtig ist hier, dass 'abgrenzung_table'
         als letztes instanziert wird (da hier die 'awb'-abgrenzung ausgewählt
         wird, und dazu muss zuerst koppel und komplex vorhanden sein"""
+        self.abgrenzung_table = AbgrenzungDataView(self, gis_mode=True)
+        self.abgrenzung_table.setDataviewSession(self.entity_session)
+        self.abgrenzung_table.initDataView()
+
         self.komplex_table = KomplexAktDataView(self, gis_mode=True)
         self.komplex_table.setDataviewSession(self.entity_session)
         self.komplex_table.initDataView()
@@ -501,17 +518,12 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.koppel_table.setDataviewSession(self.entity_session)
         self.koppel_table.initDataView()
 
-        self.abgrenzung_table = AbgrenzungDataView(self, gis_mode=True)
-        self.abgrenzung_table.setDataviewSession(self.entity_session)
-        self.abgrenzung_table.initDataView()
-
         self.uiAbgrenzungVlay.addWidget(self.abgrenzung_table)
         self.uiKomplexVlay.addWidget(self.komplex_table)
         self.uiKoppelVlay.addWidget(self.koppel_table)
 
-        self.guiMainGis.project_instance.addMapLayer(
-            self.komplex_table._gis_layer)
         self.guiMainGis.project_instance.addMapLayer(self.koppel_table._gis_layer)
+        self.guiMainGis.project_instance.addMapLayer(self.komplex_table._gis_layer)
         """"""
 
         """setzte die karte auf die ausdehnung des gst-layers"""
@@ -532,8 +544,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
             self.filter_komplex_from_abgr_string = f"\"abgrenzung_id\" = {str(feat_id)}"
             self.filter_koppel_from_abgr_string = f"\"abgrenzung_id\" = {str(feat_id)}"
 
-            self.koppel_table.useSubsetString()
             self.komplex_table.useSubsetString()
+            # self.koppel_table.useSubsetString()
 
     def selectedKomplexChanged(self):
 

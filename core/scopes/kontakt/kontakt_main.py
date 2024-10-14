@@ -35,8 +35,8 @@ class KontaktEntityDialog(EntityDialog):
 
 class KontaktMainWidget(MainWidget):
 
-    def __init__(self, parent=None):
-        super(self.__class__, self).__init__(parent)
+    def __init__(self, parent=None, session=None):
+        super().__init__(parent, session)
 
         self.uiTitleLbl.setText('alle Kontakte')
 
@@ -45,7 +45,7 @@ class KontaktMainWidget(MainWidget):
         # with db_session_cm(name='main-widget - kontakt',
         #                    expire_on_commit=False) as session:
 
-        self.kontakt_table.setDataviewSession(DbSession())
+        self.kontakt_table.setDataviewSession(session)
         self.kontakt_table.initDataView()
 
     def initMainWidget(self):

@@ -12,7 +12,7 @@ class MainWidget(QWidget, main_widget_UI.Ui_MainWidget):
 
     update_app = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, session=None):
         super(__class__, self).__init__()
         self.setupUi(self)
 

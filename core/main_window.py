@@ -11,7 +11,7 @@ from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget,
 # from PyQt5.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
 #     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
 
-from core import main_window_UI, db_session_cm
+from core import main_window_UI, db_session_cm, DbSession
 from core.config import alm_data_db_path
 from core.gis_tools import cut_koppel_gstversion
 # from core.data_model import BKomplex
@@ -34,6 +34,10 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
 
         self.initUi()
         self.signalsMenue()
+
+    def setupMainWindow(self):
+
+        self.main_session = DbSession()
 
     def signalsMenue(self):
         """
@@ -92,16 +96,18 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
 
         if scope == "akte_alle":
             # widget = akte_all_main.AkteAllMain(self)
-            widget = akte_all_main.AkteAllMainWidget(self)
+            widget = akte_all_main.AkteAllMainWidget(self,
+                                                     self.main_session)
             widget_title = "Akten"
 
         if scope == "kontakte_alle":
-            widget = kontakt_main.KontaktMainWidget(self)
+            widget = kontakt_main.KontaktMainWidget(self,
+                                                     self.main_session)
             widget_title = "Kontakte"
 
-        if scope == "gst_match_all":
-            widget = GstAllMain(self)
-            widget_title = "zugeordnete Grundstücke"
+        # if scope == "gst_match_all":
+        #     widget = GstAllMain(self)
+        #     widget_title = "zugeordnete Grundstücke"
 
         widget.initMainWidget()
 

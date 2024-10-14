@@ -565,6 +565,12 @@ class KomplexAktDataView(DataView):
     #
     #     self.uiHeaderHley.insertLayout(1, filter_lay)
 
+
+    def selectedRowsChanged(self):
+        super().selectedRowsChanged()
+
+        sel_rows = self.getSelectedRows()
+
     def useSubsetString(self):
 
         self._gis_layer.setSubsetString(
