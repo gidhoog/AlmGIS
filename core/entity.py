@@ -145,6 +145,8 @@ class Entity(QMainWindow):
         """
         put the entity-widget together
         """
+        self.prepareEntity()
+
         self.loadBackgroundData()
 
         self.mapEntityData()
@@ -160,6 +162,12 @@ class Entity(QMainWindow):
         self.finalEntitySettings()
 
         self.signals()
+
+    def prepareEntity(self):
+        """
+        z.B. übergebe die session an diverse widgets
+        :return:
+        """
 
     def loadBackgroundData(self):
         """

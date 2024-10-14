@@ -32,6 +32,7 @@ from operator import attrgetter
 
 from core.scopes.gst.gst_zuordnung import GstZuordnung
 from core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
+from core.scopes.koppel.koppel import Koppel
 
 
 class KoppelDialog(EntityDialog):
@@ -147,7 +148,7 @@ class KoppelAktDataView(DataView):
         super(__class__, self).__init__(parent, gis_mode)
 
         self.entity_dialog_class = KoppelDialog
-        # self.entity_widget_class = GstZuordnungDataForm
+        self.entity_widget_class = Koppel
 
         self._entity_mc = BKoppel
         self._model_gis_class = KoppelModel
@@ -328,6 +329,8 @@ class KoppelAktDataView(DataView):
         koppel_area_fld = QgsField("koppel_area", QVariant.Double)
         koppel_area_fld.setAlias('Koppelfläche')
 
+        mci_fld = QgsField("mci", QVariant.List)
+
         self.feature_fields.append(abgrenzung_id_fld)
         self.feature_fields.append(abgrenzung_jahr_fld)
         self.feature_fields.append(abgrenzung_status_id_fld)
@@ -339,6 +342,7 @@ class KoppelAktDataView(DataView):
         self.feature_fields.append(koppel_name_fld)
         self.feature_fields.append(nicht_weide_fld)
         self.feature_fields.append(koppel_area_fld)
+        self.feature_fields.append(mci_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
@@ -369,6 +373,7 @@ class KoppelAktDataView(DataView):
         feature['koppel_name'] = mci.name
         feature['nicht_weide'] = mci.nicht_weide
         feature['koppel_area'] = mci.koppel_area
+        feature['mci'] = [mci]
 
     def updateFeatureAttributes(self, *args):
         super().updateFeatureAttributes(args)
@@ -376,6 +381,25 @@ class KoppelAktDataView(DataView):
         new_mci = args[0][0]
 
         self.setFeatureAttributes(self.current_feature, new_mci)
+
+    def changeAttributes(self, feature, mci):
+
+        attrib = {1: mci.rel_komplex.rel_abgrenzung.id,
+                  2: mci.rel_komplex.rel_abgrenzung.jahr,
+                  3: mci.rel_komplex.rel_abgrenzung.status_id,
+                  4: mci.rel_komplex.id,
+                  5: mci.rel_komplex.rel_komplex_name.nr,
+                  6: mci.rel_komplex.rel_komplex_name.name,
+                  7: mci.id,
+                  8: mci.nr,
+                  9: mci.name,
+                  10: mci.nicht_weide,
+                  11: mci.koppel_area,
+                  12: [mci]
+                  }
+
+        self._gis_layer.changeAttributeValues(feature.id(),
+                                              attrib)
 
     # def setFilterUI(self):
     #     """
@@ -801,6 +825,10 @@ class KoppelAktDataView(DataView):
                 index.row(), 1))
 
         return del_info
+
+    def getEntityMci(self, index):
+
+        return None
 
     # def setMainTableModel(self):
     #     super().setMainTableModel()

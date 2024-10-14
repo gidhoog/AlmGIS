@@ -1239,8 +1239,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if self.gis_mode:
                 self.current_feature = self.model.feature(index)
+                entity_mci = self.getFeatureMci(self.current_feature)
+            else:
+                entity_mci = self.getEntityMci(index)
 
-            entity_mci = self.getEntityMci(index)
             self.edit_entity = entity_mci
 
             entity_wdg_cls = self.get_entity_widget_class(entity_mci)
@@ -1290,6 +1292,16 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         """
         # return self.model.mci_list[self.getProxyIndex(index).row()]
         return self._mci_list[index.row()]
+
+    def getFeatureMci(self, feature):
+        """
+        liefere das mci eines features; subclass wenn notwendig
+
+        :param feature:
+        :return:
+        """
+        return feature.attribute('mci')[0]
+
 
     def rowSelected(self):
         """

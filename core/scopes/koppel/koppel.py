@@ -1,5 +1,6 @@
 from core import db_session_cm
 from core.data_model import BErfassungsart, BAbgrenzungStatus
+from core.entity import Entity
 from core.gis_item import GisItem
 from core.main_dialog import MainDialog
 from core.scopes.koppel import koppel_UI
@@ -10,20 +11,49 @@ from qgis.PyQt.QtCore import Qt
 from sqlalchemy import select
 
 
-class Koppel(QWidget, koppel_UI.Ui_Koppel):
+class Koppel(koppel_UI.Ui_Koppel, Entity):
 
-    _nicht_weide = 0
     # _erfassungsart_name = ''
     # _status_id = None
     # _status_name = ''
     #
+    _name = ''
+    _nr = 0
+    _nicht_weide = 0
+    _anm = ''
+
+    @property  # getter
+    def name(self):
+
+        self._name = self.uiNameLedit.text()
+        return self._name
+
+    @name.setter
+    def name(self, value):
+
+        self.uiNameLedit.setText(value)
+        self._name = value
+
+    @property  # getter
+    def nr(self):
+
+        self._nr = self.uiNrSbox.value()
+        return self._nr
+
+    @nr.setter
+    def nr(self, value):
+
+        self.uiNrSbox.setValue(value)
+        self._nr = value
+
     @property  # getter
     def nicht_weide(self):
 
-        if self.uiNichtWeideCbox.checkState() == 2:
+        if self.uiNichtWeideCbox.isChecked():
             self._nicht_weide = 1
         else:
             self._nicht_weide = 0
+
         return self._nicht_weide
 
     @nicht_weide.setter
@@ -31,69 +61,52 @@ class Koppel(QWidget, koppel_UI.Ui_Koppel):
 
         if value == 1:
             self.uiNichtWeideCbox.setChecked(Qt.Checked)
+        else:
+            self.uiNichtWeideCbox.setChecked(Qt.Unchecked)
 
         self._nicht_weide = value
 
-    # @property  # getter
-    # def erfassungsart_name(self):
-    #
-    #     self._erfassungsart_name = self.uiErfassCombo.currentText()
-    #     return self._erfassungsart_name
-    #
-    # @property  # getter
-    # def status_id(self):
-    #
-    #     self._status_id = self.uiStatusCombo.currentData(Qt.UserRole)
-    #     return self._status_id
-    #
-    # @status_id.setter
-    # def status_id(self, value):
-    #
-    #     self.uiStatusCombo.setCurrentIndex(
-    #         self.uiStatusCombo.findData(value, Qt.UserRole)
-    #     )
-    #
-    #     self._status_id = value
-    #
-    # @property  # getter
-    # def status_name(self):
-    #
-    #     self._status_name = self.uiStatusCombo.currentText()
-    #     return self._status_name
+    @property  # getter
+    def anm(self):
+
+        self._anm = self.uiAnmerkungPtext.toPlainText()
+        return self._anm
+
+    @anm.setter
+    def anm(self, value):
+
+        self.uiAnmerkungPtext.setPlainText(value)
+        self._anm = value
 
     def __init__(self, parent=None, item=None):
         super(__class__, self).__init__()
         self.setupUi(self)
 
         self.parent = parent
-        self.item = item
 
-        self.uiAktNameLbl.setText(self.parent.name + ' (AZ '
-                                  + str(self.parent.az) + ')')
+        # self.uiAktNameLbl.setText(self.parent.name + ' (AZ '
+        #                           + str(self.parent.az) + ')')
 
-        komplex_name = self.item.parent().data(GisItem.Name_Role)
-        self.uiKomplexNameLbl.setText(komplex_name)
+        # komplex_name = self.item.parent().data(GisItem.Name_Role)
+        # self.uiKomplexNameLbl.setText(komplex_name)
 
     #     self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
     #
     #     self.loadCombos()
 
-        self.mapData()
-
-    def mapData(self):
+    def mapEntityData(self):
         # self.uiStatusCombo.currentIndexChanged.connect(self.changedStatus)
 
-        self.uiNameLedit.setText(self.item.data(GisItem.Name_Role))
-        if self.item.data(GisItem.Nr_Role) is not None:
-            self.uiNrSbox.setValue(self.item.data(GisItem.Nr_Role))
+        self.name = self._entity_mci.name
+        self.nr = self._entity_mci.nr
+        self.nicht_weide = self._entity_mci.nicht_weide
+        self.anm = self._entity_mci.anmerkung
 
-        self.nicht_weide = self.item.data(GisItem.NichtWeide_Role)
-
-        self.uiAnmerkungPtext.setPlainText(
-            self.item.data(GisItem.Anmerkung_Role))
-
-        area = self.item.data(GisItem.Feature_Role).geometry().area()
-        self.uiAreaLbl.setText(str(area))
+        # self.uiAreaLbl.setText(str(self._entity_mci.koppel_area))
+        self.uiAreaLbl.setText(
+            '{:.4f}'.format(
+                round(float(self._entity_mci.koppel_area) / 10000, 4))
+            .replace(".", ",") + ' ha')
 
     # def changedStatus(self):
     #

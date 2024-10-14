@@ -320,6 +320,10 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.uiBewirtschafterCombo.action_add.triggered.connect(self.add_new_kontakt)
         """"""
 
+    def prepareEntity(self):
+
+        self.guiMainGis.setMaingisSession(self.entity_session)
+
     def add_new_kontakt(self):
         """
         lege einen neuen kontakt an
@@ -538,14 +542,13 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         for abgr_feat in self.abgrenzung_table._gis_layer.selectedFeatures():
 
-
             feat_id = abgr_feat.attribute('abgrenzung_id')
             print(f'abgrenzung_id: {feat_id}')
             self.filter_komplex_from_abgr_string = f"\"abgrenzung_id\" = {str(feat_id)}"
             self.filter_koppel_from_abgr_string = f"\"abgrenzung_id\" = {str(feat_id)}"
 
             self.komplex_table.useSubsetString()
-            # self.koppel_table.useSubsetString()
+            self.koppel_table.useSubsetString()
 
     def selectedKomplexChanged(self):
 
@@ -646,19 +649,19 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     #
     #         session.commit()
 
-    def currentAbgenzungJahr(self):
-        """
-        erhalte das Referenzjahr der Abgrenzung aus den Daten des Item-Trees
-        :return: Int
-        """
-
-        jahre = []
-
-        for j in range(self.komplex_root_item.rowCount()):
-            abgr_item = self.komplex_root_item.child(j)
-            jahre.append(abgr_item.data(GisItem.Jahr_Role))
-
-        return max(jahre)
+    # def currentAbgenzungJahr(self):
+    #     """
+    #     erhalte das Referenzjahr der Abgrenzung aus den Daten des Item-Trees
+    #     :return: Int
+    #     """
+    #
+    #     jahre = []
+    #
+    #     for j in range(self.komplex_root_item.rowCount()):
+    #         abgr_item = self.komplex_root_item.child(j)
+    #         jahre.append(abgr_item.data(GisItem.Jahr_Role))
+    #
+    #     return max(jahre)
 
     # def loadKKModel(self):
     #
@@ -781,25 +784,25 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     #                                                          False)
     #             """"""
 
-    def setCurrentRoleToKK(self):
-        """
-        setze die 'Current_Role' der KK-Layerfür das erste Mal beim laden
-        der Daten
-
-        :return:
-        """
-
-        for abgr in range(self.komplex_root_item.rowCount()):
-            abgr_item = self.komplex_root_item.child(abgr)
-
-            abgr_status = abgr_item.data(GisItem.StatusId_Role)
-            abgr_jahr = abgr_item.data(GisItem.Jahr_Role)
-
-            if abgr_status == 0 and abgr_jahr == self.currentAbgenzungJahr():
-                abgr_item.setData(1, GisItem.Current_Role)
-                self.current_abgrenzung_item = abgr_item
-            else:
-                abgr_item.setData(0, GisItem.Current_Role)
+    # def setCurrentRoleToKK(self):
+    #     """
+    #     setze die 'Current_Role' der KK-Layerfür das erste Mal beim laden
+    #     der Daten
+    #
+    #     :return:
+    #     """
+    #
+    #     for abgr in range(self.komplex_root_item.rowCount()):
+    #         abgr_item = self.komplex_root_item.child(abgr)
+    #
+    #         abgr_status = abgr_item.data(GisItem.StatusId_Role)
+    #         abgr_jahr = abgr_item.data(GisItem.Jahr_Role)
+    #
+    #         if abgr_status == 0 and abgr_jahr == self.currentAbgenzungJahr():
+    #             abgr_item.setData(1, GisItem.Current_Role)
+    #             self.current_abgrenzung_item = abgr_item
+    #         else:
+    #             abgr_item.setData(0, GisItem.Current_Role)
 
     # def loadGisLayer(self):
     #     """hole die infos der zu ladenden gis-layer aus der datenbank und

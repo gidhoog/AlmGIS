@@ -131,6 +131,7 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.setupUi(self)
 
         self.parent = parent
+        self.maingis_session = None
         self.gis_control_widget = gis_control
         self.base_id = base_id
 
@@ -887,6 +888,10 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
                 self.layer_tree_view.setCurrentLayer(layer)
                 self.setSelectFeature(feature_ids)
 
+    def setMaingisSession(self, session):
+
+        self.maingis_session = session
+
     def setSelectFeature(self, feature_ids):
         """
         select features
@@ -1065,6 +1070,7 @@ class FeatureInfoTool(QgsMapToolIdentifyFeature):
                     self.dlg = self.parent.current_layer.entity_dialog(self.parent)
                     # self.wid.editEntity(entity_mci=gst_mci,
                     #                     custom_data=self.parent.parent.parent().gst_table.getCustomEntityData())
+                    self.wid.setEntitySession(self.parent.maingis_session)
                     self.wid.editEntity(entity_mci=gst_mci)
                     self.wid.entity_dialog = self.dlg
                     self.dlg.insertWidget(self.wid)
