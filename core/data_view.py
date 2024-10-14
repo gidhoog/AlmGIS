@@ -1303,7 +1303,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 # entity_wdg.initEntityWidget()
 
                 self.editRow(entity_wdg,
-                             entity_mci=self.edit_entity,
+                             entity_mci=entity_mci,
                              feature=self.current_feature)
 
     def getEntityId(self, index):

@@ -22,6 +22,8 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
     _nicht_weide = 0
     _anm = ''
 
+    _commit_on_apply = False
+
     @property  # getter
     def name(self):
 
@@ -108,64 +110,12 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
                 round(float(self._entity_mci.koppel_area) / 10000, 4))
             .replace(".", ",") + ' ha')
 
-    # def changedStatus(self):
-    #
-    #     self.status_id = self.uiStatusCombo.currentData(Qt.UserRole)
-    #
-    #     if self.status_id == 1:  # plan
-    #         self.uiBezeichnungLbl.setVisible(True)
-    #         self.uiBezeichnungLedit.setVisible(True)
-    #
-    #     if self.status_id == 0:  # ist
-    #         self.uiBezeichnungLbl.setVisible(False)
-    #         self.uiBezeichnungLedit.setVisible(False)
-    #
-    # def loadCombos(self):
-    #
-    #     with db_session_cm() as session:
-    #
-    #         stmt = select(BErfassungsart)
-    #         erfassungsart_di = session.scalars(stmt).all()
-    #
-    #         stmt_status = select(BAbgrenzungStatus)
-    #         status_di = session.scalars(stmt_status).all()
-    #
-    #         for erfass in erfassungsart_di:
-    #             self.uiErfassCombo.addItem(erfass.name, erfass.id)
-    #         for status_id in status_di:
-    #             self.uiStatusCombo.addItem(status_id.name_short, status_id.id)
-    #
-    def submitData(self):
+    def submitEntity(self):
 
-        self.item.setData(self.uiNameLedit.text(), GisItem.Name_Role)
-        self.item.setData(self.uiNrSbox.value(), GisItem.Nr_Role)
-
-        self.item.setData(self.nicht_weide, GisItem.NichtWeide_Role)
-
-        self.item.setData(self.uiAnmerkungPtext.toPlainText(),
-                          GisItem.Anmerkung_Role)
-
-
-
-        # """um nach einer Änderung des Statues den richtigen Wert im
-        # Abgrenzungs-View darzustellen, muss zusätzlich zum id (=wichtig für
-        # das abspeichern) auch der Text des aktuellen Elements übergeben
-        # werden"""
-        # self.item.setData(self.status_id, GisItem.StatusId_Role)
-        # self.item.setData(self.status_name, GisItem.StatusName_Role)
-        #
-        # self.item.setData(self.erfassungsart_id, GisItem.ErfassungsArtId_Role)
-        # self.item.setData(self.erfassungsart_name,
-        #                   GisItem.ErfassungsArtName_Role)
-        # """"""
-        #
-        # self.item.setData(self.uiBearbeiterLedit.text(),
-        #                   GisItem.Bearbeiter_Role)
-        # self.item.setData(self.uiBezeichnungLedit.text(),
-        #                   GisItem.Bezeichnung_Role)
-        # self.item.setData(self.uiAnmerkungPtext.toPlainText(),
-        #                   GisItem.Anmerkung_Role)
-
+        self._entity_mci.name = self.name
+        self._entity_mci.nr = self.nr
+        self._entity_mci.nicht_weide = self.nicht_weide
+        self._entity_mci.anmerkung = self.anm
 
 class KoppelDialog(MainDialog):
     """
