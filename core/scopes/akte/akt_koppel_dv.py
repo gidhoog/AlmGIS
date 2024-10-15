@@ -217,27 +217,8 @@ class KoppelAktDataView(DataView):
 
     def loadData(self, session=None):
 
-        # self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
-        # self._mci_list = self.parent.komplex_table._mci_list[0].rel_komplex[1].rel_koppel
         self._mci_list = self.parent.abgrenzung_table._mci_list
-
-        # """verwende hier .join() um verknüpfte tabellen abzufragen"""
-        # stmt = select(
-        #     BKoppel
-        # ).join(
-        #     BKoppel.rel_komplex
-        # ).join(
-        #     BKomplex.rel_abgrenzung
-        # ).options(
-        #     joinedload(BKoppel.rel_komplex)
-        #          .joinedload(BKomplex.rel_abgrenzung)
-        # ).options(
-        #     joinedload(BKoppel.rel_komplex)
-        #          .joinedload(BKomplex.rel_komplex_name)
-        # ).where(BAbgrenzung.akt_id == self.parent._entity_id)
-        # """"""
-        #
-        # self._mci_list = session.scalars(stmt).unique().all()
+        # self._mci_list = self.parent.abgrenzung_table._mci_list
 
     def setLayer(self):
 
@@ -245,7 +226,8 @@ class KoppelAktDataView(DataView):
             "Polygon?crs=epsg:31259",
             "Koppeln",
             "memory",
-            feature_fields=self.feature_fields
+            feature_fields=self.feature_fields,
+            data_view=self
         )
 
         setLayerStyle(layer, 'koppel_gelb')

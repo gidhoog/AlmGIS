@@ -1050,38 +1050,36 @@ class FeatureInfoTool(QgsMapToolIdentifyFeature):
     def canvasReleaseEvent(self, event):
 
         if event.button() == Qt.LeftButton:
-            # found_features = self.identify(event.x(), event.y(), [self.layer],
-            #                                QgsMapToolIdentify.ActiveLayer)
-            found_features = self.identify(event.x(), event.y(), [self.parent.current_layer],
-                                           QgsMapToolIdentify.ActiveLayer)
+
+            found_features = self.identify(
+                event.x(),
+                event.y(),
+                [self.parent.current_layer],
+                QgsMapToolIdentify.ActiveLayer
+            )
 
             if found_features:
                 for feat in found_features:
 
-                    print(f'##############################################')
-                    print(f'found_feature: {feat}')
-                    print(f'----------------------------------------------')
-                    # print(f'--------koppel from model: {self.parent.parent.parent().koppel_table.view.model().sourceModel().data(self.parent.parent.parent().koppel_table.view.model().sourceModel().index(self.parent.parent.parent().koppel_table.view.model().sourceModel().idToIndex(feat.mFeature.id()).row(), 8), Qt.DisplayRole)}')
-                    # print(f'--------koppel from mci: {self.parent.parent.parent().gst_table._mci_list[self.parent.parent.parent().gst_table.view.model().sourceModel().idToRow(feat.mFeature.id()) + 1].gst}')
+                    dv = self.parent.current_layer.data_view
 
-                    gst_mci = self.parent.parent.parent().gst_table._mci_list[self.parent.parent.parent().gst_table.view.model().sourceModel().idToRow(feat.mFeature.id())]
-                    print(f'>>> gst_mci: {gst_mci}')
-                    self.wid = self.parent.current_layer.entity_form(self.parent)
-                    self.dlg = self.parent.current_layer.entity_dialog(self.parent)
-                    # self.wid.editEntity(entity_mci=gst_mci,
-                    #                     custom_data=self.parent.parent.parent().gst_table.getCustomEntityData())
-                    self.wid.setEntitySession(self.parent.maingis_session)
-                    self.wid.editEntity(entity_mci=gst_mci)
-                    self.wid.entity_dialog = self.dlg
-                    self.dlg.insertWidget(self.wid)
+                    feat_mci = feat.mFeature['mci'][0]
+
+                    wid = dv.entity_widget_class(self.parent)
+                    dlg = dv.entity_dialog_class(self.parent)
+
+                    wid.setEntitySession(self.parent.maingis_session)
+                    wid.editEntity(entity_mci=feat_mci)
+
+                    # """open the entity_widget_class in a dialog"""
+                    # self.openDialog(wid)
+                    # """"""
+
+                    wid.entity_dialog = dlg
+                    dlg.insertWidget(wid)
                     # self.dlg.resize(self.minimumSizeHint())
 
-                    self.dlg.show()
-
-                    # for field_name in self.layer.fields():
-                    for field_name in self.parent.current_layer.fields():
-                        print(f'{field_name.name()}: {feat.mFeature[field_name.name()]}')
-                    print(f'##############################################')
+                    dlg.show()
 
         elif event.button() == Qt.RightButton:
             self.parent.pan()

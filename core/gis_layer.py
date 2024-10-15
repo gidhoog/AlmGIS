@@ -124,12 +124,14 @@ class ZVectorLayer(QgsVectorLayer):
                  baseName: str = ...,
                  providerLib: str = ...,
                  options: 'QgsVectorLayer.LayerOptions' = QgsVectorLayer.LayerOptions(),
-                 feature_fields=None) -> None:
+                 feature_fields=None,
+                 data_view=None) -> None:
         super().__init__(path, baseName, providerLib, options)
 
         self.data_provider = self.dataProvider()
 
         self.data_provider.addAttributes(feature_fields)
+        self.data_view = data_view
 
         self.updateFields()
 
