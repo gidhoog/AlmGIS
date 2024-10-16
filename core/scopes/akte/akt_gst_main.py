@@ -50,21 +50,21 @@ class GstDialog(EntityDialog):
         # self.set_apply_button_text('&Speichern und Schließen')
 
 
-    def accept(self):
-        super().accept()
-
-        if self.dialogWidget.acceptEntity() is not None:
-
-            new_mci = self.dialogWidget.acceptEntity()
-
-            update_feature = self.dialogWidget.entity_feature if self.dialogWidget.entity_feature != None else None
-
-            self.parent.updateMaintableNew(self.dialogWidget.purpose,
-                                           new_mci,
-                                           None,
-                                           update_feature)
-
-        QDialog.accept(self)
+    # def accept(self):
+    #     super().accept()
+    #
+    #     if self.dialogWidget.acceptEntity() is not None:
+    #
+    #         new_mci = self.dialogWidget.acceptEntity()
+    #
+    #         update_feature = self.dialogWidget.entity_feature if self.dialogWidget.entity_feature != None else None
+    #
+    #         self.parent.updateMaintableNew(self.dialogWidget.purpose,
+    #                                        new_mci,
+    #                                        None,
+    #                                        update_feature)
+    #
+    #     QDialog.accept(self)
 
 
 class GstZuordnungMainDialog(MainDialog):

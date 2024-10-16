@@ -397,5 +397,11 @@ class EntityDialog(MainDialog):
 
         self.accepted_mci = self.dialogWidget.acceptEntity()
         self.edited_mci = self.dialogWidget.edited_mci
+        self.update_feature = self.dialogWidget.entity_feature
 
-        # QDialog.accept(self)
+        self.parent.updateMaintableNew(self.dialogWidget.purpose,
+                                       self.accepted_mci,
+                                       self.edited_mci,
+                                       self.update_feature)
+
+        QDialog.accept(self)
