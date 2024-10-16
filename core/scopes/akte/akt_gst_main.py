@@ -768,13 +768,13 @@ class GstAktDataView(DataView):
         self._gis_layer.changeAttributeValues(feature.id(),
                                               attrib)
 
-    def updateFeatureAttributes(self, *args):
-        super().updateFeatureAttributes(args)
-
-        new_mci = args[0][0]
-        update_feat = args[0][2]
-
-        self.setFeatureAttributes(update_feat, new_mci)
+    # def updateFeatureAttributes(self, *args):
+    #     super().updateFeatureAttributes(args)
+    #
+    #     new_mci = args[0][0]
+    #     update_feat = args[0][2]
+    #
+    #     self.setFeatureAttributes(update_feat, new_mci)
 
     def setFilterUI(self):
         """

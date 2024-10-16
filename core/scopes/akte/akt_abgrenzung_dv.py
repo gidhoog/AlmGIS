@@ -223,12 +223,12 @@ class AbgrenzungDataView(DataView):
         self._gis_layer.changeAttributeValues(feature.id(),
                                               attrib)
 
-    def updateFeatureAttributes(self, *args):
-        super().updateFeatureAttributes(args)
-
-        new_mci = args[0][0]
-
-        self.setFeatureAttributes(self.current_feature, new_mci)
+    # def updateFeatureAttributes(self, *args):
+    #     super().updateFeatureAttributes(args)
+    #
+    #     new_mci = args[0][0]
+    #
+    #     self.setFeatureAttributes(self.current_feature, new_mci)
 
     def signals(self):
         super().signals()

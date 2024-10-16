@@ -1062,6 +1062,10 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         :param args:
         :return:
         """
+        new_mci = args[0][0]
+        update_feat = args[0][2]
+
+        self.setFeatureAttributes(update_feat, new_mci)
 
     def updateMaintableNew(self, widget_purpose, *args):
         """

@@ -356,12 +356,12 @@ class KomplexAktDataView(DataView):
         # feature['nicht_weide'] = mci.nicht_weide
         # feature['koppel_area'] = 1.23
 
-    def updateFeatureAttributes(self, *args):
-        super().updateFeatureAttributes(args)
-
-        new_mci = args[0][0]
-
-        self.setFeatureAttributes(self.current_feature, new_mci)
+    # def updateFeatureAttributes(self, *args):
+    #     super().updateFeatureAttributes(args)
+    #
+    #     new_mci = args[0][0]
+    #
+    #     self.setFeatureAttributes(self.current_feature, new_mci)
 
     # def setFilterUI(self):
     #     """
