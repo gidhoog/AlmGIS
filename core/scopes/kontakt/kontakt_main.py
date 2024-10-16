@@ -24,14 +24,6 @@ class KontaktEntityDialog(EntityDialog):
 
         self.dialog_window_title = 'Kontakt'
 
-    # def accept(self):
-    #     super().accept()
-    #
-    #     if self.accepted_mci is not None:
-    #
-    #         self.parent.updateMaintableNew(self.dialogWidget.purpose,
-    #                                        self.accepted_mci)
-
 
 class KontaktMainWidget(MainWidget):
 

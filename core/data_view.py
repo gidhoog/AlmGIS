@@ -1089,9 +1089,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             elif widget_purpose == 'edit':
 
-                # if self.current_feature is not None:
-                # if update_feature is not None:
-
                 self.updateFeatureAttributes(args)
 
                 self._gis_layer.startEditing()
@@ -1100,8 +1097,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                                       args[0])
 
                 self._gis_layer.commitChanges()
-
-                # self.loadData()
 
             self.view.model().sourceModel().modelChanged.emit()
 
@@ -1134,11 +1129,6 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 for inst in DataView.instance_list:
                     self.updateDataviewInstances(inst)
 
-        #     self.view.model().sourceModel().layoutAboutToBeChanged.emit()
-        #     if self.edit_entity_by == 'id':
-        #         self.dataview_session.refresh(self.edit_entity)
-        #     self.view.model().sourceModel().layoutChanged.emit()
-        #
         self.updateFooter()
 
     def updateDataviewInstances(self, instance):

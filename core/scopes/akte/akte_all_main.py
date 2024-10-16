@@ -26,30 +26,7 @@ class AktDialog(EntityDialog):
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
 
-        # self.parent = parent
-
         self.dialog_window_title = 'Alm- und Weidebuchakt'
-
-    # def accept(self):
-    #     super().accept()
-    #
-    #     # if self.accepted_mci is not None:
-    #
-    #     self.parent.updateMaintableNew(self.dialogWidget.purpose,
-    #                                    self.accepted_mci,
-    #                                    self.edited_mci)
-    #     # if self.dialogWidget.acceptEntity() is not None:
-    #     #
-    #     #     new_mci = self.dialogWidget.acceptEntity()
-    #     #
-    #     #     update_feature = self.dialogWidget.entity_feature if self.dialogWidget.entity_feature != None else None
-    #     #
-    #     #     self.parent.updateMaintableNew(self.dialogWidget.purpose,
-    #     #                                    new_mci,
-    #     #                                    self.edited_mci,
-    #     #                                    update_feature)
-    #
-    #     QDialog.accept(self)
 
 
 class AkteAllMainWidget(MainWidget):

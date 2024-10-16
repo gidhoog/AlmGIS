@@ -43,39 +43,13 @@ class KoppelDialog(EntityDialog):
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
 
-        # self.parent = parent
-        #
-        # self.enableApply = True
-
         self.dialog_window_title = 'Koppel'
-        # self.set_apply_button_text('&Speichern und Schließen')
-
-
-    # def accept(self):
-    #     super().accept()
-    #
-    #     if self.dialogWidget.acceptEntity() is not None:
-    #
-    #         new_mci = self.dialogWidget.acceptEntity()
-    #
-    #         update_feature = self.dialogWidget.entity_feature if self.dialogWidget.entity_feature != None else None
-    #
-    #         self.parent.updateMaintableNew(self.dialogWidget.purpose,
-    #                                        new_mci,
-    #                                        None,
-    #                                        update_feature)
-    #
-    #     QDialog.accept(self)
 
 
 class KoppelModel(GisTableModel):
 
     def __init__(self, layerCache, parent=None):
         super(KoppelModel, self).__init__(layerCache, parent)
-
-        # self.parent = parent
-
-        # print(f'-.-.-.')
 
     def data(self, index: QModelIndex, role: int = ...):
 
