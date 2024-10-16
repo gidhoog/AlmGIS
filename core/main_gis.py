@@ -215,6 +215,11 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.current_layer = self.layer_tree_view.currentLayer()
         """"""
 
+        if self.current_layer.data_view:
+            self.actionFeatureInfo.setEnabled(True)
+        else:
+            self.actionFeatureInfo.setEnabled(False)
+
     def setToolbarBasic(self):
         """
         passe die toolbar 'uiBasicToolbar' an

@@ -1084,18 +1084,13 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
             if widget_purpose == 'add':
-
                 self.updateInstanceNew()
 
             elif widget_purpose == 'edit':
 
                 self.updateFeatureAttributes(args)
-
                 self._gis_layer.startEditing()
-
-                self.changeAttributes(update_feature,
-                                      args[0])
-
+                self.changeAttributes(update_feature, args[0])
                 self._gis_layer.commitChanges()
 
             self.view.model().sourceModel().modelChanged.emit()
@@ -1708,6 +1703,22 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         aktualisiere den maintable;
         """
         self.updateFooter()
+
+    def changeAttributes(self, update_feature, mci):
+        """
+        definiere in einem dict (attrib_dict) die neuen attribute für
+        das 'update_feature';
+        key= spalte als int;
+        führe danach folgendes aus:
+
+        self._gis_layer.changeAttributeValues(feature.id(), attrib_dict)
+
+
+        :param update_feature:
+        :param param:
+        :return:
+        """
+        pass
 
 
 class GisSortFilterProxyModel(QgsAttributeTableFilterModel):
