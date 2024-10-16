@@ -320,9 +320,9 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                     # gst_feature_id = feat.id()
                     # if gst_feature_id not in [g[0] for g in self.preselected_gst_mci]:
 
-                    if feat['gst_mci'][0].kg_gst not in [g.kg_gst for g in self.preselected_gst_mci]:
+                    if feat['mci'][0].kg_gst not in [g.kg_gst for g in self.preselected_gst_mci]:
 
-                        self.preselected_gst_mci.append(feat['gst_mci'][0])
+                        self.preselected_gst_mci.append(feat['mci'][0])
                         # self.preselected_gst_mci.append([
                         #     gst_feature_id,
                         #     feat.attribute('gst_id'),
@@ -1014,7 +1014,7 @@ class GstTable(DataView):
         importzeit_fld = QgsField("importzeit", QVariant.String)
         importzeit_fld.setAlias('Importzeit')
 
-        gst_mci_fld = QgsField("gst_mci", QVariant.List)
+        gst_mci_fld = QgsField("mci", QVariant.List)
 
         self.feature_fields.append(gst_id_fld)
         self.feature_fields.append(gst_fld)
@@ -1082,7 +1082,7 @@ class GstTable(DataView):
         feature['zugeordnet_zu'] = zugeordnet_zu
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
         feature['importzeit'] = last_gst.rel_alm_gst_ez.import_time
-        feature['gst_mci'] = [mci]
+        feature['mci'] = [mci]
 
     def setLayer(self):
 

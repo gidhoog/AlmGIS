@@ -1081,7 +1081,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if widget_purpose == 'add':
 
-                self.updateDataviewInstances(self)
+                self.updateInstanceNew()
 
             elif widget_purpose == 'edit':
 
@@ -1143,30 +1143,30 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         instance.view.model().sourceModel().layoutChanged.emit()
 
-    # def updateInstanceNew(self):
-    #     """
-    #     update the given data_view instance
-    #     :param instance:
-    #     :return:
-    #     """
-    #
-    #     self._gis_layer.startEditing()
-    #
-    #     self._gis_layer.data_provider.truncate()
-    #
-    #     with db_session_cm(name='update data_view') as session:
-    #         self.loadData(session)
-    #
-    #         # instance.addFeaturesFromMciList(instance._mci_list)
-    #         self.setFeaturesFromMci()
-    #     self._gis_layer.commitChanges()
-    #
-    #     # instance._gis_layer.data_provider.dataChanged.emit()
-    #     self._gis_layer.data_provider.reloadData()
-    #     self._gis_layer.triggerRepaint()
-    #
-    #     self.updateFooter()
-    #
+    def updateInstanceNew(self):
+        """
+        update the given data_view instance
+        :param instance:
+        :return:
+        """
+
+        self._gis_layer.startEditing()
+
+        self._gis_layer.data_provider.truncate()
+
+        with db_session_cm(name='update data_view') as session:
+            self.loadData(session)
+
+            # instance.addFeaturesFromMciList(instance._mci_list)
+            self.setFeaturesFromMci()
+        self._gis_layer.commitChanges()
+
+        # instance._gis_layer.data_provider.dataChanged.emit()
+        self._gis_layer.data_provider.reloadData()
+        self._gis_layer.triggerRepaint()
+
+        self.updateFooter()
+
     # def updateInstance(self, instance):
     #     """
     #     update the given data_view instance

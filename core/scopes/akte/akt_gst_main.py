@@ -772,8 +772,9 @@ class GstAktDataView(DataView):
         super().updateFeatureAttributes(args)
 
         new_mci = args[0][0]
+        update_feat = args[0][2]
 
-        self.setFeatureAttributes(self.current_feature, new_mci)
+        self.setFeatureAttributes(update_feat, new_mci)
 
     def setFilterUI(self):
         """
