@@ -84,12 +84,12 @@ class GisTableModel(QgsAttributeTableModel):
         super(GisTableModel, self).__init__(layerCache, parent)
 
         # self.parent = parent
-        self.layoutChanged.connect(self.selectionChanged)
-
-    def selectionChanged(self):
-
-        self.updateFooter()
-        print(f'layout changed!')
+    #     self.layoutChanged.connect(self.selectionChanged)
+    #
+    # def selectionChanged(self):
+    #
+    #     self.parent.updateFooter()
+    #     print(f'layout changed!')
 
     def headerData(self, column, orientation, role=None):
         super().headerData(column, orientation, role)
