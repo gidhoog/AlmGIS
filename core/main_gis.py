@@ -1065,11 +1065,12 @@ class FeatureInfoTool(QgsMapToolIdentifyFeature):
 
                     feat_mci = feat.mFeature['mci'][0]
 
-                    wid = dv.entity_widget_class(self.parent)
-                    dlg = dv.entity_dialog_class(self.parent)
+                    wid = dv.entity_widget_class(dv)
+                    dlg = dv.entity_dialog_class(dv)
 
                     wid.setEntitySession(self.parent.maingis_session)
                     wid.editEntity(entity_mci=feat_mci)
+                    wid.entity_feature = feat.mFeature
 
                     # """open the entity_widget_class in a dialog"""
                     # self.openDialog(wid)

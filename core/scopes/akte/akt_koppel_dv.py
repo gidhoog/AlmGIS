@@ -58,7 +58,12 @@ class KoppelDialog(EntityDialog):
 
             new_mci = self.dialogWidget.acceptEntity()
 
-            self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
+            update_feature = self.dialogWidget.entity_feature if self.dialogWidget.entity_feature != None else None
+
+            self.parent.updateMaintableNew(self.dialogWidget.purpose,
+                                           new_mci,
+                                           None,
+                                           update_feature)
 
         QDialog.accept(self)
 
@@ -361,8 +366,10 @@ class KoppelAktDataView(DataView):
         super().updateFeatureAttributes(args)
 
         new_mci = args[0][0]
+        update_feat = args[0][2]
 
-        self.setFeatureAttributes(self.current_feature, new_mci)
+        # self.setFeatureAttributes(self.current_feature, new_mci)
+        self.setFeatureAttributes(update_feat, new_mci)
 
     def changeAttributes(self, feature, mci):
 

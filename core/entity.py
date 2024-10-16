@@ -111,6 +111,7 @@ class Entity(QMainWindow):
         self._entity_mc = None
         # self._custom_entity_data = {}
         """"""
+        self.entity_feature = None
 
         self.invalid_data_text = "Die Angaben sind ungültig"
 
@@ -210,7 +211,7 @@ class Entity(QMainWindow):
             session wie die entity_mci erstellt werden sollten
         """
         self.edited_mci = edited_mci
-        self.feature = feature
+        self.entity_feature = feature
 
         if entity_id is not None:
             self.entity_id = entity_id

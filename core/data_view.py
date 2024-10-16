@@ -84,6 +84,12 @@ class GisTableModel(QgsAttributeTableModel):
         super(GisTableModel, self).__init__(layerCache, parent)
 
         # self.parent = parent
+        self.layoutChanged.connect(self.selectionChanged)
+
+    def selectionChanged(self):
+
+        self.updateFooter()
+        print(f'layout changed!')
 
     def headerData(self, column, orientation, role=None):
         super().headerData(column, orientation, role)
@@ -1066,28 +1072,32 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         try:
             accepted_mci = args[0]
             edited_mci = args[1]
+            update_feature = args[2]
         except:
             pass
 
         if self.gis_mode:
+            self.view.model().sourceModel().layoutAboutToBeChanged.emit()
+
             if widget_purpose == 'add':
 
                 self.updateInstanceNew()
 
             elif widget_purpose == 'edit':
 
-                if self.current_feature is not None:
+                # if self.current_feature is not None:
+                # if update_feature is not None:
 
-                    self.updateFeatureAttributes(args)
+                self.updateFeatureAttributes(args)
 
-                    self._gis_layer.startEditing()
+                self._gis_layer.startEditing()
 
-                    self.changeAttributes(self.current_feature,
-                                          args[0])
+                self.changeAttributes(update_feature,
+                                      args[0])
 
-                    self._gis_layer.commitChanges()
+                self._gis_layer.commitChanges()
 
-                    self.loadData()
+                # self.loadData()
 
             self.view.model().sourceModel().modelChanged.emit()
 
@@ -1125,7 +1135,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         #         self.dataview_session.refresh(self.edit_entity)
         #     self.view.model().sourceModel().layoutChanged.emit()
         #
-        # self.updateFooter()
+        self.updateFooter()
 
     def updateDataviewInstances(self, instance):
 
@@ -1405,7 +1415,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         # if entity_mci:
         else:
             entity_widget.setEntitySession(self.dataview_session)
-            entity_widget.editEntity(entity_mci=entity_mci)
+            entity_widget.editEntity(entity_mci=entity_mci,
+                                     feature=feature)
 
         """open the entity_widget_class in a dialog"""
         self.openDialog(entity_widget)
@@ -1723,12 +1734,7 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         self.parent = parent
         self.filter_rows_with_elements = {}
 
-        self.layoutChanged.connect(self.selectionChanged)
 
-    def selectionChanged(self):
-
-        self.parent.updateFooter()
-        print(f'layout changed!')
 
     def headerData(self, section: int, orientation: Qt.Orientation,
                    role: int = ...):

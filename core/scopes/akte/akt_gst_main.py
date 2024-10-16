@@ -57,7 +57,12 @@ class GstDialog(EntityDialog):
 
             new_mci = self.dialogWidget.acceptEntity()
 
-            self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
+            update_feature = self.dialogWidget.entity_feature if self.dialogWidget.entity_feature != None else None
+
+            self.parent.updateMaintableNew(self.dialogWidget.purpose,
+                                           new_mci,
+                                           None,
+                                           update_feature)
 
         QDialog.accept(self)
 
@@ -576,7 +581,8 @@ class GstAktDataView(DataView):
             "Polygon?crs=epsg:31259",
             "Grundstücke",
             "memory",
-            feature_fields=self.feature_fields
+            feature_fields=self.feature_fields,
+            data_view=self
         )
         layer.base = True
 
