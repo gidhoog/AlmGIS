@@ -22,8 +22,8 @@ from os import listdir
 from os.path import isfile, join
 
 from qgis.PyQt.QtCore import (QModelIndex, Qt, QItemSelectionModel, QVariant)
-from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QAction, \
-    QDockWidget, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit)
+from qgis.PyQt.QtWidgets import (QLabel, QMainWindow, QAction,\
+    QDockWidget, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QDialog)
 from qgis.PyQt.QtGui import QFont, QIcon
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
@@ -442,7 +442,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         funktioniert"""
         # self.setPreSelModel()
         """"""
-        self.guiGstTable.updateMaintableNew(purpose='add')
+        self.guiGstTable.updateMaintableNew(widget_purpose='add')
 
         # """aktualisiere main_gis"""
         # self.guiMainGis.uiCanvas.update()
@@ -1535,6 +1535,14 @@ class GstGemWerteMainDialog(main_dialog.MainDialog):
 
         self.dialog_window_title = 'Werte setzen'
         self.set_apply_button_text('&Werte setzen und zuordnen')
+
+    def accept(self) -> None:
+        """
+        subclass in subclassed classes; important to call
+        'QDialog.accept(self)' in the 'top'-subclass
+        (e.g. AktDialog) to finish (z.g. close) the dialog
+        """
+        QDialog.accept(self)
 
 
 class GisDock(QDockWidget):

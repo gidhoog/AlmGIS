@@ -1081,7 +1081,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
             if widget_purpose == 'add':
 
-                self.updateInstanceNew()
+                self.updateDataviewInstances(self)
 
             elif widget_purpose == 'edit':
 
