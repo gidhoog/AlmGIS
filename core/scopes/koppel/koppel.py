@@ -1,5 +1,6 @@
 from core import db_session_cm
-from core.data_model import BErfassungsart, BAbgrenzungStatus, BKomplexName
+from core.data_model import BErfassungsart, BAbgrenzungStatus, BKomplexName, \
+    BAbgrenzung, BKomplex
 from core.entity import Entity
 from core.gis_item import GisItem
 from core.main_dialog import MainDialog
@@ -22,8 +23,15 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
     _nr = 0
     _nicht_weide = 0
     _anm = ''
+
+    _komplex_name_id = 0
+    _komplex_name_mci = None
+
     _komplex_id = 0
     _komplex_mci = None
+
+    _abgrenzung_id = 0
+    _abgrenzung_mci = None
 
     _commit_on_apply = False
 
@@ -84,17 +92,17 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         self._anm = value
 
     @property  # getter
-    def komplex_id(self):
+    def komplex_name_id(self):
 
-        self._komplex_id = self.uiKomplexCombo.currentData(Qt.UserRole + 1)
-        return self._komplex_id
+        self._komplex_name_id = self.uiKomplexNameCombo.currentData(Qt.UserRole + 1)
+        return self._komplex_name_id
 
-    @komplex_id.setter
-    def komplex_id(self, value):
+    @komplex_name_id.setter
+    def komplex_name_id(self, value):
 
         """finde den status_id im model des uiAwbStatusCombo"""
-        match_index = self.uiKomplexCombo.model().match(
-            self.uiKomplexCombo.model().index(0, 0),
+        match_index = self.uiKomplexNameCombo.model().match(
+            self.uiKomplexNameCombo.model().index(0, 0),
             Qt.UserRole + 1,
             value,
             -1,
@@ -103,16 +111,81 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
 
         if match_index:
 
-            self.uiKomplexCombo.setCurrentIndex(match_index[0].row())
-            self._komplex_id = value
+            self.uiKomplexNameCombo.setCurrentIndex(match_index[0].row())
+            self._komplex_name_id = value
         else:
-            self._komplex_id = 0
+            self._komplex_name_id = 0
+
+    @property  # getter
+    def komplex_name_mci(self):
+
+        mci = self.uiKomplexNameCombo.currentData(Qt.UserRole)
+        return mci
+
+    @property  # getter
+    def abgrenzung_mci(self):
+
+        mci = self.uiAbgrenzungCombo.currentData(Qt.UserRole)
+        return mci
+
+    @property  # getter
+    def abgrenzung_id(self):
+
+        self._abgrenzung_id = self.uiAbgrenzungCombo.currentData(Qt.UserRole + 1)
+        return self._abgrenzung_id
+
+    @abgrenzung_id.setter
+    def abgrenzung_id(self, value):
+
+        """finde den status_id im model des uiAwbStatusCombo"""
+        match_index = self.uiAbgrenzungCombo.model().match(
+            self.uiAbgrenzungCombo.model().index(0, 0),
+            Qt.UserRole + 1,
+            value,
+            -1,
+            Qt.MatchExactly)
+        """"""
+
+        if match_index:
+
+            self.uiAbgrenzungCombo.setCurrentIndex(match_index[0].row())
+            self._abgrenzung_id = value
+        else:
+            self._abgrenzung_id = 0
 
     @property  # getter
     def komplex_mci(self):
 
+        # self._komplex_mci.rel_abgrenzung = self.abgrenzung_mci
+        # self._komplex_mci.rel_komplex_name = self.komplex_name_mci
+
         mci = self.uiKomplexCombo.currentData(Qt.UserRole)
+
         return mci
+
+    @komplex_mci.setter
+    def komplex_mci(self, value):
+
+        """finde den status_id im model des uiAwbStatusCombo"""
+        match_index = self.uiKomplexCombo.model().match(
+            self.uiKomplexCombo.model().index(0, 0),
+            Qt.UserRole + 1,
+            value.id,
+            -1,
+            Qt.MatchExactly)
+        """"""
+
+        if match_index:
+
+            self.uiKomplexCombo.setCurrentIndex(match_index[0].row())
+            self._komplex_mci = value
+        else:
+            self._komplex_mci = None
+
+        self.abgrenzung_id = value.abgrenzung_id
+        self.komplex_name_id = value.komplex_name_id
+
+        self._komplex_mci = value
 
     def __init__(self, parent=None, item=None):
         super(__class__, self).__init__()
@@ -137,7 +210,9 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         self.nr = self._entity_mci.nr
         self.nicht_weide = self._entity_mci.nicht_weide
         self.anm = self._entity_mci.anmerkung
-        self.komplex_id = self._entity_mci.rel_komplex.komplex_name_id
+
+        # self.komplex_name_id = self._entity_mci.rel_komplex.komplex_name_id
+        self.komplex_mci = self._entity_mci.rel_komplex
 
         # self.uiAreaLbl.setText(str(self._entity_mci.koppel_area))
         self.uiAreaLbl.setText(
@@ -148,35 +223,133 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
     def loadBackgroundData(self):
         super().loadBackgroundData()
 
+        self.setAbgrenzungComboData()
+        self.setKomplexNameComboData()
+
         self.setKomplexComboData()
+
+    def setAbgrenzungComboData(self):
+        """
+
+        """
+        akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
+
+        abgrenzung_stmt = select(BAbgrenzung).where(BAbgrenzung.akt_id == akt_id).order_by(BAbgrenzung.jahr)
+        abgrenzung_mci_list = self.entity_session.scalars(abgrenzung_stmt).all()
+
+        """erstelle ein model mit 1 spalten für das combo"""
+        abgrenzung_model = QStandardItemModel(len(abgrenzung_mci_list), 1)
+        for i in range(len(abgrenzung_mci_list)):
+
+            text = f'{str(abgrenzung_mci_list[i].jahr)} - {abgrenzung_mci_list[i].rel_status.name}'
+
+            abgrenzung_model.setData(abgrenzung_model.index(i, 0),
+                                          text, Qt.DisplayRole)
+            abgrenzung_model.setData(abgrenzung_model.index(i, 0),
+                                          abgrenzung_mci_list[i].id, Qt.UserRole + 1)
+            abgrenzung_model.setData(abgrenzung_model.index(i, 0),
+                                          abgrenzung_mci_list[i], Qt.UserRole)
+        """"""
+
+        """weise dem combo das model zu"""
+        self.uiAbgrenzungCombo.setModel(abgrenzung_model)
+        """"""
+
+    def setKomplexNameComboData(self):
+        """
+
+        """
+        akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
+
+        komplex_name_stmt = select(BKomplexName).where(BKomplexName.akt_id == akt_id).order_by(BKomplexName.nr)
+        komplex_name_mci_list = self.entity_session.scalars(komplex_name_stmt).all()
+
+        for name in komplex_name_mci_list:
+
+            print(f'name: {name.name}   - komplex_name_id: {name.rel_komplex}')
+
+        """erstelle ein model mit 1 spalten für das combo"""
+        komplex_name_model = QStandardItemModel(len(komplex_name_mci_list), 1)
+        for i in range(len(komplex_name_mci_list)):
+
+            if komplex_name_mci_list[i].nr == 0 or komplex_name_mci_list[i].nr is None:
+                nr = 0
+            else:
+                nr = komplex_name_mci_list[i].nr
+
+            text = f'{str(nr)}: {komplex_name_mci_list[i].name}'
+            komplex_name_model.setData(komplex_name_model.index(i, 0),
+                                          text, Qt.DisplayRole)
+            komplex_name_model.setData(komplex_name_model.index(i, 0),
+                                          komplex_name_mci_list[i].id, Qt.UserRole + 1)
+            komplex_name_model.setData(komplex_name_model.index(i, 0),
+                                          komplex_name_mci_list[i], Qt.UserRole)
+        """"""
+
+        """weise dem combo das model zu"""
+        self.uiKomplexNameCombo.setModel(komplex_name_model)
+        """"""
 
     def setKomplexComboData(self):
         """
-        hole die daten für die status_id-combobox aus der datenbank und füge
-        sie in die combobox ein
+
         """
         akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
-        # oder: akt_id = self.parent.parent.entity_id
-        pass
-        komplexe_stmt = select(BKomplexName).where(BKomplexName.akt_id == akt_id).order_by(BKomplexName.nr)
-        komplexe_mci_list = self.entity_session.scalars(komplexe_stmt).all()
+        abgr_id = self.parent.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('abgrenzung_id')
+        abgr_mci = self.parent.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('mci')
 
-        """erstelle ein model mit 1 spalten für das type-combo"""
-        komplex_model = QStandardItemModel(len(komplexe_mci_list), 1)
-        for i in range(len(komplexe_mci_list)):
+        komplex_stmt = select(BKomplex).where(BKomplex.abgrenzung_id == abgr_id)
+        komplex_mci_list = self.entity_session.scalars(komplex_stmt).all()
 
-            if komplexe_mci_list[i].nr == 0 or komplexe_mci_list[i].nr is None:
-                nr = 0
+        all_komplex_name = select(BKomplexName).where(BKomplexName.akt_id == akt_id)
+        all_komplex_name_mci_list = self.entity_session.scalars(all_komplex_name).all()
+
+        current_names = [komplex_mci.rel_komplex_name for komplex_mci in komplex_mci_list]
+
+        combo_mci_list = []
+
+        for komplex_name in all_komplex_name_mci_list:
+
+            if komplex_name in current_names:
+
+                    for komp in komplex_name.rel_komplex:
+
+                        if komp.abgrenzung_id == abgr_id:
+
+                            combo_mci_list.append(komp)
+
+
             else:
-                nr = komplexe_mci_list[i].nr
 
-            text = f'{str(nr)}: {komplexe_mci_list[i].name}'
+                new_komplex = BKomplex()
+                new_komplex.abgrenzung_id = abgr_id
+                # new_komplex.rel_abgrenzung = abgr_mci
+                # new_komplex.abgrenzung_id = 99999
+                new_komplex.rel_komplex_name = komplex_name
+                self.entity_session.add(new_komplex)
+                self.entity_session.flush()
+
+                combo_mci_list.append(new_komplex)
+
+        """erstelle ein model mit 1 spalten für das combo"""
+        komplex_model = QStandardItemModel(len(combo_mci_list), 1)
+
+        for i in range(len(combo_mci_list)):
+
+            # if komplex_mci_list[i].nr == 0 or komplex_mci_list[i].nr is None:
+            #     nr = 0
+            # else:
+            #     nr = komplex_mci_list[i].nr
+
+            text = f'{str(combo_mci_list[i].rel_komplex_name.nr)}: {combo_mci_list[i].rel_komplex_name.name}'
+            print(f'text: {text}')
+
             komplex_model.setData(komplex_model.index(i, 0),
                                           text, Qt.DisplayRole)
             komplex_model.setData(komplex_model.index(i, 0),
-                                          komplexe_mci_list[i].id, Qt.UserRole + 1)
+                                          combo_mci_list[i].id, Qt.UserRole + 1)
             komplex_model.setData(komplex_model.index(i, 0),
-                                          komplexe_mci_list[i], Qt.UserRole)
+                                          combo_mci_list[i], Qt.UserRole)
         """"""
 
         """weise dem combo das model zu"""
@@ -189,6 +362,9 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         self._entity_mci.nr = self.nr
         self._entity_mci.nicht_weide = self.nicht_weide
         self._entity_mci.anmerkung = self.anm
+
+        # self._entity_mci.rel_komplex.rel_komplex_name = self.komplex_name_mci
+        self._entity_mci.rel_komplex = self.komplex_mci
 
 class KoppelDialog(MainDialog):
     """
