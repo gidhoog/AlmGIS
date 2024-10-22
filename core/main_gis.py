@@ -526,20 +526,34 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
     def exportLayer(self):
         """
-        exportiere den ausgewählten Layer
+        exportiere den ausgewählten Layer als GeoPackage
         :return:
         """
-
-
-
         if self.current_layer:
-            QgsVectorFileWriter.writeAsVectorFormat(layer=self.current_layer,
-                                                    fileName='C:/work/gst.gpkg',
-                                                    fileEncoding='utf-8',
-                                                    destCRS=self.current_layer.crs(),
-                                                    driverName='GPKG')
 
-        print(self.current_layer)
+            layer_name = self.current_layer.name()
+
+            filename_default = 'C:/work/' + layer_name + '.gpkg'
+
+            s_lyr = QFileDialog(self)
+
+            save_project_file = s_lyr.getSaveFileName(
+                self,
+                'exportiere ausgewählten Layer',
+                filename_default,
+                "GeoPackage (GPKG) (*.gpkg)"
+            )
+
+            if save_project_file[0]:
+                self.project_instance.write(save_project_file[0])
+
+                QgsVectorFileWriter.writeAsVectorFormat(
+                    layer=self.current_layer,
+                    fileName=save_project_file[0],
+                    fileEncoding='utf-8',
+                    destCRS=self.current_layer.crs(),
+                    driverName='GPKG'
+                )
 
     def loadLayer(self, layer_instance_list):
         """
