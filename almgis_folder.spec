@@ -5,6 +5,9 @@ block_cipher = None
 #    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', 'qgis_dll'),
 #    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', './qgis_dll')
 #    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/qgis/_core.pyd', 'qgis_pyd')
+
+# in datas-liste:
+#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/sagaprovider/', './sagaprovider')
 a = Analysis(
     ['almgis.py'],
     pathex=[],
@@ -19,8 +22,7 @@ a = Analysis(
     ('C:/work/Projekte/AlmGIS/almgis/core/print_templates/', './core/print_templates'),
     ('C:/work/Projekte/AlmGIS/almgis/core/styles/', './core/styles'),
     ('C:/work/_anwendungen/OSGeo4W/share/proj/proj.db','./proj_db'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/sagaprovider/', './sagaprovider')
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing')
     ],
     hiddenimports=[
     'pkgutil', 'PyQt5.QtPositioning', 'PyQt5.QtPrintSupport',
