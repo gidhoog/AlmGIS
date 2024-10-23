@@ -24,8 +24,8 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
     _nicht_weide = 0
     _anm = ''
 
-    _komplex_name_id = 0
-    _komplex_name_mci = None
+    # _komplex_name_id = 0
+    # _komplex_name_mci = None
 
     _komplex_id = 0
     _komplex_mci = None
@@ -91,36 +91,36 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         self.uiAnmerkungPtext.setPlainText(value)
         self._anm = value
 
-    @property  # getter
-    def komplex_name_id(self):
-
-        self._komplex_name_id = self.uiKomplexNameCombo.currentData(Qt.UserRole + 1)
-        return self._komplex_name_id
-
-    @komplex_name_id.setter
-    def komplex_name_id(self, value):
-
-        """finde den status_id im model des uiAwbStatusCombo"""
-        match_index = self.uiKomplexNameCombo.model().match(
-            self.uiKomplexNameCombo.model().index(0, 0),
-            Qt.UserRole + 1,
-            value,
-            -1,
-            Qt.MatchExactly)
-        """"""
-
-        if match_index:
-
-            self.uiKomplexNameCombo.setCurrentIndex(match_index[0].row())
-            self._komplex_name_id = value
-        else:
-            self._komplex_name_id = 0
-
-    @property  # getter
-    def komplex_name_mci(self):
-
-        mci = self.uiKomplexNameCombo.currentData(Qt.UserRole)
-        return mci
+    # @property  # getter
+    # def komplex_name_id(self):
+    #
+    #     self._komplex_name_id = self.uiKomplexNameCombo.currentData(Qt.UserRole + 1)
+    #     return self._komplex_name_id
+    #
+    # @komplex_name_id.setter
+    # def komplex_name_id(self, value):
+    #
+    #     """finde den status_id im model des uiAwbStatusCombo"""
+    #     match_index = self.uiKomplexNameCombo.model().match(
+    #         self.uiKomplexNameCombo.model().index(0, 0),
+    #         Qt.UserRole + 1,
+    #         value,
+    #         -1,
+    #         Qt.MatchExactly)
+    #     """"""
+    #
+    #     if match_index:
+    #
+    #         self.uiKomplexNameCombo.setCurrentIndex(match_index[0].row())
+    #         self._komplex_name_id = value
+    #     else:
+    #         self._komplex_name_id = 0
+    #
+    # @property  # getter
+    # def komplex_name_mci(self):
+    #
+    #     mci = self.uiKomplexNameCombo.currentData(Qt.UserRole)
+    #     return mci
 
     @property  # getter
     def abgrenzung_mci(self):
@@ -183,7 +183,7 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
             self._komplex_mci = None
 
         self.abgrenzung_id = value.abgrenzung_id
-        self.komplex_name_id = value.komplex_name_id
+        # self.komplex_name_id = value.komplex_name_id
 
         self._komplex_mci = value
 
@@ -224,7 +224,7 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         super().loadBackgroundData()
 
         self.setAbgrenzungComboData()
-        self.setKomplexNameComboData()
+        # self.setKomplexNameComboData()
 
         self.setKomplexComboData()
 

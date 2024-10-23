@@ -1117,21 +1117,21 @@ class GstTable(DataView):
     def getMciList(self, session):
 
         stmt = (select(BGst)
-        .options(
-            joinedload(BGst.rel_alm_gst_version)
-            .joinedload(BGstVersion.rel_alm_gst_ez)
-        )
-        .options(
-            joinedload(BGst.rel_alm_gst_version)
-            .joinedload(BGstVersion.rel_alm_gst_nutzung)
-        )
-        .options(
-            joinedload(BGst.rel_kat_gem)
-        )
-        .options(
-            joinedload(BGst.rel_gst_zuordnung)
-            .joinedload(BGstZuordnung.rel_akt)
-        )
+        # .options(
+        #     joinedload(BGst.rel_alm_gst_version)
+        #     .joinedload(BGstVersion.rel_alm_gst_ez)
+        # )
+        # .options(
+        #     joinedload(BGst.rel_alm_gst_version)
+        #     .joinedload(BGstVersion.rel_alm_gst_nutzung)
+        # )
+        # .options(
+        #     joinedload(BGst.rel_kat_gem)
+        # )
+        # .options(
+        #     joinedload(BGst.rel_gst_zuordnung)
+        #     .joinedload(BGstZuordnung.rel_akt)
+        # )
         )
 
         mci = session.scalars(stmt).unique().all()
