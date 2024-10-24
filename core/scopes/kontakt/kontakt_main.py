@@ -1,4 +1,5 @@
-from PyQt5.QtCore import Qt
+# from PyQt5.QtCore import Qt
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
                                  QMenu, QAction, QToolButton)

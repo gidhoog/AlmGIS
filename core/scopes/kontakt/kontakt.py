@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QRegExp, Qt
+# from PyQt5.QtCore import QRegExp, Qt
+from qgis.PyQt.QtCore import QRegExp, Qt
 # from PyQt5.QtGui import QRegExpValidator
 from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
 from qgis.PyQt.QtWidgets import QWidget, QPushButton, QVBoxLayout

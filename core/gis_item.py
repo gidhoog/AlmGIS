@@ -1,6 +1,7 @@
 
 from qgis.PyQt.QtGui import QStandardItem
-from PyQt5.QtCore import Qt
+# from PyQt5.QtCore import Qt
+from qgis.PyQt.QtCore import Qt
 
 
 class GisItem(QStandardItem):

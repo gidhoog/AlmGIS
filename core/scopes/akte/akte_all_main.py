@@ -1,6 +1,6 @@
 from _operator import attrgetter
 
-from PyQt5.QtWidgets import QDialog
+# from PyQt5.QtWidgets import QDialog
 from qgis.PyQt.QtCore import Qt, QModelIndex
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,

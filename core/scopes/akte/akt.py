@@ -1,11 +1,11 @@
 import os
 from pathlib import Path
 
-from PyQt5.QtCore import QDate
+# from PyQt5.QtCore import QDate
 from qgis.PyQt.QtGui import (QIntValidator, QIcon, QStandardItem, QStandardItemModel)
 from qgis.PyQt.QtWidgets import QDockWidget
 
-from qgis.PyQt.QtCore import Qt, QModelIndex, pyqtSlot
+from qgis.PyQt.QtCore import Qt, QModelIndex, pyqtSlot, QDate
 
 from geoalchemy2.shape import to_shape
 from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry

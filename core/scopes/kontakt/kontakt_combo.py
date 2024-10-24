@@ -2,7 +2,8 @@
 
 from sqlalchemy import asc, func
 
-from PyQt5.QtCore import Qt
+# from PyQt5.QtCore import Qt
+from qgis.PyQt.QtCore import Qt
 
 # from core.combo import Combobox, ComboGroup, ComboColumn, ComboModel
 

@@ -1,6 +1,8 @@
-from PyQt5.QtCore import QModelIndex, Qt
+# from PyQt5.QtCore import QModelIndex, Qt
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
+
+from qgis.PyQt.QtCore import QModelIndex, Qt
 
 from core import db_session_cm
 from core.combogroup import ExtendedCombo, ComboModel

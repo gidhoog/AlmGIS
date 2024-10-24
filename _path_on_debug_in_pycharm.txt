@@ -1,0 +1,21 @@
+PATH: ++++++++++++++++++++++++++++++++++++++++++++++
+C:\work\Projekte\AlmGIS\almgis
+C:\Program Files\JetBrains\PyCharm 2024.1.1\plugins\python\helpers\pydev
+C:\Program Files\JetBrains\PyCharm 2024.1.1\plugins\python\helpers\third_party\thriftpy
+C:\Program Files\JetBrains\PyCharm 2024.1.1\plugins\python\helpers\pydev
+C:\work\_anwendungen\OSGeo4W\apps\Qt5
+C:\work\Projekte\AlmGIS\almgis
+C:\Program Files\JetBrains\PyCharm 2024.1.1\plugins\python\helpers\pycharm_display
+C:\Users\ZNFF\AppData\Local\JetBrains\PyCharm2024.1\cythonExtensions
+C:\Program Files\JetBrains\PyCharm 2024.1.1\plugins\python\helpers-pro\pydevd_asyncio
+C:\work\_ANWEN~1\OSGeo4W\apps\qgis-ltr\python\plugins
+C:\work\_ANWEN~1\OSGeo4W\apps\Python312\lib\site-packages
+C:\work\_ANWEN~1\OSGeo4W\apps\qgis-ltr\python
+C:\work\_ANWEN~1\OSGeo4W\bin\python312.zip
+C:\work\_ANWEN~1\OSGeo4W\apps\Python312\DLLs
+C:\work\_ANWEN~1\OSGeo4W\apps\Python312\Lib
+C:\work\Projekte\AlmGIS\almgis\venv_02\Scripts
+C:\work\Projekte\AlmGIS\almgis\venv_02
+C:\work\Projekte\AlmGIS\almgis\venv_02\Lib\site-packages
+C:\Program Files\JetBrains\PyCharm 2024.1.1\plugins\python\helpers\pycharm_matplotlib_backend
+++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -1,5 +1,5 @@
 from core.gis_item import GisItem
-from PyQt5.QtGui import QColor
+from qgis.PyQt.QtGui import QColor
 
 
 class KoppelItem(GisItem):

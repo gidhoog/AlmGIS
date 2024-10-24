@@ -1,7 +1,9 @@
-from PyQt5.QtCore import Qt, QModelIndex, QAbstractTableModel, \
+# from PyQt5.QtCore import Qt, QModelIndex, QAbstractTableModel, \
+#     QSortFilterProxyModel
+from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel, \
     QSortFilterProxyModel
-from PyQt5.QtGui import QIcon, QValidator, QKeyEvent
-from PyQt5.QtWidgets import QAction, QComboBox, QCompleter, QTableView, \
+from qgis.PyQt.QtGui import QIcon, QValidator, QKeyEvent
+from qgis.PyQt.QtWidgets import QAction, QComboBox, QCompleter, QTableView, \
     QLineEdit, QMenu, QMessageBox
 
 from core import db_session_cm
