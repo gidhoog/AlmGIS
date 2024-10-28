@@ -1,13 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-# ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', 'mod_spatialite'),
-#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', 'qgis_dll'),
-#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', './qgis_dll')
-#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/qgis/_core.pyd', 'qgis_pyd')
 
-# in datas-liste:
-#    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/sagaprovider/', './sagaprovider')
 a = Analysis(
     ['almgis.py'],
     pathex=[],
