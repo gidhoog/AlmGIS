@@ -25,9 +25,9 @@ a = Analysis(
     ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing')
     ],
     hiddenimports=[
-    'pkgutil', 'PyQt5.QtPositioning', 'PyQt5.QtPrintSupport',
-    'PyQt5.QtSql', 'PyQt5.QtNetwork', 'PyQt5.QtXml', 'PyQt5.Qsci', 'PyQt5.sip',
-    'shapely._geos'
+    'sqlalchemy', 'shapely._geos', 'pkgutil', 'PyQt5.QtPositioning',
+    'PyQt5.QtPrintSupport', 'PyQt5.QtSql', 'PyQt5.QtNetwork', 'PyQt5.QtXml',
+    'PyQt5.Qsci', 'PyQt5.sip', 'PyQt5.QtGui', 'PyQt5.QtCore'
     ],
     hookspath=[],
     hooksconfig={},
