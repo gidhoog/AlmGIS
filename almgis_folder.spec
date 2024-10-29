@@ -7,7 +7,7 @@ a = Analysis(
     pathex=[],
     binaries=[
     ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', './dll'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', '.'),
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', './dll'),
     ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/qgis/_core.pyd', './qgis')
     ],
     datas=[
