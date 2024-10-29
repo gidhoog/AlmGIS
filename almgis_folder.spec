@@ -12,9 +12,9 @@ a = Analysis(
     ],
     datas=[
     ('almgis.cmd', '.'),
-    ('C:/work/Projekte/AlmGIS/almgis/core/print_layouts/', './core/print_layouts'),
-    ('C:/work/Projekte/AlmGIS/almgis/core/print_templates/', './core/print_templates'),
-    ('C:/work/Projekte/AlmGIS/almgis/core/styles/', './core/styles'),
+    ('C:/work/Projekte/AlmGIS/almgis/app_core/print_layouts/', './app_core/print_layouts'),
+    ('C:/work/Projekte/AlmGIS/almgis/app_core/print_templates/', './app_core/print_templates'),
+    ('C:/work/Projekte/AlmGIS/almgis/app_core/styles/', './app_core/styles'),
     ('C:/work/_anwendungen/OSGeo4W/share/proj/proj.db','./proj_db'),
     ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing')
     ],

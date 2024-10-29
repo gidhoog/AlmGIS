@@ -6,8 +6,8 @@ for path in sys.path:
     print(path)
 print(f'++++++++++++++++++++++++++++++++++++++++++++++++++++')
 from qgis.core import QgsApplication
-from core.main_window import AlmgisMainWindow
-from core.logger import LOGGER
+from app_core.main_window import AlmgisMainWindow
+from app_core.logger import LOGGER
 from importlib import resources
 
 # from PyQt5.QtWidgets import QWidget
