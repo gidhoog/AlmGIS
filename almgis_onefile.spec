@@ -3,13 +3,13 @@
 block_cipher = None
 
 # von binaries: ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/qgis/_core.pyd', './qgis')
-#               ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', './dll')
 
 a = Analysis(
     ['almgis.py'],
     pathex=[],
     binaries=[
-    ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', './dll')
+    ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', './dll'),
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/bin/qgis_core.dll', './dll')
     ],
     datas=[
     ('almgis.cmd', '.'),
@@ -36,30 +36,26 @@ a = Analysis(
 )
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
-exe = EXE(
-    pyz,
-    a.scripts,
-    [],
-    exclude_binaries=True,
-    name='almgis',
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
-    console=True,
-    disable_windowed_traceback=False,
-    argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='almgis',
-)
+exe = EXE(pyz,
+          a.scripts,
+          a.binaries,
+          a.zipfiles,
+          a.datas,
+          name='almgis',
+          debug=False,
+          strip=False,
+          upx=True,
+          runtime_tmpdir=None,
+          console=True
+          )
+
+# coll = COLLECT(
+#     exe,
+#     a.binaries,
+#     a.zipfiles,
+#     a.datas,
+#     strip=False,
+#     upx=True,
+#     upx_exclude=[],
+#     name='almgis',
+# )
