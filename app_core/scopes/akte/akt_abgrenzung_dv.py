@@ -24,16 +24,16 @@ class AbgrenzungDialog(EntityDialog):
         self.dialog_window_title = 'Abgrenzung'
         # self.set_apply_button_text('&Speichern und Schließen')
 
-    def accept(self):
-        super().accept()
-
-        if self.dialogWidget.acceptEntity() is not None:
-
-            new_mci = self.dialogWidget.acceptEntity()
-
-            self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
-
-        QDialog.accept(self)
+    # def accept(self):
+    #     super().accept()
+    #
+    #     if self.dialogWidget.acceptEntity() is not None:
+    #
+    #         new_mci = self.dialogWidget.acceptEntity()
+    #
+    #         self.parent.updateMaintableNew(self.dialogWidget.purpose, new_mci)
+    #
+    #     QDialog.accept(self)
 
 
 class AbgrenzungModel(GisTableModel):
