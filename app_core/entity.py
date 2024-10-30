@@ -6,6 +6,7 @@ from sqlalchemy import select
 
 from app_core import DbSession
 from app_core.main_dialog import MainDialog
+from app_core.data_view import DataView
 from app_core.tools import getMciState
 
 
@@ -141,7 +142,6 @@ class Entity(QMainWindow):
         self._entity_mci = new_instance
 
         self.setDefaultValues()
-
 
     def assembleEntityWidget(self):
         """
@@ -399,9 +399,12 @@ class EntityDialog(MainDialog):
         self.edited_mci = self.dialogWidget.edited_mci
         self.update_feature = self.dialogWidget.entity_feature
 
-        self.parent.updateMaintableNew(self.dialogWidget.purpose,
-                                       self.accepted_mci,
-                                       self.edited_mci,
-                                       self.update_feature)
+        """aktualisiere den data_view, wenn parent einer ist"""
+        if isinstance(self.parent, DataView):
+            self.parent.updateMaintableNew(self.dialogWidget.purpose,
+                                           self.accepted_mci,
+                                           self.edited_mci,
+                                           self.update_feature)
+        """"""
 
         QDialog.accept(self)

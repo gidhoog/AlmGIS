@@ -16,9 +16,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 
 from app_core import data_view_UI, db_session_cm, color, DbSession
-from app_core.entity import EntityDialog
+# from app_core.entity import EntityDialog
 from app_core.footer_line import FooterLine
 from app_core.gis_layer import Feature
+from app_core.gis_tools import cut_koppel_gstversion
 from app_core.tools import getMciState
 
 
@@ -235,22 +236,22 @@ class TableView(QTableView):
             super().keyPressEvent(event)
 
 
-class DataViewEntityDialog(EntityDialog):
-    """
-    Dialog für ein Entity, dass aus einem DataView geöffnet wird
-    """
-
-    def __init__(self, parent=None):
-        super(self.__class__, self).__init__(parent)
-
-        self.set_apply_button_text('&Speichern und Schließen_dv')
-
-    def accept(self):
-        super().accept()
-
-        self.parent.updateMaintableNew()
-
-        QDialog.accept(self)
+# class DataViewEntityDialog(EntityDialog):
+#     """
+#     Dialog für ein Entity, dass aus einem DataView geöffnet wird
+#     """
+#
+#     def __init__(self, parent=None):
+#         super(self.__class__, self).__init__(parent)
+#
+#         self.set_apply_button_text('&Speichern und Schließen_dv')
+#
+#     def accept(self):
+#         super().accept()
+#
+#         self.parent.updateMaintableNew()
+#
+#         QDialog.accept(self)
 
 
 class TableModel(QAbstractTableModel):
@@ -531,7 +532,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.sel_entity_mci = None
 
         """"""
-        self.entity_dialog_class = DataViewEntityDialog
+        # self.entity_dialog_class = DataViewEntityDialog
+        self.entity_dialog_class = None
         self.entity_widget_class = None
         self._entity_mc = None
         self._type_mc = None
@@ -1084,7 +1086,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
             if widget_purpose == 'add':
-                self.updateInstanceNew()
+                pass
+                # self.updateInstanceNew()
 
             elif widget_purpose == 'edit':
 
@@ -1657,6 +1660,49 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.editRow(entity_widget=entity_widget,
                      entity_mci=mci)
+
+    def addEntityFeature(self, feature):
+
+        new_mci = self._entity_mc()
+        new_mci.nr = 99
+        new_mci.name = 'koppel 99'
+        new_mci.nicht_weide = 0
+        new_mci.rel_komplex = self.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('mci')[0].rel_komplex[0]
+        new_mci.geometry = feature.geometry().asWkt()
+
+        self.parent._entity_mci.rel_abgrenzung[1].rel_komplex[0].rel_koppel.append(new_mci)
+
+        sel_abgrenzung_mci = (
+            self.parent.abgrenzung_table.
+            _gis_layer.selectedFeatures()[0].attribute('mci'))
+
+        entity_widget = self.entity_widget_class(self)
+        entity_widget.akt_id = self.parent.entity_id
+        entity_widget.purpose = 'add'
+
+        entity_widget.setEntitySession(self.dataview_session)
+        entity_widget.editEntity(entity_mci=new_mci,
+                                 feature=feature)
+
+        entity_dialog = self.entity_dialog_class(parent=self)
+
+        """setze den entity_dialog im entity_widget"""
+        entity_widget.entity_dialog = entity_dialog
+        """"""
+
+        entity_dialog.insertWidget(entity_widget)
+        entity_dialog.resize(self.minimumSizeHint())
+
+        result = entity_dialog.exec()
+
+        if result:
+
+            entity_widget.acceptEntity()
+            self.updateMaintableNew('add', [entity_widget._entity_mci])
+
+            return True
+
+        return False
 
     def openDialog(self, entity_widget):
         """

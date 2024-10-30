@@ -20,7 +20,7 @@ from qgis.gui import QgsLayerTreeView, QgsLayerTreeMapCanvasBridge, QgsMapToolPa
     QgsAdvancedDigitizingDockWidget, QgsMapToolDigitizeFeature, QgsMapToolCapture, \
     QgsMapCanvas
 
-from app_core.data_model import BGisStyle, BGisLayerMenu
+from app_core.data_model import BGisStyle, BGisLayerMenu, BKoppel
 from app_core.gis_layer import getGisLayer, setLayerStyle
 from app_core.main_dialog import MainDialog
 from app_core.print_content_widget import PrintContentWidget
@@ -187,7 +187,7 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.digi_dock = QgsAdvancedDigitizingDockWidget(self.uiCanvas)
         """"""
 
-        self.actionAddFeature.setEnabled(False)
+        # self.actionAddFeature.setEnabled(False)
         self.setToolbarBasic()
 
         """activiere pan standardmässig"""
@@ -215,10 +215,11 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.current_layer = self.layer_tree_view.currentLayer()
         """"""
 
-        if self.current_layer.data_view:
-            self.actionFeatureInfo.setEnabled(True)
-        else:
-            self.actionFeatureInfo.setEnabled(False)
+        if hasattr(self.current_layer, 'data_view'):
+            if self.current_layer.data_view:
+                self.actionFeatureInfo.setEnabled(True)
+            else:
+                self.actionFeatureInfo.setEnabled(False)
 
     def setToolbarBasic(self):
         """
@@ -1188,26 +1189,53 @@ class DigiTool(QgsMapToolDigitizeFeature):
         wenn fertig digitalisiert ist, dann gebe die attribute ein
         """
 
-        """hole die modul und widget-class"""
-        form_module = __import__(self.parent.current_layer.dataform_modul,
-                                 fromlist=[self.parent.current_layer.dataform_class])
-        form_wid = getattr(form_module, self.parent.current_layer.dataform_class)
-        self.attribute_widget = form_wid()
-        """"""
+        # self.parent.current_layer.data_view.addEntityFeature(feature)
 
-        """erzeuge einen dialog, füge das attribut-widget ein und zeige den dialog"""
-        self.att_dialog = FeatureAttributeDialog(self.parent)
-        self.att_dialog.insertWidget(self.attribute_widget)
-        result = self.att_dialog.exec()
-        """"""
+        # """hole die modul und widget-class"""
+        # # form_module = __import__(self.parent.current_layer.dataform_modul,
+        # #                          fromlist=[self.parent.current_layer.dataform_class])
+        # # form_wid = getattr(form_module, self.parent.current_layer.dataform_class)
+        #
+        # form_wid = self.parent.current_layer.data_view.entity_widget_class
+        # self.entity_wdg = form_wid(parent=self.parent.current_layer.data_view)
+        # """"""
+        # self.entity_wdg.addEntityFeature(feature)
+
+        # new_mci = self.parent.current_layer.data_view._entity_mc()
+
+        # self.entity_wdg._entity_mci = new_mci
+
+        # self.parent.parent.parent().entity_session.add(new_mci)
+
+        # """erzeuge einen dialog, füge das attribut-widget ein und zeige den dialog"""
+        # # self.att_dialog = FeatureAttributeDialog(self.parent)
+        # self.att_dialog = self.parent.current_layer.data_view.entity_dialog_class(
+        #     self.parent.current_layer.data_view)
+        # self.att_dialog.insertWidget(self.entity_wdg)
+        # result = self.att_dialog.exec()
+        # """"""
 
         """wenn der attribut-dialog mit 'accept' geschlossen wird, dann werden
         das feature und die attribute gespeichert und die darstellung aktualisiert"""
-        if result:
-            attr_list = self.attribute_widget.feature_attribute_list()
-            attr_list.insert(0, self.parent.parent.parent().entity_id)
-            attr_list.insert(0, None)
-            feature.setAttributes(attr_list)
+        # if result:
+        #     # attr_list = self.entity_wdg.feature_attribute_list()
+        #     # attr_list.insert(0, self.parent.parent.parent().entity_id)
+        #     # attr_list.insert(0, None)
+        #
+        #     self.entity_wdg.acceptEntity()
+        #     # feature.setAttributes(attr_list)
+        #     feature.setAttributes([None,
+        #                            None,
+        #                            None,
+        #                            None,
+        #                            None,
+        #                            None,
+        #                            None,
+        #                            66666,
+        #                            666,
+        #                            '666'
+        #                            ])
+        if self.parent.current_layer.data_view.addEntityFeature(feature):
 
             self.layer_name.addFeature(feature)
 
@@ -1217,8 +1245,8 @@ class DigiTool(QgsMapToolDigitizeFeature):
             self.canvas.update()
             self.canvas.refresh()
 
-            cut_koppel_gstversion()
-            self.parent.parent.parent().onGisEdit()
+            # cut_koppel_gstversion(self.layer_name)
+            # self.parent.parent.parent().onGisEdit()
 
         else:
             print(f"Error in '{self.__class__.__name__}':", sys.exc_info())

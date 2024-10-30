@@ -1,6 +1,6 @@
 from app_core import db_session_cm
 from app_core.data_model import BErfassungsart, BAbgrenzungStatus, BKomplexName, \
-    BAbgrenzung, BKomplex
+    BAbgrenzung, BKomplex, BKoppel
 from app_core.entity import Entity
 from app_core.gis_item import GisItem
 from app_core.main_dialog import MainDialog
@@ -193,6 +193,18 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
 
         self.parent = parent
 
+        self._entity_mc = BKoppel
+
+        self.akt_id = None
+        self.abgrenzung_id = None
+
+    def getAktId(self):
+
+        if self.akt_id is None:
+            return self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
+        else:
+            return self.akt_id
+
         # self.uiAktNameLbl.setText(self.parent.name + ' (AZ '
         #                           + str(self.parent.az) + ')')
 
@@ -214,11 +226,10 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         # self.komplex_name_id = self._entity_mci.rel_komplex.komplex_name_id
         self.komplex_mci = self._entity_mci.rel_komplex
 
-        # self.uiAreaLbl.setText(str(self._entity_mci.koppel_area))
-        self.uiAreaLbl.setText(
-            '{:.4f}'.format(
-                round(float(self._entity_mci.koppel_area) / 10000, 4))
-            .replace(".", ",") + ' ha')
+        # self.uiAreaLbl.setText(
+        #     '{:.4f}'.format(
+        #         round(float(self._entity_mci.koppel_area) / 10000, 4))
+        #     .replace(".", ",") + ' ha')
 
     def loadBackgroundData(self):
         super().loadBackgroundData()
@@ -232,9 +243,14 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         """
 
         """
-        akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
+        # akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
 
-        abgrenzung_stmt = select(BAbgrenzung).where(BAbgrenzung.akt_id == akt_id).order_by(BAbgrenzung.jahr)
+        abgrenzung_stmt = (
+            select(BAbgrenzung)
+            .where(BAbgrenzung.akt_id == self.getAktId())
+            .order_by(BAbgrenzung.jahr)
+        )
+
         abgrenzung_mci_list = self.entity_session.scalars(abgrenzung_stmt).all()
 
         """erstelle ein model mit 1 spalten für das combo"""
@@ -259,9 +275,14 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         """
 
         """
-        akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
+        # akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
 
-        komplex_name_stmt = select(BKomplexName).where(BKomplexName.akt_id == akt_id).order_by(BKomplexName.nr)
+        komplex_name_stmt = (
+            select(BKomplexName)
+            .where(BKomplexName.akt_id == self.getAktId())
+            .order_by(BKomplexName.nr)
+        )
+
         komplex_name_mci_list = self.entity_session.scalars(komplex_name_stmt).all()
 
         for name in komplex_name_mci_list:
@@ -294,14 +315,14 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         """
 
         """
-        akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
+        # akt_id = self._entity_mci.rel_komplex.rel_abgrenzung.rel_akt.id
         abgr_id = self.parent.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('abgrenzung_id')
-        abgr_mci = self.parent.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('mci')
+        # abgr_mci = self.parent.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('mci')
 
         komplex_stmt = select(BKomplex).where(BKomplex.abgrenzung_id == abgr_id)
         komplex_mci_list = self.entity_session.scalars(komplex_stmt).all()
 
-        all_komplex_name = select(BKomplexName).where(BKomplexName.akt_id == akt_id)
+        all_komplex_name = select(BKomplexName).where(BKomplexName.akt_id == self.getAktId())
         all_komplex_name_mci_list = self.entity_session.scalars(all_komplex_name).all()
 
         current_names = [komplex_mci.rel_komplex_name for komplex_mci in komplex_mci_list]
