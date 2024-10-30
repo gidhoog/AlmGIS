@@ -217,7 +217,6 @@ class Entity(QMainWindow):
             self.entity_id = entity_id
             self._entity_mci = self.entity_session.get(self._entity_mc,
                                                        self.entity_id)
-
         else:
             self._entity_mci = entity_mci
 

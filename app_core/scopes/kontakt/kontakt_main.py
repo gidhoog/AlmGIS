@@ -181,6 +181,7 @@ class KontaktMain(DataView):
         entity_widget.purpose = 'add'
 
         self.edit_entity = mci
+        self.dataview_session.add(mci)
 
         self.editRow(entity_widget=entity_widget,
                      entity_mci=mci)

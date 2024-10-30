@@ -339,13 +339,9 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.setStatusComboData()
 
         """init bewirtschafter_combo"""
-        # self.setBewirtschafterCombo()
-
-        self.uiBewirtschafterCombo.loadComboData(self.entity_session,
-                                                 gemeinschaft=True)
+        self.uiBewirtschafterCombo.loadComboData(self.entity_session)
         self.uiBewirtschafterCombo.combo_widget_form = Kontakt
         self.uiBewirtschafterCombo.initCombo()
-
         """"""
 
         self.uiInfoBtnAlmBnr.initInfoButton(1001)

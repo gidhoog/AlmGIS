@@ -1086,8 +1086,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
             self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
             if widget_purpose == 'add':
-                pass
-                # self.updateInstanceNew()
+                # pass
+                self.updateInstanceNew()
 
             elif widget_purpose == 'edit':
 
@@ -1111,7 +1111,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
                     for inst in DataView.instance_list:
                         inst.view.model().sourceModel().layoutAboutToBeChanged.emit()
-                        inst.loadData()
+                        inst.loadData(inst.dataview_session)
                         inst.view.model().sourceModel().mci_list = inst._mci_list
                         inst.view.model().sourceModel().layoutChanged.emit()
 

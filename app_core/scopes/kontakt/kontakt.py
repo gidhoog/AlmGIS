@@ -291,6 +291,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
+        self.setupCodeUi()
 
         self._entity_mc = BKontakt
         # self.data_class = BKontakt
@@ -315,7 +316,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
 
         self.setTypeCombo()
 
-        self.uiVertreterCombo.loadComboData(self.entity_session)
+        self.uiVertreterCombo.loadComboData(self.entity_session, gruppe='e')
         self.uiVertreterCombo.combo_widget_form = KontaktEinzel
         self.uiVertreterCombo.initCombo()
 
@@ -516,6 +517,7 @@ class KontaktEinzel(Kontakt):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
+        self.setupCodeUi()
 
     def setupCodeUi(self):
         super().setupCodeUi()

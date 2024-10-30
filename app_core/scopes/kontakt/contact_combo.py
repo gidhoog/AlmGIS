@@ -1,5 +1,5 @@
 # from PyQt5.QtCore import QModelIndex, Qt
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.orm import joinedload
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
@@ -39,7 +39,13 @@ class ContactCombo(ExtendedCombo):
         self.combo_proxy_model.sort(0, Qt.AscendingOrder)
         """"""
 
-    def loadComboData(self, session=None, gemeinschaft=False):
+    def loadComboData(self, session=None, gruppe='a'):
+        """
+
+        :param session:
+        :param gruppe: a=alle; e=einzelpersonen; g=gemeinschaften
+        :return:
+        """
 
         if session is not None:
             self.combo_session = session
@@ -47,8 +53,17 @@ class ContactCombo(ExtendedCombo):
         # with db_session_cm(name='load contact-type in contact',
         #                    expire_on_commit=False) as session:
 
-        stmt = select(BKontakt).join(BKontakt.rel_type).where(
-            BKontaktTyp.gemeinschaft == gemeinschaft)
+        match gruppe:
+
+            case 'a':
+                stmt = select(BKontakt)
+            case 'e':
+                stmt = select(BKontakt).join(BKontakt.rel_type).where(
+                    BKontaktTyp.gemeinschaft == 0)
+            case 'g':
+                stmt = select(BKontakt).join(BKontakt.rel_type).where(
+                    or_((BKontaktTyp.gemeinschaft == 1), (BKontakt.blank_value == 1))
+                )
 
         self._mci_list = self.combo_session.scalars(stmt).unique().all()
 

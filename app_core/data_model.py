@@ -844,12 +844,15 @@ class BKontakt(Base):
 
         name = ''
 
-        if self.nachname != '':
-            name += self.nachname
+        try:
+            if self.nachname != '':
+                name += self.nachname
 
-        if self.vorname != '':
-            name += ' '
-            name += self.vorname
+            if self.vorname != '':
+                name += ' '
+                name += self.vorname
+        except:
+            pass
 
         return name
 

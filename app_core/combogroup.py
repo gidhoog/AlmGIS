@@ -393,6 +393,9 @@ class ActionAdd(ComboAction):
         new_mci = self.parent.combo_mc()
 
         contact_wdg = self.parent.combo_widget_form()
+        contact_wdg._commit_on_apply = False
+        contact_wdg.setEntitySession(self.parent.parent.parent().entity_session)
+        contact_wdg.entity_session.add(new_mci)
         contact_wdg.editEntity(entity_mci=new_mci)
 
         self.entity_dialog = EntityDialog(parent=self.parent)
