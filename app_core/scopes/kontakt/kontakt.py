@@ -9,6 +9,7 @@ from sqlalchemy.orm import joinedload
 
 from app_core import entity, db_session_cm
 from app_core.combogroup import ComboModel
+from app_core.entity import EntityDialog
 from app_core.scopes.kontakt import kontakt_UI
 
 from app_core.data_model import BKontakt, BKontaktTyp
@@ -574,7 +575,7 @@ class KontaktNewSelector(QWidget):
     """
 
     def __init__(self, parent=None):
-        super(KontaktNewSelector, self).__init__(parent)
+        super(KontaktNewSelector, self).__init__()
 
         self.parent = parent
 
@@ -594,3 +595,36 @@ class KontaktNewSelector(QWidget):
         self.setWindowTitle('neuer Kontakt')
         self.setWindowIcon(QIcon(QPixmap(1, 1)))
         # todo: besser wäre hier: sub->setWindowIcon( QIcon("your_transparent_icon") );
+
+        self.uiEinzelPbtn.clicked.connect(lambda: self.addKontakt('einzel'))
+        self.uiGemeinschaftPbtn.clicked.connect(lambda: self.addKontakt('gem'))
+
+    def addKontakt(self, type):
+
+        if type == 'einzel':
+            entity_widget = KontaktEinzel(self)
+        elif type == 'gem':
+            entity_widget = Kontakt(self)
+
+        entity_widget.initEntityWidget()
+
+        mci = BKontakt()
+
+        entity_widget.purpose = 'add'
+
+        self.edit_entity = mci
+        self.parent.entity_session.add(mci)
+
+        entity_widget.setEntitySession(self.parent.entity_session)
+        entity_widget.editEntity(entity_mci=mci)
+
+        entity_dialog = EntityDialog(parent=self.parent.uiBewirtschafterCombo)
+
+        """setze den entity_dialog im entity_widget"""
+        entity_widget.entity_dialog = entity_dialog
+        """"""
+
+        entity_dialog.insertWidget(entity_widget)
+        # entity_dialog.resize(self.minimumSizeHint())
+
+        entity_dialog.show()

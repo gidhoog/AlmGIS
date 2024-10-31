@@ -330,7 +330,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         :return:
         """
 
-        self.kt = KontaktNewSelector()
+        self.kt = KontaktNewSelector(self)
         self.kt.show()
 
     def loadBackgroundData(self):
