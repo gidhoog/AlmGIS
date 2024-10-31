@@ -16,6 +16,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 
 from app_core import data_view_UI, db_session_cm, color, DbSession
+from app_core.data_model import BKontakt
 # from app_core.entity import EntityDialog
 from app_core.footer_line import FooterLine
 from app_core.gis_layer import Feature
@@ -1532,14 +1533,23 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def delMci(self, mci):
 
-        try:
-            with db_session_cm(name='delete mci from data_view') as session:
-                session.delete(mci)
-        except IntegrityError:  # mci is used
-            print('...........................................cannot delete')
-            raise
+        with db_session_cm() as session:
+
+            stmt = select(BKontakt.vertreter_id)
+            vertreter_id_list = session.scalars(stmt).all()
+
+        if mci.id not in vertreter_id_list:
+
+            try:
+                self.dataview_session.delete(mci)
+                self.dataview_session.commit()
+            except:
+                raise
+            else:
+                self._mci_list.remove(mci)
+
         else:
-            self._mci_list.remove(mci)
+            print('kontakt wird verwendet')
 
     def delRow(self):
         """eigentliche methode zum löschen von zeilen der tabelle"""
