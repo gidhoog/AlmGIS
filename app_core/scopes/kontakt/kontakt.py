@@ -1,4 +1,5 @@
 # from PyQt5.QtCore import QRegExp, Qt
+from PyQt5.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtCore import QRegExp, Qt
 # from PyQt5.QtGui import QRegExpValidator
 from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
@@ -588,3 +589,8 @@ class KontaktNewSelector(QWidget):
         self.uiGemeinschaftPbtn = QPushButton(self)
         self.uiGemeinschaftPbtn.setText('Gemeinschaftskontakt')
         self.main_layout.addWidget(self.uiGemeinschaftPbtn)
+
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.setWindowTitle('neuer Kontakt')
+        self.setWindowIcon(QIcon(QPixmap(1, 1)))
+        # todo: besser wäre hier: sub->setWindowIcon( QIcon("your_transparent_icon") );
