@@ -1549,7 +1549,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 self._mci_list.remove(mci)
 
         else:
-            print('kontakt wird verwendet')
+            self.can_not_delete_msg(mci.name)
 
     def delRow(self):
         """eigentliche methode zum löschen von zeilen der tabelle"""
