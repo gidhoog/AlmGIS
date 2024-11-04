@@ -1111,22 +1111,29 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
                 elif self.edit_entity_by == 'id':
 
                     for inst in DataView.instance_list:
-                        inst.view.model().sourceModel().layoutAboutToBeChanged.emit()
-                        inst.loadData(inst.dataview_session)
-                        inst.view.model().sourceModel().mci_list = inst._mci_list
-                        inst.view.model().sourceModel().layoutChanged.emit()
+                        try:
+                            inst.view.model().sourceModel().layoutAboutToBeChanged.emit()
+                            inst.loadData(inst.dataview_session)
+                            inst.view.model().sourceModel().mci_list = inst._mci_list
+                            inst.view.model().sourceModel().layoutChanged.emit()
+                        except:
+                            print(f'cannot update data_view')
 
             elif widget_purpose == 'edit':
 
                 self.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
                 if self.edit_entity_by == 'id':
-                    self.dataview_session.refresh(edited_mci)
+                    # self.dataview_session.refresh(edited_mci)
+                    self.dataview_session.expire_all()
 
                 self.view.model().sourceModel().layoutChanged.emit()
 
                 for inst in DataView.instance_list:
-                    self.updateDataviewInstances(inst)
+                    try:
+                        self.updateDataviewInstances(inst)
+                    except RuntimeError:
+                        print(f'data_view for update already deleted!')
 
         self.updateFooter()
 
@@ -1533,12 +1540,13 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
     def delMci(self, mci):
 
-        with db_session_cm() as session:
-
-            stmt = select(BKontakt.vertreter_id)
-            vertreter_id_list = session.scalars(stmt).all()
-
-        if mci.id not in vertreter_id_list:
+        # with db_session_cm() as session:
+        #
+        #     stmt = select(BKontakt.vertreter_id)
+        #     vertreter_id_list = session.scalars(stmt).all()
+        #
+        # if mci.id not in vertreter_id_list:
+        if self.deleteCheck(mci):
 
             try:
                 self.dataview_session.delete(mci)

@@ -13,6 +13,7 @@ from app_core.entity import EntityDialog
 from app_core.scopes.kontakt import kontakt_UI
 
 from app_core.data_model import BKontakt, BKontaktTyp
+from app_core.tools import getMciState
 
 
 class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
@@ -571,7 +572,8 @@ class KontaktEinzel(Kontakt):
 class KontaktNewSelector(QWidget):
     """
     widget zum auswählen, ob ein neuer Einzelkontakt oder Gemeinschaftskontakt
-    angelegt werden soll
+    angelegt werden soll;
+    für das Akt-Formular
     """
 
     def __init__(self, parent=None):
@@ -611,9 +613,11 @@ class KontaktNewSelector(QWidget):
         mci = BKontakt()
 
         entity_widget.purpose = 'add'
+        entity_widget._commit_on_apply = False
 
         self.edit_entity = mci
         self.parent.entity_session.add(mci)
+
 
         entity_widget.setEntitySession(self.parent.entity_session)
         entity_widget.editEntity(entity_mci=mci)
@@ -627,4 +631,22 @@ class KontaktNewSelector(QWidget):
         entity_dialog.insertWidget(entity_widget)
         # entity_dialog.resize(self.minimumSizeHint())
 
-        entity_dialog.show()
+        akt_status_vor = getMciState(self.parent._entity_mci)
+        print(f'akt_status_vor: {akt_status_vor}')
+
+        # entity_dialog.show()
+        result = entity_dialog.exec()
+
+        if result:
+            self.parent.uiBewirtschafterCombo.combo_view.model().sourceModel().layoutAboutToBeChanged.emit()
+            self.parent.uiBewirtschafterCombo._mci_list.append(mci)
+            self.parent.uiBewirtschafterCombo.combo_view.model().sourceModel().layoutChanged.emit()
+
+        akt_status_nach = getMciState(self.parent._entity_mci)
+        print(f'akt_status_nach: {akt_status_nach}')
+
+        print('new kontakt added!')
+
+        self.parent.uiBewirtschafterCombo.setCurrentIndex(self.parent.uiBewirtschafterCombo.combo_view.model().sourceModel()._mci_list.index(mci))
+
+        self.close()

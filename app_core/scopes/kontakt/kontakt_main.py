@@ -12,7 +12,7 @@ from app_core.data_view import DataView, TableModel
 from app_core.entity import EntityDialog
 from app_core.main_widget import MainWidget
 
-from app_core.data_model import BKontakt, BKontaktTyp
+from app_core.data_model import BKontakt, BKontaktTyp, BAkt
 from app_core.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 
 
@@ -57,7 +57,8 @@ class KontaktModel(TableModel):
         'Vertreter',
         'Adresse',
         'Telefon',
-        'e-Mail'
+        'e-Mail',
+        'Verwendung'
     ]
 
     def data(self, index, role=None):
@@ -109,6 +110,20 @@ class KontaktModel(TableModel):
             if role == Qt.DisplayRole:
                 return self.mci_list[row].mail_all
 
+        if index.column() == 6:
+            if role == Qt.DisplayRole:
+                verwendung = []
+                if self.mci_list[row].rel_akt is not None:
+                    for a in self.mci_list[row].rel_akt:
+                        verwendung.append(f'Akt: {a.name}')
+                if self.mci_list[row].children is not None:
+                    for n in self.mci_list[row].children:
+                        verwendung.append(f'VertreterIn: {n.name}')
+
+                verwendung_text = ", ".join(str(v) for v in verwendung)
+
+                return verwendung_text
+
 
 class KontaktMain(DataView):
 
@@ -138,9 +153,10 @@ class KontaktMain(DataView):
             all_vertreter_ids_stmt = select(BKontakt.vertreter_id)
             all_vertreter_ids = session.scalars(all_vertreter_ids_stmt).all()
 
-            # bewirtschafter_ids_stmt = select(BAkt.bewirtschafter_id)
+            bewirtschafter_ids_stmt = select(BAkt.bewirtschafter_id)
+            bewirtschafter_ids = session.scalars(bewirtschafter_ids_stmt).all()
 
-        if mci.id in all_vertreter_ids:
+        if mci.id in all_vertreter_ids or mci.id in bewirtschafter_ids:
             return False
         else:
             return True
@@ -150,6 +166,16 @@ class KontaktMain(DataView):
 
         self.setStretchMethod(2)
 
+        self.uiDeleteDataTbtn.setVisible(False)
+
+        self.actionDelKontakt = QAction(self.uiToolsTbtn)
+        self.actionDelKontakt.setText('lösche Kontakt')
+        self.actionDelKontakt.setIcon(
+                QIcon(':/svg/resources/icons/minus_red.svg'))
+        self.uiToolsTbtn.addAction(self.actionDelKontakt)
+
+        """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
+        kontakt wählen zu können"""
         self.add_menu = QMenu(self)
 
         action_einzel = QAction(QIcon(":/svg/resources/icons/person.svg"),
@@ -160,12 +186,17 @@ class KontaktMain(DataView):
         action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
         action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
 
-
         self.add_menu.addAction(action_einzel)
         self.add_menu.addAction(action_gemeinschaft)
+        """"""
 
         self.uiAddDataTbtn.setMenu(self.add_menu)
         self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
+
+    def signals(self):
+        super().signals()
+
+        self.actionDelKontakt.triggered.connect(self.delRowMain)
 
     def addKontakt(self, type):
 

@@ -36,7 +36,8 @@ class BAkt(Base):
 
     # rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
     rel_bearbeitungsstatus: Mapped["BBearbeitungsstatus"] = relationship(lazy='joined')
-    rel_bewirtschafter: Mapped["BKontakt"] = relationship(lazy='joined')
+    rel_bewirtschafter: Mapped["BKontakt"] = relationship(lazy='joined',
+                                                          back_populates='rel_akt')
 
     # rel_gst_zuordnung = relationship(
     #     'BGstZuordnung',
@@ -768,8 +769,12 @@ class BKontakt(Base):
 
     rel_type = relationship('BKontaktTyp', lazy="joined")
 
+    # children = relationship("BKontakt", back_populates="rel_vertreter")
+    children: Mapped[List["BKontakt"]] = relationship(back_populates="rel_vertreter")
     rel_vertreter = relationship("BKontakt", lazy="joined", join_depth=1,
                              remote_side=[id])
+
+    rel_akt: Mapped[List["BAkt"]] = relationship(back_populates="rel_bewirtschafter")
 
     @hybrid_property
     def name(self):
