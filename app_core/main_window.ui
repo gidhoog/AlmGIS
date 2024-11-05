@@ -73,7 +73,7 @@
     <property name="title">
      <string>Grundstücke</string>
     </property>
-    <addaction name="uiAactionAllMatchGst"/>
+    <addaction name="actionAllGst"/>
    </widget>
    <widget class="QMenu" name="menuOptionen">
     <property name="title">
@@ -102,6 +102,7 @@
    </attribute>
    <addaction name="uiAkteAllAction"/>
    <addaction name="uiKontakteAllAction"/>
+   <addaction name="actionAllGst"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="uiAkteAllAction">
@@ -118,7 +119,7 @@
     <string>Verschnitt: Gst im AW-Buch und Komplexe</string>
    </property>
   </action>
-  <action name="uiAactionAllMatchGst">
+  <action name="actionAllGst">
    <property name="text">
     <string>Alle zugeordeten Grundstücke</string>
    </property>

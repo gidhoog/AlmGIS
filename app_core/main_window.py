@@ -17,7 +17,8 @@ from app_core.gis_tools import cut_koppel_gstversion
 # from core.data_model import BKomplex
 # from core.gis_tools import cut_koppel_gstversion
 from app_core.scopes.akte import akte_all_main
-from app_core.scopes.gst.gst_all_main import GstAllMain
+from app_core.scopes.gst import gst_all_main
+from app_core.scopes.gst.zzz_gst_all_main import GstAllMain
 from app_core.scopes.kontakt import kontakt_main
 from app_core.settings import SettingsDlg, SettingsWdg
 
@@ -53,8 +54,8 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             lambda: self._setMainWidget("kontakte_alle"))
 
         # alle zugeordneten gst:
-        self.uiAactionAllMatchGst.triggered.connect(
-            lambda: self._setMainWidget("gst_match_all"))
+        self.actionAllGst.triggered.connect(
+            lambda: self._setMainWidget("gst_all"))
 
         # Verschnitte:
         self.actionCutGstVersionKomplexe.triggered.connect(self.cutGstKoppel)
@@ -104,6 +105,11 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
             widget = kontakt_main.KontaktMainWidget(self,
                                                      self.main_session)
             widget_title = "Kontakte"
+
+        if scope == "gst_all":
+            widget = gst_all_main.GstAllMainWidget(self,
+                                                     self.main_session)
+            widget_title = "Grundstücke"
 
         # if scope == "gst_match_all":
         #     widget = GstAllMain(self)
