@@ -80,11 +80,24 @@ class GstTableModel(GisTableModel):
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
-        if index.column() == 3:
+        if role == Qt.BackgroundRole:
 
-            if role == Qt.DisplayRole:
+            if index.column() == 6:
 
-                return str(self.feature(index).attribute('kgnr'))
+                if self.feature(index).attribute('awb_id') == 0:  # nicht
+                    return QColor(234, 216, 54)
+                elif self.feature(index).attribute('awb_id') == 1:  # eingetragen
+                    return QColor(189, 239, 255)
+                elif self.feature(index).attribute('awb_id') == 2:  # gelöscht
+                    return QColor(234, 163, 165)
+                else:
+                    return QColor(255, 255, 255)
+
+        # if index.column() == 3:
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         return str(self.feature(index).attribute('kgnr'))
 
         if index.column() == 9:  # gis_area
 

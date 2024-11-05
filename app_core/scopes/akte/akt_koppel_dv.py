@@ -250,6 +250,7 @@ class KoppelAktDataView(DataView):
                     #                     '',
                     #                     gst_version.rel_alm_gst_ez.datenstand])
 
+                    # if str(koppel.geometry.__class__) == "<class 'geoalchemy2.elements.WKBElement'>":
                     geom_wkt = to_shape(koppel.geometry).wkt
                     geom_new = QgsGeometry()
                     geom = geom_new.fromWkt(geom_wkt)

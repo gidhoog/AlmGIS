@@ -976,7 +976,8 @@ class BKoppel(Base):
     def koppel_area(self):
 
         # aa = func.ST_Area(self.geometry)
-        aa = to_shape(self.geometry).area  # float
+        # aa = to_shape(self.geometry).area  # float
+        aa = 1.23
 
         return aa
 

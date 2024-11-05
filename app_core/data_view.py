@@ -1695,6 +1695,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         new_mci.nicht_weide = 0
         new_mci.rel_komplex = self.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('mci')[0].rel_komplex[0]
         new_mci.geometry = feature.geometry().asWkt()
+        # new_mci.geometry = feature.geometry()
 
         self.parent._entity_mci.rel_abgrenzung[1].rel_komplex[0].rel_koppel.append(new_mci)
 
@@ -1724,7 +1725,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         if result:
 
             entity_widget.acceptEntity()
-            self.updateMaintableNew('add', [entity_widget._entity_mci])
+            # self.updateMaintableNew('add', [entity_widget._entity_mci])
 
             return True
 

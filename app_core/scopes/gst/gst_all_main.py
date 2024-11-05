@@ -157,10 +157,6 @@ class GstAllTableModel(GisTableModel):
 
         if role == Qt.BackgroundRole:
 
-            if index.column() in [1, 2]:
-
-                return QColor(220, 220, 220)
-
             if index.column() == 8:
 
                 if self.feature(index).attribute('awb_id') == 0:  # nicht
