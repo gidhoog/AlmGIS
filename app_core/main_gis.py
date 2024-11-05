@@ -424,12 +424,15 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         """
         lade einen gis-layer mit einer layer_style instanz
         """
-        layer = getGisLayer(style_instance)
+        with db_session_cm(name='load_layer_by_style') as session:
+            session.add(style_instance)
 
-        if style_instance.qml_file:
-            setLayerStyle(layer, style_instance.qml_file)
+            layer = getGisLayer(style_instance)
 
-        self.addLayer(layer)
+            if style_instance.qml_file:
+                setLayerStyle(layer, style_instance.qml_file)
+
+            self.addLayer(layer)
 
     def setBackgroundComboData(self):
         """

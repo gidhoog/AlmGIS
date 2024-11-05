@@ -3,6 +3,8 @@ from pathlib import Path
 from qgis._core import QgsField, QgsFeature, QgsGeometry
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsRasterLayer
+
+from app_core import db_session_cm
 from app_core.config import alm_data_db_path
 from app_core.gis_item import GisItem
 from app_core.scopes.koppel.koppel_item import KoppelItem
