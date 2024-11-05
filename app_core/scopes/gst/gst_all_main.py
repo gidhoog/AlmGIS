@@ -82,8 +82,19 @@ class GstAllMainWidget(MainWidget):
 
         """setzte den 'scope_id'; damit die richtigen layer aus dem 
         daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
-        self.guiMainGis.scope_id = 1
+        # self.guiMainGis.scope_id = 1
         """"""
+
+        self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
+        """"""
+
+        """setzte die karte auf die ausdehnung des gst-layers"""
+        self.gst_table._gis_layer.updateExtents()
+        extent = self.gst_table._gis_layer.extent()
+        self.guiMainGis.uiCanvas.setExtent(extent)
+        """"""
+
+        self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
 
     def initMainWidget(self):
         super().initMainWidget()
@@ -91,6 +102,22 @@ class GstAllMainWidget(MainWidget):
         self.uiMainVLay.addWidget(self.gst_table)
         # self.kontakt_table.loadData()
         # self.kontakt_table.initDataView()
+
+    def changedGisDockLevel(self, level):
+        """
+        überwache den level des GisDock; zeige die schaltfläche 'uiUnfloatDock'
+        nur wenn es losgelöst ist
+        """
+        if level:
+            self.uiGisDock.setWindowFlags(Qt.CustomizeWindowHint |
+                                          Qt.Window |
+                                          Qt.WindowMinimizeButtonHint |
+                                          Qt.WindowMaximizeButtonHint |
+                                          Qt.WindowCloseButtonHint)
+            self.uiGisDock.widget().uiUnfoatDock.setVisible(True)
+            self.uiGisDock.show()
+        else:
+            self.uiGisDock.widget().uiUnfoatDock.setVisible(False)
 
 
 class GstZuordnungMainDialog(MainDialog):
@@ -120,13 +147,30 @@ class GstAllTableModel(GisTableModel):
 
         if role == Qt.TextAlignmentRole:
 
-            if index.column() in [2, 5]:
+            if index.column() in [5]:
 
                 return Qt.AlignRight | Qt.AlignVCenter
 
             if index.column() in [3, 4]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if role == Qt.BackgroundRole:
+
+            if index.column() in [1, 2]:
+
+                return QColor(220, 220, 220)
+
+            if index.column() == 8:
+
+                if self.feature(index).attribute('awb_id') == 0:  # nicht
+                    return QColor(234, 216, 54)
+                elif self.feature(index).attribute('awb_id') == 1:  # eingetragen
+                    return QColor(189, 239, 255)
+                elif self.feature(index).attribute('awb_id') == 2:  # gelöscht
+                    return QColor(234, 163, 165)
+                else:
+                    return QColor(255, 255, 255)
 
         # if index.column() == 3:
         #
@@ -763,15 +807,17 @@ class GstAllDataView(DataView):
                               factor=0.0001, decimal=4)
 
         """setzt bestimmte spaltenbreiten"""
-        self.view.setColumnWidth(1, 55)
-        self.view.setColumnWidth(2, 45)
+        self.view.setColumnWidth(1, 20)
+        self.view.setColumnWidth(2, 130)
         self.view.setColumnWidth(3, 50)
-        self.view.setColumnWidth(4, 120)
+        self.view.setColumnWidth(4, 20)
+        self.view.setColumnWidth(5, 40)
         self.view.setColumnWidth(6, 100)
-        self.view.setColumnWidth(8, 120)
-        self.view.setColumnWidth(9, 75)
-        self.view.setColumnWidth(10, 75)
+        self.view.setColumnWidth(8, 80)
+        self.view.setColumnWidth(10, 85)
         self.view.setColumnWidth(11, 75)
+        self.view.setColumnWidth(12, 75)
+        self.view.setColumnWidth(13, 75)
         """"""
 
         """passe die Zeilenhöhen an den Inhalt an"""
