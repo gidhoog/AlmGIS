@@ -294,7 +294,6 @@ class AkteAllMain(DataView):
         self.setStretchMethod(2)
 
         self.uiAddDataTbtn.setVisible(False)
-        self.uiDeleteDataTbtn.setVisible(False)
 
     def getMciList(self, session):
 

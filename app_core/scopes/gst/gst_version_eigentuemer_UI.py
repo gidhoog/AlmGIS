@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'core/scopes/gst/gst_version_eigentuemer.ui'
+# Form implementation generated from reading ui file 'app_core/scopes/gst/gst_version_eigentuemer.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #

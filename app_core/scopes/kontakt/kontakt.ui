@@ -534,7 +534,7 @@
   <customwidget>
    <class>ContactCombo</class>
    <extends>QComboBox</extends>
-   <header>core.scopes.kontakt.contact_combo</header>
+   <header>app_core.scopes.kontakt.contact_combo</header>
   </customwidget>
  </customwidgets>
  <tabstops>

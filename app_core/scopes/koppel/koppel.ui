@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>597</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -416,7 +416,7 @@
   <customwidget>
    <class>InfoButton</class>
    <extends>QWidget</extends>
-   <header>core/info_button</header>
+   <header>app_core/info_button</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'core/scopes/gst/gst_zuordnung_dataform.ui'
+# Form implementation generated from reading ui file 'app_core/scopes/gst/gst_zuordnung_dataform.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GstZuordnungDataForm(object):
     def setupUi(self, GstZuordnungDataForm):
         GstZuordnungDataForm.setObjectName("GstZuordnungDataForm")
-        GstZuordnungDataForm.resize(450, 517)
+        GstZuordnungDataForm.resize(450, 521)
         self.centralwidget = QtWidgets.QWidget(GstZuordnungDataForm)
         self.centralwidget.setMinimumSize(QtCore.QSize(450, 0))
         self.centralwidget.setObjectName("centralwidget")

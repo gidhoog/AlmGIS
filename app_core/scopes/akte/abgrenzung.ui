@@ -439,7 +439,7 @@
   <customwidget>
    <class>InfoButton</class>
    <extends>QWidget</extends>
-   <header>core/info_button</header>
+   <header>app_core/info_button</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

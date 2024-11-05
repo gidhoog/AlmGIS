@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'core/scopes/koppel/koppel.ui'
+# Form implementation generated from reading ui file 'app_core/scopes/koppel/koppel.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Koppel(object):
     def setupUi(self, Koppel):
         Koppel.setObjectName("Koppel")
-        Koppel.resize(800, 600)
+        Koppel.resize(800, 597)
         self.centralwidget = QtWidgets.QWidget(Koppel)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)

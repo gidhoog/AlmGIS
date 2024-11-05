@@ -49,7 +49,6 @@ class GstAllMain(DataView, MainWidget):
 
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
-        self.uiDeleteDataTbtn.setVisible(False)
 
     def signals(self):
         super().signals()

@@ -1104,7 +1104,6 @@ class GstTable(DataView):
 
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
-        self.uiDeleteDataTbtn.setVisible(False)
 
         self.uiSeparator01.setVisible(False)
         self.uiSeparator03.setVisible(False)
@@ -1459,7 +1458,6 @@ class GstPreSelTable(DataView):
 
         self.uiAddDataTbtn.setVisible(False)
         self.uiEditDataTbtn.setVisible(False)
-        self.uiDeleteDataTbtn.setVisible(False)
         self.uiToolsTbtn.setVisible(False)
 
         self.uiSeparator01.setVisible(False)

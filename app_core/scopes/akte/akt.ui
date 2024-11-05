@@ -1270,13 +1270,13 @@
   <customwidget>
    <class>InfoButton</class>
    <extends>QWidget</extends>
-   <header>core/info_button</header>
+   <header>app_core/info_button</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ContactCombo</class>
    <extends>QComboBox</extends>
-   <header>core.scopes.kontakt.contact_combo</header>
+   <header>app_core.scopes.kontakt.contact_combo</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -1,6 +1,6 @@
 # from PyQt5.QtCore import Qt
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import (QLabel, QComboBox,
+from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
                                  QMenu, QAction, QToolButton)
 from qgis.PyQt.QtGui import QIcon
@@ -88,6 +88,8 @@ class KontaktModel(TableModel):
         if index.column() == 1:
             if role == Qt.DisplayRole:
                 return self.mci_list[row].name
+            if role == Qt.EditRole:
+                return self.mci_list[row].name
 
         if index.column() == 2:
             if role == Qt.DisplayRole:
@@ -166,14 +168,6 @@ class KontaktMain(DataView):
 
         self.setStretchMethod(2)
 
-        self.uiDeleteDataTbtn.setVisible(False)
-
-        self.actionDelKontakt = QAction(self.uiToolsTbtn)
-        self.actionDelKontakt.setText('lösche Kontakt')
-        self.actionDelKontakt.setIcon(
-                QIcon(':/svg/resources/icons/minus_red.svg'))
-        self.uiToolsTbtn.addAction(self.actionDelKontakt)
-
         """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
         kontakt wählen zu können"""
         self.add_menu = QMenu(self)
@@ -192,11 +186,6 @@ class KontaktMain(DataView):
 
         self.uiAddDataTbtn.setMenu(self.add_menu)
         self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
-
-    def signals(self):
-        super().signals()
-
-        self.actionDelKontakt.triggered.connect(self.delRowMain)
 
     def addKontakt(self, type):
 
@@ -237,7 +226,6 @@ class KontaktMain(DataView):
         filter_lay = QHBoxLayout(self)
 
         """filter typen"""
-
         self.filter_type_lbl = QLabel(self)
         self.filter_type_lbl.setText('Typ:')
         kontakt_type_lbl_font = self.filter_type_lbl.font()
@@ -268,35 +256,36 @@ class KontaktMain(DataView):
             self.applyFilter)
         """"""
 
-        # """filter name"""
-        # # filter_name = FilterElement(self)
-        # # filter_name.uiLabelLbl.setText('Name:')
-        # self.filter_name_lbl = QLabel(self)
-        #
-        # name_lbl_font = self.filter_name_lbl.font()
-        # name_lbl_font.setFamily(config.font_family)
-        # self.filter_name_lbl.setFont(name_lbl_font)
-        #
-        # self.filter_name_lbl.setText('Name:')
-        # self.filter_name_lbl.setVisible(False)
-        #
-        # self.filter_name_input_wdg = QLineEdit(self)
-        #
-        # name_input_wdg_font = self.filter_name_input_wdg.font()
-        # name_input_wdg_font.setPointSize(11)
-        # name_input_wdg_font.setFamily(config.font_family)
-        # self.filter_name_input_wdg.setFont(name_input_wdg_font)
-        #
-        # self.filter_name_input_wdg.setPlaceholderText('Name')
-        # self.filter_name_input_wdg.setClearButtonEnabled(True)
-        # self.filter_name_input_wdg.setMaximumWidth(200)
-        # # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-        #
+        """filter name"""
+        # filter_name = FilterElement(self)
+        # filter_name.uiLabelLbl.setText('Name:')
+        self.filter_name_lbl = QLabel(self)
+
+        name_lbl_font = self.filter_name_lbl.font()
+        name_lbl_font.setFamily(config.font_family)
+        self.filter_name_lbl.setFont(name_lbl_font)
+
+        self.filter_name_lbl.setText('Name:')
+        self.filter_name_lbl.setVisible(False)
+
+        self.filter_name_input_wdg = QLineEdit(self)
+
+        name_input_wdg_font = self.filter_name_input_wdg.font()
+        name_input_wdg_font.setPointSize(11)
+        name_input_wdg_font.setFamily(config.font_family)
+        self.filter_name_input_wdg.setFont(name_input_wdg_font)
+
+        self.filter_name_input_wdg.setPlaceholderText('Name')
+        self.filter_name_input_wdg.setClearButtonEnabled(True)
+        self.filter_name_input_wdg.setMaximumWidth(200)
+        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+
         # self.filter_name_input_wdg.textChanged.connect(self.useFilter)
-        #
-        # # filter_lay.addWidget(filter_name)
-        # """"""
-        #
+        self.filter_name_input_wdg.textChanged.connect(self.applyFilter)
+
+        # filter_lay.addWidget(filter_name)
+        """"""
+
         # """filter adresse"""
         # # filter_az = FilterElement(self)
         # # filter_az.uiLabelLbl.setText('AZ:')
@@ -328,8 +317,8 @@ class KontaktMain(DataView):
 
         filter_lay.addWidget(self.filter_type_lbl)
         filter_lay.addWidget(self.filter_type_input_wdg)
-        # filter_lay.addWidget(self.filter_name_lbl)
-        # filter_lay.addWidget(self.filter_name_input_wdg)
+        filter_lay.addWidget(self.filter_name_lbl)
+        filter_lay.addWidget(self.filter_name_input_wdg)
         # filter_lay.addWidget(self.filter_adr_lbl)
         # filter_lay.addWidget(self.filter_adr_input_wdg)
 
@@ -347,17 +336,22 @@ class KontaktMain(DataView):
         else:
             self.filter_type_lbl.setVisible(True)
 
+        if self.filter_name_input_wdg.text() != '':
+            self.filter_name_lbl.setVisible(True)
+        else:
+            self.filter_name_lbl.setVisible(False)
+
         super().applyFilter()
 
     def useFilter(self):
 
         name_text = self.filter_name_input_wdg.text()
-        adr_text = self.filter_adr_input_wdg.text()
-        kontakt_type_id = self.filter_type_input_wdg.currentData(Qt.UserRole)
+        # adr_text = self.filter_adr_input_wdg.text()
+        # kontakt_type_id = self.filter_type_input_wdg.currentData(Qt.UserRole)
 
         name_expr = f"lower(\"name\") LIKE '%{name_text}%'"
-        adr_expr = f"lower(\"adresse\") LIKE '%{adr_text}%'"
-        kontakt_type_expr = f"(\"typ_id\") = {kontakt_type_id}"
+        # adr_expr = f"lower(\"adresse\") LIKE '%{adr_text}%'"
+        # kontakt_type_expr = f"(\"typ_id\") = {kontakt_type_id}"
 
         expr_list = []
 
@@ -367,17 +361,17 @@ class KontaktMain(DataView):
         else:
             self.filter_name_lbl.setVisible(False)
 
-        if adr_text != '':
-            self.filter_adr_lbl.setVisible(True)
-            expr_list.append(adr_expr)
-        else:
-            self.filter_adr_lbl.setVisible(False)
-
-        if kontakt_type_id != -1:
-            self.filter_type_lbl.setVisible(True)
-            expr_list.append(kontakt_type_expr)
-        else:
-            self.filter_type_lbl.setVisible(False)
+        # if adr_text != '':
+        #     self.filter_adr_lbl.setVisible(True)
+        #     expr_list.append(adr_expr)
+        # else:
+        #     self.filter_adr_lbl.setVisible(False)
+        #
+        # if kontakt_type_id != -1:
+        #     self.filter_type_lbl.setVisible(True)
+        #     expr_list.append(kontakt_type_expr)
+        # else:
+        #     self.filter_type_lbl.setVisible(False)
 
         if expr_list == []:
             self._gis_layer.setSubsetString('')
@@ -399,11 +393,19 @@ class KontaktMain(DataView):
         contact_type = self.filter_proxy.sourceModel() \
             .data(self.filter_proxy.sourceModel().index(source_row, 0),
                   Qt.EditRole)
-        # if self.filter_type_input_wdg.currentText() != "--- alle Typen ---":
         if self.filter_type_input_wdg.currentData(Qt.UserRole) != -1:
-            # return False
             if contact_type != self.filter_type_input_wdg.currentData(Qt.UserRole):
                 return False
+        """"""
+
+        """filter name"""
+        name = self.filter_proxy.sourceModel() \
+            .data(self.filter_proxy.sourceModel().index(source_row, 1),
+                  Qt.EditRole)
+        if self.filter_name_input_wdg.text() != '':
+            if name != '' and name is not None:
+                if self.filter_name_input_wdg.text().lower() not in name.lower():
+                    return False
         """"""
 
     def getDeleteInfo(self, index=None):

@@ -649,7 +649,7 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
     def signals(self):
 
         # self.uiEditDataTbtn.clicked.connect(self.clickedEditRow)
-        self.uiDeleteDataTbtn.clicked.connect(self.delRowMain)
+        self.actionDeleteRow.triggered.connect(self.delRowMain)
         self.uiAddDataTbtn.clicked.connect(self.add_row)
 
         self.view.doubleClicked.connect(self.doubleClickedRow)
@@ -829,6 +829,14 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         self.uiActionExportCsv = QAction(self.uiToolsTbtn)
         self.uiActionExportCsv.setText('exportiere csv-Datei')
         self.uiToolsTbtn.addAction(self.uiActionExportCsv)
+
+        """aktion zum entfernen einer Zeile"""
+        self.actionDeleteRow = QAction(self.uiToolsTbtn)
+        self.actionDeleteRow.setText('lösche Zeile')
+        self.actionDeleteRow.setIcon(
+                QIcon(':/svg/resources/icons/minus_red.svg'))
+        self.uiToolsTbtn.addAction(self.actionDeleteRow)
+        """"""
 
         """definiere für eine alternative zeilen farbe"""
         data_view_palette = self.view.palette()

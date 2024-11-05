@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'core/main_widget.ui'
+# Form implementation generated from reading ui file 'app_core/main_widget.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
