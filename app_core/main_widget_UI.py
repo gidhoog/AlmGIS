@@ -14,10 +14,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWidget(object):
     def setupUi(self, MainWidget):
         MainWidget.setObjectName("MainWidget")
-        MainWidget.resize(400, 300)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(MainWidget)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.uiTitleLbl = QtWidgets.QLabel(MainWidget)
+        MainWidget.resize(661, 386)
+        self.centralwidget = QtWidgets.QWidget(MainWidget)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.uiTitleLbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -31,20 +33,21 @@ class Ui_MainWidget(object):
         self.uiTitleLbl.setFont(font)
         self.uiTitleLbl.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.uiTitleLbl.setObjectName("uiTitleLbl")
-        self.verticalLayout_2.addWidget(self.uiTitleLbl)
-        self.line = QtWidgets.QFrame(MainWidget)
+        self.verticalLayout.addWidget(self.uiTitleLbl)
+        self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
-        self.verticalLayout_2.addWidget(self.line)
+        self.verticalLayout.addWidget(self.line)
         self.uiMainVLay = QtWidgets.QVBoxLayout()
         self.uiMainVLay.setObjectName("uiMainVLay")
-        self.verticalLayout_2.addLayout(self.uiMainVLay)
+        self.verticalLayout.addLayout(self.uiMainVLay)
+        MainWidget.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWidget)
         QtCore.QMetaObject.connectSlotsByName(MainWidget)
 
     def retranslateUi(self, MainWidget):
         _translate = QtCore.QCoreApplication.translate
-        MainWidget.setWindowTitle(_translate("MainWidget", "Form"))
+        MainWidget.setWindowTitle(_translate("MainWidget", "MainWindow"))
         self.uiTitleLbl.setText(_translate("MainWidget", "TextLabel"))

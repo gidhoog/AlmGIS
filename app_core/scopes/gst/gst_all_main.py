@@ -1,6 +1,6 @@
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog,
+from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
                                  QAbstractItemView, QSpacerItem, QLineEdit,
                                  QLabel, QHBoxLayout, QSizePolicy)
 
@@ -29,6 +29,7 @@ import typing
 
 from operator import attrgetter
 
+from app_core.main_gis import MainGis
 from app_core.main_widget import MainWidget
 from app_core.scopes.gst.gst_zuordnung import GstZuordnung
 from app_core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
@@ -46,6 +47,17 @@ class GstDialog(EntityDialog):
         self.dialog_window_title = 'Grundstückszuordnung'
 
 
+class GstGisDock(QDockWidget):
+    """
+    baseclass für das GisDock in der klasse 'Akt'
+    """
+
+    def __init__(self, parent):
+        super(__class__, self).__init__(parent)
+
+        self.setWindowTitle('Kartenansicht')
+
+
 class GstAllMainWidget(MainWidget):
 
     def __init__(self, parent=None, session=None):
@@ -53,13 +65,25 @@ class GstAllMainWidget(MainWidget):
 
         self.uiTitleLbl.setText('zugeordnete Gst')
 
-        self.gst_table = GstAllDataView(self)
+        self.gst_table = GstAllDataView(self, gis_mode=True)
 
         # with db_session_cm(name='main-widget - kontakt',
         #                    expire_on_commit=False) as session:
 
         self.gst_table.setDataviewSession(session)
         self.gst_table.initDataView()
+
+        """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
+        self.uiGisDock = GstGisDock(self)
+        self.guiMainGis = MainGis(self.uiGisDock, self)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
+        self.uiGisDock.setWidget(self.guiMainGis)
+        """"""
+
+        """setzte den 'scope_id'; damit die richtigen layer aus dem 
+        daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
+        self.guiMainGis.scope_id = 1
+        """"""
 
     def initMainWidget(self):
         super().initMainWidget()
@@ -83,10 +107,10 @@ class GstZuordnungMainDialog(MainDialog):
         self.set_reject_button_text('&Schließen')
 
 
-class GstTableModel(GisTableModel):
+class GstAllTableModel(GisTableModel):
 
     def __init__(self, layerCache, parent=None):
-        super(GisTableModel, self).__init__(layerCache, parent)
+        super(GstAllTableModel, self).__init__(layerCache, parent)
 
     def data(self, index: QModelIndex, role: int = ...):
 
@@ -96,21 +120,21 @@ class GstTableModel(GisTableModel):
 
         if role == Qt.TextAlignmentRole:
 
-            if index.column() in [3]:
+            if index.column() in [2, 5]:
 
                 return Qt.AlignRight | Qt.AlignVCenter
 
-            if index.column() in [1, 2]:
+            if index.column() in [3, 4]:
 
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
-        if index.column() == 3:
+        # if index.column() == 3:
+        #
+        #     if role == Qt.DisplayRole:
+        #
+        #         return str(self.feature(index).attribute('kgnr'))
 
-            if role == Qt.DisplayRole:
-
-                return str(self.feature(index).attribute('kgnr'))
-
-        if index.column() == 9:  # gis_area
+        if index.column() == 11:  # gis_area
 
             if role == Qt.DisplayRole:
 
@@ -119,7 +143,7 @@ class GstTableModel(GisTableModel):
                                          ).replace(".", ",")
                 return area_r + ' ha'
 
-        if index.column() == 10:  # gb_area
+        if index.column() == 12:  # gb_area
 
             if role == Qt.DisplayRole:
 
@@ -128,7 +152,7 @@ class GstTableModel(GisTableModel):
                                          ).replace(".", ",")
                 return area_r + ' ha'
 
-        if index.column() == 11:  # bew_area
+        if index.column() == 13:  # bew_area
 
             if role == Qt.DisplayRole:
                 area = self.feature(index).attribute('bew_area')
@@ -163,7 +187,10 @@ class GstAllDataView(DataView):
         self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BGstZuordnung
-        self._model_gis_class = GstTableModel
+        self._model_gis_class = GstAllTableModel
+
+        # _model_gis_class = GisTableModel
+        # _view_gis_class = GisTableView
 
         # self._commit_entity = False
         # self.edit_entity_by = 'mci'
@@ -273,6 +300,12 @@ class GstAllDataView(DataView):
 
         gst_version_id_fld = QgsField("id", QVariant.Int)
 
+        az_fld = QgsField("az", QVariant.Int)
+        az_fld.setAlias('AZ')
+
+        akt_name_fld = QgsField("akt_name", QVariant.String)
+        akt_name_fld.setAlias('Aktname')
+
         gst_fld = QgsField("gst", QVariant.String)
         gst_fld.setAlias('Gst')
 
@@ -310,6 +343,8 @@ class GstAllDataView(DataView):
         mci_fld = QgsField("mci", QVariant.List)
 
         self.feature_fields.append(gst_version_id_fld)
+        self.feature_fields.append(az_fld)
+        self.feature_fields.append(akt_name_fld)
         self.feature_fields.append(gst_fld)
         self.feature_fields.append(ez_fld)
         self.feature_fields.append(kgnr_fld)
@@ -346,6 +381,8 @@ class GstAllDataView(DataView):
         """"""
 
         feature['id'] = mci.id
+        feature['az'] = mci.rel_akt.az
+        feature['akt_name'] = mci.rel_akt.name
         feature['gst'] = mci.rel_gst.gst
         feature['ez'] = last_gst.rel_alm_gst_ez.ez
         feature['kgnr'] = mci.rel_gst.kgnr
@@ -381,19 +418,21 @@ class GstAllDataView(DataView):
         """"""
 
         attrib = {0: mci.id,
-                  1: mci.rel_gst.gst,
-                  2: last_gst.rel_alm_gst_ez.ez,
-                  3: mci.rel_gst.kgnr,
-                  4: mci.rel_gst.rel_kat_gem.kgname,
-                  5: mci.awb_status_id,
-                  6: mci.rel_awb_status.name,
-                  7: mci.rechtsgrundlage_id,
-                  8: mci.rel_rechtsgrundlage.name,
-                  9: last_gst.gst_gis_area,
-                  10: gb_area,
-                  11: sum_cut,
-                  12: last_gst.rel_alm_gst_ez.datenstand,
-                  13: [mci]
+                  1: mci.rel_akt.az,
+                  2: mci.rel_akt.name,
+                  3: mci.rel_gst.gst,
+                  4: last_gst.rel_alm_gst_ez.ez,
+                  5: mci.rel_gst.kgnr,
+                  6: mci.rel_gst.rel_kat_gem.kgname,
+                  7: mci.awb_status_id,
+                  8: mci.rel_awb_status.name,
+                  9: mci.rechtsgrundlage_id,
+                  10: mci.rel_rechtsgrundlage.name,
+                  11: last_gst.gst_gis_area,
+                  12: gb_area,
+                  13: sum_cut,
+                  14: last_gst.rel_alm_gst_ez.datenstand,
+                  15: [mci]
                   }
 
         self._gis_layer.changeAttributeValues(feature.id(),
@@ -703,25 +742,25 @@ class GstAllDataView(DataView):
         self.setStretchMethod(2)
 
         self.view.setColumnHidden(0, True)
-        self.view.setColumnHidden(5, True)
         self.view.setColumnHidden(7, True)
-        self.view.setColumnHidden(13, True)
+        self.view.setColumnHidden(9, True)
+        self.view.setColumnHidden(15, True)
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
-        # self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
-        #                       'ha', 'gb_area', value_width=120,
-        #                       factor=0.0001, decimal=4, filter_col='awb_id',
-        #                       filter_operator='==', filter_criterion=1)
-        # self.insertFooterLine('davon beweidet (GIS)',
-        #                       'ha', 'bew_area', value_width=120,
-        #                       factor=0.0001, decimal=4)
-        # self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
-        #                       'ha', 'gis_area', value_width=120,
-        #                       factor=0.0001, decimal=4)
-        # self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GB):',
-        #                       'ha', 'gb_area', value_width=120,
-        #                       factor=0.0001, decimal=4)
+        self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
+                              'ha', 'gb_area', value_width=120,
+                              factor=0.0001, decimal=4, filter_col='awb_id',
+                              filter_operator='==', filter_criterion=1)
+        self.insertFooterLine('davon beweidet (GIS)',
+                              'ha', 'bew_area', value_width=120,
+                              factor=0.0001, decimal=4)
+        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
+                              'ha', 'gis_area', value_width=120,
+                              factor=0.0001, decimal=4)
+        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GB):',
+                              'ha', 'gb_area', value_width=120,
+                              factor=0.0001, decimal=4)
 
         """setzt bestimmte spaltenbreiten"""
         self.view.setColumnWidth(1, 55)

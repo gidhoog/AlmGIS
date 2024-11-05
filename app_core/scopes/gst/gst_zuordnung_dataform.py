@@ -3,7 +3,8 @@ from qgis.PyQt.QtGui import QStandardItemModel
 from sqlalchemy import select
 
 from app_core import entity
-from app_core.data_model import BGstAwbStatus, BRechtsgrundlage, BKatGem
+from app_core.data_model import BGstAwbStatus, BRechtsgrundlage, BKatGem, \
+    BGstZuordnung
 from app_core.scopes.gst import gst_zuordnung_dataform_UI
 
 
@@ -225,6 +226,8 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
+
+        self._entity_mc = BGstZuordnung
 
     def addGstInfo(self):
 
