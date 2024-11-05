@@ -120,6 +120,10 @@
    </property>
   </action>
   <action name="actionAllGst">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/svg/resources/icons/gst_all.svg</normaloff>:/svg/resources/icons/gst_all.svg</iconset>
+   </property>
    <property name="text">
     <string>Alle zugeordeten Grundstücke</string>
    </property>
