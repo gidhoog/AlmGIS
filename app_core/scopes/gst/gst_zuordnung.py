@@ -1143,11 +1143,12 @@ class GstTable(DataView):
         self.setStretchMethod(2)
 
         self.view.setColumnHidden(0, True)
+        self.view.setColumnHidden(9, True)
 
         """setzt bestimmte spaltenbreiten"""
         self.view.setColumnWidth(1, 60)
         self.view.setColumnWidth(2, 50)
-        self.view.setColumnWidth(3, 60)
+        self.view.setColumnWidth(3, 50)
         self.view.setColumnWidth(4, 150)
         self.view.setColumnWidth(5, 80)
         self.view.setColumnWidth(6, 100)

@@ -63,6 +63,8 @@ class GstAllMainWidget(MainWidget):
     def __init__(self, parent=None, session=None):
         super().__init__(parent, session)
 
+        self.mainwidget_session = session
+
         self.uiTitleLbl.setText('zugeordnete Gst')
 
         self.gst_table = GstAllDataView(self, gis_mode=True)
@@ -76,6 +78,7 @@ class GstAllMainWidget(MainWidget):
         """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
         self.uiGisDock = GstGisDock(self)
         self.guiMainGis = MainGis(self.uiGisDock, self)
+        self.guiMainGis.setMaingisSession(self.mainwidget_session)
         self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
         self.uiGisDock.setWidget(self.guiMainGis)
         """"""

@@ -334,7 +334,6 @@ class KoppelAktDataView(DataView):
         feature['koppel_name'] = mci.name
         feature['nicht_weide'] = mci.nicht_weide
         feature['koppel_area'] = mci.koppel_area
-        # feature['koppel_area'] = 1.23
         feature['mci'] = [mci]
 
     # def updateFeatureAttributes(self, *args):
@@ -480,6 +479,7 @@ class KoppelAktDataView(DataView):
         self.view.setColumnHidden(2, True)
         self.view.setColumnHidden(3, True)
         self.view.setColumnHidden(6, True)
+        self.view.setColumnHidden(11, True)
 
         self.view.sortByColumn(7, Qt.AscendingOrder)
 

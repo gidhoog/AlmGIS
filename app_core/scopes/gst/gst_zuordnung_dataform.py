@@ -6,6 +6,7 @@ from app_core import entity
 from app_core.data_model import BGstAwbStatus, BRechtsgrundlage, BKatGem, \
     BGstZuordnung
 from app_core.scopes.gst import gst_zuordnung_dataform_UI
+from app_core.scopes.gst.gst import Gst
 
 
 class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
@@ -254,6 +255,13 @@ class GstZuordnungDataForm(gst_zuordnung_dataform_UI.Ui_GstZuordnungDataForm,
         self.gb_wrong = self._entity_mci.gb_wrong
         self.awb_wrong = self._entity_mci.awb_wrong
         self.last_edit = self._entity_mci.user_edit
+
+        self.gst_info = Gst(self)
+        self.gst_info.initEntityWidget()
+
+        self.gst_info.editEntity(self._entity_mci.rel_gst, None)
+        self.gst_info.loadSubWidgets()
+        self.addGstInfo()
 
     def submitEntity(self):
         super().submitEntity()
