@@ -1192,52 +1192,6 @@ class DigiTool(QgsMapToolDigitizeFeature):
         wenn fertig digitalisiert ist, dann gebe die attribute ein
         """
 
-        # self.parent.current_layer.data_view.addEntityFeature(feature)
-
-        # """hole die modul und widget-class"""
-        # # form_module = __import__(self.parent.current_layer.dataform_modul,
-        # #                          fromlist=[self.parent.current_layer.dataform_class])
-        # # form_wid = getattr(form_module, self.parent.current_layer.dataform_class)
-        #
-        # form_wid = self.parent.current_layer.data_view.entity_widget_class
-        # self.entity_wdg = form_wid(parent=self.parent.current_layer.data_view)
-        # """"""
-        # self.entity_wdg.addEntityFeature(feature)
-
-        # new_mci = self.parent.current_layer.data_view._entity_mc()
-
-        # self.entity_wdg._entity_mci = new_mci
-
-        # self.parent.parent.parent().entity_session.add(new_mci)
-
-        # """erzeuge einen dialog, füge das attribut-widget ein und zeige den dialog"""
-        # # self.att_dialog = FeatureAttributeDialog(self.parent)
-        # self.att_dialog = self.parent.current_layer.data_view.entity_dialog_class(
-        #     self.parent.current_layer.data_view)
-        # self.att_dialog.insertWidget(self.entity_wdg)
-        # result = self.att_dialog.exec()
-        # """"""
-
-        """wenn der attribut-dialog mit 'accept' geschlossen wird, dann werden
-        das feature und die attribute gespeichert und die darstellung aktualisiert"""
-        # if result:
-        #     # attr_list = self.entity_wdg.feature_attribute_list()
-        #     # attr_list.insert(0, self.parent.parent.parent().entity_id)
-        #     # attr_list.insert(0, None)
-        #
-        #     self.entity_wdg.acceptEntity()
-        #     # feature.setAttributes(attr_list)
-        #     feature.setAttributes([None,
-        #                            None,
-        #                            None,
-        #                            None,
-        #                            None,
-        #                            None,
-        #                            None,
-        #                            66666,
-        #                            666,
-        #                            '666'
-        #                            ])
         if self.parent.current_layer.data_view.addEntityFeature(feature):
 
             self.layer_name.addFeature(feature)

@@ -226,10 +226,10 @@ class Koppel(koppel_UI.Ui_Koppel, Entity):
         # self.komplex_name_id = self._entity_mci.rel_komplex.komplex_name_id
         self.komplex_mci = self._entity_mci.rel_komplex
 
-        # self.uiAreaLbl.setText(
-        #     '{:.4f}'.format(
-        #         round(float(self._entity_mci.koppel_area) / 10000, 4))
-        #     .replace(".", ",") + ' ha')
+        self.uiAreaLbl.setText(
+            '{:.4f}'.format(
+                round(float(self._entity_mci.koppel_area) / 10000, 4))
+            .replace(".", ",") + ' ha')
 
     def loadBackgroundData(self):
         super().loadBackgroundData()

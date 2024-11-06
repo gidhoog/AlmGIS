@@ -1,3 +1,4 @@
+from geoalchemy2 import WKBElement
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog,
@@ -240,18 +241,16 @@ class KoppelAktDataView(DataView):
 
                     self.setFeatureAttributes(feat, koppel)
 
-                    # feat.setAttributes([gst_version.id,
-                    #                     gst_zuor.rel_gst.gst,
-                    #                     gst_version.rel_alm_gst_ez.ez,
-                    #                     gst_version.rel_alm_gst_ez.kgnr,
-                    #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-                    #                     gst_zuor.awb_status_id,
-                    #                     gst_zuor.rechtsgrundlage_id,
-                    #                     '',
-                    #                     gst_version.rel_alm_gst_ez.datenstand])
+                    if isinstance(koppel.geometry, WKBElement):
+                        """standard beim auslesen aus der db"""
+                        geom_wkt = to_shape(koppel.geometry).wkt
+                        """"""
+                    else:
+                        """notwendig für neu erzeugte koppeln, die noch nicht 
+                        in der db sind"""
+                        geom_wkt = koppel.geometry
+                        """"""
 
-                    # if str(koppel.geometry.__class__) == "<class 'geoalchemy2.elements.WKBElement'>":
-                    geom_wkt = to_shape(koppel.geometry).wkt
                     geom_new = QgsGeometry()
                     geom = geom_new.fromWkt(geom_wkt)
 

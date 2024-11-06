@@ -2,7 +2,9 @@ import os
 from datetime import datetime
 from typing import List
 
-from geoalchemy2 import Geometry
+from qgis.core import QgsGeometry
+
+from geoalchemy2 import Geometry, WKBElement
 from geoalchemy2.shape import to_shape
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
@@ -976,8 +978,18 @@ class BKoppel(Base):
     def koppel_area(self):
 
         # aa = func.ST_Area(self.geometry)
-        # aa = to_shape(self.geometry).area  # float
-        aa = 1.23
+        if isinstance(self.geometry, WKBElement):
+            """standard beim auslesen aus der db"""
+            aa = to_shape(self.geometry).area  # float
+            """"""
+        else:
+            """notwendig für neu erzeugte koppeln, die noch nicht 
+            in der db sind"""
+            geom_wkt = self.geometry
+            geom_new = QgsGeometry()
+            geom = geom_new.fromWkt(geom_wkt)
+            aa = geom.area()
+            """"""
 
         return aa
 

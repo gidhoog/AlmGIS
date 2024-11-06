@@ -10,7 +10,7 @@ from qgis.PyQt.QtWidgets import QWidget, QHeaderView, QMenu, QAction, \
 
 from qgis.gui import (QgsAttributeTableModel, QgsAttributeTableView,
                       QgsAttributeTableFilterModel, QgsMapCanvas)
-from qgis.core import QgsVectorLayerCache, edit
+from qgis.core import QgsVectorLayerCache, edit, QgsGeometry
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
@@ -1695,13 +1695,12 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         new_mci.nicht_weide = 0
         new_mci.rel_komplex = self.parent.abgrenzung_table._gis_layer.selectedFeatures()[0].attribute('mci')[0].rel_komplex[0]
         new_mci.geometry = feature.geometry().asWkt()
-        # new_mci.geometry = feature.geometry()
 
         self.parent._entity_mci.rel_abgrenzung[1].rel_komplex[0].rel_koppel.append(new_mci)
 
-        sel_abgrenzung_mci = (
-            self.parent.abgrenzung_table.
-            _gis_layer.selectedFeatures()[0].attribute('mci'))
+        # sel_abgrenzung_mci = (
+        #     self.parent.abgrenzung_table.
+        #     _gis_layer.selectedFeatures()[0].attribute('mci'))
 
         entity_widget = self.entity_widget_class(self)
         entity_widget.akt_id = self.parent.entity_id
