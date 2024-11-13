@@ -1,4 +1,6 @@
 # from PyQt5.QtCore import Qt
+from pathlib import Path
+
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
@@ -148,6 +150,8 @@ class KontaktMain(DataView):
         self._entity_mc = BKontakt
         self._model_class = KontaktModel
         """"""
+
+        print(f'.... home: {Path.home()}')
 
     def deleteCheck(self, mci):
 

@@ -13,6 +13,7 @@ from sqlalchemy import desc, select, text, func
 from sqlalchemy.orm import joinedload
 
 from app_core import entity, db_session_cm, LOGGER
+from app_core.config import almgis_home_path
 from app_core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
     BGstZuordnung, BKontakt
@@ -1017,7 +1018,8 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         """erzeuge eine pdf-Datei"""
         exporter = QgsLayoutExporter(awb_auszug)
         pdf_settings = exporter.PdfExportSettings()
-        pdf_file = str(Path().absolute().joinpath('data', '__AWB-Auszug.pdf'))
+        # pdf_file = str(Path().absolute().joinpath('data', '__AWB-Auszug.pdf'))
+        pdf_file = str(almgis_home_path.joinpath('__AWB-Auszug.pdf'))
         exporter.exportToPdf(pdf_file, pdf_settings)
         """"""
 
