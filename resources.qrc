@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="png"/>
+  <qresource prefix="dll">
+    <file>mod_spatialite.dll</file>
+  </qresource>
   <qresource prefix="theme"/>
   <qresource prefix="logo">
     <file>resources/icons/nordpfeil01.png</file>

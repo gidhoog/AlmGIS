@@ -9,13 +9,13 @@ a = Analysis(
     ['almgis.py'],
     pathex=[],
     binaries=[
-    ('C:/work/_anwendungen/OSGeo4W/bin/mod_spatialite.dll', './dll')
+    ('C:/work/Projekte/AlmGIS/almgis/_internal/dll/mod_spatialite.dll', './dll')
     ],
     datas=[
     ('almgis.cmd', '.'),
-    ('C:/work/Projekte/AlmGIS/almgis/app_core/print_layouts/', './app_core/print_layouts'),
-    ('C:/work/Projekte/AlmGIS/almgis/app_core/print_templates/', './app_core/print_templates'),
-    ('C:/work/Projekte/AlmGIS/almgis/app_core/styles/', './app_core/styles'),
+    ('C:/work/Projekte/AlmGIS/almgis/_internal/print_layouts/', './print_layouts'),
+    ('C:/work/Projekte/AlmGIS/almgis/_internal/print_templates/', './print_templates'),
+    ('C:/work/Projekte/AlmGIS/almgis/_internal/styles/', './styles'),
     ('C:/work/_anwendungen/OSGeo4W/share/proj/proj.db','./proj_db'),
     ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing')
     ],
@@ -37,29 +37,29 @@ a = Analysis(
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(
-    pyz,
-    a.scripts,
-    [],
-    exclude_binaries=True,
-    name='almgis',
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
-    console=True,
-    disable_windowed_traceback=False,
-    argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
+          pyz,
+          a.scripts,
+          [],
+          exclude_binaries=True,
+          name='almgis',
+          debug=False,
+          bootloader_ignore_signals=False,
+          strip=False,
+          upx=True,
+          console=True,
+          disable_windowed_traceback=False,
+          argv_emulation=False,
+          target_arch=None,
+          codesign_identity=None,
+          entitlements_file=None,
 )
 coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='almgis',
+               exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               upx_exclude=[],
+               name='almgis'
 )

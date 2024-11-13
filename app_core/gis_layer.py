@@ -77,7 +77,8 @@ def setLayerStyle(layer: QgsVectorLayer, qml_file_name: str):
 
     qml_path = str(Path()
                    .absolute()
-                   .joinpath('app_core')
+                   .joinpath('_internal')
+                   # .joinpath('app_core')
                    .joinpath('styles')
                    .joinpath(qml_file_name)) + ".qml"
     layer.loadNamedStyle(qml_path)

@@ -242,3 +242,4 @@ class Ui_GstVersion(object):
         self.label_7.setText(_translate("GstVersion", "lt. Grundbuch:"))
         self.uiAreaKatLbl.setText(_translate("GstVersion", "TextLabel"))
         self.label_3.setText(_translate("GstVersion", "Datenstand:"))
+import resources_rc

@@ -18,10 +18,10 @@ from app_core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGstZuordnung, BKontakt
 from app_core.entity_titel import EntityTitel
 from app_core.gis_item import GisItem
-from app_core.gis_layer import KoppelLayer, KomplexLayer
+# from app_core.gis_layer import KoppelLayer, KomplexLayer
 from app_core.gis_tools import cut_koppel_gstversion
 from app_core.main_gis import MainGis
-from app_core.print_layouts.awb_auszug import AwbAuszug
+from app_core.scopes.prints.awb_auszug import AwbAuszug
 from app_core.scopes.akte import akt_UI
 from app_core.scopes.akte.akt_abgrenzung_dv import AbgrenzungDataView
 from app_core.scopes.akte.akt_gst_main import GstAktDataView

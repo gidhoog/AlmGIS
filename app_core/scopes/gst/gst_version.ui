@@ -483,6 +483,8 @@
   <tabstop>uiEigentuemerSa</tabstop>
   <tabstop>uiBenuetzungsartenSa</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -10,7 +10,9 @@ import logging
 #def LOGGER():
 
 # write log to log-file
-logging.basicConfig(filename="almgis.log", filemode='w', level=logging.DEBUG,
+# logging.basicConfig(filename="almgis.log", filemode='w', level=logging.DEBUG,
+#                     format='%(asctime)s  - %(module)s.%(funcName)s: %(levelname)-9s:%(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s  - %(module)s.%(funcName)s: %(levelname)-9s:%(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 # create console handler and set level to DEBUG
