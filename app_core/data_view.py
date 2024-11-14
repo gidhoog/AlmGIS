@@ -1741,8 +1741,9 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
         entity_widget.entity_dialog = self.entity_dialog
         """"""
 
-        self.entity_dialog.insertWidget(entity_widget)
-        self.entity_dialog.resize(self.minimumSizeHint())
+        # self.entity_dialog.insertWidget(entity_widget)
+        self.entity_dialog.initDialog(entity_widget)
+        # self.entity_dialog.resize(self.minimumSizeHint())
 
         self.entity_dialog.show()
 

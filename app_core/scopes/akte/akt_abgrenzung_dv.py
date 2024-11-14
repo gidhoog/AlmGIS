@@ -21,6 +21,8 @@ class AbgrenzungDialog(EntityDialog):
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
 
+        self.dialog_size = [800, 400]
+
         self.dialog_window_title = 'Abgrenzung'
         # self.set_apply_button_text('&Speichern und Schließen')
 

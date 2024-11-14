@@ -16,6 +16,8 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
 
         self._parent = parent
 
+        self.dialog_size = []  # w, h
+
         self._dialog_window_title = 'AlmGIS'
 
         self.dialogWidget = None
@@ -102,6 +104,8 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
 
         if width is not None and height is not None:
             self.resize(width, height)
+        elif self.dialog_size != []:
+            self.resize(self.dialog_size[0], self.dialog_size[1])
 
         if center_in is not None:
             self.centerDialogInGivenWidget(center_in)

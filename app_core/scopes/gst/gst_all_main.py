@@ -44,6 +44,8 @@ class GstDialog(EntityDialog):
     def __init__(self, parent):
         super(__class__, self).__init__(parent)
 
+        self.dialog_size = [1880, 800]
+
         self.dialog_window_title = 'Grundstückszuordnung'
 
 
@@ -231,6 +233,8 @@ class GstAllDataView(DataView):
 
         self._entity_mc = BGstZuordnung
         self._model_gis_class = GstAllTableModel
+
+        self.uiAddDataTbtn.setVisible(False)
 
         # _model_gis_class = GisTableModel
         # _view_gis_class = GisTableView
@@ -759,7 +763,7 @@ class GstAllDataView(DataView):
         super().signals()
 
         self.uiAddDataTbtn.clicked.disconnect(self.add_row)
-        self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
+        # self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
 
         # self.test_cut_btn.clicked.connect(self.test_cut)
         # self.test_update_btn.clicked.connect(self.test_update)
