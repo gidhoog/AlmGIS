@@ -392,7 +392,6 @@ class EntityDialog(MainDialog):
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
 
     def accept(self):
-        super().accept()
 
         self.accepted_mci = self.dialogWidget.acceptEntity()
         self.edited_mci = self.dialogWidget.edited_mci

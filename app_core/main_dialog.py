@@ -151,8 +151,7 @@ class MainDialog(QDialog, main_dialog_UI.Ui_MainDialog):
         'QDialog.accept(self)' in the 'top'-subclass
         (e.g. AktDialog) to finish (z.g. close) the dialog
         """
-        pass
-        # QDialog.accept(self)
+        QDialog.accept(self)
 
     def reject(self):
 

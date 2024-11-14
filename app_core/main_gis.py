@@ -846,17 +846,21 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
             content = layout.itemById('content')
             remark = layout.itemById('remark')
             user = layout.itemById('user')
+            datum = layout.itemById('datum')
             """"""
 
             """setze werte für die vordefinierten widgets"""
-            akt_name.setText(self.parent.parent()._entity_mci.name)
-            az.setText(str(self.parent.parent()._entity_mci.az))
+            # akt_name.setText(self.parent.parent()._entity_mci.name)
+            akt_name.setText(self.print_widget.alm)
+            # az.setText(str(self.parent.parent()._entity_mci.az))
+            az.setText(self.print_widget.az)
             abb_logo.setPicturePath(
                 ':/logo/resources/icons/abb_logo_ohne_schrift.svg')
             north_arrow.setPicturePath(':/logo/resources/icons/nordpfeil01.png')
             content.setText(self.print_widget.content)
             remark.setText(self.print_widget.remark)
             user.setText(self.print_widget.user)
+            datum.setText(self.print_widget.datum)
             """"""
 
             """übernehme die Ausdehnung der Kartenansicht"""

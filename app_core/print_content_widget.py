@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from qgis.PyQt.QtWidgets import QWidget
 from app_core import print_content_widget_UI
 
@@ -8,9 +10,24 @@ class PrintContentWidget(print_content_widget_UI.Ui_PrintContentWidget, QWidget)
     informationen, die dann in der karte engefügt werden, abzufragen
     """
 
+    _alm = ''
     _content = ''
     _remark = ''
     _user = ''
+    _az = ''
+    _datum = ''
+
+    @property  # getter
+    def alm(self):
+
+        self._alm = self.uiAlmLedit.text()
+        return self._alm
+
+    @alm.setter
+    def alm(self, value):
+
+        self.uiAlmLedit.setText(value)
+        self._alm = value
 
     @property  # getter
     def content(self):
@@ -48,8 +65,38 @@ class PrintContentWidget(print_content_widget_UI.Ui_PrintContentWidget, QWidget)
         self.uiRemarkTedit.setPlainText(value)
         self._remark = value
 
+    @property  # getter
+    def az(self):
+
+        self._az = self.uiAzLedit.text()
+        return self._az
+
+    @az.setter
+    def az(self, value):
+
+        self.uiAzLedit.setText(str(value))
+        self._az = value
+
+    @property  # getter
+    def datum(self):
+
+        self._datum = self.uiDatumLedit.text()
+        return self._datum
+
+    @datum.setter
+    def datum(self, value):
+
+        self.uiDatumLedit.setText(value)
+        self._datum = value
+
     def __init__(self, parent=None):
         super(__class__, self).__init__()
         self.setupUi(self)
 
         self.parent = parent
+
+        if hasattr(self.parent.parent.parent(), '_entity_mci'):
+            self.alm = self.parent.parent.parent()._entity_mci.name
+            self.az = self.parent.parent.parent()._entity_mci.az
+
+        self.datum = datetime.now().strftime('%d. %B %Y')

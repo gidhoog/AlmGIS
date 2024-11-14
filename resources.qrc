@@ -1,14 +1,8 @@
 <RCC>
-  <qresource prefix="png"/>
-  <qresource prefix="dll">
-    <file>mod_spatialite.dll</file>
-  </qresource>
-  <qresource prefix="theme"/>
   <qresource prefix="logo">
     <file>resources/icons/nordpfeil01.png</file>
     <file>resources/icons/abb_logo_ohne_schrift.svg</file>
   </qresource>
-  <qresource prefix="html_info"/>
   <qresource prefix="svg">
     <file>resources/icons/gst_all.svg</file>
     <file>resources/icons/awb.svg</file>
