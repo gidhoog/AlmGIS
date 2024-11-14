@@ -184,6 +184,10 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.statusBar().setSizeGripEnabled(False)
         """"""
 
+        """deaktiviere die die digitalisierungs-schaltfläche"""
+        self.actionAddFeature.setEnabled(False)
+        """"""
+
         """erzeuge ein 'AdvancedDigitizingDockWidget'"""
         self.digi_dock = QgsAdvancedDigitizingDockWidget(self.uiCanvas)
         """"""
@@ -214,6 +218,13 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
         """setze die eigenschaft 'current_layer' """
         self.current_layer = self.layer_tree_view.currentLayer()
+        """"""
+
+        """steuere die sichtbarkeit der digitalisierung-schaltfläche"""
+        if self.current_layer.name() in ['Koppeln']:
+            self.actionAddFeature.setEnabled(True)
+        else:
+            self.actionAddFeature.setEnabled(False)
         """"""
 
         if hasattr(self.current_layer, 'data_view'):
@@ -501,11 +512,13 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
         self.load_project = QAction(QIcon(":/svg/resources/icons/mActionFileOpen.svg"),
                                     'öffne Projekt')
         self.load_project.triggered.connect(self.openProject)
+        self.load_project.setEnabled(False)
         self.main_menu.addAction(self.load_project)
 
         self.save_project = QAction(QIcon(":/svg/resources/icons/mActionFileSaveAs.svg"),
                                     'speichere als Projekt')
         self.save_project.triggered.connect(self.saveProject)
+        self.save_project.setEnabled(False)
         self.main_menu.addAction(self.save_project)
 
         self.load_layer = QAction(QIcon(":/svg/resources/icons/mActionDataSourceManager.svg"),
