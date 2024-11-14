@@ -36,6 +36,8 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
         self.initUi()
         self.signalsMenue()
 
+        self.showMaximized()
+
     def setupMainWindow(self):
 
         self.main_session = DbSession()
