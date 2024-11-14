@@ -10,7 +10,6 @@ alm_data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/alm_daten.db')
 almgis_home_path = Path.home().joinpath('AppData', 'Roaming', 'almgis')
 
 mod_spatialite_dll = Path().absolute().joinpath(
-    # 'dll', 'mod_spatialite.dll'
     '_internal', 'dll', 'mod_spatialite.dll'
 )
 """"""
