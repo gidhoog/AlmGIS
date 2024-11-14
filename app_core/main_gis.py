@@ -20,6 +20,7 @@ from qgis.gui import QgsLayerTreeView, QgsLayerTreeMapCanvasBridge, QgsMapToolPa
     QgsAdvancedDigitizingDockWidget, QgsMapToolDigitizeFeature, QgsMapToolCapture, \
     QgsMapCanvas
 
+from app_core.config import almgis_home_path
 from app_core.data_model import BGisStyle, BGisLayerMenu, BKoppel
 from app_core.gis_layer import getGisLayer, setLayerStyle
 from app_core.main_dialog import MainDialog
@@ -874,7 +875,8 @@ class MainGis(QMainWindow, main_gis_UI.Ui_MainGis):
 
             """erstelle und öffne die karte als pdf"""
             exporter = QgsLayoutExporter(layout)
-            print_pdf = str(Path().absolute().joinpath('data', '__gis_ausdruck.pdf'))
+            # print_pdf = str(Path().absolute().joinpath('data', '__gis_ausdruck.pdf'))
+            print_pdf = str(almgis_home_path.joinpath('__gis_ausdruck.pdf'))
             exporter.exportToPdf(
                 print_pdf, QgsLayoutExporter.PdfExportSettings())
             os.startfile(print_pdf)
