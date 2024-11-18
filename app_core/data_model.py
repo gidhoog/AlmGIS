@@ -308,7 +308,7 @@ class BGisScopeLayer(Base):
 class BGst(Base):
     """
     alle grundstücke die aktuell in der DB verfügbar sind
-    (alle bereits zugeordneten und die gst, die im gdb-importverzeichis sind)
+    (alle bereits zugeordneten und die gst, die im gst-importverzeichis sind)
     """
     __tablename__ = 'a_alm_gst'
 
@@ -459,7 +459,7 @@ class BGstNutzung(Base):
 class BGstVersion(Base):
     """
     die versionsabhängigen informationen der gst;
-    ein jüngerer gdb-import (= jüngerer datenstand) bedeutet z.B. eine neue
+    ein jüngerer gst-import (= jüngerer datenstand) bedeutet z.B. eine neue
     version des gst
     """
     __tablename__ = 'a_alm_gst_version'

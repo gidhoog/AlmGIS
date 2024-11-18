@@ -255,7 +255,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
     def setLoadTime(self, time):
         """
-        trage die Zeit für den gdb-import in der datenbank ein
+        trage die Zeit für den gst-import in der datenbank ein
         """
 
         with db_session_cm() as session:
@@ -266,7 +266,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
     def getLoadTime(self):
         """
-        erhalte die Zeit des letzten gdb-importes aus der alm_sys tabelle
+        erhalte die Zeit des letzten gst-importes aus der alm_sys tabelle
         """
         with db_session_cm() as session:
             time_sys_query = session.query(BSys).filter(BSys.key == 'last_gdb_import').first()
@@ -371,7 +371,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
     def loadGdbDaten(self):
         """
         lösche zuerst alle ungenutzten Gst-Daten;
-        lade dann alle Gst-Daten die sich im GDB-Importverzeichnis befinden;
+        lade dann alle Gst-Daten die sich im Gst-Importverzeichnis befinden;
         :return:
         """
 
@@ -403,7 +403,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
             self.alle_zugeordnete_gst = [r[0] for r in alle_zugeordnete_gst]
             """"""
 
-            """durchsuche die dateien aus dem gdb-importverzeichnis"""
+            """durchsuche die dateien aus dem gst-importverzeichnis"""
             for file in gdb_files:
                 point_pos = file.index('.')  #: suche die Position des Punktes
                 file_endung = file[point_pos+1:]  #: erhalte die Dateiendung
@@ -617,7 +617,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
     def loadGstCsv(self, zip_file, gst_csv):
         """
-        lese die übergebene csv datei aus dem gdb-import-pfad ein und hänge diese daten als base_instanz
+        lese die übergebene csv datei aus dem gst-import-pfad ein und hänge diese daten als base_instanz
         der liste 'self.ez_import_path' an; diese liste wird für den import der daten in die datenbank
         verwendet;
         die instanzen werden unabhängig davon ob die daten bereits importiert wurden angelegt, beim importvorgang
@@ -958,19 +958,19 @@ class GstTable(DataView):
         self.maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
 
         self.actionOpenImportPath = QAction(self.uiToolsTbtn)
-        self.actionOpenImportPath.setText('öffne Importpfad')
+        self.actionOpenImportPath.setText('öffne Gst-Importverzeichnis')
         self.actionOpenImportPath.setIcon(
             QIcon(':/svg/resources/icons/mActionFileOpen.svg'))
         self.uiToolsTbtn.addAction(self.actionOpenImportPath)
 
         self.actionLoadGdb = QAction(self.uiToolsTbtn)
-        self.actionLoadGdb.setText('GDB-Daten neu einlesen')
+        self.actionLoadGdb.setText('Gst-Importverzeichnis neu einlesen')
         self.actionLoadGdb.setIcon(
             QIcon(':/svg/resources/icons/import.svg'))
         self.uiToolsTbtn.addAction(self.actionLoadGdb)
 
         self.uiImportTimeLabelLbl = QLabel(self)
-        self.uiImportTimeLabelLbl.setText('GDB-Daten zuletzt eingelesen:')
+        self.uiImportTimeLabelLbl.setText('Gst-Importverzeichnis zuletzt eingelesen:')
         self.uiImportTimeLabelLbl_font = QFont('Calibri', 9, QFont.Normal)
         self.uiImportTimeLabelLbl.setFont(self.uiImportTimeLabelLbl_font)
 
@@ -1110,8 +1110,11 @@ class GstTable(DataView):
 
         self.parent.uiSelectGstPbtn.setEnabled(False)
 
-        self.guiGstChecked = QLabel()
-        self.uiFooterSubVlay.addWidget(self.guiGstChecked)
+        # self.guiGstChecked = QLabel()
+        # self.uiFooterSubVlay.addWidget(self.guiGstChecked)
+
+        self.actionDeleteRow.setParent(None)  # entferne action zeile löschen
+        self.uiToolsTbtn.removeAction(self.actionDeleteRow)
 
     def getMciList(self, session):
 

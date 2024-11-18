@@ -359,9 +359,9 @@ class AkteAllMain(DataView):
 
         self.view.setColumnWidth(0, 40)
         self.view.setColumnWidth(1, 200)
-        self.view.setColumnWidth(2, 100)
+        self.view.setColumnWidth(2, 150)
         self.view.setColumnWidth(3, 60)
-        self.view.setColumnWidth(4, 40)
+        self.view.setColumnWidth(4, 450)
         self.view.setColumnWidth(5, 80)
         self.view.setColumnWidth(6, 150)
         self.view.setColumnWidth(7, 150)
