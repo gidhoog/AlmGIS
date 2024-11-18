@@ -275,8 +275,11 @@ class GstAllDataView(DataView):
 
     def getMciList(self, session):
 
-        stmt = (select(BGstZuordnung))
-        mci = session.scalars(stmt).unique().all()
+        stmt = ((select(BGstZuordnung))
+                .join(BGstZuordnung.rel_gst)
+                .group_by(BGst.id))
+        # mci = session.scalars(stmt).unique().all()
+        mci = session.scalars(stmt).all()
 
         return mci
 
