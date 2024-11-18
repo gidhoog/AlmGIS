@@ -471,6 +471,11 @@ class KoppelAktDataView(DataView):
         current_koppel_layer = self.parent.current_abgrenzung_item.data(GisItem.KoppelLayer_Role)
         cut_koppel_gstversion(current_koppel_layer)
 
+    def initUi(self):
+        super().initUi()
+
+        self.actionDeleteRow.setEnabled(False)
+
     def finalInit(self):
         super().finalInit()
 

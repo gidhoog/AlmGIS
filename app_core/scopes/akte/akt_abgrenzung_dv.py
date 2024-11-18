@@ -105,6 +105,8 @@ class AbgrenzungDataView(DataView):
 
         self.uiTitleLbl.setText('Abgrenzungen')
 
+        self.actionDeleteRow.setEnabled(False)
+
     def loadData(self, session=None):
 
         self._mci_list = self.parent._entity_mci.rel_abgrenzung

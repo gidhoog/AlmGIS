@@ -828,6 +828,8 @@ class DataView(QWidget, data_view_UI.Ui_DataView):
 
         self.uiActionExportCsv = QAction(self.uiToolsTbtn)
         self.uiActionExportCsv.setText('exportiere csv-Datei')
+        self.uiActionExportCsv.setIcon(
+            QIcon(':/svg/resources/icons/export_table.svg'))
         self.uiToolsTbtn.addAction(self.uiActionExportCsv)
 
         """aktion zum entfernen einer Zeile"""

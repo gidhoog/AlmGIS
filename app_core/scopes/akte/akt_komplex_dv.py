@@ -187,6 +187,8 @@ class KomplexAktDataView(DataView):
 
         self.uiTitleLbl.setText('Komplexe')
 
+        self.actionDeleteRow.setEnabled(False)
+
         # self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
         #                       'ha', 'gb_area', 120,
         #                       0.0001, 4, 'awb_id',
