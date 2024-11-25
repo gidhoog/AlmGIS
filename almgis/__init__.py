@@ -1,13 +1,13 @@
 from contextlib import contextmanager
-from app_core import config
-from app_core.config import mod_spatialite_dll
-from app_core.logger import LOGGER
+from almgis import config
+from almgis.config import mod_spatialite_dll
+from almgis.logger import LOGGER
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.event import listen
 
-from app_core.data_model import *
+from almgis.data_model import *
 
 
 def load_spatialite(dbapi_conn, connection_record):

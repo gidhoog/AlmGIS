@@ -9,13 +9,13 @@ from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from app_core import db_session_cm, config, DbSession
-from app_core.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
+from almgis import db_session_cm, config, DbSession
+from almgis.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BBearbeitungsstatus, BAbgrenzung
-from app_core.entity import EntityDialog
-from app_core.data_view import DataView, TableModel
-from app_core.main_widget import MainWidget
-from app_core.scopes.akte.akt import Akt
+from qga.entity import EntityDialog
+from qga.data_view import DataView, TableModel
+from qga.main_widget import MainWidget
+from almgis.scopes.akte.akt import Akt
 
 
 class AktDialog(EntityDialog):

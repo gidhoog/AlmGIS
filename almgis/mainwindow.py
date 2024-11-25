@@ -1,42 +1,36 @@
 import os
 
-# from PyQt5.QtCore import QSize, Qt, QEvent
 from qgis.PyQt.QtCore import QSize, Qt, QEvent
-# from PyQt5.QtGui import QIcon
 
 from qgis.core import QgsVectorLayer
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel, QProgressBar
-# from PyQt5.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
-#     QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel
 
-from app_core import main_window_UI, db_session_cm, DbSession
-from app_core.config import data_db_path
-from app_core.gis_tools import cut_koppel_gstversion
-# from core.data_model import BKomplex
-# from core.gis_tools import cut_koppel_gstversion
-from app_core.scopes.akte import akte_all_main
-from app_core.scopes.gst import gst_all_main
-from app_core.scopes.gst.zzz_gst_all_main import GstAllMain
-from app_core.scopes.kontakt import kontakt_main
-from app_core.settings import SettingsDlg, SettingsWdg
+from almgis import mainwindow_UI, DbSession
+from almgis.config import data_db_path
+from qga.gis_tools import cut_koppel_gstversion
+
+# from almgis.scopes.akte import akte_all_main
+# from almgis.scopes.gst import gst_all_main
+# from almgis.scopes.kontakt import kontakt_main
+# from qga.settings import SettingsDlg, SettingsWdg
 
 
-class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
+class AlmgisMainWindow(QMainWindow, mainwindow_UI.Ui_MainWindow):
 
     def __init__(self, parent=None):
         super(AlmgisMainWindow, self).__init__(parent)
         self.setupUi(self)
 
-        self._selected_mainarea = None
+        # self._selected_mainarea = None
         self.mainarea_list = []
         self._main_widget_list = []
 
-        self.initUi()
-        self.signalsMenue()
+        # self.initUi()
+        # self.signalsMenue()
 
-        self.showMaximized()
+        # self.showMaximized()
 
     def setupMainWindow(self):
 
@@ -97,25 +91,24 @@ class AlmgisMainWindow(QMainWindow, main_window_UI.Ui_MainWindow):
         main_table)
         """
 
-        if scope == "akte_alle":
-            # widget = akte_all_main.AkteAllMain(self)
-            widget = akte_all_main.AkteAllMainWidget(self,
-                                                     self.main_session)
-            widget_title = "Akten"
+        widget = QWidget(self)
+        widget_title = 'tttt'
 
-        if scope == "kontakte_alle":
-            widget = kontakt_main.KontaktMainWidget(self,
-                                                     self.main_session)
-            widget_title = "Kontakte"
-
-        if scope == "gst_all":
-            widget = gst_all_main.GstAllMainWidget(self,
-                                                     self.main_session)
-            widget_title = "Grundstücke"
-
-        # if scope == "gst_match_all":
-        #     widget = GstAllMain(self)
-        #     widget_title = "zugeordnete Grundstücke"
+        # if scope == "akte_alle":
+        #     # widget = akte_all_main.AkteAllMain(self)
+        #     widget = akte_all_main.AkteAllMainWidget(self,
+        #                                              self.main_session)
+        #     widget_title = "Akten"
+        #
+        # if scope == "kontakte_alle":
+        #     widget = kontakt_main.KontaktMainWidget(self,
+        #                                              self.main_session)
+        #     widget_title = "Kontakte"
+        #
+        # if scope == "gst_all":
+        #     widget = gst_all_main.GstAllMainWidget(self,
+        #                                              self.main_session)
+        #     widget_title = "Grundstücke"
 
         widget.initMainWidget()
 
