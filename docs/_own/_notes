@@ -1,0 +1,8 @@
+Um beim debuggen und beim ausführen/packen keinen Qt5-Error zu bekommen
+muss folgendes Verzeichnis umbenennt werden:
+
+beim Ausführen/Packen:
+OsGeo4W/apps/Python39/Lib/side-packages/PyQt5/Qt5
+
+beim Debugen (z.B. in PyCharm):
+OsGeo4W/apps/Python39/Lib/side-packages/PyQt5/Qt5zzz

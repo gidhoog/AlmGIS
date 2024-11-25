@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="24"
+   width="24"
+   version="1.1"
+   id="svg346"
+   sodipodi:docname="export_layer.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs350" />
+  <sodipodi:namedview
+     id="namedview348"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="16.38"
+     inkscape:cx="19.017094"
+     inkscape:cy="11.965812"
+     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg346" />
+  <filter
+     id="a"
+     height="1.5"
+     width="1.5"
+     x="-.25"
+     y="-.25">
+    <feGaussianBlur
+       in="SourceAlpha"
+       result="blur"
+       stdDeviation="2"
+       id="feGaussianBlur313" />
+    <feColorMatrix
+       result="bluralpha"
+       values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.351000 0"
+       id="feColorMatrix315" />
+    <feOffset
+       dx="7.5"
+       dy="7.5"
+       in="bluralpha"
+       result="offsetBlur"
+       id="feOffset317" />
+    <feMerge
+       id="feMerge323">
+      <feMergeNode
+         in="offsetBlur"
+         id="feMergeNode319" />
+      <feMergeNode
+         in="SourceGraphic"
+         id="feMergeNode321" />
+    </feMerge>
+  </filter>
+  <rect
+     y="1.4"
+     x="2.4"
+     width="19.2"
+     ry="1.5"
+     rx="1.889"
+     height="20.5"
+     overflow="visible"
+     fill="#6d97c4"
+     fill-rule="evenodd"
+     stroke="#415a75"
+     stroke-width=".8"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="rect326" />
+  <rect
+     y="2"
+     x="5"
+     width="14"
+     rx=".5"
+     height="9"
+     ry=".5"
+     overflow="visible"
+     fill="#ededed"
+     fill-rule="evenodd"
+     stroke="#666"
+     stroke-width=".5"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="rect328" />
+  <path
+     d="M7 4.5h10"
+     fill="none"
+     stroke="#666"
+     stroke-linecap="round"
+     id="path330" />
+  <path
+     d="M6.01 14.517H18V21.5H6.01z"
+     overflow="visible"
+     fill="#ededed"
+     fill-rule="evenodd"
+     stroke="#666"
+     stroke-width=".6"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path332" />
+  <path
+     d="M7.009 15.41h3.993v4.969H7.009z"
+     overflow="visible"
+     fill="#415a75"
+     fill-rule="evenodd"
+     stroke="#e6e6e6"
+     stroke-width=".996"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path334" />
+  <path
+     d="M7 6.5h10M7 8.5h10"
+     fill="none"
+     stroke="#666"
+     stroke-linecap="round"
+     id="path344" />
+  <path
+     style="fill:#ffd507;fill-opacity:1;stroke:#000000;stroke-width:0.278685;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1;stroke-linecap:round;paint-order:normal"
+     d="m 16.51219,15.342485 0.0034,2.399548 H 5.424877 v 3.374791 h 11.095037 l 0.004,2.39955 3.536354,-2.048807 3.536348,-2.048678 -3.542371,-2.038201 z"
+     id="rect889"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccccccccc" />
+</svg>

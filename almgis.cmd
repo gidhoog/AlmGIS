@@ -1,0 +1,3 @@
+call almgis.exe
+
+pause
