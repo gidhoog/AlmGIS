@@ -1,6 +1,8 @@
 import os
 
 from qgis.PyQt.QtCore import QSize, Qt, QEvent
+from qgis.PyQt.QtGui import QAction
+from qgis.PyQt.QtWidgets import QMenu
 
 from qgis.core import QgsVectorLayer
 from qgis.PyQt.QtGui import QIcon
@@ -9,6 +11,9 @@ from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget,
 
 from almgis import mainwindow_UI, DbSession
 from almgis.config import data_db_path
+
+from qga.mainwindow import QgaMainWindow
+from qga import mainwindow_UI
 from qga.gis_tools import cut_koppel_gstversion
 
 # from almgis.scopes.akte import akte_all_main
@@ -17,15 +22,33 @@ from qga.gis_tools import cut_koppel_gstversion
 # from qga.settings import SettingsDlg, SettingsWdg
 
 
-class AlmgisMainWindow(QMainWindow, mainwindow_UI.Ui_MainWindow):
+# class AlmMainWindow(QgaMainWindow, mainwindow_UI.Ui_QgaMainWindow):
+class AlmMainWindow(QgaMainWindow):
 
     def __init__(self, parent=None):
-        super(AlmgisMainWindow, self).__init__(parent)
-        self.setupUi(self)
+        super(AlmMainWindow, self).__init__(parent)
+        # self.setupUi(self)
 
         # self._selected_mainarea = None
         self.mainarea_list = []
         self._main_widget_list = []
+
+        test_m = QMenu()
+        test_m.setTitle('GGGGG')
+
+        test_act = QAction()
+        test_act.setText('ttttt')
+
+        test_m.addAction(test_act)
+        self.uiMainMBar.addMenu(test_m)
+
+        self.uiMainTBar.addAction(test_act)
+
+        # self.lab = QLabel(self)
+        # self.lab.setText('LLLLLLLLLLLLLLLL')
+        #
+        # self.uiMainHLay.addWidget(self.lab)
+
 
         # self.initUi()
         # self.signalsMenue()

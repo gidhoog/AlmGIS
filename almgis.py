@@ -7,7 +7,7 @@ for path in sys.path:
 print(f'++++++++++++++++++++++++++++++++++++++++++++++++++++')
 from qgis.core import QgsApplication
 
-from almgis.mainwindow import AlmgisMainWindow
+from almgis.mainwindow import AlmMainWindow
 # from app_core.main_window import AlmgisMainWindow
 from almgis.logger import LOGGER
 from importlib import resources
@@ -26,7 +26,7 @@ def run():
     # app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis", True)
     app.initQgis()
 
-    main_window = AlmgisMainWindow()
+    main_window = AlmMainWindow()
     # aaa = QWidget()
 
     main_window.setupMainWindow()
