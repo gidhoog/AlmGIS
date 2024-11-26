@@ -130,9 +130,12 @@ dmypy.json
 
 # PyCarm
 
-.idea
-.idea/
+# .idea
+# .idea/
 
 # Projektdaten
 
 /data
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf/
