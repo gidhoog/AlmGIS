@@ -96,6 +96,16 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionImportGst.setIcon(
             QIcon(':/svg/resources/icons/import.svg'))
 
+        self.uiAktionOpenWiki = QAction()
+        self.uiAktionOpenWiki.setText('öffne AlmGIS-Wiki')
+        # self.uiAktionOpenSettings.setIcon(
+        #     QIcon(':/svg/resources/icons/contacts.svg'))
+
+        self.uiAktionOpenAbout = QAction()
+        self.uiAktionOpenAbout.setText('über AlmGIS')
+        # self.uiAktionOpenSettings.setIcon(
+        #     QIcon(':/svg/resources/icons/contacts.svg'))
+
     def signalsAction(self):
 
         self.uiAktionOpenAkteMain.triggered.connect(self.testAkte)
@@ -103,6 +113,7 @@ class AlmMainWindow(QgaMainWindow):
     def testAkte(self):
 
         print('test Akte')
+        self.uiStatusProgressLbl.setText('Akt öffnen')
 
     def createMenuBar(self):
         super().createMenuBar()
@@ -122,11 +133,20 @@ class AlmMainWindow(QgaMainWindow):
         self.uiMenuSonstiges.addAction(self.uiAktionImportGst)
         self.uiMenuSonstiges.addAction(self.uiAktionOpenSettings)
 
+        self.uiMenuHilfe = self.menuBar().addMenu('Hilfe')
+        self.uiMenuHilfe.addAction(self.uiAktionOpenWiki)
+        self.uiMenuHilfe.addAction(self.uiAktionOpenAbout)
+
     def createToolBar(self):
 
         self.uiToolBar.addAction(self.uiAktionOpenAkteMain)
         self.uiToolBar.addAction(self.uiAktionOpenKontakteMain)
         self.uiToolBar.addAction(self.uiAktionOpenGstZuornungMain)
+
+    def initStatusBar(self):
+        super().initStatusBar()
+
+        self.uiStatusBar.showMessage('AlmGIS geladen ...', 3000)
 
 #     def setupMainWindow(self):
 #
