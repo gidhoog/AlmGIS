@@ -12,6 +12,8 @@ from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget,
 from almgis import mainwindow_UI, DbSession
 from almgis.config import data_db_path
 
+from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
+
 from qga.mainwindow import QgaMainWindow
 from qga import mainwindow_UI
 from qga.gis_tools import cut_koppel_gstversion
@@ -109,11 +111,25 @@ class AlmMainWindow(QgaMainWindow):
     def signalsAction(self):
 
         self.uiAktionOpenAkteMain.triggered.connect(self.testAkte)
+        self.uiAktionOpenKontakteMain.triggered.connect(self.testKontakte)
 
     def testAkte(self):
 
         print('test Akte')
         self.uiStatusProgressLbl.setText('Akt öffnen')
+
+    def testKontakte(self):
+
+        print('test Kontakte')
+        # widget = KontaktMainWidget(self, self.main_session)
+        widget = KontaktMainWidget(self, DbSession())
+        widget_title = "Kontakte"
+
+        widget.initMainWidget()
+
+        self._addMaintable(widget, widget_title)
+
+        widget.update_app.connect(self.update_application_in_mainwindow)
 
     def createMenuBar(self):
         super().createMenuBar()

@@ -9,26 +9,26 @@ from qgis.PyQt.QtGui import QIcon
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from app_core import db_session_cm, config, DbSession
-from app_core.data_view import DataView, TableModel
-from app_core.entity import EntityDialog
-from app_core.main_widget import MainWidget
+from almgis import db_session_cm, config, DbSession
+from qga.data_view import QgaDataView, TableModel
+# from qga.entity import EntityDialog
+from qga.main_widget import QgaMainWidget
 
-from app_core.data_model import BKontakt, BKontaktTyp, BAkt
-from app_core.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
-
-
-class KontaktEntityDialog(EntityDialog):
-
-    def __init__(self, parent):
-        super(__class__, self).__init__(parent)
-
-        self.parent = parent
-
-        self.dialog_window_title = 'Kontakt'
+from almgis.data_model import BKontakt, BKontaktTyp, BAkt
+# from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 
 
-class KontaktMainWidget(MainWidget):
+# class KontaktEntityDialog(EntityDialog):
+#
+#     def __init__(self, parent):
+#         super(__class__, self).__init__(parent)
+#
+#         self.parent = parent
+#
+#         self.dialog_window_title = 'Kontakt'
+
+
+class KontaktMainWidget(QgaMainWidget):
 
     def __init__(self, parent=None, session=None):
         super().__init__(parent, session)
@@ -46,7 +46,7 @@ class KontaktMainWidget(MainWidget):
     def initMainWidget(self):
         super().initMainWidget()
 
-        self.uiMainVLay.addWidget(self.kontakt_table)
+        self.uiMainVlay.addWidget(self.kontakt_table)
         # self.kontakt_table.loadData()
         # self.kontakt_table.initDataView()
 
@@ -129,7 +129,7 @@ class KontaktModel(TableModel):
                 return verwendung_text
 
 
-class KontaktMain(DataView):
+class KontaktMain(QgaDataView):
 
     # data_view_mc = BContact
 
@@ -145,10 +145,10 @@ class KontaktMain(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
-        self.entity_dialog_class = KontaktEntityDialog
-        self.entity_widget_class = KontaktEinzel
-        self._entity_mc = BKontakt
-        self._model_class = KontaktModel
+        # self.entity_dialog_class = KontaktEntityDialog
+        # self.entity_widget_class = KontaktEinzel
+        # self._entity_mc = BKontakt
+        # self._model_class = KontaktModel
         """"""
 
         print(f'.... home: {Path.home()}')
@@ -181,8 +181,8 @@ class KontaktMain(DataView):
         action_gemeinschaft = QAction(QIcon(":/svg/resources/icons/group.svg"),
                                       'Gemeinschaft', self)
 
-        action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
-        action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
+        # action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
+        # action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
 
         self.add_menu.addAction(action_einzel)
         self.add_menu.addAction(action_gemeinschaft)
@@ -428,7 +428,9 @@ class KontaktMain(DataView):
         else:
             return KontaktEinzel
 
-    def getMciList(self, session):
+    def getMciList(self):
+
+        session = DbSession()
 
         stmt = (select(BKontakt)
         .options(
