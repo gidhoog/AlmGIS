@@ -12,24 +12,24 @@ from sqlalchemy.orm import joinedload
 from almgis import db_session_cm, config, DbSession
 from almgis.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
     BBearbeitungsstatus, BAbgrenzung
-from qga.entity import EntityDialog
-from qga.data_view import DataView, TableModel
-from qga.main_widget import MainWidget
-from almgis.scopes.akte.akt import Akt
+# from qga.entity import EntityDialog
+from qga.data_view import QgaDataView, QgaTableModel
+from qga.main_widget import QgaMainWidget
+# from almgis.scopes.akte.akt import Akt
 
 
-class AktDialog(EntityDialog):
-    """
-    dialog für die anzeige einer grundstückszuordnung
-    """
+# class AktDialog(EntityDialog):
+#     """
+#     dialog für die anzeige einer grundstückszuordnung
+#     """
+#
+#     def __init__(self, parent):
+#         super(__class__, self).__init__(parent)
+#
+#         self.dialog_window_title = 'Alm- und Weidebuchakt'
 
-    def __init__(self, parent):
-        super(__class__, self).__init__(parent)
 
-        self.dialog_window_title = 'Alm- und Weidebuchakt'
-
-
-class AkteAllMainWidget(MainWidget):
+class AkteAllMainWidget(QgaMainWidget):
     """
     MainWidget für die Darstellung eines DataView's mit allen Akten
     """
@@ -47,10 +47,10 @@ class AkteAllMainWidget(MainWidget):
     def initMainWidget(self):
         super().initMainWidget()
 
-        self.uiMainVLay.addWidget(self.akt_all_table)
+        self.uiMainVlay.addWidget(self.akt_all_table)
 
 
-class AktAllModel(TableModel):
+class AktAllModel(QgaTableModel):
 
     header = ['AZ',
               'Name',
@@ -236,7 +236,7 @@ class AktAllModel(TableModel):
                         return 0
 
 
-class AkteAllMain(DataView):
+class AkteAllMain(QgaDataView):
 
 
     _maintable_text = ["Akt", "Akte", "kein Akt"]
@@ -291,8 +291,8 @@ class AkteAllMain(DataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
-        self.entity_dialog_class = AktDialog
-        self.entity_widget_class = Akt
+        # self.entity_dialog_class = AktDialog
+        # self.entity_widget_class = Akt
         self._entity_mc = BAkt
         self._model_class = AktAllModel
 
@@ -306,7 +306,9 @@ class AkteAllMain(DataView):
         self.actionDeleteRow.setParent(None)  # entferne action zeile löschen
         self.uiToolsTbtn.removeAction(self.actionDeleteRow)
 
-    def getMciList(self, session):
+    def getMciList(self):
+
+        session = DbSession()
 
         stmt = (select(BAkt)
         # .options(
@@ -526,33 +528,33 @@ class AkteAllMain(DataView):
         self.filter_name_input_wdg.setText('')
         self.filter_status_input_wdg.setCurrentIndex(0)
 
-    def useFilterScope(self, source_row, source_parent):
-        super().useFilterScope(source_row, source_parent)
-
-        """filter az"""
-        table_value = self.filter_proxy.sourceModel() \
-            .data(self.filter_proxy.sourceModel().index(source_row, 0),
-        Qt.DisplayRole)
-        if self.filter_az_input_wdg.text() not in str(table_value):
-            return False
-        """"""
-
-        """filter name"""
-        table_value = self.filter_proxy.sourceModel() \
-            .data(self.filter_proxy.sourceModel().index(source_row, 1),
-        Qt.DisplayRole)
-        if self.filter_name_input_wdg.text() not in table_value.lower():
-            return False
-        """"""
-
-        """filter status_id"""
-        status = self.filter_proxy.sourceModel() \
-            .data(self.filter_proxy.sourceModel().index(source_row, 2),
-                  Qt.EditRole)
-        if self.filter_status_input_wdg.currentData(Qt.UserRole) != -1:
-            if status != self.filter_status_input_wdg.currentData(Qt.UserRole):
-                return False
-        """"""
+    # def useFilterScope(self, source_row, source_parent):
+    #     super().useFilterScope(source_row, source_parent)
+    #
+    #     """filter az"""
+    #     table_value = self.filter_proxy.sourceModel() \
+    #         .data(self.filter_proxy.sourceModel().index(source_row, 0),
+    #     Qt.DisplayRole)
+    #     if self.filter_az_input_wdg.text() not in str(table_value):
+    #         return False
+    #     """"""
+    #
+    #     """filter name"""
+    #     table_value = self.filter_proxy.sourceModel() \
+    #         .data(self.filter_proxy.sourceModel().index(source_row, 1),
+    #     Qt.DisplayRole)
+    #     if self.filter_name_input_wdg.text() not in table_value.lower():
+    #         return False
+    #     """"""
+    #
+    #     """filter status_id"""
+    #     status = self.filter_proxy.sourceModel() \
+    #         .data(self.filter_proxy.sourceModel().index(source_row, 2),
+    #               Qt.EditRole)
+    #     if self.filter_status_input_wdg.currentData(Qt.UserRole) != -1:
+    #         if status != self.filter_status_input_wdg.currentData(Qt.UserRole):
+    #             return False
+    #     """"""
 
     def signals(self):
         super().signals()

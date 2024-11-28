@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from almgis import db_session_cm, config, DbSession
-from qga.data_view import QgaDataView, TableModel
+from qga.data_view import QgaDataView, QgaTableModel
 # from qga.entity import EntityDialog
 from qga.main_widget import QgaMainWidget
 
@@ -51,7 +51,7 @@ class KontaktMainWidget(QgaMainWidget):
         # self.kontakt_table.initDataView()
 
 
-class KontaktModel(TableModel):
+class KontaktModel(QgaTableModel):
 
     header = [
         'Typ',
@@ -147,8 +147,8 @@ class KontaktMain(QgaDataView):
 
         # self.entity_dialog_class = KontaktEntityDialog
         # self.entity_widget_class = KontaktEinzel
-        # self._entity_mc = BKontakt
-        # self._model_class = KontaktModel
+        self._entity_mc = BKontakt
+        self._model_class = KontaktModel
         """"""
 
         print(f'.... home: {Path.home()}')

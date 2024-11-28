@@ -11,6 +11,7 @@ from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget,
 
 from almgis import mainwindow_UI, DbSession
 from almgis.config import data_db_path
+from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
 
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
 
@@ -114,22 +115,34 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionOpenKontakteMain.triggered.connect(self.testKontakte)
 
     def testAkte(self):
+        # super().testAkte()
 
         print('test Akte')
-        self.uiStatusProgressLbl.setText('Akt öffnen')
+        self.uiStatusProgressBar.setVisible(True)
+        # self.uiStatusProgressLbl.setText('Akt öffnen')
+        # widget = AkteAllMainWidget(self, DbSession())
+        db_session_cls = DbSession
+        widget_cls = AkteAllMainWidget
+        widget_title = "AAkte"
+
+        # self.openMainWidget(widget_cls, widget_title, db_session_cls)
+        self.openMainWidgetThread(self, widget_cls, widget_title, db_session_cls)
 
     def testKontakte(self):
+        super().testKontakte()
 
         print('test Kontakte')
         # widget = KontaktMainWidget(self, self.main_session)
         widget = KontaktMainWidget(self, DbSession())
-        widget_title = "Kontakte"
+        widget_title = "KKontakte"
 
-        widget.initMainWidget()
+        self.openMainWidget(widget, widget_title)
 
-        self._addMaintable(widget, widget_title)
-
-        widget.update_app.connect(self.update_application_in_mainwindow)
+        # widget.initMainWidget()
+        #
+        # self._addMaintable(widget, widget_title)
+        #
+        # widget.update_app.connect(self.update_application_in_mainwindow)
 
     def createMenuBar(self):
         super().createMenuBar()
