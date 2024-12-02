@@ -1,6 +1,4 @@
 from contextlib import contextmanager
-from almgis import config
-from almgis.config import mod_spatialite_dll
 from almgis.logger import LOGGER
 
 from sqlalchemy import create_engine
@@ -8,6 +6,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.event import listen
 
 from almgis.data_model import *
+from almgis.config import PathsAndFiles
+
+"""important to load the app-config-file ('config.yaml')"""
+""""""
 
 
 def load_spatialite(dbapi_conn, connection_record):
@@ -19,13 +21,13 @@ def load_spatialite(dbapi_conn, connection_record):
     :return:
     """
     dbapi_conn.enable_load_extension(True)
-    dbapi_conn.load_extension(str(mod_spatialite_dll))
+    dbapi_conn.load_extension(str(PathsAndFiles.mod_spatialite_dll))
 
-data_engine = create_engine(f"sqlite:///{config.data_db_path}",
+data_engine = create_engine(f"sqlite:///{PathsAndFiles.data_db_path}",
                        echo=True)
 
-setting_engine = create_engine(f"sqlite:///{config.setting_db_path}",
-                       echo=True)
+# setting_engine = create_engine(f"sqlite:///{PathsAndFiles.setting_db_path}",
+#                        echo=True)
 
 listen(data_engine, 'connect', load_spatialite)
 
@@ -66,7 +68,7 @@ DbSession.configure(binds={data_model.BAkt: data_engine,
                            data_model.BRechtsgrundlage: data_engine,
                            data_model.BSys: data_engine,
                            data_model.McInfoButton: data_engine,
-                           data_model.BSettings: setting_engine,
+                           # data_model.BSettings: setting_engine,
                            })
 """"""
 

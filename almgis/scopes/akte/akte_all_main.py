@@ -7,11 +7,9 @@ from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy)
 
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload
 
-from almgis import db_session_cm, config, DbSession
-from almgis.data_model import BAkt, BKomplex, BGstZuordnung, BGst, BGstVersion, \
-    BBearbeitungsstatus, BAbgrenzung
+from almgis import db_session_cm, DbSession, config
+from almgis.data_model import BAkt, BBearbeitungsstatus
 # from qga.entity import EntityDialog
 from qga.data_view import QgaDataView, QgaTableModel
 from qga.main_widget import QgaMainWidget

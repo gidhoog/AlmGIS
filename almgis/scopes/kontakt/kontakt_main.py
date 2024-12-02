@@ -9,7 +9,7 @@ from qgis.PyQt.QtGui import QIcon
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from almgis import db_session_cm, config, DbSession
+from almgis import db_session_cm, DbSession, config
 from qga.data_view import QgaDataView, QgaTableModel
 # from qga.entity import EntityDialog
 from qga.main_widget import QgaMainWidget

@@ -1,30 +1,19 @@
-import os
-
-from qgis.PyQt.QtCore import QSize, Qt, QEvent
 from qgis.PyQt.QtGui import QAction
-from qgis.PyQt.QtWidgets import QMenu
 
-from qgis.core import QgsVectorLayer
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QMainWindow, QSplitter, QPushButton, QTabWidget, \
-    QScrollArea, QFrame, QVBoxLayout, QWidget, QLabel, QProgressBar
 
-from almgis import mainwindow_UI, DbSession
-from almgis.config import data_db_path
+from almgis import DbSession
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
 
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
 
 from qga.mainwindow import QgaMainWindow
-from qga import mainwindow_UI
-from qga.gis_tools import cut_koppel_gstversion
+
 
 # from almgis.scopes.akte import akte_all_main
 # from almgis.scopes.gst import gst_all_main
 # from almgis.scopes.kontakt import kontakt_main
 # from qga.settings import SettingsDlg, SettingsWdg
-
-import resources_rc
 
 
 # class AlmMainWindow(QgaMainWindow, mainwindow_UI.Ui_QgaMainWindow):
