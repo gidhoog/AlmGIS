@@ -115,7 +115,7 @@ class AlmMainWindow(QgaMainWindow):
         widget_title = "AAkte"
 
         # self.openMainWidget(widget_cls, widget_title, db_session_cls)
-        self.openMainWidgetThread(self, widget_cls, widget_title, db_session_cls)
+        self.openMainWidgetNew(widget_cls, widget_title, db_session_cls)
 
     def testKontakte(self):
         super().testKontakte()

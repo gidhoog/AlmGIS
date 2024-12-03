@@ -31,7 +31,7 @@ class PathsAndFiles(PaF):
     almgis_home_path = Path.home().joinpath('AppData', 'Roaming', '')
 
     mod_spatialite_dll = Path().absolute().joinpath(
-        '../_internal', 'dll', 'mod_spatialite.dll'
+        '_internal', 'dll', 'mod_spatialite.dll'
     )
 
 
