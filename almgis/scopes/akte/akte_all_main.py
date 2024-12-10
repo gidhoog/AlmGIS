@@ -44,6 +44,8 @@ class AkteAllMainWidget(QgaMainWidget):
         self.akt_all_table.setDataviewSession(session)
         self.akt_all_table.initDataView()
 
+        self.initMainWidget()
+
     def initMainWidget(self):
         super().initMainWidget()
 
@@ -296,6 +298,16 @@ class AkteAllMain(QgaDataView):
         self._entity_mc = BAkt
         self._model_class = AktAllModel
 
+        self.insertFooterLine('Gesamtweidefläche',
+                              'ha', column_id=9, value_width=120,
+                              factor=0.0001, decimal=4)
+        self.insertFooterLine('davon beweidet',
+                              'ha', column_id=8, value_width=120,
+                              factor=0.0001, decimal=4)
+        self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
+                              'ha', column_id=7, value_width=120,
+                              factor=0.0001, decimal=4)
+
     def initUi(self):
         super().initUi()
 
@@ -360,15 +372,15 @@ class AkteAllMain(QgaDataView):
 
     def finalInit(self):
 
-        self.insertFooterLine('Gesamtweidefläche',
-                              'ha', column_id=9, value_width=120,
-                              factor=0.0001, decimal=4)
-        self.insertFooterLine('davon beweidet',
-                              'ha', column_id=8, value_width=120,
-                              factor=0.0001, decimal=4)
-        self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
-                              'ha', column_id=7, value_width=120,
-                              factor=0.0001, decimal=4)
+        # self.insertFooterLine('Gesamtweidefläche',
+        #                       'ha', column_id=9, value_width=120,
+        #                       factor=0.0001, decimal=4)
+        # self.insertFooterLine('davon beweidet',
+        #                       'ha', column_id=8, value_width=120,
+        #                       factor=0.0001, decimal=4)
+        # self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
+        #                       'ha', column_id=7, value_width=120,
+        #                       factor=0.0001, decimal=4)
 
         self.view.setColumnWidth(0, 40)
         self.view.setColumnWidth(1, 200)
