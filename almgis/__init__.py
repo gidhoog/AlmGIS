@@ -1,4 +1,7 @@
 from contextlib import contextmanager
+
+from qga import ConfigTest as ConfigTestQga
+
 from almgis.logger import LOGGER
 
 from sqlalchemy import create_engine
@@ -121,3 +124,7 @@ def db_session_cm_data(expire_on_commit=True, name=''):
         LOGGER.info(f"--- close SESSION: {name})")
 
 """"""
+
+class ConfigTest(ConfigTestQga):
+
+    test1 = 11
