@@ -100,38 +100,50 @@ class AlmMainWindow(QgaMainWindow):
 
     def signalsAction(self):
 
-        self.uiAktionOpenAkteMain.triggered.connect(self.testAkte)
-        self.uiAktionOpenKontakteMain.triggered.connect(self.testKontakte)
+        # self.uiAktionOpenAkteMain.triggered.connect(self.testAkte)
+        self.uiAktionOpenAkteMain.triggered.connect(
+            lambda x,
+                   wid_cls=AkteAllMainWidget,
+                   session=DbSession:
+            self.openMainWidgetNew(wid_cls, session))
 
-    def testAkte(self):
-        # super().testAkte()
+        self.uiAktionOpenKontakteMain.triggered.connect(
+            lambda x,
+                   wid_cls=KontaktMainWidget,
+                   session=DbSession:
+            self.openMainWidgetNew(wid_cls, session))
 
-        print('test Akte')
-        self.uiStatusProgressBar.setVisible(True)
-        # self.uiStatusProgressLbl.setText('Akt öffnen')
-        # widget = AkteAllMainWidget(self, DbSession())
-        db_session_cls = DbSession
-        widget_cls = AkteAllMainWidget
-        widget_title = "AAkte"
+        # self.uiAktionOpenKontakteMain.triggered.connect(self.testKontakte)
 
-        # self.openMainWidget(widget_cls, widget_title, db_session_cls)
-        self.openMainWidgetNew(widget_cls, widget_title, db_session_cls)
+    # def testAkte(self):
+    #     # super().testAkte()
+    #
+    #     print('test Akte')
+    #     # self.uiStatusProgressBar.setVisible(True)
+    #     # self.uiStatusProgressLbl.setText('Akt öffnen')
+    #     # widget = AkteAllMainWidget(self, DbSession())
+    #     db_session_cls = DbSession
+    #     widget_cls = AkteAllMainWidget
+    #     widget_title = "AAkte"
+    #
+    #     # self.openMainWidget(widget_cls, widget_title, db_session_cls)
+    #     self.openMainWidgetNew(widget_cls, widget_title, db_session_cls)
 
-    def testKontakte(self):
-        super().testKontakte()
-
-        print('test Kontakte')
-        # widget = KontaktMainWidget(self, self.main_session)
-        widget = KontaktMainWidget(self, DbSession())
-        widget_title = "KKontakte"
-
-        self.openMainWidget(widget, widget_title)
-
-        # widget.initMainWidget()
-        #
-        # self._addMaintable(widget, widget_title)
-        #
-        # widget.update_app.connect(self.update_application_in_mainwindow)
+    # def testKontakte(self):
+    #     super().testKontakte()
+    #
+    #     print('test Kontakte')
+    #     # widget = KontaktMainWidget(self, self.main_session)
+    #     widget = KontaktMainWidget(self, DbSession())
+    #     widget_title = "KKontakte"
+    #
+    #     self.openMainWidget(widget, widget_title)
+    #
+    #     # widget.initMainWidget()
+    #     #
+    #     # self._addMaintable(widget, widget_title)
+    #     #
+    #     # widget.update_app.connect(self.update_application_in_mainwindow)
 
     def createMenuBar(self):
         super().createMenuBar()
