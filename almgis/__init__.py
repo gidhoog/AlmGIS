@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from qga import ConfigTest as ConfigTestQga
+# from qga import ConfigTest as ConfigTestQga
 
 from almgis.logger import LOGGER
 
@@ -10,9 +10,13 @@ from sqlalchemy.event import listen
 
 from almgis.data_model import *
 from almgis.config import PathsAndFiles
+from almgis.settings import AlmSettingsUser, AlmSettingsSys
 
 """important to load the app-config-file ('config.yaml')"""
 """"""
+
+settings_user = AlmSettingsUser()
+settings_sys = AlmSettingsSys()
 
 
 def load_spatialite(dbapi_conn, connection_record):
@@ -125,6 +129,6 @@ def db_session_cm_data(expire_on_commit=True, name=''):
 
 """"""
 
-class ConfigTest(ConfigTestQga):
-
-    test1 = 11
+# class ConfigTest(ConfigTestQga):
+#
+#     test1 = 11

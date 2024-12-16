@@ -1,13 +1,18 @@
+from pathlib import Path
+
+from PyQt5.QtCore import QSettings
 from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
 
-from almgis import DbSession
+from almgis import DbSession, settings_user, settings_sys
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
 
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
 
 from qga.mainwindow import QgaMainWindow
+
+from almgis.settings import AlmSettingsUser, AlmSettingsSys
 
 
 # from almgis.scopes.akte import akte_all_main
@@ -24,6 +29,33 @@ class AlmMainWindow(QgaMainWindow):
         # self.setupUi(self)
 
         self.setWindowTitle('AlmGIS')
+
+        # self.setting = AlmSettingsUser()
+        # # self.setting.setValue('a1', 'a1')
+        #
+        # # self.sys_setting = QSettings(QSettings.IniFormat,
+        # #                              QSettings.SystemScope,
+        # #                              "NoeAbb",
+        # #                              "AlmGIS")
+        #
+        # # ppp = Path().absolute().joinpath('AlmGIS.ini')
+        # # self.sys_setting = QSettings(str(ppp),
+        # #                              QSettings.IniFormat)
+        # # self.sys_setting.clear()
+        # self.sys_setting = AlmSettingsSys()
+        #
+        #
+        # # self.sys_setting.setPath(QSettings.IniFormat, QSettings.SystemScope, str(ppp.absolute()))
+        # #
+        # # self.sys_setting.setDefaultFormat(QSettings.IniFormat)
+        # # self.sys_setting.sync()
+        #
+        # print(f'self.setting.value(a2): {self.setting.value('a2')}')
+        # print(f'self.sys_setting.value(debug): {self.sys_setting.value('debug')}')
+
+        print(f'settings_user.value(a2): {settings_user.value('a2')}')
+        print(f'settings_sys.value(debug): {settings_sys.value('debug')}')
+        print(f'...')
 
         # self._selected_mainarea = None
         # self.mainarea_list = []

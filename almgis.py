@@ -20,14 +20,18 @@ if sys.version < '3.0':
 
 def run():
 
-    # QgsApplication.setPrefixPath("C:/PROGRA~1/OSGeo4W/apps/qgis-ltr", True)
-    QgsApplication.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr", True)
     app = QgsApplication([], True)
-    # app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis", True)
+
+    # """wichtig für settings (siehe 'QSetting'"""
+    # app.setOrganizationName('NoeAbb')
+    # app.setApplicationName('AlmGIS')
+    # """"""
+
+    app.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr", True)
+
     app.initQgis()
 
     main_window = AlmMainWindow()
-    # aaa = QWidget()
 
     main_window.setupMainWindow()
 
