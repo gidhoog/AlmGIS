@@ -30,59 +30,6 @@ class AlmMainWindow(QgaMainWindow):
 
         self.setWindowTitle('AlmGIS')
 
-        # self.setting = AlmSettingsUser()
-        # # self.setting.setValue('a1', 'a1')
-        #
-        # # self.sys_setting = QSettings(QSettings.IniFormat,
-        # #                              QSettings.SystemScope,
-        # #                              "NoeAbb",
-        # #                              "AlmGIS")
-        #
-        # # ppp = Path().absolute().joinpath('AlmGIS.ini')
-        # # self.sys_setting = QSettings(str(ppp),
-        # #                              QSettings.IniFormat)
-        # # self.sys_setting.clear()
-        # self.sys_setting = AlmSettingsSys()
-        #
-        #
-        # # self.sys_setting.setPath(QSettings.IniFormat, QSettings.SystemScope, str(ppp.absolute()))
-        # #
-        # # self.sys_setting.setDefaultFormat(QSettings.IniFormat)
-        # # self.sys_setting.sync()
-        #
-        # print(f'self.setting.value(a2): {self.setting.value('a2')}')
-        # print(f'self.sys_setting.value(debug): {self.sys_setting.value('debug')}')
-
-        print(f'settings_user.value(a2): {settings_user.value('a2')}')
-        print(f'settings_sys.value(debug): {settings_sys.value('debug')}')
-        print(f'...')
-
-        # self._selected_mainarea = None
-        # self.mainarea_list = []
-        # self._main_widget_list = []
-
-        # test_m = QMenu()
-        # test_m.setTitle('GGGGG')
-        #
-        # test_act = QAction()
-        # test_act.setText('ttttt')
-        #
-        # test_m.addAction(test_act)
-        # self.uiMainMBar.addMenu(test_m)
-        #
-        # self.uiMainTBar.addAction(test_act)
-
-        # self.lab = QLabel(self)
-        # self.lab.setText('LLLLLLLLLLLLLLLL')
-        #
-        # self.uiMainHLay.addWidget(self.lab)
-
-
-        # self.initUi()
-        # self.signalsMenue()
-
-        # self.showMaximized()
-
     def declareActions(self):
 
         self.uiAktionOpenAkteMain = QAction()

@@ -1,12 +1,6 @@
 from pathlib import Path
 
 from qga.config import Config as Cnfg, PathsAndFiles as PaF
-# from qga import Config as Cnfg, PathsAndFiles as PaF
-
-# import yaml
-
-# from qga import app_config
-
 
 class PathsAndFiles(PaF):
     """

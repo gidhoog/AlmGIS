@@ -8,11 +8,8 @@ print(f'++++++++++++++++++++++++++++++++++++++++++++++++++++')
 from qgis.core import QgsApplication
 
 from almgis.mainwindow import AlmMainWindow
-# from app_core.main_window import AlmgisMainWindow
 from almgis.logger import LOGGER
-from importlib import resources
 
-# from PyQt5.QtWidgets import QWidget
 
 if sys.version < '3.0':
     sys.exit("This program requires a python3 runtime")
@@ -22,12 +19,9 @@ def run():
 
     app = QgsApplication([], True)
 
-    # """wichtig für settings (siehe 'QSetting'"""
-    # app.setOrganizationName('NoeAbb')
-    # app.setApplicationName('AlmGIS')
-    # """"""
-
-    app.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr", True)
+    app.setPrefixPath(
+        "C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
+        True)
 
     app.initQgis()
 

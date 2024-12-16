@@ -12,11 +12,11 @@ from almgis.data_model import *
 from almgis.config import PathsAndFiles
 from almgis.settings import AlmSettingsUser, AlmSettingsSys
 
-"""important to load the app-config-file ('config.yaml')"""
-""""""
 
+"""verwende settings systemweit"""
 settings_user = AlmSettingsUser()
 settings_sys = AlmSettingsSys()
+""""""
 
 
 def load_spatialite(dbapi_conn, connection_record):
