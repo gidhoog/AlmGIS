@@ -12,7 +12,7 @@ from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
 
 from qga.mainwindow import QgaMainWindow
 
-from almgis.settings import AlmSettingsUser, AlmSettingsSys
+from almgis.settings import AlmSettingsUser, AlmSettingsApp
 
 
 # from almgis.scopes.akte import akte_all_main

@@ -1,22 +1,12 @@
 from contextlib import contextmanager
 
-# from qga import ConfigTest as ConfigTestQga
-
-# from almgis.logger import LOGGER
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.event import listen
 
-from almgis.data_model import *
-from almgis.settings import AlmSettingsUser, AlmSettingsApp
+from almgis import data_model
 from almgis.config import Config
-
-
-"""verwende settings systemweit"""
-settings_user = AlmSettingsUser()
-settings_sys = AlmSettingsApp()
-""""""
+from almgis.logger import LOGGER
 
 
 def load_spatialite(dbapi_conn, connection_record):
@@ -84,33 +74,9 @@ danach wird automatisch 'commit' und 'close' ausgeführt"""
 @contextmanager
 def db_session_cm(expire_on_commit=True, name=''):
     # print(f"- create SESSION - {name}")
-    # LOGGER.info(f"--- create SESSION: {name} "
-    #             f"(expire_on_commit={expire_on_commit})")
-    session = DbSession()
-    session.expire_on_commit = expire_on_commit
-    try:
-        yield session
-        # print(f"-- commit SESSION -- {name}")
-        # LOGGER.info(f"--- commit SESSION: {name})")
-        session.commit()
-    except:
-        # print(f"-- except SESSION -- {name}")
-        session.rollback()
-        # LOGGER.info(f"--- except SESSION: {name})")
-        raise
-    finally:
-        # print(f"--- close SESSION --- {name}")
-        session.close()
-        # LOGGER.info(f"--- close SESSION: {name})")
-
-""""""
-
-@contextmanager
-def db_session_cm_data(expire_on_commit=True, name=''):
-    # print(f"- create SESSION - {name}")
     LOGGER.info(f"--- create SESSION: {name} "
                 f"(expire_on_commit={expire_on_commit})")
-    session = DBSessionData()
+    session = DbSession()
     session.expire_on_commit = expire_on_commit
     try:
         yield session

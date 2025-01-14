@@ -8,7 +8,7 @@ print(f'++++++++++++++++++++++++++++++++++++++++++++++++++++')
 from qgis.core import QgsApplication
 
 from almgis.mainwindow import AlmMainWindow
-from almgis.logger import LOGGER
+# from almgis.logger import LOGGER
 
 
 if sys.version < '3.0':
