@@ -31,7 +31,7 @@ def run():
 
     main_window.show()
 
-    LOGGER.debug("almgis started! + + + + + + + + + + + + + + + + ")
+    # LOGGER.debug("almgis started! + + + + + + + + + + + + + + + + ")
 
     sys.exit(app.exec_())
 
