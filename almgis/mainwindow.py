@@ -5,7 +5,8 @@ from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
 
-from almgis import DbSession, settings_user, settings_sys
+# from almgis import DbSession, settings_user, settings_sys
+from almgis.data_session import DbSession
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
 
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget

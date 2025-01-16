@@ -8,7 +8,8 @@ from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
 
 from sqlalchemy import select
 
-from almgis import db_session_cm, DbSession
+# from almgis import db_session_cm, DbSession
+from almgis.data_session import db_session_cm, DbSession
 from almgis.config import Config
 from almgis.data_model import BAkt, BBearbeitungsstatus
 # from qga.entity import EntityDialog

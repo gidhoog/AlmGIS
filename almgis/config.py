@@ -6,7 +6,7 @@ from qga.config import Config as Cnfg
 
 class Config(Cnfg):
 
-    app_modul_name = 'almggis'
+    app_modul_name = 'almgis'
     allow_project_start_selector = False
 
     class PathsAndFiles(Cnfg.PathsAndFiles):
