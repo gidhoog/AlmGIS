@@ -4,7 +4,7 @@ from sqlalchemy.orm import joinedload
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
 
-from app_core import db_session_cm
+from app_core import session_cm
 from app_core.combogroup import ExtendedCombo, ComboModel
 from app_core.data_model import BKontakt, BKontaktTyp
 
@@ -50,7 +50,7 @@ class ContactCombo(ExtendedCombo):
         if session is not None:
             self.combo_session = session
 
-        # with db_session_cm(name='load contact-type in contact',
+        # with session_cm(name='load contact-type in contact',
         #                    expire_on_commit=False) as session:
 
         match gruppe:

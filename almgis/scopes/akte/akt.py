@@ -12,7 +12,7 @@ from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry
 from sqlalchemy import desc, select, text, func
 from sqlalchemy.orm import joinedload
 
-from app_core import entity, db_session_cm, LOGGER
+from app_core import entity, session_cm, LOGGER
 from app_core.config import almgis_home_path
 from app_core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
     BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
@@ -597,7 +597,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     #     """
     #     alm_new = []
     #
-    #     with db_session_cm() as session:
+    #     with session_cm() as session:
     #
     #         akt_instances = session.scalars(select(BAkt)
     #                                         .options(joinedload(BAkt.rel_abgrenzung)
@@ -705,7 +705,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     #
     #         return added_kop_feat
     #
-    #     with db_session_cm() as session:
+    #     with session_cm() as session:
     #
     #         abgrenzungs_instances = session.scalars(select(BAbgrenzung)
     #                                 .where(BAbgrenzung.akt_id == self._entity_mci.id)
@@ -837,7 +837,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
     #     """"""
     #
     #     """hole die daten für die gis-layer aus der datenbank"""
-    #     with db_session_cm() as session:
+    #     with session_cm() as session:
     #         session.expire_on_commit = False
     #
     #         akt_gis_scope_layer = session.query(BGisScopeLayer)\

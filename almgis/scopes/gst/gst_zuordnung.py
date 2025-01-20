@@ -28,8 +28,8 @@ from qgis.PyQt.QtGui import QFont, QIcon
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
 
-from app_core import db_session_cm, config, main_dialog, settings, \
-    db_session_cm_data
+from app_core import session_cm, config, main_dialog, settings, \
+    session_cm_data
 from app_core.scopes.gst import gst_zuordnung_UI
 from app_core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
 from app_core.tools import getMciState
@@ -76,7 +76,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         # self.getZugeordneteGst()
         #
         # """initialisiere die grundstückstabelle"""
-        # with db_session_cm() as session:
+        # with session_cm() as session:
         #     self.guiGstTable.initDataView(session)
         # """"""
         #
@@ -228,7 +228,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         self.uiPreSelGstTableVLay.addWidget(self.guiGstPreSelTview)
 
-        # with db_session_cm(name='query tables in gst-zuordung',
+        # with session_cm(name='query tables in gst-zuordung',
         #                    expire_on_commit=False) as session:
         self.guiGstTable.initDataView()
         self.guiGstPreSelTview.initDataView()
@@ -243,7 +243,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
     # def loadGisLayer(self):
     #
-    #     with db_session_cm() as session:
+    #     with session_cm() as session:
     #         session.expire_on_commit = False
     #
     #         scope_layer_inst = session.query(BGisScopeLayer) \
@@ -259,7 +259,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         trage die Zeit für den gst-import in der datenbank ein
         """
 
-        with db_session_cm() as session:
+        with session_cm() as session:
             time_sys_query = session.query(BSys).filter(BSys.key == 'last_gdb_import').first()
             time_sys_query.value = str(time)
 
@@ -269,7 +269,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         """
         erhalte die Zeit des letzten gst-importes aus der alm_sys tabelle
         """
-        with db_session_cm() as session:
+        with session_cm() as session:
             time_sys_query = session.query(BSys).filter(BSys.key == 'last_gdb_import').first()
             return time_sys_query.value
 
@@ -290,7 +290,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
     #
     #     self.akt_id = self.parent.parent.entity_id
     #
-    #     with db_session_cm() as session:
+    #     with session_cm() as session:
     #
     #         zuord_query = session.query(BGst.id) \
     #             .join(BGstZuordnung) \
@@ -397,7 +397,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         self.ez_import_path = []  # liste der ez's im import-pfad (ez als base-class)
 
-        with db_session_cm(expire_on_commit = False) as session:
+        with session_cm(expire_on_commit = False) as session:
 
             """hole alle Gst die aktuell einem Akt zugeordnet sind"""
             alle_zugeordnete_gst = session.query(BGst.kg_gst).join(BGstZuordnung).all()
@@ -436,7 +436,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.setLoadTimeLabel()
         """"""
 
-        with db_session_cm(name='lade gst in die gst-zuordnung') as session_2:
+        with session_cm(name='lade gst in die gst-zuordnung') as session_2:
             self.guiGstTable.loadData(session_2)  # lade die Daten in der Gst-Tabelle neu
 
         """setzte das model für den Filter erneut, damit dieser korrekt
@@ -454,7 +454,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         """
         importiere die Gdb-Daten, die in die Liste self.ez_import_path geladen wurden
         """
-        with db_session_cm() as session:
+        with session_cm() as session:
 
             """erstelle ein dict mit allen kg_gst aus der tabelle a_alm_gst mit der klasse BGst als value"""
             self.vorhandene_kg_gst = {}
@@ -862,7 +862,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         mache die aus performace-gründen direkt in der db
         """
 
-        with db_session_cm_data() as session:
+        with session_cm_data() as session:
 
             """aktiviere foreign_key-Support in der alm-datenbank"""
             session.execute(text('pragma foreign_keys=ON'))

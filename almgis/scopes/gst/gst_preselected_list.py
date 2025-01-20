@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from app_core import db_session_cm
+from app_core import session_cm
 from app_core.data_model import BGst
 from app_core.item_list import Itemlist
 
@@ -15,7 +15,7 @@ class PreselectedGstList(Itemlist):
 
     def getPossibleInstances(self):
 
-        with db_session_cm() as session:
+        with session_cm() as session:
             # session.expire_on_commit = False
 
             possible_inst = session.query(BGst.id, BGst.gst, BGst)\

@@ -5,7 +5,7 @@ from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QLabel, QComboBox
 from sqlalchemy import func
 
-from app_core import db_session_cm
+from app_core import session_cm
 from app_core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt, BKoppel
@@ -179,7 +179,7 @@ class GstAllMain(DataView, MainWidget):
 
     # def setFilterAwb(self):
     #
-    #     with db_session_cm() as session:
+    #     with session_cm() as session:
     #         item_query = session.query(BGstAwbStatus.name).distinct()
     #
     #     try:

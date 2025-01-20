@@ -8,7 +8,7 @@ print(f'++++++++++++++++++++++++++++++++++++++++++++++++++++')
 from qgis.core import QgsApplication
 
 from almgis.mainwindow import AlmMainWindow
-# from almgis.logger import LOGGER
+from almgis.logger import Logger
 
 
 if sys.version < '3.0':
@@ -27,7 +27,7 @@ def run():
 
     main_window = AlmMainWindow()
 
-    main_window.setupMainWindow()
+    # main_window.setupMainWindow()
 
     main_window.show()
 

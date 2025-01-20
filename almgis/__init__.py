@@ -1,24 +1,24 @@
-from contextlib import contextmanager
-
-# from qga import ConfigTest as ConfigTestQga
-
-# from almgis.logger import LOGGER
-
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.event import listen
-
-from almgis.data_model import *
-from almgis.settings import AlmSettingsUser, AlmSettingsApp
-from almgis.config import Config
+from almgis.settings import AlmSettingsUser, AlmSettingsApp, AlmSettingsProject, \
+    AlmSettingsConstants, AlmSettingsPaths, AlmSettingsColors, \
+    AlmSettingsGeneral
 
 
 """verwende settings systemweit"""
+settings_general = AlmSettingsGeneral()
+settings_colors = AlmSettingsColors()
+settings_paths = AlmSettingsPaths()
+settings_constants = AlmSettingsConstants()
+
 settings_user = AlmSettingsUser()
-settings_sys = AlmSettingsApp()
+settings_app = AlmSettingsApp()
+settings_project = AlmSettingsProject()
 """"""
 
+"""init session handling
+use the instance of 'DbSession' to connect to the db"""
 DbSession = sessionmaker()
+""""""
 
 
 # def load_spatialite(dbapi_conn, connection_record):
@@ -81,10 +81,10 @@ DbSession = sessionmaker()
 #                            })
 # """"""
 #
-# """verwende den Contextmanager 'db_session_cm' für schnelle Datenbankzugriffe;
+# """verwende den Contextmanager 'session_cm' für schnelle Datenbankzugriffe;
 # danach wird automatisch 'commit' und 'close' ausgeführt"""
 # @contextmanager
-# def db_session_cm(expire_on_commit=True, name=''):
+# def session_cm(expire_on_commit=True, name=''):
 #     # print(f"- create SESSION - {name}")
 #     # LOGGER.info(f"--- create SESSION: {name} "
 #     #             f"(expire_on_commit={expire_on_commit})")
@@ -108,7 +108,7 @@ DbSession = sessionmaker()
 # """"""
 #
 # @contextmanager
-# def db_session_cm_data(expire_on_commit=True, name=''):
+# def session_cm_data(expire_on_commit=True, name=''):
 #     # print(f"- create SESSION - {name}")
 #     LOGGER.info(f"--- create SESSION: {name} "
 #                 f"(expire_on_commit={expire_on_commit})")

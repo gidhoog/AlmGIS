@@ -9,13 +9,13 @@ from qgis.PyQt.QtGui import QIcon
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-# from almgis import db_session_cm, DbSession, config
-from almgis.data_session import db_session_cm, DbSession
+# from almgis import session_cm, DbSession, config
+from almgis.data_session import session_cm, DbSession
 from qga.data_view import QgaDataView, QgaTableModel
 # from qga.entity import EntityDialog
 from qga.main_widget import QgaMainWidget
 
-from almgis.config import Config
+# from almgis.config import Config
 from almgis.data_model import BKontakt, BKontaktTyp, BAkt
 # from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 
@@ -39,7 +39,7 @@ class KontaktMainWidget(QgaMainWidget):
 
         self.kontakt_table = KontaktMain(self)
 
-        # with db_session_cm(name='main-widget - kontakt',
+        # with session_cm(name='main-widget - kontakt',
         #                    expire_on_commit=False) as session:
 
         # self.kontakt_table.setDataviewSession(session)
@@ -163,7 +163,7 @@ class KontaktMain(QgaDataView):
 
     def deleteCheck(self, mci):
 
-        with db_session_cm() as session:
+        with session_cm() as session:
             all_vertreter_ids_stmt = select(BKontakt.vertreter_id)
             all_vertreter_ids = session.scalars(all_vertreter_ids_stmt).all()
 
@@ -250,7 +250,7 @@ class KontaktMain(QgaDataView):
 
         self.filter_type_input_wdg.addItem('--- alle Typen ---', -1)
 
-        with db_session_cm(name='contact type filter') as session:
+        with session_cm(name='contact type filter') as session:
 
             contact_type_stmt = select(BKontaktTyp)
             contact_type_list = session.scalars(contact_type_stmt).all()

@@ -1,4 +1,4 @@
-from app_core import db_session_cm
+from app_core import session_cm
 from app_core.data_model import BErfassungsart, BAbgrenzungStatus, BKomplexName, \
     BAbgrenzung, BKomplex, BKoppel
 from app_core.entity import Entity

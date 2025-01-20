@@ -16,7 +16,7 @@ from geoalchemy2.shape import to_shape
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from app_core import config, db_session_cm
+from app_core import config, session_cm
 from app_core.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt, BKoppel, BAbgrenzung

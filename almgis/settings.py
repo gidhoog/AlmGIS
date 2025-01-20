@@ -1,12 +1,42 @@
+from enum import Enum
 from pathlib import Path
 
 from PyQt5.QtCore import QSettings
-from qga.settings import QgaSettings, QgaSettingsProject
+from qga.settings import QgaSettings, QgaSettingsProject, QgaSettingsGeneral, \
+    QgaSettingsColors, QgaSettingsPaths, QgaSettingsConstants
 
-from almgis.data_model import BSettings
-# from almgis.data_session import db_session_cm
-# from almgis import db_session_cm
+from almgis.data_model import McSettings
 
+
+class AlmSettingsGeneral(QgaSettingsGeneral):
+
+    app_modul_name = 'almgis'
+    allow_project_start_selector = False
+
+
+class AlmSettingsColors(QgaSettingsColors): pass
+
+
+class AlmSettingsPaths(QgaSettingsPaths):
+
+    data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.db')
+
+    print_template_path = (Path().absolute()
+                           .joinpath('../_internal',
+                                     'print_templates'))
+
+
+class AlmSettingsConstants(QgaSettingsConstants):
+
+    class CostCenterType(Enum):
+        SITE = 1
+        CROP = 4
+
+    class AttributeDataType(Enum):
+        TEXT = 0
+        INTEGER = 1
+        FLOAT = 2
+        LIST = 3
 
 class AlmSettingsUser(QgaSettings):
     """
@@ -20,7 +50,6 @@ class AlmSettingsUser(QgaSettings):
         ('h2', 'h2'),
         ('agn/h1', 'agn-h1'),
         ('agn/h3', 'agn-h3'),
-        ('agn/project_start_selector', 'True'),
         ('paths/last_project_file', 'ggg')
     ]
 
@@ -36,6 +65,10 @@ class AlmSettingsUser(QgaSettings):
 
 class AlmSettingsApp(QgaSettings):
 
+    attr_list = [
+        ('project_start_selector', 'False')
+    ]
+
     def __init__(self):
 
         ppp = Path().absolute().joinpath('AlmGIS.ini')
@@ -45,7 +78,7 @@ class AlmSettingsApp(QgaSettings):
         self.sync()
 
 
-class AgnSettingsProject(QgaSettingsProject):
+class AlmSettingsProject(QgaSettingsProject):
 
-    # db_session_cm = db_session_cm
-    settings_datamodel = BSettings
+    # session_cm = session_cm
+    settings_datamodel = McSettings

@@ -8,9 +8,9 @@ from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
 
 from sqlalchemy import select
 
-# from almgis import db_session_cm, DbSession
-from almgis.data_session import db_session_cm, DbSession
-from almgis.config import Config
+# from almgis import session_cm, DbSession
+from almgis.data_session import session_cm, DbSession
+# from almgis.config import Config
 from almgis.data_model import BAkt, BBearbeitungsstatus
 # from qga.entity import EntityDialog
 from qga.data_view import QgaDataView, QgaTableModel
@@ -462,7 +462,7 @@ class AkteAllMain(QgaDataView):
 
         self.filter_status_input_wdg.addItem('--- alle Statuse ---', -1)
 
-        with db_session_cm(name='contact type filter') as session:
+        with session_cm(name='contact type filter') as session:
 
             status_stmt = select(BBearbeitungsstatus)
             status_mci_list = session.scalars(status_stmt).all()

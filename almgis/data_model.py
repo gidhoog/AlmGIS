@@ -1022,7 +1022,7 @@ class BRechtsgrundlage(Base):
                f"name='{self.name}')>"
 
 
-class BSettings(Base):
+class McSettings(Base):
     """
     Einstellungen die vom Benutzer verändert werden können
     """

@@ -4,7 +4,7 @@ from qgis.PyQt.QtCore import Qt, QSize, QAbstractItemModel, QModelIndex
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorLayer, QgsField
 
-from app_core import db_session_cm
+from app_core import session_cm
 from app_core.data_model import BGstVersion
 from app_core.entity import Entity
 from app_core.gis_layer import setLayerStyle

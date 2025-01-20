@@ -7,7 +7,7 @@ from qgis.PyQt.QtWidgets import QWidget, QPushButton, QVBoxLayout
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 
-from app_core import entity, db_session_cm
+from app_core import entity, session_cm
 from app_core.combogroup import ComboModel
 from app_core.entity import EntityDialog
 from app_core.scopes.kontakt import kontakt_UI

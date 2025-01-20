@@ -1,14 +1,51 @@
 from contextlib import contextmanager
 
-from qga.data_session import QgaSession
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.event import listen
+from sqlalchemy import select
 
-from almgis import data_model
-from almgis.config import Config
-# from almgis.logger import LOGGER
+from almgis import DbSession
+from almgis.data_model import McSettings
 from almgis.logger import Logger
+
+"""verwende den Contextmanager 'session_cm' für schnelle Datenbankzugriffe;
+danach wird automatisch 'commit' und 'close' ausgeführt"""
+@contextmanager
+def session_cm(expire_on_commit=True, name=''):
+    # print(f"- create SESSION - {name}")
+    Logger.info(f"--- create SESSION: {name} "
+                f"(expire_on_commit={expire_on_commit})")
+    session = DbSession()
+    session.expire_on_commit = expire_on_commit
+    try:
+        yield session
+        # print(f"-- commit SESSION -- {name}")
+        Logger.info(f"--- commit SESSION: {name})")
+        session.commit()
+    except:
+        # print(f"-- except SESSION -- {name}")
+        session.rollback()
+        Logger.info(f"--- except SESSION: {name})")
+        raise
+    finally:
+        # print(f"--- close SESSION --- {name}")
+        session.close()
+        Logger.info(f"--- close SESSION: {name})")
+
+""""""
+
+def getSettingProjectValue(code):
+    """
+    lese die Einstellung mit dem übergebenen Code aus der Datenbank
+    und liefere den Wert zurück
+
+    :param code: str
+    :return: value
+    """
+    with session_cm(expire_on_commit=False,
+                    name=f'get project setting value \'{code}\'') as session:
+        stmt = select(McSettings).where(McSettings.code == code)
+        query = session.scalars(stmt).first()
+
+    return query.value
 
 
 # def load_spatialite(dbapi_conn, connection_record):
@@ -40,43 +77,43 @@ from almgis.logger import Logger
 # # DbSession.configure(bind=data_engine)
 
 
-DbSession = QgaSession()
-
-DbSession.config = Config
-
-DbSession.configure(binds={data_model.BAkt: DbSession.data_engine,
-                           data_model.BBanu: DbSession.data_engine,
-                           data_model.BBearbeitungsstatus: DbSession.data_engine,
-                           data_model.BCutKoppelGstAktuell: DbSession.data_engine,
-                           data_model.BErfassungsart: DbSession.data_engine,
-                           data_model.BGisLayer: DbSession.data_engine,
-                           data_model.BGisLayerMenu: DbSession.data_engine,
-                           data_model.BGisStyle: DbSession.data_engine,
-                           data_model.BGisStyleLayerVar: DbSession.data_engine,
-                           data_model.BGisScope: DbSession.data_engine,
-                           data_model.BGisScopeLayer: DbSession.data_engine,
-                           data_model.BGst: DbSession.data_engine,
-                           data_model.BGstAwbStatus: DbSession.data_engine,
-                           data_model.BGstEigentuemer: DbSession.data_engine,
-                           data_model.BGstEz: DbSession.data_engine,
-                           data_model.BGstNutzung: DbSession.data_engine,
-                           data_model.BGstVersion: DbSession.data_engine,
-                           data_model.BGstZuordnung: DbSession.data_engine,
-                           data_model.BGstZuordnungMain: DbSession.data_engine,
-                           data_model.BKatGem: DbSession.data_engine,
-                           data_model.BAbgrenzung: DbSession.data_engine,
-                           data_model.BAbgrenzungStatus: DbSession.data_engine,
-                           data_model.BKomplex: DbSession.data_engine,
-                           data_model.BKomplexName: DbSession.data_engine,
-                           data_model.BKontakt: DbSession.data_engine,
-                           data_model.BKontaktTyp: DbSession.data_engine,
-                           data_model.BKoppel: DbSession.data_engine,
-                           data_model.BRechtsgrundlage: DbSession.data_engine,
-                           data_model.BSys: DbSession.data_engine,
-                           data_model.McInfoButton: DbSession.data_engine,
-                           # data_model.BSettings: setting_engine,
-                           })
-""""""
+# DbSession = QgaSession()
+#
+# DbSession.config = Config
+#
+# DbSession.configure(binds={data_model.BAkt: DbSession.data_engine,
+#                            data_model.BBanu: DbSession.data_engine,
+#                            data_model.BBearbeitungsstatus: DbSession.data_engine,
+#                            data_model.BCutKoppelGstAktuell: DbSession.data_engine,
+#                            data_model.BErfassungsart: DbSession.data_engine,
+#                            data_model.BGisLayer: DbSession.data_engine,
+#                            data_model.BGisLayerMenu: DbSession.data_engine,
+#                            data_model.BGisStyle: DbSession.data_engine,
+#                            data_model.BGisStyleLayerVar: DbSession.data_engine,
+#                            data_model.BGisScope: DbSession.data_engine,
+#                            data_model.BGisScopeLayer: DbSession.data_engine,
+#                            data_model.BGst: DbSession.data_engine,
+#                            data_model.BGstAwbStatus: DbSession.data_engine,
+#                            data_model.BGstEigentuemer: DbSession.data_engine,
+#                            data_model.BGstEz: DbSession.data_engine,
+#                            data_model.BGstNutzung: DbSession.data_engine,
+#                            data_model.BGstVersion: DbSession.data_engine,
+#                            data_model.BGstZuordnung: DbSession.data_engine,
+#                            data_model.BGstZuordnungMain: DbSession.data_engine,
+#                            data_model.BKatGem: DbSession.data_engine,
+#                            data_model.BAbgrenzung: DbSession.data_engine,
+#                            data_model.BAbgrenzungStatus: DbSession.data_engine,
+#                            data_model.BKomplex: DbSession.data_engine,
+#                            data_model.BKomplexName: DbSession.data_engine,
+#                            data_model.BKontakt: DbSession.data_engine,
+#                            data_model.BKontaktTyp: DbSession.data_engine,
+#                            data_model.BKoppel: DbSession.data_engine,
+#                            data_model.BRechtsgrundlage: DbSession.data_engine,
+#                            data_model.BSys: DbSession.data_engine,
+#                            data_model.McInfoButton: DbSession.data_engine,
+#                            # data_model.BSettings: setting_engine,
+#                            })
+# """"""
 
 
 # DbSession.configure(binds={data_model.BAkt: data_engine,
@@ -112,29 +149,3 @@ DbSession.configure(binds={data_model.BAkt: DbSession.data_engine,
 #                            # data_model.BSettings: setting_engine,
 #                            })
 # """"""
-
-"""verwende den Contextmanager 'db_session_cm' für schnelle Datenbankzugriffe;
-danach wird automatisch 'commit' und 'close' ausgeführt"""
-@contextmanager
-def db_session_cm(expire_on_commit=True, name=''):
-    # print(f"- create SESSION - {name}")
-    Logger.info(f"--- create SESSION: {name} "
-                f"(expire_on_commit={expire_on_commit})")
-    session = DbSession()
-    session.expire_on_commit = expire_on_commit
-    try:
-        yield session
-        # print(f"-- commit SESSION -- {name}")
-        Logger.info(f"--- commit SESSION: {name})")
-        session.commit()
-    except:
-        # print(f"-- except SESSION -- {name}")
-        session.rollback()
-        Logger.info(f"--- except SESSION: {name})")
-        raise
-    finally:
-        # print(f"--- close SESSION --- {name}")
-        session.close()
-        Logger.info(f"--- close SESSION: {name})")
-
-""""""

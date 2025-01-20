@@ -4,7 +4,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QStandardItemModel
 from qgis.PyQt.QtWidgets import QWidget
 
-from app_core import db_session_cm
+from app_core import session_cm
 from app_core.data_model import BRechtsgrundlage, BGstAwbStatus
 from app_core.scopes.gst import gst_gemeinsame_werte_UI
 
@@ -32,7 +32,7 @@ class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget)
     def setAwbStatusCombo(self):
 
         try:
-            # with db_session_cm() as session:
+            # with session_cm() as session:
             #     session.expire_on_commit = False
             awb_status_query = self.session.query(BGstAwbStatus)\
                 .order_by(BGstAwbStatus.sort)\
@@ -62,7 +62,7 @@ class GstGemeinsameWerte(gst_gemeinsame_werte_UI.Ui_GstGemeinsameWerte, QWidget)
     def setRechtsgrundlageCombo(self):
 
         try:
-            # with db_session_cm() as session:
+            # with session_cm() as session:
             #     session.expire_on_commit = False
             rechtsgrunglage_query = self.session.query(BRechtsgrundlage)\
                 .order_by(BRechtsgrundlage.sort)\

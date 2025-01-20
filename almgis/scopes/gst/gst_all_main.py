@@ -71,7 +71,7 @@ class GstAllMainWidget(MainWidget):
 
         self.gst_table = GstAllDataView(self, gis_mode=True)
 
-        # with db_session_cm(name='main-widget - kontakt',
+        # with session_cm(name='main-widget - kontakt',
         #                    expire_on_commit=False) as session:
 
         self.gst_table.setDataviewSession(session)
