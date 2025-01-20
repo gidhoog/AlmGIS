@@ -15,6 +15,12 @@ settings_app = AlmSettingsApp()
 settings_project = AlmSettingsProject()
 """"""
 
+"""aktualisiere die ini-Dateien beim App-Start, falls neu Einträge eingefügt
+worden sind"""
+settings_app.updateSettings()
+settings_user.updateSettings()
+""""""
+
 """init session handling
 use the instance of 'DbSession' to connect to the db"""
 DbSession = sessionmaker()

@@ -1,5 +1,6 @@
 import sys
 
+from almgis import settings_user, settings_app
 
 print(f'PATH: ++++++++++++++++++++++++++++++++++++++++++++++')
 for path in sys.path:
@@ -17,21 +18,22 @@ if sys.version < '3.0':
 
 def run():
 
+    Logger.info("+ + + + AlmGis gestartet !!! + + + +")
+    Logger.info(f'setting_app file_name: {settings_app.fileName()}')
+    Logger.info(f'setting_user file_name: {settings_user.fileName()}')
+
     app = QgsApplication([], True)
 
     app.setPrefixPath(
         "C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
         True)
-
     app.initQgis()
 
     main_window = AlmMainWindow()
-
     # main_window.setupMainWindow()
 
     main_window.show()
 
-    # LOGGER.debug("almgis started! + + + + + + + + + + + + + + + + ")
 
     sys.exit(app.exec_())
 

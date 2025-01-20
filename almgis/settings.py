@@ -9,17 +9,48 @@ from almgis.data_model import McSettings
 
 
 class AlmSettingsGeneral(QgaSettingsGeneral):
+    """
+    Klasse für alle allgemeinen Einstellungen;
+
+        - Einstellungen die bei kompilierten/gepackten Programmen
+         verändert werden können müssen in der Klasse 'AlmSettingsApp'
+         geschrieben werden;
+
+        - Einstellungen die vom User verändert werden können müssen
+        in der Klasse 'AlmSettingsUser' geschrieben werden;
+    """
 
     app_modul_name = 'almgis'
     allow_project_start_selector = False
 
 
-class AlmSettingsColors(QgaSettingsColors): pass
+class AlmSettingsColors(QgaSettingsColors):
+    """
+    Klasse für alle Einstellungen die Farben betreffen;
+
+        - Einstellungen die bei kompilierten/gepackten Programmen
+         verändert werden können müssen in der Klasse 'AlmSettingsApp'
+         geschrieben werden;
+
+        - Einstellungen die vom User verändert werden können müssen
+        in der Klasse 'AlmSettingsUser' geschrieben werden;
+    """
 
 
 class AlmSettingsPaths(QgaSettingsPaths):
+    """
+    Klasse für alle Einstellungen die Pfade und Speicherorte von Dateien
+     betreffen;
 
-    data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.db')
+        - Einstellungen die bei kompilierten/gepackten Programmen
+         verändert werden können müssen in der Klasse 'AlmSettingsApp'
+         geschrieben werden;
+
+        - Einstellungen die vom User verändert werden können müssen
+        in der Klasse 'AlmSettingsUser' geschrieben werden;
+    """
+
+    data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
 
     print_template_path = (Path().absolute()
                            .joinpath('../_internal',
@@ -27,6 +58,9 @@ class AlmSettingsPaths(QgaSettingsPaths):
 
 
 class AlmSettingsConstants(QgaSettingsConstants):
+    """
+    Klasse für konstante Werte;
+    """
 
     class CostCenterType(Enum):
         SITE = 1
@@ -38,15 +72,18 @@ class AlmSettingsConstants(QgaSettingsConstants):
         FLOAT = 2
         LIST = 3
 
+
 class AlmSettingsUser(QgaSettings):
-    """
-    klasse für die benutzer-spezifischen settings;
-    settings werden in eine ini-datei im benutzerverzeichnis geschrieben (
-    e.g.: /home/user/.config/NoeAbb/AlmGIS.ini)
-    """
+
+    # klasse für benutzer-spezifischen Einstellungen;
+    # Einstellungen werden in eine ini-datei im benutzerverzeichnis geschrieben (
+    # e.g.: '/home/user/.config/NoeAbb/AlmGIS.ini' oder
+    # 'C:\Users\ZNFF\AppData\Roaming\NoeAbb.AlmGIS.ini')
+
 
     attr_list = [
         ('h1', 'h1'),
+        ('h11', 'h11'),
         ('h2', 'h2'),
         ('agn/h1', 'agn-h1'),
         ('agn/h3', 'agn-h3'),
@@ -66,7 +103,8 @@ class AlmSettingsUser(QgaSettings):
 class AlmSettingsApp(QgaSettings):
 
     attr_list = [
-        ('project_start_selector', 'False')
+        ('project_start_selector', 'False'),
+        ('static_project_file', 'G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
     ]
 
     def __init__(self):
