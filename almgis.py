@@ -1,5 +1,7 @@
 import sys
 
+from PyQt5.QtCore import Qt
+
 from almgis import settings_user, settings_app
 
 print(f'PATH: ++++++++++++++++++++++++++++++++++++++++++++++')
@@ -30,10 +32,8 @@ def run():
     app.initQgis()
 
     main_window = AlmMainWindow()
-    # main_window.setupMainWindow()
-
-    main_window.show()
-
+    main_window.setupMainWindow()
+    # main_window.setWindowState(Qt.WindowMaximized)
 
     sys.exit(app.exec_())
 

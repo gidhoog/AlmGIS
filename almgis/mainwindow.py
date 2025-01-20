@@ -5,6 +5,8 @@ from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
 
+from almgis import settings_user, settings_app, settings_project, \
+    settings_general, settings_colors, settings_paths, settings_constants
 # from almgis import DbSession, settings_user, settings_sys
 from almgis.data_session import DbSession
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
@@ -77,6 +79,17 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionOpenAbout.setText('über AlmGIS')
         # self.uiAktionOpenSettings.setIcon(
         #     QIcon(':/svg/resources/icons/contacts.svg'))
+
+    def bindSettings(self):
+
+        self.settings_app = settings_app
+        self.settings_user = settings_user
+        self.settings_project = settings_project
+
+        self.settings_general = settings_general
+        self.settings_colors = settings_colors
+        self.settings_paths = settings_paths
+        self.settings_constants = settings_constants
 
     def signalsAction(self):
 
