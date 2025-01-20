@@ -21,7 +21,6 @@ class AlmSettingsGeneral(QgaSettingsGeneral):
     """
 
     app_modul_name = 'almgis'
-    allow_project_start_selector = False
 
 
 class AlmSettingsColors(QgaSettingsColors):
@@ -103,7 +102,7 @@ class AlmSettingsUser(QgaSettings):
 class AlmSettingsApp(QgaSettings):
 
     attr_list = [
-        ('project_start_selector', 'False'),
+        ('use_project_start_selector', 'False'),
         ('static_project_file', 'G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
     ]
 

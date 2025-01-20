@@ -1,6 +1,6 @@
 from qga.footer_line import QgaFooterLine
 
-from almgis.config import Config
+from almgis.zzz_config import Config
 
 class AlmFooterLine(QgaFooterLine):
 

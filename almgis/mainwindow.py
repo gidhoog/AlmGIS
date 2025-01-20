@@ -8,7 +8,8 @@ from qgis.PyQt.QtGui import QIcon
 from almgis import settings_user, settings_app, settings_project, \
     settings_general, settings_colors, settings_paths, settings_constants
 # from almgis import DbSession, settings_user, settings_sys
-from almgis.data_session import DbSession
+from almgis import DbSession
+from almgis.logger import Logger
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
 
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
@@ -30,6 +31,9 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self, parent=None):
         super(AlmMainWindow, self).__init__(parent)
         # self.setupUi(self)
+
+        self.session = DbSession
+        self.logger = Logger
 
         self.setWindowTitle('AlmGIS')
 
