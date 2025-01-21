@@ -8,6 +8,7 @@ from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
 
 from sqlalchemy import select
 
+from almgis import settings_general
 # from almgis import session_cm, DbSession
 from almgis.data_session import session_cm, DbSession
 # from almgis.config import Config
@@ -404,7 +405,7 @@ class AkteAllMain(QgaDataView):
         self.filter_name_lbl = QLabel(self)
 
         name_lbl_font = self.filter_name_lbl.font()
-        name_lbl_font.setFamily(Config.font_family)
+        name_lbl_font.setFamily(settings_general.font_family)
         self.filter_name_lbl.setFont(name_lbl_font)
 
         self.filter_name_lbl.setText('Name:')
@@ -414,7 +415,7 @@ class AkteAllMain(QgaDataView):
 
         name_input_wdg_font = self.filter_name_input_wdg.font()
         name_input_wdg_font.setPointSize(11)
-        name_input_wdg_font.setFamily(Config.font_family)
+        name_input_wdg_font.setFamily(settings_general.font_family)
         self.filter_name_input_wdg.setFont(name_input_wdg_font)
 
         self.filter_name_input_wdg.setPlaceholderText('Aktenname')
@@ -429,7 +430,7 @@ class AkteAllMain(QgaDataView):
         self.filter_az_lbl = QLabel(self)
 
         az_lbl_font = self.filter_az_lbl.font()
-        az_lbl_font.setFamily(Config.font_family)
+        az_lbl_font.setFamily(settings_general.font_family)
         self.filter_az_lbl.setFont(az_lbl_font)
 
         self.filter_az_lbl.setText('AZ:')
@@ -439,7 +440,7 @@ class AkteAllMain(QgaDataView):
         self.filter_az_input_wdg.setPlaceholderText('AZ')
         az_input_wdg_font = self.filter_az_input_wdg.font()
         az_input_wdg_font.setPointSize(11)
-        az_input_wdg_font.setFamily(Config.font_family)
+        az_input_wdg_font.setFamily(settings_general.font_family)
         self.filter_az_input_wdg.setFont(az_input_wdg_font)
         self.filter_az_input_wdg.setClearButtonEnabled(True)
         self.filter_az_input_wdg.setMaximumWidth(80)
@@ -452,7 +453,7 @@ class AkteAllMain(QgaDataView):
         self.filter_status_lbl = QLabel(self)
 
         status_lbl_font = self.filter_status_lbl.font()
-        status_lbl_font.setFamily(Config.font_family)
+        status_lbl_font.setFamily(settings_general.font_family)
         self.filter_status_lbl.setFont(status_lbl_font)
 
         self.filter_status_lbl.setText('AZ:')
@@ -473,7 +474,7 @@ class AkteAllMain(QgaDataView):
 
         status_input_wdg_font = self.filter_status_input_wdg.font()
         status_input_wdg_font.setPointSize(11)
-        status_input_wdg_font.setFamily(Config.font_family)
+        status_input_wdg_font.setFamily(settings_general.font_family)
         self.filter_status_input_wdg.setFont(status_input_wdg_font)
 
         self.filter_status_input_wdg.currentIndexChanged.connect(

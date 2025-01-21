@@ -9,6 +9,7 @@ from qgis.PyQt.QtGui import QIcon
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
+from almgis import settings_general
 # from almgis import session_cm, DbSession, config
 from almgis.data_session import session_cm, DbSession
 from qga.data_view import QgaDataView, QgaTableModel
@@ -242,7 +243,7 @@ class KontaktMain(QgaDataView):
         self.filter_type_lbl.setText('Typ:')
         kontakt_type_lbl_font = self.filter_type_lbl.font()
         # kontakt_type_lbl_font.setFamily(config.font_family)
-        kontakt_type_lbl_font.setFamily(Config.font_family)
+        kontakt_type_lbl_font.setFamily(settings_general.font_family)
         self.filter_type_lbl.setFont(kontakt_type_lbl_font)
         self.filter_type_lbl.setVisible(False)
 
@@ -261,7 +262,7 @@ class KontaktMain(QgaDataView):
 
         kontakt_type_input_wdg_font = self.filter_type_input_wdg.font()
         kontakt_type_input_wdg_font.setPointSize(11)
-        kontakt_type_input_wdg_font.setFamily(Config.font_family)
+        kontakt_type_input_wdg_font.setFamily(settings_general.font_family)
         self.filter_type_input_wdg.setFont(kontakt_type_input_wdg_font)
 
         # self.filter_type_input_wdg.currentIndexChanged.connect(self.useFilter)
@@ -275,7 +276,7 @@ class KontaktMain(QgaDataView):
         self.filter_name_lbl = QLabel(self)
 
         name_lbl_font = self.filter_name_lbl.font()
-        name_lbl_font.setFamily(Config.font_family)
+        name_lbl_font.setFamily(settings_general.font_family)
         self.filter_name_lbl.setFont(name_lbl_font)
 
         self.filter_name_lbl.setText('Name:')
@@ -285,7 +286,7 @@ class KontaktMain(QgaDataView):
 
         name_input_wdg_font = self.filter_name_input_wdg.font()
         name_input_wdg_font.setPointSize(11)
-        name_input_wdg_font.setFamily(Config.font_family)
+        name_input_wdg_font.setFamily(settings_general.font_family)
         self.filter_name_input_wdg.setFont(name_input_wdg_font)
 
         self.filter_name_input_wdg.setPlaceholderText('Name')
