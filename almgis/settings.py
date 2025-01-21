@@ -21,6 +21,8 @@ class AlmSettingsGeneral(QgaSettingsGeneral):
     """
 
     app_modul_name = 'almgis'
+    app_display_name = 'AlmGIS'
+    project_file_suffix = 'alm'
 
 
 class AlmSettingsColors(QgaSettingsColors):

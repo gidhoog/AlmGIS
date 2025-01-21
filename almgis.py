@@ -34,7 +34,7 @@ def run():
     main_window = AlmMainWindow()
     main_window.setupMainWindow()
     # main_window.setWindowState(Qt.WindowMaximized)
-    main_window.arrangeProjectFile()
+    main_window.selectStartProject()
 
     sys.exit(app.exec_())
 

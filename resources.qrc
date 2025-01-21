@@ -4,6 +4,7 @@
     <file>resources/icons/abb_logo_ohne_schrift.svg</file>
   </qresource>
   <qresource prefix="svg">
+    <file>resources/icons/mActionFileNew.svg</file>
     <file>resources/icons/gst_all.svg</file>
     <file>resources/icons/awb.svg</file>
     <file>resources/icons/awb_auszug.svg</file>

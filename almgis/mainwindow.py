@@ -1,13 +1,9 @@
-from pathlib import Path
-
-from PyQt5.QtCore import QSettings
 from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
 
 from almgis import settings_user, settings_app, settings_project, \
     settings_general, settings_colors, settings_paths, settings_constants
-# from almgis import DbSession, settings_user, settings_sys
 from almgis import DbSession
 from almgis.logger import Logger
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
@@ -16,16 +12,7 @@ from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
 
 from qga.mainwindow import QgaMainWindow
 
-from almgis.settings import AlmSettingsUser, AlmSettingsApp
 
-
-# from almgis.scopes.akte import akte_all_main
-# from almgis.scopes.gst import gst_all_main
-# from almgis.scopes.kontakt import kontakt_main
-# from qga.settings import SettingsDlg, SettingsWdg
-
-
-# class AlmMainWindow(QgaMainWindow, mainwindow_UI.Ui_QgaMainWindow):
 class AlmMainWindow(QgaMainWindow):
 
     def __init__(self, parent=None):
@@ -35,9 +22,9 @@ class AlmMainWindow(QgaMainWindow):
         self.session = DbSession
         self.logger = Logger
 
-        self.setWindowTitle('AlmGIS')
 
     def declareActions(self):
+        super().declareActions()
 
         self.uiAktionOpenAkteMain = QAction()
         self.uiAktionOpenAkteMain.setText('Alle Akte')
@@ -96,6 +83,7 @@ class AlmMainWindow(QgaMainWindow):
         self.settings_constants = settings_constants
 
     def signalsAction(self):
+        super().signalsAction()
 
         # self.uiAktionOpenAkteMain.triggered.connect(self.testAkte)
         self.uiAktionOpenAkteMain.triggered.connect(
