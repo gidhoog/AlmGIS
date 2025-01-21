@@ -83,12 +83,7 @@ class AlmSettingsUser(QgaSettings):
 
 
     attr_list = [
-        ('h1', 'h1'),
-        ('h11', 'h11'),
-        ('h2', 'h2'),
-        ('agn/h1', 'agn-h1'),
-        ('agn/h3', 'agn-h3'),
-        ('paths/last_project_file', 'ggg')
+        ('paths/last_project_file', '')
     ]
 
     def __init__(self):

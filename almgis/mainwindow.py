@@ -161,8 +161,6 @@ class AlmMainWindow(QgaMainWindow):
     def initStatusBar(self):
         super().initStatusBar()
 
-        self.uiStatusBar.showMessage('AlmGIS geladen ...', 3000)
-
 #     def setupMainWindow(self):
 #
 #         self.main_session = DbSession()
