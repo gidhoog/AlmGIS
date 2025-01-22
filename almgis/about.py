@@ -1,0 +1,14 @@
+from qga.about import QgaAboutDialog
+
+from almgis import AlmSettingsGeneral
+from almgis.logger import Logger
+
+
+class AlmAboutDialog(QgaAboutDialog):
+
+    def __init__(self, parent=None):
+        super(AlmAboutDialog, self).__init__(parent)
+
+        self.logger = Logger
+
+        self.dialog_window_title = AlmSettingsGeneral.app_display_name

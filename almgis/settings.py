@@ -24,6 +24,8 @@ class AlmSettingsGeneral(QgaSettingsGeneral):
     app_display_name = 'AlmGIS'
     project_file_suffix = 'alm'
 
+    help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
+
 
 class AlmSettingsColors(QgaSettingsColors):
     """
