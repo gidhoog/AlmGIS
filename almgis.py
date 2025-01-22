@@ -32,8 +32,9 @@ def run():
     app.initQgis()
 
     main_window = AlmMainWindow()
+    main_window.setWindowState(Qt.WindowMaximized)
+    main_window.show()
     main_window.setupMainWindow()
-    # main_window.setWindowState(Qt.WindowMaximized)
     main_window.selectStartProject()
 
     sys.exit(app.exec_())
