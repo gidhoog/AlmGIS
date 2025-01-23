@@ -62,15 +62,15 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionImportGst.setIcon(
             QIcon(':/svg/resources/icons/import.svg'))
 
-        self.uiActionOpenHelp = QAction()
-        self.uiActionOpenHelp.setText('öffne AlmGIS-Wiki')
-        # self.uiAktionOpenSettings.setIcon(
-        #     QIcon(':/svg/resources/icons/contacts.svg'))
-
-        self.uiActionOpenAbout = QAction()
-        self.uiActionOpenAbout.setText('über AlmGIS')
-        # self.uiAktionOpenSettings.setIcon(
-        #     QIcon(':/svg/resources/icons/contacts.svg'))
+        # self.uiActionOpenHelp = QAction()
+        # self.uiActionOpenHelp.setText('öffne AlmGIS-Wiki')
+        # # self.uiAktionOpenSettings.setIcon(
+        # #     QIcon(':/svg/resources/icons/contacts.svg'))
+        #
+        # self.uiActionOpenAbout = QAction()
+        # self.uiActionOpenAbout.setText('über AlmGIS')
+        # # self.uiAktionOpenSettings.setIcon(
+        # #     QIcon(':/svg/resources/icons/contacts.svg'))
 
     def bindSettings(self):
 
@@ -86,8 +86,8 @@ class AlmMainWindow(QgaMainWindow):
     def signalsAction(self):
         super().signalsAction()
 
-        self.uiActionOpenHelp.triggered.connect(self.openHelpUrl)
-        self.uiActionOpenAbout.triggered.connect(self.openAboutDialog)
+        # self.uiActionOpenHelp.triggered.connect(self.openHelpUrl)
+        # self.uiActionOpenAbout.triggered.connect(self.openAboutDialog)
 
         self.uiAktionOpenAkteMain.triggered.connect(
             lambda x,
@@ -119,9 +119,9 @@ class AlmMainWindow(QgaMainWindow):
         self.uiMenuSonstiges.addAction(self.uiAktionImportGst)
         self.uiMenuSonstiges.addAction(self.uiAktionOpenSettings)
 
-        self.uiMenuHilfe = self.menuBar().addMenu('Hilfe')
-        self.uiMenuHilfe.addAction(self.uiActionOpenHelp)
-        self.uiMenuHilfe.addAction(self.uiActionOpenAbout)
+        # self.uiMenuHilfe = self.menuBar().addMenu('Hilfe')
+        # self.uiMenuHilfe.addAction(self.uiActionOpenHelp)
+        # self.uiMenuHilfe.addAction(self.uiActionOpenAbout)
 
     def createToolBar(self):
 
