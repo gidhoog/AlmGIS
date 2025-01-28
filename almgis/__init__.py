@@ -2,6 +2,7 @@ from sqlalchemy.orm import sessionmaker
 from almgis.settings import AlmSettingsUser, AlmSettingsApp, AlmSettingsProject, \
     AlmSettingsConstants, AlmSettingsPaths, AlmSettingsColors, \
     AlmSettingsGeneral
+from almgis import data_model
 
 
 """verwende settings systemweit"""
@@ -25,6 +26,39 @@ settings_user.updateSettings()
 use the instance of 'DbSession' to connect to the db"""
 DbSession = sessionmaker()
 """"""
+
+# DbSession.configure(binds={data_model.BAkt: DbSession.data_engine,
+#                            data_model.BBanu: DbSession.data_engine,
+#                            data_model.BBearbeitungsstatus: DbSession.data_engine,
+#                            data_model.BCutKoppelGstAktuell: DbSession.data_engine,
+#                            data_model.BErfassungsart: DbSession.data_engine,
+#                            data_model.BGisLayer: DbSession.data_engine,
+#                            data_model.BGisLayerMenu: DbSession.data_engine,
+#                            data_model.BGisStyle: DbSession.data_engine,
+#                            data_model.BGisStyleLayerVar: DbSession.data_engine,
+#                            data_model.BGisScope: DbSession.data_engine,
+#                            data_model.BGisScopeLayer: DbSession.data_engine,
+#                            data_model.BGst: DbSession.data_engine,
+#                            data_model.BGstAwbStatus: DbSession.data_engine,
+#                            data_model.BGstEigentuemer: DbSession.data_engine,
+#                            data_model.BGstEz: DbSession.data_engine,
+#                            data_model.BGstNutzung: DbSession.data_engine,
+#                            data_model.BGstVersion: DbSession.data_engine,
+#                            data_model.BGstZuordnung: DbSession.data_engine,
+#                            data_model.BGstZuordnungMain: DbSession.data_engine,
+#                            data_model.BKatGem: DbSession.data_engine,
+#                            data_model.BAbgrenzung: DbSession.data_engine,
+#                            data_model.BAbgrenzungStatus: DbSession.data_engine,
+#                            data_model.BKomplex: DbSession.data_engine,
+#                            data_model.BKomplexName: DbSession.data_engine,
+#                            data_model.BKontakt: DbSession.data_engine,
+#                            data_model.BKontaktTyp: DbSession.data_engine,
+#                            data_model.BKoppel: DbSession.data_engine,
+#                            data_model.BRechtsgrundlage: DbSession.data_engine,
+#                            data_model.BSys: DbSession.data_engine,
+#                            data_model.McInfoButton: DbSession.data_engine,
+#                            # data_model.BSettings: setting_engine,
+#                            })
 
 
 # def load_spatialite(dbapi_conn, connection_record):

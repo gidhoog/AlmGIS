@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
+    <width>654</width>
     <height>633</height>
    </rect>
   </property>
@@ -523,7 +523,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>648</width>
+     <width>654</width>
      <height>21</height>
     </rect>
    </property>
@@ -534,7 +534,7 @@
   <customwidget>
    <class>ContactCombo</class>
    <extends>QComboBox</extends>
-   <header>app_core.scopes.kontakt.contact_combo</header>
+   <header>almgis.scopes.kontakt.contact_combo</header>
   </customwidget>
  </customwidgets>
  <tabstops>

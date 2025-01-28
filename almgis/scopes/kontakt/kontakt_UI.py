@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'app_core/scopes/kontakt/kontakt.ui'
+# Form implementation generated from reading ui file 'almgis/scopes/kontakt/kontakt.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Kontakt(object):
     def setupUi(self, Kontakt):
         Kontakt.setObjectName("Kontakt")
-        Kontakt.resize(648, 633)
+        Kontakt.resize(654, 633)
         self.centralwidget = QtWidgets.QWidget(Kontakt)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -298,7 +298,7 @@ class Ui_Kontakt(object):
         self.verticalLayout.addLayout(self.gridLayout)
         Kontakt.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Kontakt)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 648, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 654, 21))
         self.menubar.setObjectName("menubar")
         Kontakt.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(Kontakt)
@@ -341,4 +341,4 @@ class Ui_Kontakt(object):
         self.label_8.setText(_translate("Kontakt", "Telefon:"))
         self.label_7.setText(_translate("Kontakt", "Post"))
         self.uiVornameLbl.setText(_translate("Kontakt", "Vorname:"))
-from app_core.scopes.kontakt.contact_combo import ContactCombo
+from almgis.scopes.kontakt.contact_combo import ContactCombo

@@ -1,22 +1,18 @@
 import os
-from pathlib import Path
 
 # from PyQt5.QtCore import QDate
-from qgis.PyQt.QtGui import (QIntValidator, QIcon, QStandardItem, QStandardItemModel)
+from qgis.PyQt.QtGui import (QIntValidator, QIcon, QStandardItemModel)
 from qgis.PyQt.QtWidgets import QDockWidget
 
 from qgis.PyQt.QtCore import Qt, QModelIndex, pyqtSlot, QDate
 
-from geoalchemy2.shape import to_shape
-from qgis.core import QgsLayoutExporter, QgsFeature, QgsGeometry
-from sqlalchemy import desc, select, text, func
+from qgis.core import QgsLayoutExporter
+from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 
-from app_core import entity, session_cm, LOGGER
+from app_core import entity, LOGGER
 from app_core.config import almgis_home_path
-from app_core.data_model import BAkt, BBearbeitungsstatus, BGisStyle, \
-    BGisScopeLayer, BGisStyleLayerVar, BAbgrenzung, BKomplex, BKoppel, \
-    BGstZuordnung, BKontakt
+from app_core.data_model import BAkt, BBearbeitungsstatus, BGstZuordnung, BKontakt
 from app_core.entity_titel import EntityTitel
 from app_core.gis_item import GisItem
 # from app_core.gis_layer import KoppelLayer, KomplexLayer
@@ -32,7 +28,6 @@ from app_core.scopes.komplex.komplex_item import KomplexItem, AbgrenzungItem
 from app_core.scopes.kontakt.kontakt import Kontakt, KontaktNewSelector
 from app_core.scopes.koppel.koppel_item import KoppelItem
 
-import resources_rc
 
 class Akt(akt_UI.Ui_Akt, entity.Entity):
     """

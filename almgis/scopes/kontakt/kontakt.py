@@ -5,18 +5,19 @@ from qgis.PyQt.QtCore import QRegExp, Qt
 from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
 from qgis.PyQt.QtWidgets import QWidget, QPushButton, QVBoxLayout
 from sqlalchemy import select, func
-from sqlalchemy.orm import joinedload
+# from sqlalchemy.orm import joinedload
 
-from app_core import entity, session_cm
-from app_core.combogroup import ComboModel
-from app_core.entity import EntityDialog
-from app_core.scopes.kontakt import kontakt_UI
+# from almgis.combogroup import ComboModel
+from almgis.entity import AlmEntityDialog
+from almgis.scopes.kontakt import kontakt_UI
 
-from app_core.data_model import BKontakt, BKontaktTyp
-from app_core.tools import getMciState
+from almgis.data_model import BKontakt, BKontaktTyp
+from qga.tools import getMciState
+
+from almgis.entity import AlmEntity
 
 
-class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
+class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
     """
     klasse für einen gemeinschafts-kontakt
     """
@@ -294,6 +295,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, entity.Entity):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
         self.setupUi(self)
+
         self.setupCodeUi()
 
         self._entity_mc = BKontakt
@@ -622,7 +624,7 @@ class KontaktNewSelector(QWidget):
         entity_widget.setEntitySession(self.parent.entity_session)
         entity_widget.editEntity(entity_mci=mci)
 
-        entity_dialog = EntityDialog(parent=self.parent.uiBewirtschafterCombo)
+        entity_dialog = AlmEntityDialog(parent=self.parent.uiBewirtschafterCombo)
 
         """setze den entity_dialog im entity_widget"""
         entity_widget.entity_dialog = entity_dialog

@@ -723,4 +723,3 @@ class Ui_Akt(object):
         self.actionAwbAuszug.setToolTip(_translate("Akt", "erstelle einen AWB-Auszug"))
 from app_core.info_button import InfoButton
 from app_core.scopes.kontakt.contact_combo import ContactCombo
-import resources_rc

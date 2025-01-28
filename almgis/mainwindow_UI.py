@@ -101,4 +101,4 @@ class Ui_MainWindow(object):
         self.actionAllGst.setText(_translate("MainWindow", "Alle zugeordeten Grundstücke"))
         self.actionSettings.setText(_translate("MainWindow", "Einstellungen"))
         self.uiKontakteAllAction.setText(_translate("MainWindow", "alle Kontakte"))
-import resources_rc
+from . import resources_rc

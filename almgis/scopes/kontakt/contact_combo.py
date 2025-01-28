@@ -1,12 +1,12 @@
 # from PyQt5.QtCore import QModelIndex, Qt
 from sqlalchemy import select, or_
-from sqlalchemy.orm import joinedload
+# from sqlalchemy.orm import joinedload
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
 
-from app_core import session_cm
-from app_core.combogroup import ExtendedCombo, ComboModel
-from app_core.data_model import BKontakt, BKontaktTyp
+# from app_core import session_cm
+from qga.combobox import ExtendedCombo, ComboModel
+from almgis.data_model import BKontakt, BKontaktTyp
 
 
 # from core.scopes.kontakt.kontakt import Kontakt

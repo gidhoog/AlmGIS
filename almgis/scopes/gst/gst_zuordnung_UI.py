@@ -158,4 +158,3 @@ class Ui_GstZuordnung(object):
         self.uiMatchGstPbtn.setText(_translate("GstZuordnung", "Gst zuordnen"))
         self.uiSelectGstPbtn.setText(_translate("GstZuordnung", "Auswahl übernehmen"))
 from app_core.info_button import InfoButton
-import resources_rc
