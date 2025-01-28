@@ -1,13 +1,10 @@
-# from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtCore import QRegExp, Qt
 # from PyQt5.QtGui import QRegExpValidator
 from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
 from qgis.PyQt.QtWidgets import QWidget, QPushButton, QVBoxLayout
 from sqlalchemy import select, func
-# from sqlalchemy.orm import joinedload
 
-# from almgis.combogroup import ComboModel
 from almgis.entity import AlmEntityDialog
 from almgis.scopes.kontakt import kontakt_UI
 
@@ -156,33 +153,6 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
 
         self.uiStrasseLedit.setText(value)
         self._strasse = value
-
-    # @property  # getter
-    # def shown_name(self):
-    #
-    #     name = ''
-    #
-    #     name = name + self.uiLastNameLedit.text()
-    #     if self.uiLastNameLedit.text() != ''\
-    #             and self.uiFirstNameLedit.text() != '':
-    #         name = name + ' '
-    #     name = name + self.uiFirstNameLedit.text()
-    #
-    #     if self.uiCompanyLedit.text() != '' and name == '':
-    #         self._shown_name = self.uiCompanyLedit.text()
-    #
-    #     if self.uiCompanyLedit.text() != '' and name != '':
-    #         self._shown_name = self.uiCompanyLedit.text() + ' (' + name + ')'
-    #
-    #     if self.uiCompanyLedit.text() == '' and name != '':
-    #         self._shown_name = name
-    #
-    #     return self._shown_name
-    #
-    # @shown_name.setter
-    # def shown_name(self, value):
-    #
-    #     self._shown_name = value
 
     @property  # getter
     def plz(self):

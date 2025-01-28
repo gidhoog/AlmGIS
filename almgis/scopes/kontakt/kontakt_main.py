@@ -1,4 +1,3 @@
-# from PyQt5.QtCore import Qt
 from pathlib import Path
 
 from qgis.PyQt.QtCore import Qt
@@ -10,20 +9,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from almgis import settings_general
-# from almgis import session_cm, DbSession, config
 from almgis.data_session import session_cm, DbSession
 from qga.data_view import QgaTableModel
 from almgis.data_view import AlmDataView
-# from qga.entity import EntityDialog
 from qga.main_widget import QgaMainWidget
 
-# from almgis.config import Config
 from almgis.data_model import BKontakt, BKontaktTyp, BAkt
 from almgis.entity import AlmEntityDialog
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
-
-
-# from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 
 
 class KontaktEntityDialog(AlmEntityDialog):
@@ -45,14 +38,8 @@ class KontaktMainWidget(QgaMainWidget):
 
         self.kontakt_table = KontaktMain(self)
 
-        # with session_cm(name='main-widget - kontakt',
-        #                    expire_on_commit=False) as session:
+    def createMw(self):
 
-        # self.kontakt_table.setDataviewSession(session)
-        # self.kontakt_table.initDataView()
-
-    def createMw(self, session):
-        # self.kontakt_table.setDataviewSession(session)
         self.kontakt_table.initDataView()
 
         self.initMainWidget()
@@ -61,8 +48,6 @@ class KontaktMainWidget(QgaMainWidget):
         super().initMainWidget()
 
         self.uiMainVlay.addWidget(self.kontakt_table)
-        # self.kontakt_table.loadData()
-        # self.kontakt_table.initDataView()
 
 
 class KontaktModel(QgaTableModel):
