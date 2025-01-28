@@ -117,4 +117,4 @@ class AlmSettingsApp(QgaSettings):
 class AlmSettingsProject(QgaSettingsProject):
 
     # session_cm = session_cm
-    settings_datamodel = McSettings
+    settings_mc = McSettings

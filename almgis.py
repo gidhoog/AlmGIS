@@ -1,3 +1,4 @@
+import platform
 import sys
 
 from PyQt5.QtCore import Qt
@@ -26,9 +27,16 @@ def run():
 
     app = QgsApplication([], True)
 
-    app.setPrefixPath(
-        "C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
-        True)
+    if platform.system() == 'Linux':
+        app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis",
+                          True)
+    elif platform.system() == 'Windows':
+        app.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
+                          True)
+    else:
+        Logger.error(f'cannot set PrefixPath for QGIS! --> Quit app!')
+        return
+
     app.initQgis()
 
     main_window = AlmMainWindow()
