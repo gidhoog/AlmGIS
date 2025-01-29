@@ -1,6 +1,7 @@
 from qga.entity import QgaEntity, QgaEntityDialog
 
 from almgis import DbSession
+from almgis.data_view import AlmDataView
 from almgis.logger import Logger
 
 

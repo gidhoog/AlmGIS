@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from almgis import settings_general
-from almgis.data_session import session_cm, DbSession
+from almgis.data_session import session_cm
 from qga.data_view import QgaTableModel
 from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
@@ -38,7 +38,7 @@ class KontaktMainWidget(QgaMainWidget):
 
         self.kontakt_table = KontaktMain(self)
 
-    def createMw(self):
+    def createMw(self, session):
 
         self.kontakt_table.initDataView()
 
@@ -430,7 +430,7 @@ class KontaktMain(AlmDataView):
 
     def getMciList(self):
 
-        session = DbSession()
+        # session = DbSession()
 
         stmt = (select(BKontakt)
         .options(
@@ -438,7 +438,7 @@ class KontaktMain(AlmDataView):
         )
                 .where(BKontakt.blank_value == 0))
 
-        mci = session.scalars(stmt).all()
+        mci = self.session.scalars(stmt).all()
 
         return mci
 
