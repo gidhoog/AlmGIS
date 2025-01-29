@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from PyQt5.QtWidgets import QDialog
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
@@ -10,7 +11,7 @@ from sqlalchemy.orm import joinedload
 
 from almgis import settings_general
 from almgis.data_session import session_cm
-from qga.data_view import QgaTableModel
+from qga.data_view import QgaTableModel, QgaDataView
 from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
 

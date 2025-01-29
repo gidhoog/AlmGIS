@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QDialog
 from qga.entity import QgaEntity, QgaEntityDialog
 
 from almgis import DbSession
