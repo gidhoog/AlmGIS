@@ -43,7 +43,7 @@ class AkteAllMainWidget(QgaMainWidget):
         self.akt_all_table = AkteAllMain(self)
 
     def createMw(self, session):
-        self.akt_all_table.setDataviewSession(session)
+        # self.akt_all_table.setDataviewSession(session)
         self.akt_all_table.initDataView()
 
         self.initMainWidget()
