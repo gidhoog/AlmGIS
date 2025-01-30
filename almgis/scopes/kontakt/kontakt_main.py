@@ -36,7 +36,6 @@ class KontaktMainWidget(QgaMainWidget):
         super().__init__(parent, session)
 
         self.uiTitleLbl.setText('alle Kontakte')
-
         self.kontakt_table = KontaktMain(self)
 
     def createMw(self, session):
