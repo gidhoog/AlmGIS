@@ -9,15 +9,16 @@ a = Analysis(
     ['almgis.py'],
     pathex=[],
     binaries=[
-    ('C:/work/Projekte/AlmGIS/almgis/_internal/dll/mod_spatialite.dll', './dll')
+    ('C:/work/Projekte/AlmGIS/_internal/dll/mod_spatialite.dll', './dll')
     ],
     datas=[
     ('almgis.cmd', '.'),
-    ('C:/work/Projekte/AlmGIS/almgis/_internal/print_layouts/', './print_layouts'),
-    ('C:/work/Projekte/AlmGIS/almgis/_internal/print_templates/', './print_templates'),
-    ('C:/work/Projekte/AlmGIS/almgis/_internal/styles/', './styles'),
+    ('C:/work/Projekte/AlmGIS/_internal/print_layouts/', './print_layouts'),
+    ('C:/work/Projekte/AlmGIS/_internal/print_templates/', './print_templates'),
+    ('C:/work/Projekte/AlmGIS/_internal/styles/', './styles'),
     ('C:/work/_anwendungen/OSGeo4W/share/proj/proj.db','./proj_db'),
-    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing')
+    ('C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr/python/plugins/processing/', './processing'),
+    ('C:/work/Projekte/QGA/qga/', './qga')
     ],
     hiddenimports=[
     'sqlalchemy', 'shapely._geos', 'pkgutil', 'PyQt5.QtPositioning',

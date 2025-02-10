@@ -8,7 +8,7 @@ rem call "%OSGEO4W_ROOT%\bin\qt5_env.bat"
 rem call "%OSGEO4W_ROOT%\bin\py3_env.bat"
 
 @echo off
-set PATH=%OSGEO4W_ROOT%\apps\qgis-ltr\bin;C:\work\Projekte\AlmGIS\almgis\venv_02\Scripts;%OSGEO4W_ROOT%\apps\Qt5\bin;%PATH%
+set PATH=%OSGEO4W_ROOT%\apps\qgis-ltr\bin;C:\work\Projekte\AlmGIS\.venv\Scripts;%OSGEO4W_ROOT%\apps\Qt5\bin;%PATH%
 
 set O4W_QT_BINARIES=%OSGEO4W_ROOT%\apps\Qt5\bin
 set O4W_QT_DOC=%OSGEO4W_ROOT%\apps\Qt5\doc
