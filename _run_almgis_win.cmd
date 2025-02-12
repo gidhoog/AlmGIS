@@ -25,7 +25,7 @@ set GDAL_FILENAME_IS_UTF8=YES
 set VSI_CACHE=TRUE
 set VSI_CACHE_SIZE=1000000
 
-set PYTHONPATH=%OSGEO4W_ROOT%\bin;%OSGEO4W_ROOT%\apps\qgis-ltr\python;%OSGEO4W_ROOT%\apps\qgis-ltr\python\plugins;%OSGEO4W_ROOT%\apps\Python312\lib\site-packages;%PYTHONPATH%
+set PYTHONPATH=%OSGEO4W_ROOT%\bin;%OSGEO4W_ROOT%\apps\qgis-ltr\python;%OSGEO4W_ROOT%\apps\qgis-ltr\python\plugins;%OSGEO4W_ROOT%\apps\Python312\lib\site-packages;C:\work\Projekte\QGA;%PYTHONPATH%
 
 @call C:/work/Projekte/AlmGIS/.venv/Skripts/activate.bat
 python almgis.py
