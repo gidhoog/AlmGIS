@@ -267,6 +267,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.setupUi(self)
 
         self.setupCodeUi()
+        self.uiVertreterCombo.setComboSession(self.entity_session)
 
         self._entity_mc = BKontakt
         # self.data_class = BKontakt

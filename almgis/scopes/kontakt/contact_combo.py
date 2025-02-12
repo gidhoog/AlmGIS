@@ -2,7 +2,7 @@ from sqlalchemy import select, or_
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
 
-from almgis.combobox import AlmComboModel, AlmExtendedCombo
+from almgis.combobox import AlmComboModel, AlmExtendedCombo, AlmComboActionAdd
 from almgis.data_model import BKontakt, BKontaktTyp
 
 
@@ -23,14 +23,27 @@ class ContactCombo(AlmExtendedCombo):
         self.combobox_line_edit.view.setColumnWidth(0, 180)
         self.combobox_line_edit.view.setColumnWidth(1, 180)
 
+        # self.action_add = AlmComboActionAdd(self, self.session)
+
+        # """make a default setting of the combo_actions"""
+        # self.action_list = [self.action_clear,
+        #                     self.action_edit,
+        #                     self.action_add]
+        # """"""
+
+        """set the default sort order"""
+        self.combo_proxy_model.sort(0, Qt.AscendingOrder)
+        """"""
+
+    def setActionList(self):
+        super().setActionList()
+
+        self.action_add = AlmComboActionAdd(self, self.session)
+
         """make a default setting of the combo_actions"""
         self.action_list = [self.action_clear,
                             self.action_edit,
                             self.action_add]
-        """"""
-
-        """set the default sort order"""
-        self.combo_proxy_model.sort(0, Qt.AscendingOrder)
         """"""
 
     def loadComboData(self, session=None, gruppe='a'):
