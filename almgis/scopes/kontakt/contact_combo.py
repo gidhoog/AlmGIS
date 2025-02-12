@@ -2,11 +2,11 @@ from sqlalchemy import select, or_
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
 
-from qga.combobox import ExtendedCombo, ComboModel
+from almgis.combobox import AlmComboModel, AlmExtendedCombo
 from almgis.data_model import BKontakt, BKontaktTyp
 
 
-class ContactCombo(ExtendedCombo):
+class ContactCombo(AlmExtendedCombo):
 
     def __init__(self, parent):
         super(ContactCombo, self).__init__(parent)
@@ -62,7 +62,7 @@ class ContactCombo(ExtendedCombo):
         self._mci_list = self.combo_session.scalars(stmt).unique().all()
 
 
-class ContactComboModel(ComboModel):
+class ContactComboModel(AlmComboModel):
 
     header = ['Name',
               'Anschrift']
@@ -81,11 +81,11 @@ class ContactComboModel(ComboModel):
 
         if index.column() == 0:
 
-            if role == ComboModel.IdRole:
+            if role == AlmComboModel.IdRole:
 
                 return self._mci_list[index.row()].id
 
-            if role == ComboModel.MciRole:
+            if role == AlmComboModel.MciRole:
 
                 return self._mci_list[index.row()]
 
