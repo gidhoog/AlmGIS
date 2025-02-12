@@ -12,7 +12,7 @@ class AlmEntity(QgaEntity):
         super(AlmEntity, self).__init__(parent)
 
         self.logger = Logger
-        self.entity_session = DbSession
+        self.entity_session = DbSession()
 
 
 class AlmEntityDialog(QgaEntityDialog):
