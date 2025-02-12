@@ -130,7 +130,9 @@ class KontaktModel(QgaTableModel):
 
 class KontaktMain(AlmDataView):
 
-    # data_view_mc = BContact
+    entity_dialog_class = KontaktEntityDialog
+    _entity_mc = BKontakt
+    _model_class = KontaktModel
 
     entitiy_amount_text = ["Kontakt", "Kontakte", "kein Kontakt"]
     _delete_window_title = ["Kontakt löschen", "Kontakte löschen"]
@@ -143,14 +145,6 @@ class KontaktMain(AlmDataView):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
-
-        self.entity_dialog_class = KontaktEntityDialog
-        # self.entity_widget_class = KontaktEinzel
-        self._entity_mc = BKontakt
-        self._model_class = KontaktModel
-        """"""
-
-        print(f'.... home: {Path.home()}')
 
     def deleteCheck(self, mci):
 
