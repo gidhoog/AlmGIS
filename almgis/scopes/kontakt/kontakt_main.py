@@ -166,6 +166,11 @@ class KontaktMain(AlmDataView):
         else:
             return True
 
+    def signals(self):
+        super().signals()
+
+        self.uiAddDataTbtn.clicked.disconnect(self.add_row)
+
     def initUi(self):
         super().initUi()
 
@@ -173,17 +178,25 @@ class KontaktMain(AlmDataView):
 
         """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
         kontakt wählen zu können"""
+
         self.add_menu = QMenu(self)
 
-        action_einzel = QAction(QIcon(":/svg/resources/icons/person.svg"),
-                                'Einzelperson', self)
-        action_gemeinschaft = QAction(QIcon(":/svg/resources/icons/group.svg"),
-                                      'Gemeinschaft', self)
+        self.action_einzel = QAction(
+            QIcon(":/svg/resources/icons/person.svg"),
+            'Einzelperson',
+            self
+        )
 
-        # action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
-        # action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
+        action_gemeinschaft = QAction(
+            QIcon(":/svg/resources/icons/group.svg"),
+            'Gemeinschaft',
+            self
+        )
 
-        self.add_menu.addAction(action_einzel)
+        self.action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
+        action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
+
+        self.add_menu.addAction(self.action_einzel)
         self.add_menu.addAction(action_gemeinschaft)
         """"""
 
@@ -191,6 +204,8 @@ class KontaktMain(AlmDataView):
         self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
 
     def addKontakt(self, type):
+
+        print(f'...')
 
         if type == 'einzel':
             entity_widget = KontaktEinzel(self)
