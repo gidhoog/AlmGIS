@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
@@ -163,7 +164,7 @@ class KontaktMain(AlmDataView):
     def signals(self):
         super().signals()
 
-        self.uiAddDataTbtn.clicked.disconnect(self.add_row)
+        # self.uiAddDataTbtn.clicked.disconnect(self.add_row)
 
     def initUi(self):
         super().initUi()
@@ -173,50 +174,90 @@ class KontaktMain(AlmDataView):
         """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
         kontakt wählen zu können"""
 
-        self.add_menu = QMenu(self)
+        # self.add_menu = QMenu(self)
 
-        self.action_einzel = QAction(
-            QIcon(":/svg/resources/icons/person.svg"),
-            'Einzelperson',
-            self
-        )
+        self.action_einzel = QAction(self.uiAddDataTbtn)
+        self.action_einzel.setText('Einzelperson')
+        self.action_einzel.setIcon(QIcon(":/svg/resources/icons/person.svg"))
+        self.uiAddDataTbtn.addAction(self.action_einzel)
 
-        action_gemeinschaft = QAction(
-            QIcon(":/svg/resources/icons/group.svg"),
-            'Gemeinschaft',
-            self
-        )
+        self.action_gemeinschaft = QAction(self.uiAddDataTbtn)
+        self.action_gemeinschaft.setText('Gemeinschaft')
+        self.action_gemeinschaft.setIcon(QIcon(":/svg/resources/icons/group.svg"))
+        self.uiAddDataTbtn.addAction(self.action_gemeinschaft)
 
-        self.action_einzel.triggered.connect(lambda: self.addKontakt("einzel"))
-        action_gemeinschaft.triggered.connect(lambda: self.addKontakt("gem"))
+        self.action_einzel.triggered.connect(self.addEinzelKontakt)
+        # self.action_einzel..connect(lambda x: self.fn(x))
+        self.action_gemeinschaft.triggered.connect(lambda x: self.addKontakt("gem"))
 
-        self.add_menu.addAction(self.action_einzel)
-        self.add_menu.addAction(action_gemeinschaft)
+        # self.add_menu.addAction(self.action_einzel)
+        # self.add_menu.addAction(action_gemeinschaft)
+
         """"""
 
-        self.uiAddDataTbtn.setMenu(self.add_menu)
+        # self.uiAddDataTbtn.setMenu(self.add_menu)
         self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
 
-    def addKontakt(self, type):
+    def testAction(self, bbb):
+
+        print(f'test action: {bbb}')
+
+    # @pyqtSlot()
+    @staticmethod
+    def fn(checked):
+
+        print(f'ff: {checked}')
+        # self.addKontakt('einzel')
+
+    def addEinzelKontakt(self):
 
         print(f'...')
 
-        if type == 'einzel':
-            entity_widget = KontaktEinzel(self)
-        elif type == 'gem':
-            entity_widget = Kontakt(self)
+        entity_widget = KontaktEinzel(self)
+        self.openNewKontakt(entity_widget)
 
-        entity_widget.initEntityWidget()
+    def addGemKontakt(self):
+
+        print(f'...')
+
+        entity_widget = Kontakt(self)
+        self.openNewKontakt(entity_widget)
+
+    def openNewKontakt(self, entity_widget):
+
+        # entity_widget.initEntityWidget()
+        entity_widget.setupCodeUi()
 
         mci = BKontakt()
 
         entity_widget.purpose = 'add'
 
         self.edit_entity = mci
-        self.dataview_session.add(mci)
+        self.session.add(mci)
 
         self.editRow(entity_widget=entity_widget,
                      entity_mci=mci)
+
+    # def addKontakt(self, type='einzel'):
+    #
+    #     print(f'...')
+    #
+    #     if type == 'einzel':
+    #         entity_widget = KontaktEinzel(self)
+    #     elif type == 'gem':
+    #         entity_widget = Kontakt(self)
+    #
+    #     entity_widget.initEntityWidget()
+    #
+    #     mci = BKontakt()
+    #
+    #     entity_widget.purpose = 'add'
+    #
+    #     self.edit_entity = mci
+    #     self.dataview_session.add(mci)
+    #
+    #     self.editRow(entity_widget=entity_widget,
+    #                  entity_mci=mci)
 
     def finalInit(self):
         super().finalInit()
