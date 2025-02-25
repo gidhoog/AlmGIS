@@ -1026,7 +1026,7 @@ class McSettings(Base):
     """
     Einstellungen die vom Benutzer verändert werden können
     """
-    __tablename__ = 'qga_settings'
+    __tablename__ = 'settings'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     code: Mapped[str]

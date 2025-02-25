@@ -1,12 +1,15 @@
+from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
 
 from almgis import settings_user, settings_app, settings_project, \
     settings_general, settings_colors, settings_paths, settings_constants
-from almgis import DbSession
+# from almgis import DbSession
 from almgis.about import AlmAboutDialog
+from almgis.data_model import McSettings
 from almgis.logger import Logger
+from almgis.projectstartselector import AlmStartDialog, AlmProjectStartSelector
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
 
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
@@ -19,10 +22,19 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self, parent=None):
         super(AlmMainWindow, self).__init__(parent)
 
-        self.session = DbSession
+        # self.session = DbSession
         self.logger = Logger
+        self.mc_settings = McSettings
 
-        self.about_dialog = AlmAboutDialog(self)
+        self.about_dialog_cls = AlmAboutDialog
+
+        self.settings_dlg_cls = QgaSettingsDialog
+        self.settings_wdg_cls = QgaSettingsWdg
+
+        self._project_file = None
+        self._selected_mainarea = None
+
+        Logger.info("create Mainwindwos!!")
 
     def declareActions(self):
         super().declareActions()
@@ -91,15 +103,13 @@ class AlmMainWindow(QgaMainWindow):
 
         self.uiAktionOpenAkteMain.triggered.connect(
             lambda x,
-                   wid_cls=AkteAllMainWidget,
-                   session=DbSession:
-            self.openMainWidget(wid_cls, session))
+                   wid_cls=AkteAllMainWidget:
+            self.openMainWidget(wid_cls))
 
         self.uiAktionOpenKontakteMain.triggered.connect(
             lambda x,
-                   wid_cls=KontaktMainWidget,
-                   session=DbSession:
-            self.openMainWidget(wid_cls, session))
+                   wid_cls=KontaktMainWidget:
+            self.openMainWidget(wid_cls))
 
     def createMenuBar(self):
         super().createMenuBar()
@@ -131,3 +141,25 @@ class AlmMainWindow(QgaMainWindow):
 
     def initStatusBar(self):
         super().initStatusBar()
+
+    def _selectStartproject(self):
+        """open the projectstartselector on start"""
+
+        self.startDialog = AlmStartDialog(self)
+        ps = AlmProjectStartSelector(self.startDialog)
+        ps.setupProjectStartSelector()
+
+        self.startDialog.enableApply = True
+        self.startDialog.insertWidget(ps)
+
+        result = self.startDialog.exec()
+
+    def openSettings(self):
+        super().openSettings()
+
+        if self.settings_user.value('project_start_selector') == 'True':
+            self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(True)
+        elif self.settings_user.value('project_start_selector') == 'False':
+            self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
+
+        self.settings_dlg.exec()

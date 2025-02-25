@@ -10,7 +10,7 @@ from sqlalchemy import select
 
 from almgis import settings_general
 # from almgis import session_cm, DbSession
-from almgis.data_session import session_cm, DbSession
+# from almgis.data_session import session_cm, DbSession
 # from almgis.config import Config
 from almgis.data_model import BAkt, BBearbeitungsstatus
 # from qga.entity import EntityDialog
@@ -42,7 +42,7 @@ class AkteAllMainWidget(QgaMainWidget):
 
         self.akt_all_table = AkteAllMain(self)
 
-    def createMw(self, session):
+    def createMw(self):
         # self.akt_all_table.setDataviewSession(session)
         self.akt_all_table.initDataView()
 

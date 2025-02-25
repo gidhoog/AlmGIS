@@ -26,6 +26,9 @@ class AlmSettingsGeneral(QgaSettingsGeneral):
 
     help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
 
+    app_version = '0.0.2'
+    db_version = '0.0.1'
+
 
 class AlmSettingsColors(QgaSettingsColors):
     """
@@ -53,7 +56,7 @@ class AlmSettingsPaths(QgaSettingsPaths):
         in der Klasse 'AlmSettingsUser' geschrieben werden;
     """
 
-    data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
+    # data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
 
     print_template_path = (Path().absolute()
                            .joinpath('../_internal',
@@ -84,7 +87,9 @@ class AlmSettingsUser(QgaSettings):
     # 'C:\Users\ZNFF\AppData\Roaming\NoeAbb.AlmGIS.ini')
 
     attr_list = [
-        ('paths/last_project_file', '')
+        ('project_start_selector', 'True'),
+        ('default_start_option', 'LAST'),  # LAST, OTHER, NEW, NONE
+        ('paths/last_project_file', '--')
     ]
 
     def __init__(self):
@@ -99,10 +104,7 @@ class AlmSettingsUser(QgaSettings):
 
 class AlmSettingsApp(QgaSettings):
 
-    attr_list = [
-        ('use_project_start_selector', 'False'),
-        ('static_project_file', 'G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
-    ]
+    attr_list = []
 
     def __init__(self):
 
