@@ -202,7 +202,7 @@ class KontaktMain(AlmDataView):
 
         self.action_einzel.triggered.connect(self.addEinzelKontakt)
         # self.action_einzel..connect(lambda x: self.fn(x))
-        self.action_gemeinschaft.triggered.connect(lambda x: self.addKontakt("gem"))
+        self.action_gemeinschaft.triggered.connect(self.addGemKontakt)
 
         # self.add_menu.addAction(self.action_einzel)
         # self.add_menu.addAction(action_gemeinschaft)
@@ -228,29 +228,32 @@ class KontaktMain(AlmDataView):
         print(f'...')
 
         entity_widget = KontaktEinzel(self)
-        self.openNewKontakt(entity_widget)
+        self.addEntity(entity_wdg=entity_widget)
+        # self.openNewKontakt(entity_widget)
 
     def addGemKontakt(self):
 
         print(f'...')
 
         entity_widget = Kontakt(self)
-        self.openNewKontakt(entity_widget)
+        self.addEntity(entity_wdg=entity_widget)
 
-    def openNewKontakt(self, entity_widget):
+        # self.openNewKontakt(entity_widget)
 
-        # entity_widget.initEntityWidget()
-        entity_widget.setupCodeUi()
-
-        mci = BKontakt()
-
-        entity_widget.purpose = 'add'
-
-        self.edit_entity = mci
-        self.session.add(mci)
-
-        self.editRow(entity_widget=entity_widget,
-                     entity_mci=mci)
+    # def openNewKontakt(self, entity_widget):
+    #
+    #     # entity_widget.initEntityWidget()
+    #     entity_widget.setupCodeUi()
+    #
+    #     mci = BKontakt()
+    #
+    #     entity_widget.purpose = 'add'
+    #
+    #     self.edit_entity = mci
+    #     self.session.add(mci)
+    #
+    #     self.editRow(entity_widget=entity_widget,
+    #                  entity_mci=mci)
 
     # def addKontakt(self, type='einzel'):
     #

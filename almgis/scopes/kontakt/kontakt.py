@@ -272,6 +272,16 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self._entity_mc = BKontakt
         # self.data_class = BKontakt
 
+    # def addNewEntity(self):
+    #     super().addNewEntity()
+    #
+    #     self.uiVertreterCombo.setCurrentIndex(1)
+
+    def setDefaultValues(self, **kwargs):
+        super().setDefaultValues()
+
+        self.uiVertreterCombo.setCurrentIndex(1)
+
     def initItemUi(self):
         super().initItemUi()
 
