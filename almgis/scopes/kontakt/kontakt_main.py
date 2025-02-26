@@ -161,6 +161,11 @@ class KontaktMain(AlmDataView):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
+        test_stmt = select(BKontakt).where(BKontakt.type_id == 0)
+        test_mci = self.session.scalars(test_stmt).all()
+
+        print(f'...')
+
     def deleteCheck(self, mci):
 
         with session_cm() as session:

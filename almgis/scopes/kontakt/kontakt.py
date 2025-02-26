@@ -267,7 +267,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.setupUi(self)
 
         self.setupCodeUi()
-        self.uiVertreterCombo.setComboSession(self.entity_session)
+        self.uiVertreterCombo.combo_session = self.entity_session
 
         self._entity_mc = BKontakt
         # self.data_class = BKontakt
@@ -280,7 +280,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
     def setDefaultValues(self, **kwargs):
         super().setDefaultValues()
 
-        self.uiVertreterCombo.setCurrentIndex(1)
+        self.uiVertreterCombo.setCurrentIndex(0)
 
     def initItemUi(self):
         super().initItemUi()
@@ -335,28 +335,28 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.uiTypCombo.setModel(type_model)
         """"""
 
-    def setVertrKontaktCombo(self):
-
-        vertreter_stmt = select(
-            BKontakt).where(
-            BKontakt.type_id == 0).order_by(
-            func.lower(BKontakt.name))
-        vertreter_mci_list = self.entity_session.scalars(vertreter_stmt).all()
-
-        """erstelle ein model mit 1 spalten für das type-combo"""
-        vertreter_model = QStandardItemModel(len(vertreter_mci_list), 1)
-        for i in range(len(vertreter_mci_list)):
-            vertreter_model.setData(vertreter_model.index(i, 0),
-                                          vertreter_mci_list[i].name, Qt.DisplayRole)
-            vertreter_model.setData(vertreter_model.index(i, 0),
-                                          vertreter_mci_list[i].id, Qt.UserRole + 1)
-            vertreter_model.setData(vertreter_model.index(i, 0),
-                                          vertreter_mci_list[i], Qt.UserRole + 2)
-        """"""
-
-        """weise dem combo das model zu"""
-        self.uiVertreterCombo.setModel(vertreter_model)
-        """"""
+    # def setVertrKontaktCombo(self):
+    #
+    #     vertreter_stmt = select(
+    #         BKontakt).where(
+    #         BKontakt.type_id == 0).order_by(
+    #         func.lower(BKontakt.name))
+    #     vertreter_mci_list = self.entity_session.scalars(vertreter_stmt).all()
+    #
+    #     """erstelle ein model mit 1 spalten für das type-combo"""
+    #     vertreter_model = QStandardItemModel(len(vertreter_mci_list), 1)
+    #     for i in range(len(vertreter_mci_list)):
+    #         vertreter_model.setData(vertreter_model.index(i, 0),
+    #                                       vertreter_mci_list[i].name, Qt.DisplayRole)
+    #         vertreter_model.setData(vertreter_model.index(i, 0),
+    #                                       vertreter_mci_list[i].id, Qt.UserRole + 1)
+    #         vertreter_model.setData(vertreter_model.index(i, 0),
+    #                                       vertreter_mci_list[i], Qt.UserRole + 2)
+    #     """"""
+    #
+    #     """weise dem combo das model zu"""
+    #     self.uiVertreterCombo.setModel(vertreter_model)
+    #     """"""
 
     def mapEntityData(self, model=None):
 

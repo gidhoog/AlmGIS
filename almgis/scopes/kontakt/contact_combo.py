@@ -1,3 +1,4 @@
+from qga.tools import getMciState
 from sqlalchemy import select, or_
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
@@ -38,7 +39,7 @@ class ContactCombo(AlmExtendedCombo):
     def setActionList(self):
         super().setActionList()
 
-        self.action_add = AlmComboActionAdd(self, self.session)
+        self.action_add = AlmComboActionAdd(self, self.combo_session)
 
         """make a default setting of the combo_actions"""
         self.action_list = [self.action_clear,
@@ -54,19 +55,17 @@ class ContactCombo(AlmExtendedCombo):
         :return:
         """
 
+        self._mci_list = []
+
         if session is not None:
             self.combo_session = session
-
-        # with session_cm(name='load contact-type in contact',
-        #                    expire_on_commit=False) as session:
 
         match gruppe:
 
             case 'a':
                 stmt = select(BKontakt)
             case 'e':
-                stmt = select(BKontakt).join(BKontakt.rel_type).where(
-                    BKontaktTyp.gemeinschaft == 0)
+                stmt = select(BKontakt).where(BKontakt.type_id == 0)
             case 'g':
                 stmt = select(BKontakt).join(BKontakt.rel_type).where(
                     or_((BKontaktTyp.gemeinschaft == 1), (BKontakt.blank_value == 1))
