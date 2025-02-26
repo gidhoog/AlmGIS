@@ -280,7 +280,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
     def setDefaultValues(self, **kwargs):
         super().setDefaultValues()
 
-        self.uiVertreterCombo.setCurrentIndex(0)
+        self.uiVertreterCombo.setCurrentIndex(
+            self.uiVertreterCombo.fallback_index)
 
     def initItemUi(self):
         super().initItemUi()
