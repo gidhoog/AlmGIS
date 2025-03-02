@@ -17,12 +17,13 @@ class ContactCombo(AlmExtendedCombo):
         self.combo_mc = BKontakt
 
         self.setEditable(True)
+        self.validator_mc_attr = 'name'
 
-        self.combo_view.setColumnWidth(0, 180)
-        self.combo_view.setColumnWidth(1, 180)
-
-        self.combobox_line_edit.view.setColumnWidth(0, 180)
-        self.combobox_line_edit.view.setColumnWidth(1, 180)
+        # self.combo_view.setColumnWidth(0, 180)
+        # self.combo_view.setColumnWidth(1, 180)
+        #
+        # self.combobox_line_edit.view.setColumnWidth(0, 180)
+        # self.combobox_line_edit.view.setColumnWidth(1, 180)
 
         # self.action_add = AlmComboActionAdd(self, self.session)
 
