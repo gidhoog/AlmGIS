@@ -304,12 +304,11 @@ class KontaktMain(AlmDataView):
         """filter typen"""
         self.filter_type_lbl = QLabel(self)
         self.filter_type_lbl.setText('Typ:')
-        self.filter_type_lbl.setVisible(True)
+        self.filter_type_lbl.setVisible(False)
         kontakt_type_lbl_font = self.filter_type_lbl.font()
         # kontakt_type_lbl_font.setFamily(config.font_family)
         kontakt_type_lbl_font.setFamily(settings_general.font_family)
         self.filter_type_lbl.setFont(kontakt_type_lbl_font)
-        self.filter_type_lbl.setVisible(True)
 
         self.filter_type_input_wdg = QComboBox(self)
 
@@ -412,84 +411,84 @@ class KontaktMain(AlmDataView):
         # print(f'...')
         # self.uiHeaderHley.insertWidget(1, self.filter_type_lbl)
 
-    # def applyFilter(self):
-    #
-    #     if self.filter_type_input_wdg.currentData(Qt.UserRole) == -1:
-    #         self.filter_type_lbl.setVisible(False)
-    #     else:
-    #         self.filter_type_lbl.setVisible(True)
-    #
-    #     if self.filter_name_input_wdg.text() != '':
-    #         self.filter_name_lbl.setVisible(True)
-    #     else:
-    #         self.filter_name_lbl.setVisible(False)
-    #
-    #     super().applyFilter()
-    #
-    # def useFilter(self):
-    #
-    #     name_text = self.filter_name_input_wdg.text()
-    #     # adr_text = self.filter_adr_input_wdg.text()
-    #     # kontakt_type_id = self.filter_type_input_wdg.currentData(Qt.UserRole)
-    #
-    #     name_expr = f"lower(\"name\") LIKE '%{name_text}%'"
-    #     # adr_expr = f"lower(\"adresse\") LIKE '%{adr_text}%'"
-    #     # kontakt_type_expr = f"(\"typ_id\") = {kontakt_type_id}"
-    #
-    #     expr_list = []
-    #
-    #     if name_text != '':
-    #         self.filter_name_lbl.setVisible(True)
-    #         expr_list.append(name_expr)
-    #     else:
-    #         self.filter_name_lbl.setVisible(False)
-    #
-    #     # if adr_text != '':
-    #     #     self.filter_adr_lbl.setVisible(True)
-    #     #     expr_list.append(adr_expr)
-    #     # else:
-    #     #     self.filter_adr_lbl.setVisible(False)
-    #     #
-    #     # if kontakt_type_id != -1:
-    #     #     self.filter_type_lbl.setVisible(True)
-    #     #     expr_list.append(kontakt_type_expr)
-    #     # else:
-    #     #     self.filter_type_lbl.setVisible(False)
-    #
-    #     if expr_list == []:
-    #         self._gis_layer.setSubsetString('')
-    #     else:
-    #
-    #         expr_string = " and ".join(expr for expr in expr_list)
-    #         self._gis_layer.setSubsetString(expr_string)
-    #
-    #         print(f'expression string: {expr_string}')
-    #
-    #     print(f'expr_list: {expr_list}')
-    #
-    #     self.updateFooter()
-    #
-    # def useFilterScope(self, source_row, source_parent):
-    #     super().useFilterScope(source_row, source_parent)
-    #
-    #     """filter contact_typ"""
-    #     contact_type = self.filter_proxy.sourceModel() \
-    #         .data(self.filter_proxy.sourceModel().index(source_row, 0),
-    #               Qt.EditRole)
-    #     if self.filter_type_input_wdg.currentData(Qt.UserRole) != -1:
-    #         if contact_type != self.filter_type_input_wdg.currentData(Qt.UserRole):
-    #             return False
-    #     """"""
-    #
-    #     """filter name"""
-    #     name = self.filter_proxy.sourceModel() \
-    #         .data(self.filter_proxy.sourceModel().index(source_row, 1),
-    #               Qt.EditRole)
-    #     if self.filter_name_input_wdg.text() != '':
-    #         if name != '' and name is not None:
-    #             if self.filter_name_input_wdg.text().lower() not in name.lower():
-    #                 return False
-    #     """"""
+    def applyFilter(self):
+
+        if self.filter_type_input_wdg.currentData(Qt.UserRole) == -1:
+            self.filter_type_lbl.setVisible(False)
+        else:
+            self.filter_type_lbl.setVisible(True)
+
+        if self.filter_name_input_wdg.text() != '':
+            self.filter_name_lbl.setVisible(True)
+        else:
+            self.filter_name_lbl.setVisible(False)
+
+        super().applyFilter()
+
+    def useFilter(self):
+
+        name_text = self.filter_name_input_wdg.text()
+        # adr_text = self.filter_adr_input_wdg.text()
+        # kontakt_type_id = self.filter_type_input_wdg.currentData(Qt.UserRole)
+
+        name_expr = f"lower(\"name\") LIKE '%{name_text}%'"
+        # adr_expr = f"lower(\"adresse\") LIKE '%{adr_text}%'"
+        # kontakt_type_expr = f"(\"typ_id\") = {kontakt_type_id}"
+
+        expr_list = []
+
+        if name_text != '':
+            self.filter_name_lbl.setVisible(True)
+            expr_list.append(name_expr)
+        else:
+            self.filter_name_lbl.setVisible(False)
+
+        # if adr_text != '':
+        #     self.filter_adr_lbl.setVisible(True)
+        #     expr_list.append(adr_expr)
+        # else:
+        #     self.filter_adr_lbl.setVisible(False)
+        #
+        # if kontakt_type_id != -1:
+        #     self.filter_type_lbl.setVisible(True)
+        #     expr_list.append(kontakt_type_expr)
+        # else:
+        #     self.filter_type_lbl.setVisible(False)
+
+        if expr_list == []:
+            self._gis_layer.setSubsetString('')
+        else:
+
+            expr_string = " and ".join(expr for expr in expr_list)
+            self._gis_layer.setSubsetString(expr_string)
+
+            print(f'expression string: {expr_string}')
+
+        print(f'expr_list: {expr_list}')
+
+        self.updateFooter()
+
+    def useFilterScope(self, source_row, source_parent):
+        super().useFilterScope(source_row, source_parent)
+
+        """filter contact_typ"""
+        contact_type = self.filter_proxy.sourceModel() \
+            .data(self.filter_proxy.sourceModel().index(source_row, 0),
+                  Qt.EditRole)
+        if self.filter_type_input_wdg.currentData(Qt.UserRole) != -1:
+            if contact_type != self.filter_type_input_wdg.currentData(Qt.UserRole):
+                return False
+        """"""
+
+        """filter name"""
+        name = self.filter_proxy.sourceModel() \
+            .data(self.filter_proxy.sourceModel().index(source_row, 1),
+                  Qt.EditRole)
+        if self.filter_name_input_wdg.text() != '':
+            if name != '' and name is not None:
+                if self.filter_name_input_wdg.text().lower() not in name.lower():
+                    return False
+        """"""
 
     def getDeleteInfo(self, index=None):
         super().getDeleteInfo(index)
