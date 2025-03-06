@@ -22,16 +22,4 @@ settings_app.updateSettings()
 settings_user.updateSettings()
 """"""
 
-# """init session handling
-# use the instance of 'DbSession' to connect to the db"""
-# DbSession = sessionmaker()
-# """"""
-#
-# """falls wenn tabellen aus mehreren datenbanken verwendet werden, dann
-# binde diese nach fogenden Schema ein; kann aber erst nach definition der
-# session_engine erfolgen, also nicht hier!!!"""
-# # DbSession.configure(binds={data_model.BAkt: DbSession.data_engine,
-# #                            data_model.BBanu: DbSession.data_engine,
-# #                            # data_model.BSettings: setting_engine,
-# #                            })
-# """"""
+AlmSessionCls = sessionmaker()

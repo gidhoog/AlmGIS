@@ -13,6 +13,8 @@ from sqlalchemy.orm import joinedload
 from almgis import settings_general
 # from almgis.data_session import session_cm
 from qga.data_view import QgaTableModel, QgaDataView
+
+from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
 
@@ -158,13 +160,9 @@ class KontaktMain(AlmDataView):
     _delete_text = ["Der Kontakt", "kann nicht gelöscht werden, da er "
                     "verwendet wird!"]
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
-
-        test_stmt = select(BKontakt).where(BKontakt.type_id == 0)
-        test_mci = self.session.scalars(test_stmt).all()
-
-        print(f'...')
+    def __init__(self, parent=None, gis_mode=False):
+        super(__class__, self).__init__(parent, gis_mode)
+        self.initUi()
 
     def deleteCheck(self, mci):
 
@@ -292,119 +290,128 @@ class KontaktMain(AlmDataView):
 
         self.view.resizeColumnsToContents()
 
-    # def setFilterUI(self):
-    #     """
-    #     setze das layout für die filter
-    #     :return:
-    #     """
-    #
-    #     filter_lay = QHBoxLayout(self)
-    #
-    #     """filter typen"""
-    #     self.filter_type_lbl = QLabel(self)
-    #     self.filter_type_lbl.setText('Typ:')
-    #     kontakt_type_lbl_font = self.filter_type_lbl.font()
-    #     # kontakt_type_lbl_font.setFamily(config.font_family)
-    #     kontakt_type_lbl_font.setFamily(settings_general.font_family)
-    #     self.filter_type_lbl.setFont(kontakt_type_lbl_font)
-    #     self.filter_type_lbl.setVisible(False)
-    #
-    #     self.filter_type_input_wdg = QComboBox(self)
-    #
-    #     self.filter_type_input_wdg.addItem('--- alle Typen ---', -1)
-    #
-    #     with session_cm(name='contact type filter') as session:
-    #
-    #         contact_type_stmt = select(BKontaktTyp)
-    #         contact_type_list = session.scalars(contact_type_stmt).all()
-    #
-    #         for kontact_type in contact_type_list:
-    #             self.filter_type_input_wdg.addItem(kontact_type.name,
-    #                                                kontact_type.id)
-    #
-    #     kontakt_type_input_wdg_font = self.filter_type_input_wdg.font()
-    #     kontakt_type_input_wdg_font.setPointSize(11)
-    #     kontakt_type_input_wdg_font.setFamily(settings_general.font_family)
-    #     self.filter_type_input_wdg.setFont(kontakt_type_input_wdg_font)
-    #
-    #     # self.filter_type_input_wdg.currentIndexChanged.connect(self.useFilter)
-    #     self.filter_type_input_wdg.currentTextChanged.connect(
-    #         self.applyFilter)
-    #     """"""
-    #
-    #     """filter name"""
-    #     # filter_name = FilterElement(self)
-    #     # filter_name.uiLabelLbl.setText('Name:')
-    #     self.filter_name_lbl = QLabel(self)
-    #
-    #     name_lbl_font = self.filter_name_lbl.font()
-    #     name_lbl_font.setFamily(settings_general.font_family)
-    #     self.filter_name_lbl.setFont(name_lbl_font)
-    #
-    #     self.filter_name_lbl.setText('Name:')
-    #     self.filter_name_lbl.setVisible(False)
-    #
-    #     self.filter_name_input_wdg = QLineEdit(self)
-    #
-    #     name_input_wdg_font = self.filter_name_input_wdg.font()
-    #     name_input_wdg_font.setPointSize(11)
-    #     name_input_wdg_font.setFamily(settings_general.font_family)
-    #     self.filter_name_input_wdg.setFont(name_input_wdg_font)
-    #
-    #     self.filter_name_input_wdg.setPlaceholderText('Name')
-    #     self.filter_name_input_wdg.setClearButtonEnabled(True)
-    #     self.filter_name_input_wdg.setMaximumWidth(200)
-    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-    #
-    #     # self.filter_name_input_wdg.textChanged.connect(self.useFilter)
-    #     self.filter_name_input_wdg.textChanged.connect(self.applyFilter)
-    #
-    #     # filter_lay.addWidget(filter_name)
-    #     """"""
-    #
-    #     # """filter adresse"""
-    #     # # filter_az = FilterElement(self)
-    #     # # filter_az.uiLabelLbl.setText('AZ:')
-    #     #
-    #     # self.filter_adr_lbl = QLabel(self)
-    #     #
-    #     # adr_lbl_font = self.filter_adr_lbl.font()
-    #     # adr_lbl_font.setFamily(config.font_family)
-    #     # self.filter_adr_lbl.setFont(adr_lbl_font)
-    #     #
-    #     # self.filter_adr_lbl.setText('Adresse:')
-    #     # self.filter_adr_lbl.setVisible(False)
-    #     #
-    #     # self.filter_adr_input_wdg = QLineEdit(self)
-    #     # self.filter_adr_input_wdg.setPlaceholderText('Adresse')
-    #     # adr_input_wdg_font = self.filter_adr_input_wdg.font()
-    #     # adr_input_wdg_font.setPointSize(11)
-    #     # adr_input_wdg_font.setFamily(config.font_family)
-    #     # self.filter_adr_input_wdg.setFont(adr_input_wdg_font)
-    #     # self.filter_adr_input_wdg.setClearButtonEnabled(True)
-    #     # self.filter_adr_input_wdg.setMaximumWidth(80)
-    #     # # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
-    #     #
-    #     # self.filter_adr_input_wdg.textChanged.connect(self.useFilter)
-    #
-    #     spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
-    #                              QSizePolicy.Minimum)
-    #     filter_lay.addItem(spacerItem1)
-    #
-    #     filter_lay.addWidget(self.filter_type_lbl)
-    #     filter_lay.addWidget(self.filter_type_input_wdg)
-    #     filter_lay.addWidget(self.filter_name_lbl)
-    #     filter_lay.addWidget(self.filter_name_input_wdg)
-    #     # filter_lay.addWidget(self.filter_adr_lbl)
-    #     # filter_lay.addWidget(self.filter_adr_input_wdg)
-    #
-    #     """"""
-    #
-    #     spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-    #     filter_lay.addItem(spacerItem)
-    #
-    #     self.uiHeaderHley.insertLayout(1, filter_lay)
-    #
+    def setFilterUI(self):
+        """
+        setze das layout für die filter
+        :return:
+        """
+        # self.bbb = QLabel(self)
+        # self.bbb.setText('BBBBBBBBBBBBBB')
+        # self.uiMainVlay.addWidget(self.bbb)
+
+        filter_lay = QHBoxLayout(self)
+
+        """filter typen"""
+        self.filter_type_lbl = QLabel(self)
+        self.filter_type_lbl.setText('Typ:')
+        self.filter_type_lbl.setVisible(True)
+        kontakt_type_lbl_font = self.filter_type_lbl.font()
+        # kontakt_type_lbl_font.setFamily(config.font_family)
+        kontakt_type_lbl_font.setFamily(settings_general.font_family)
+        self.filter_type_lbl.setFont(kontakt_type_lbl_font)
+        self.filter_type_lbl.setVisible(True)
+
+        self.filter_type_input_wdg = QComboBox(self)
+
+        self.filter_type_input_wdg.addItem('--- alle Typen ---', -1)
+
+        with session_cm(name='contact type filter') as session:
+
+            contact_type_stmt = select(BKontaktTyp)
+            contact_type_list = session.scalars(contact_type_stmt).all()
+
+            for kontact_type in contact_type_list:
+                self.filter_type_input_wdg.addItem(kontact_type.name,
+                                                   kontact_type.id)
+
+        kontakt_type_input_wdg_font = self.filter_type_input_wdg.font()
+        kontakt_type_input_wdg_font.setPointSize(11)
+        kontakt_type_input_wdg_font.setFamily(settings_general.font_family)
+        self.filter_type_input_wdg.setFont(kontakt_type_input_wdg_font)
+
+        # self.filter_type_input_wdg.currentIndexChanged.connect(self.useFilter)
+        self.filter_type_input_wdg.currentTextChanged.connect(
+            self.applyFilter)
+        """"""
+
+        """filter name"""
+        # filter_name = FilterElement(self)
+        # filter_name.uiLabelLbl.setText('Name:')
+        self.filter_name_lbl = QLabel(self)
+
+        name_lbl_font = self.filter_name_lbl.font()
+        name_lbl_font.setFamily(settings_general.font_family)
+        self.filter_name_lbl.setFont(name_lbl_font)
+
+        self.filter_name_lbl.setText('Name:')
+        self.filter_name_lbl.setVisible(False)
+
+        self.filter_name_input_wdg = QLineEdit(self)
+
+        name_input_wdg_font = self.filter_name_input_wdg.font()
+        name_input_wdg_font.setPointSize(11)
+        name_input_wdg_font.setFamily(settings_general.font_family)
+        self.filter_name_input_wdg.setFont(name_input_wdg_font)
+
+        self.filter_name_input_wdg.setPlaceholderText('Name')
+        self.filter_name_input_wdg.setClearButtonEnabled(True)
+        self.filter_name_input_wdg.setMaximumWidth(200)
+        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+
+        # self.filter_name_input_wdg.textChanged.connect(self.useFilter)
+        self.filter_name_input_wdg.textChanged.connect(self.applyFilter)
+
+        # filter_lay.addWidget(filter_name)
+        """"""
+
+        # """filter adresse"""
+        # # filter_az = FilterElement(self)
+        # # filter_az.uiLabelLbl.setText('AZ:')
+        #
+        # self.filter_adr_lbl = QLabel(self)
+        #
+        # adr_lbl_font = self.filter_adr_lbl.font()
+        # adr_lbl_font.setFamily(config.font_family)
+        # self.filter_adr_lbl.setFont(adr_lbl_font)
+        #
+        # self.filter_adr_lbl.setText('Adresse:')
+        # self.filter_adr_lbl.setVisible(False)
+        #
+        # self.filter_adr_input_wdg = QLineEdit(self)
+        # self.filter_adr_input_wdg.setPlaceholderText('Adresse')
+        # adr_input_wdg_font = self.filter_adr_input_wdg.font()
+        # adr_input_wdg_font.setPointSize(11)
+        # adr_input_wdg_font.setFamily(config.font_family)
+        # self.filter_adr_input_wdg.setFont(adr_input_wdg_font)
+        # self.filter_adr_input_wdg.setClearButtonEnabled(True)
+        # self.filter_adr_input_wdg.setMaximumWidth(80)
+        # # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
+        #
+        # self.filter_adr_input_wdg.textChanged.connect(self.useFilter)
+
+        spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
+                                 QSizePolicy.Minimum)
+        filter_lay.addItem(spacerItem1)
+
+        filter_lay.addWidget(self.filter_type_lbl)
+        filter_lay.addWidget(self.filter_type_input_wdg)
+        filter_lay.addWidget(self.filter_name_lbl)
+        filter_lay.addWidget(self.filter_name_input_wdg)
+        # filter_lay.addWidget(self.filter_adr_lbl)
+        # filter_lay.addWidget(self.filter_adr_input_wdg)
+
+        """"""
+
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        filter_lay.addItem(spacerItem)
+
+        self.uiHeaderHley.insertLayout(1, filter_lay)
+        # self.uiMainVlay.addLayout(filter_lay)
+
+        # self.uiMainVlay.addWidget(self.filter_type_lbl)
+        # print(f'...')
+        # self.uiHeaderHley.insertWidget(1, self.filter_type_lbl)
+
     # def applyFilter(self):
     #
     #     if self.filter_type_input_wdg.currentData(Qt.UserRole) == -1:

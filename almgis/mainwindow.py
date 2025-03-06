@@ -4,7 +4,8 @@ from qgis.PyQt.QtGui import QAction
 from qgis.PyQt.QtGui import QIcon
 
 from almgis import settings_user, settings_app, settings_project, \
-    settings_general, settings_colors, settings_paths, settings_constants
+    settings_general, settings_colors, settings_paths, settings_constants, \
+    AlmSessionCls
 # from almgis import DbSession
 from almgis.about import AlmAboutDialog
 from almgis.data_model import McSettings
@@ -22,7 +23,7 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self, parent=None):
         super(AlmMainWindow, self).__init__(parent)
 
-        # self.session = DbSession
+        self.session_cls = AlmSessionCls
         self.logger = Logger
         self.mc_settings = McSettings
 

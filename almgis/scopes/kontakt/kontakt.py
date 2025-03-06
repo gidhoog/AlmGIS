@@ -267,7 +267,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.setupUi(self)
 
         self.setupCodeUi()
-        self.uiVertreterCombo.combo_session = self.entity_session
+        self.uiVertreterCombo.session = self.session
 
         self._entity_mc = BKontakt
         # self.data_class = BKontakt
@@ -303,7 +303,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
 
         self.setTypeCombo()
 
-        self.uiVertreterCombo.loadComboData(self.entity_session, gruppe='e')
+        self.uiVertreterCombo.loadComboData(self.session, gruppe='e')
         self.uiVertreterCombo.combo_widget_form = KontaktEinzel
         self.uiVertreterCombo.initCombo()
 
@@ -317,7 +317,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         stmt = select(BKontaktTyp).where(BKontaktTyp.gemeinschaft == 1
                                          ).order_by(BKontaktTyp.sort)
 
-        type_mci = self.entity_session.scalars(stmt).all()
+        type_mci = self.session.scalars(stmt).all()
 
 
         """erstelle ein model mit 1 spalten für das type-combo"""
@@ -527,8 +527,8 @@ class KontaktEinzel(Kontakt):
 
     def submitEntity(self):
 
-        einzel_typ_mci = self.entity_session.get(BKontaktTyp, 0)
-        leerer_kontakt = self.entity_session.get(BKontakt, 0)
+        einzel_typ_mci = self.session.get(BKontaktTyp, 0)
+        leerer_kontakt = self.session.get(BKontakt, 0)
 
         self._entity_mci.type_id = 0
         self._entity_mci.rel_type = einzel_typ_mci
@@ -600,10 +600,10 @@ class KontaktNewSelector(QWidget):
         entity_widget._commit_on_apply = False
 
         self.edit_entity = mci
-        self.parent.entity_session.add(mci)
+        self.parent.session.add(mci)
 
 
-        entity_widget.setEntitySession(self.parent.entity_session)
+        entity_widget.setEntitySession(self.parent.session)
         entity_widget.editEntity(entity_mci=mci)
 
         entity_dialog = AlmEntityDialog(parent=self.parent.uiBewirtschafterCombo)

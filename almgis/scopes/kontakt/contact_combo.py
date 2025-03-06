@@ -40,7 +40,7 @@ class ContactCombo(AlmExtendedCombo):
     def setActionList(self):
         super().setActionList()
 
-        self.action_add = AlmComboActionAdd(self, self.combo_session)
+        self.action_add = AlmComboActionAdd(self, self.session)
 
         """make a default setting of the combo_actions"""
         self.action_list = [self.action_clear,
@@ -59,7 +59,7 @@ class ContactCombo(AlmExtendedCombo):
         self._mci_list = []
 
         if session is not None:
-            self.combo_session = session
+            self.session = session
 
         match gruppe:
 
@@ -72,7 +72,7 @@ class ContactCombo(AlmExtendedCombo):
                     or_((BKontaktTyp.gemeinschaft == 1), (BKontakt.blank_value == 1))
                 )
 
-        self._mci_list = self.combo_session.scalars(stmt).unique().all()
+        self._mci_list = self.session.scalars(stmt).unique().all()
 
 
 class ContactComboModel(AlmComboModel):
