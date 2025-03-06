@@ -306,16 +306,6 @@ class AkteAllMain(AlmDataView):
         self._entity_mc = BAkt
         self._model_class = AktAllModel
 
-        self.insertFooterLine('Gesamtweidefläche',
-                              'ha', column_id=9, value_width=120,
-                              factor=0.0001, decimal=4)
-        self.insertFooterLine('davon beweidet',
-                              'ha', column_id=8, value_width=120,
-                              factor=0.0001, decimal=4)
-        self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
-                              'ha', column_id=7, value_width=120,
-                              factor=0.0001, decimal=4)
-
     def initUi(self):
         super().initUi()
 
@@ -325,6 +315,16 @@ class AkteAllMain(AlmDataView):
 
         self.actionDeleteRow.setParent(None)  # entferne action zeile löschen
         self.uiToolsTbtn.removeAction(self.actionDeleteRow)
+
+        self.insertFooterLine('Gesamtweidefläche',
+                              'ha', column_id=9, value_width=120,
+                              factor=0.0001, decimal=4)
+        self.insertFooterLine('davon beweidet',
+                              'ha', column_id=8, value_width=120,
+                              factor=0.0001, decimal=4)
+        self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
+                              'ha', column_id=7, value_width=120,
+                              factor=0.0001, decimal=4)
 
     def getMciList(self):
 
