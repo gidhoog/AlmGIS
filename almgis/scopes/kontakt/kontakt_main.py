@@ -299,7 +299,7 @@ class KontaktMain(AlmDataView):
         # self.bbb.setText('BBBBBBBBBBBBBB')
         # self.uiMainVlay.addWidget(self.bbb)
 
-        filter_lay = QHBoxLayout(self)
+        # filter_lay = QHBoxLayout(self)
 
         """filter typen"""
         self.filter_type_lbl = QLabel(self)
@@ -388,42 +388,62 @@ class KontaktMain(AlmDataView):
         #
         # self.filter_adr_input_wdg.textChanged.connect(self.useFilter)
 
-        spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
-                                 QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem1)
+        # spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
+        #                          QSizePolicy.Minimum)
+        # filter_lay.addItem(spacerItem1)
 
-        filter_lay.addWidget(self.filter_type_lbl)
-        filter_lay.addWidget(self.filter_type_input_wdg)
-        filter_lay.addWidget(self.filter_name_lbl)
-        filter_lay.addWidget(self.filter_name_input_wdg)
+        self.uiFilterHlay.addWidget(self.filter_type_lbl)
+        self.uiFilterHlay.addWidget(self.filter_type_input_wdg)
+        self.uiFilterHlay.addWidget(self.filter_name_lbl)
+        self.uiFilterHlay.addWidget(self.filter_name_input_wdg)
         # filter_lay.addWidget(self.filter_adr_lbl)
         # filter_lay.addWidget(self.filter_adr_input_wdg)
 
         """"""
 
-        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem)
+        # self.setFilterRemoveBtn()
+        # 
+        # spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # self.uiFilterHlay.addItem(spacerItem)
 
-        self.uiHeaderHley.insertLayout(1, filter_lay)
+       #  self.uiHeaderHley.insertLayout(1, self.uiFilterHlay)
         # self.uiMainVlay.addLayout(filter_lay)
 
         # self.uiMainVlay.addWidget(self.filter_type_lbl)
         # print(f'...')
         # self.uiHeaderHley.insertWidget(1, self.filter_type_lbl)
+    
+        super().setFilterUI()
 
     def applyFilter(self):
+
+        filter = False
 
         if self.filter_type_input_wdg.currentData(Qt.UserRole) == -1:
             self.filter_type_lbl.setVisible(False)
         else:
             self.filter_type_lbl.setVisible(True)
+            filter = True
 
         if self.filter_name_input_wdg.text() != '':
             self.filter_name_lbl.setVisible(True)
+            filter = True
         else:
             self.filter_name_lbl.setVisible(False)
 
+        """filter remove button"""
+        if filter:
+            self.uiFilterRemovePbtn.setVisible(True)
+        else:
+            self.uiFilterRemovePbtn.setVisible(False)
+        """"""
+
         super().applyFilter()
+
+    def removeFilter(self):
+
+        self.filter_name_input_wdg.setText('')
+        self.filter_type_input_wdg.setCurrentIndex(0)
 
     def useFilter(self):
 

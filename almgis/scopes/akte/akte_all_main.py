@@ -16,6 +16,11 @@ from almgis.data_model import BAkt, BBearbeitungsstatus
 # from qga.entity import EntityDialog
 from qga.data_view import QgaDataView, QgaTableModel
 from qga.main_widget import QgaMainWidget
+
+from almgis.data_session import session_cm
+from almgis.data_view import AlmDataView
+
+
 # from almgis.scopes.akte.akt import Akt
 
 
@@ -240,7 +245,7 @@ class AktAllModel(QgaTableModel):
                         return 0
 
 
-class AkteAllMain(QgaDataView):
+class AkteAllMain(AlmDataView):
 
 
     _maintable_text = ["Akt", "Akte", "kein Akt"]
@@ -294,6 +299,7 @@ class AkteAllMain(QgaDataView):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
+        self.initUi()
 
         # self.entity_dialog_class = AktDialog
         # self.entity_widget_class = Akt
@@ -322,7 +328,7 @@ class AkteAllMain(QgaDataView):
 
     def getMciList(self):
 
-        session = DbSession()
+        # session = DbSession()
 
         stmt = (select(BAkt)
         # .options(
@@ -356,7 +362,7 @@ class AkteAllMain(QgaDataView):
         #     .joinedload(BKomplex.rel_koppel)
         # )
         )
-        mci = session.scalars(stmt).unique().all()
+        mci = self.session.scalars(stmt).unique().all()
 
         """test um direkter mit geometrien arbeiten zu können"""
         # # ).where(BAkt.id == 1090)
@@ -493,7 +499,7 @@ class AkteAllMain(QgaDataView):
         self.uiFilterHlay.addWidget(self.filter_status_lbl)
         self.uiFilterHlay.addWidget(self.filter_status_input_wdg)
 
-        self.setFilterRemoveBtn()
+        # self.setFilterRemoveBtn()
 
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.uiFilterHlay.addItem(spacerItem)
@@ -573,4 +579,4 @@ class AkteAllMain(QgaDataView):
     def signals(self):
         super().signals()
 
-        self.uiAddDataTbtn.clicked.connect(self.add_row)
+        # self.uiAddDataTbtn.clicked.connect(self.add_row)
