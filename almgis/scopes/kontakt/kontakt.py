@@ -304,7 +304,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.setTypeCombo()
 
         self.uiVertreterCombo.loadComboData(self.session, gruppe='e')
-        self.uiVertreterCombo.combo_widget_form = KontaktEinzel
+        self.uiVertreterCombo.combo_wdg_cls = KontaktEinzel
         self.uiVertreterCombo.initCombo()
 
     def finalEntitySettings(self):

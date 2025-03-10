@@ -357,7 +357,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
 
         """init bewirtschafter_combo"""
         self.uiBewirtschafterCombo.loadComboData(self.entity_session)
-        self.uiBewirtschafterCombo.combo_widget_form = Kontakt
+        self.uiBewirtschafterCombo.combo_wdg_cls = Kontakt
         self.uiBewirtschafterCombo.initCombo()
         """"""
 
@@ -925,7 +925,7 @@ class Akt(akt_UI.Ui_Akt, entity.Entity):
         self.uiBewirtschafterCombo.setModel(bew_model)
         """"""
 
-        self.uiBewirtschafterCombo.combo_widget_form = Kontakt
+        self.uiBewirtschafterCombo.combo_wdg_cls = Kontakt
         self.uiBewirtschafterCombo.initCombo()
 
     def setStatusComboData(self):
