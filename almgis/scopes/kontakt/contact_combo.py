@@ -4,7 +4,7 @@ from sqlalchemy import select, or_
 from qgis.PyQt.QtCore import QModelIndex, Qt
 
 from almgis.combobox import AlmComboModel, AlmExtendedCombo, AlmComboActionAdd
-from almgis.data_model import BKontakt, BKontaktTyp
+from almgis.data_model import BKontakt, BKontaktGemTyp
 
 
 class ContactCombo(AlmExtendedCombo):
@@ -69,7 +69,7 @@ class ContactCombo(AlmExtendedCombo):
                 stmt = select(BKontakt).where(BKontakt.type_id == 0)
             case 'g':
                 stmt = select(BKontakt).join(BKontakt.rel_type).where(
-                    or_((BKontaktTyp.gemeinschaft == 1), (BKontakt.blank_value == 1))
+                    or_((BKontaktGemTyp.gemeinschaft == 1), (BKontakt.blank_value == 1))
                 )
 
         self._mci_list = self.session.scalars(stmt).unique().all()

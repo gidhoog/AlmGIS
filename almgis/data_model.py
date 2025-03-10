@@ -749,7 +749,7 @@ class BKontakt(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    type_id = Column(Integer, ForeignKey('a_alm_kontakt_typ.id'))
+    type_id: Mapped[int] = mapped_column(ForeignKey('a_alm_kontakt_type.id'))
     vertreter_id: Mapped[int] = mapped_column(ForeignKey("a_alm_kontakt.id"))
 
     nachname: Mapped[str]
@@ -765,12 +765,14 @@ class BKontakt(Base):
     mail3: Mapped[str]
 
     anm: Mapped[str]
+    gem_type_id: Mapped[int] = mapped_column(ForeignKey('a_alm_kontakt_gem_type.id'))
 
     blank_value: Mapped[bool]
     inactive: Mapped[bool]
     not_delete: Mapped[bool]
 
-    rel_type = relationship('BKontaktTyp', lazy="joined")
+    rel_gem_type: Mapped['BKontaktGemTyp'] = relationship(lazy="joined")
+    rel_type: Mapped['BKontaktType'] = relationship()
 
     # children = relationship("BKontakt", back_populates="rel_vertreter")
     children: Mapped[List["BKontakt"]] = relationship(back_populates="rel_vertreter")
@@ -931,8 +933,36 @@ class BKontakt(Base):
     def __repr__(self):
        return f"<BKontakt(id={self.id}, nachname='{self.nachname}')>"
 
-class BKontaktTyp(Base):
-    __tablename__ = 'a_alm_kontakt_typ'
+
+class BKontaktType(Base):
+    __tablename__ = 'a_alm_kontakt_type'
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    parent_id: Mapped[int]
+    name: Mapped[str]
+    name_short: Mapped[str]
+    description: Mapped[str]
+    sort = Column(Integer)
+    color_main: Mapped[str]
+    icon_01: Mapped[str]
+    shortcut_01: Mapped[str]
+    module: Mapped[str]
+    type_class: Mapped[str]
+    mci_class: Mapped[str]
+    value: Mapped[str]
+
+    blank_value: Mapped[bool]
+    inactive: Mapped[bool]
+    not_delete: Mapped[bool]
+    sys_data: Mapped[bool]
+
+    def __repr__(self):
+        return f"<{self.__class__}(id={self.id}," \
+               f" parent_id={self.parent_id}, name={self.name})>"
+
+
+class BKontaktGemTyp(Base):
+    __tablename__ = 'a_alm_kontakt_gem_type'
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -944,7 +974,7 @@ class BKontaktTyp(Base):
     sort: Mapped[int]
 
     def __repr__(self):
-       return (f"<BKontaktTyp(id={self.id}, "
+       return (f"<BKontaktGemTyp(id={self.id}, "
                f"name='{self.name}, "
                f"name_short='{self.name_short}')>")
 

@@ -8,7 +8,7 @@ from sqlalchemy import select, func
 from almgis.entity import AlmEntityDialog
 from almgis.scopes.kontakt import kontakt_UI
 
-from almgis.data_model import BKontakt, BKontaktTyp
+from almgis.data_model import BKontakt, BKontaktGemTyp
 from qga.tools import getMciState
 
 from almgis.entity import AlmEntity
@@ -314,8 +314,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
 
     def setTypeCombo(self):
 
-        stmt = select(BKontaktTyp).where(BKontaktTyp.gemeinschaft == 1
-                                         ).order_by(BKontaktTyp.sort)
+        stmt = select(BKontaktGemTyp).where(BKontaktGemTyp.gemeinschaft == 1
+                                            ).order_by(BKontaktGemTyp.sort)
 
         type_mci = self.session.scalars(stmt).all()
 
@@ -527,7 +527,7 @@ class KontaktEinzel(Kontakt):
 
     def submitEntity(self):
 
-        einzel_typ_mci = self.session.get(BKontaktTyp, 0)
+        einzel_typ_mci = self.session.get(BKontaktGemTyp, 0)
         leerer_kontakt = self.session.get(BKontakt, 0)
 
         self._entity_mci.type_id = 0

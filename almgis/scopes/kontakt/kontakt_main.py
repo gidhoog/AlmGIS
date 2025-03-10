@@ -18,7 +18,7 @@ from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
 
-from almgis.data_model import BKontakt, BKontaktTyp, BAkt
+from almgis.data_model import BKontakt, BKontaktGemTyp, BAkt, BKontaktType
 from almgis.entity import AlmEntityDialog
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 
@@ -147,9 +147,11 @@ class KontaktModel(QgaTableModel):
 
 class KontaktMain(AlmDataView):
 
-    entity_dialog_class = KontaktEntityDialog
-    _entity_mc = BKontakt
     _model_class = KontaktModel
+    _entity_mc = BKontakt
+    _type_mc = BKontaktType
+
+    entity_dialog_class = KontaktEntityDialog
 
     entitiy_amount_text = ["Kontakt", "Kontakte", "kein Kontakt"]
     _delete_window_title = ["Kontakt löschen", "Kontakte löschen"]
@@ -193,27 +195,27 @@ class KontaktMain(AlmDataView):
 
         # self.add_menu = QMenu(self)
 
-        self.action_einzel = QAction(self.uiAddDataTbtn)
-        self.action_einzel.setText('Einzelperson')
-        self.action_einzel.setIcon(QIcon(":/svg/resources/icons/person.svg"))
-        self.uiAddDataTbtn.addAction(self.action_einzel)
-
-        self.action_gemeinschaft = QAction(self.uiAddDataTbtn)
-        self.action_gemeinschaft.setText('Gemeinschaft')
-        self.action_gemeinschaft.setIcon(QIcon(":/svg/resources/icons/group.svg"))
-        self.uiAddDataTbtn.addAction(self.action_gemeinschaft)
-
-        self.action_einzel.triggered.connect(self.addEinzelKontakt)
-        # self.action_einzel..connect(lambda x: self.fn(x))
-        self.action_gemeinschaft.triggered.connect(self.addGemKontakt)
-
-        # self.add_menu.addAction(self.action_einzel)
-        # self.add_menu.addAction(action_gemeinschaft)
-
-        """"""
-
-        # self.uiAddDataTbtn.setMenu(self.add_menu)
-        self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
+        # self.action_einzel = QAction(self.uiAddDataTbtn)
+        # self.action_einzel.setText('Einzelperson')
+        # self.action_einzel.setIcon(QIcon(":/svg/resources/icons/person.svg"))
+        # self.uiAddDataTbtn.addAction(self.action_einzel)
+        #
+        # self.action_gemeinschaft = QAction(self.uiAddDataTbtn)
+        # self.action_gemeinschaft.setText('Gemeinschaft')
+        # self.action_gemeinschaft.setIcon(QIcon(":/svg/resources/icons/group.svg"))
+        # self.uiAddDataTbtn.addAction(self.action_gemeinschaft)
+        #
+        # self.action_einzel.triggered.connect(self.addEinzelKontakt)
+        # # self.action_einzel..connect(lambda x: self.fn(x))
+        # self.action_gemeinschaft.triggered.connect(self.addGemKontakt)
+        #
+        # # self.add_menu.addAction(self.action_einzel)
+        # # self.add_menu.addAction(action_gemeinschaft)
+        #
+        # """"""
+        #
+        # # self.uiAddDataTbtn.setMenu(self.add_menu)
+        # self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
 
     def testAction(self, bbb):
 
@@ -316,7 +318,7 @@ class KontaktMain(AlmDataView):
 
         with session_cm(name='contact type filter') as session:
 
-            contact_type_stmt = select(BKontaktTyp)
+            contact_type_stmt = select(BKontaktGemTyp)
             contact_type_list = session.scalars(contact_type_stmt).all()
 
             for kontact_type in contact_type_list:
@@ -544,14 +546,14 @@ class KontaktMain(AlmDataView):
 
         custom_data = {}
 
-        type_stmt = select(BKontaktTyp).order_by(BKontaktTyp.sort)
+        type_stmt = select(BKontaktGemTyp).order_by(BKontaktGemTyp.sort)
         type_mci = session.scalars(type_stmt).all()
 
         custom_data['typ'] = type_mci
 
         vertr_kontakte_stmt = ((select(BKontakt)
                          .options(joinedload(BKontakt.rel_type)))
-                         .where(BKontaktTyp.gemeinschaft == 0))
+                               .where(BKontaktGemTyp.gemeinschaft == 0))
         vertr_kontakte_mci = session.scalars(vertr_kontakte_stmt).all()
 
         custom_data['vertr_kontakte'] = vertr_kontakte_mci
