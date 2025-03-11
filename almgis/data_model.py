@@ -781,6 +781,10 @@ class BKontakt(Base):
 
     rel_akt: Mapped[List["BAkt"]] = relationship(back_populates="rel_bewirtschafter")
 
+    __mapper_args__ = {
+        'polymorphic_on': type_id
+    }
+
     @hybrid_property
     def name(self):
 
@@ -934,6 +938,20 @@ class BKontakt(Base):
        return f"<BKontakt(id={self.id}, nachname='{self.nachname}')>"
 
 
+class BKontaktEinzel(BKontakt):
+
+    __mapper_args__ = {
+        'polymorphic_identity': 0,
+    }
+
+
+class BKontaktGem(BKontakt):
+
+    __mapper_args__ = {
+        'polymorphic_identity': 1,
+    }
+
+
 class BKontaktType(Base):
     __tablename__ = 'a_alm_kontakt_type'
 
@@ -968,7 +986,6 @@ class BKontaktGemTyp(Base):
 
     name: Mapped[str]
     name_short: Mapped[str]
-    gemeinschaft: Mapped[bool]
 
     color: Mapped[str]
     sort: Mapped[int]

@@ -190,8 +190,8 @@ class KontaktMain(AlmDataView):
 
         self.setStretchMethod(2)
 
-        """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
-        kontakt wählen zu können"""
+        # """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
+        # kontakt wählen zu können"""
 
         # self.add_menu = QMenu(self)
 
@@ -521,12 +521,12 @@ class KontaktMain(AlmDataView):
 
         return del_info
 
-    def get_entity_widget_class(self, entity_mci):
-
-        if entity_mci.rel_type.gemeinschaft:
-            return Kontakt
-        else:
-            return KontaktEinzel
+    # def get_entity_widget_class(self, entity_mci):
+    #
+    #     if entity_mci.rel_type.gemeinschaft:
+    #         return Kontakt
+    #     else:
+    #         return KontaktEinzel
 
     def getMciList(self):
 
@@ -542,20 +542,20 @@ class KontaktMain(AlmDataView):
 
         return mci
 
-    def getCustomData(self, session):
-
-        custom_data = {}
-
-        type_stmt = select(BKontaktGemTyp).order_by(BKontaktGemTyp.sort)
-        type_mci = session.scalars(type_stmt).all()
-
-        custom_data['typ'] = type_mci
-
-        vertr_kontakte_stmt = ((select(BKontakt)
-                         .options(joinedload(BKontakt.rel_type)))
-                               .where(BKontaktGemTyp.gemeinschaft == 0))
-        vertr_kontakte_mci = session.scalars(vertr_kontakte_stmt).all()
-
-        custom_data['vertr_kontakte'] = vertr_kontakte_mci
-
-        return custom_data
+    # def getCustomData(self, session):
+    #
+    #     custom_data = {}
+    #
+    #     type_stmt = select(BKontaktGemTyp).order_by(BKontaktGemTyp.sort)
+    #     type_mci = session.scalars(type_stmt).all()
+    #
+    #     custom_data['typ'] = type_mci
+    #
+    #     vertr_kontakte_stmt = ((select(BKontakt)
+    #                      .options(joinedload(BKontakt.rel_type)))
+    #                            .where(BKontaktGemTyp.gemeinschaft == 0))
+    #     vertr_kontakte_mci = session.scalars(vertr_kontakte_stmt).all()
+    #
+    #     custom_data['vertr_kontakte'] = vertr_kontakte_mci
+    #
+    #     return custom_data
