@@ -928,7 +928,7 @@ class BKontakt(Base):
 
     def __init__(self):  # set default values
 
-        self.type_id = 0
+        # self.type_id = 0
 
         self.blank_value = 0
         self.inactive = 0
