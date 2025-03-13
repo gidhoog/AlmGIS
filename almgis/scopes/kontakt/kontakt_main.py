@@ -176,6 +176,7 @@ class KontaktMain(AlmDataView):
             bewirtschafter_ids = session.scalars(bewirtschafter_ids_stmt).all()
 
         if mci.id in all_vertreter_ids or mci.id in bewirtschafter_ids:
+            print(f'====> mci in use: {mci}')
             return False
         else:
             return True
