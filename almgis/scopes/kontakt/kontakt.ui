@@ -520,6 +520,9 @@
       <item row="1" column="4">
        <widget class="AlmInfoButton" name="uiInfoBtnNachname" native="true"/>
       </item>
+      <item row="4" column="4">
+       <widget class="AlmInfoButton" name="uiInfoBtnStrasse" native="true"/>
+      </item>
      </layout>
     </item>
    </layout>

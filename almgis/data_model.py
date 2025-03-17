@@ -616,6 +616,7 @@ class McInfoButton(Base):
     __tablename__ = 'info_button'
 
     id = Column(Integer, primary_key=True)
+    btn = Column(String)
     title = Column(String)
     content = Column(String)
 
