@@ -94,9 +94,9 @@ class AktAllModel(QgaTableModel):
 
             if index.column() == 2:
 
-                if self.mci_list[row].rel_bearbeitungsstatus is not None:
+                if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
 
-                    color_str = self.mci_list[row].rel_bearbeitungsstatus.color
+                    color_str = self.parent.mci_list[row].rel_bearbeitungsstatus.color
                     color_list = color_str.split(", ")
 
                     return QColor(int(color_list[0]),
@@ -106,57 +106,57 @@ class AktAllModel(QgaTableModel):
 
         if index.column() == 0:
             if role == Qt.DisplayRole:
-                return self.mci_list[row].az
+                return self.parent.mci_list[row].az
             # if role == Qt.EditRole:
             #     return self.parent._mci_list[row].az
 
             if role == Qt.ForegroundRole:
-                if self.mci_list[row].nicht_bewirtschaftet == 1:
+                if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
                     return QBrush(Qt.gray)
 
         if index.column() == 1:
             if role == Qt.DisplayRole:
-                return self.mci_list[row].name
+                return self.parent.mci_list[row].name
             # if role == Qt.EditRole:
-            #     return self.mci_list[row].name
+            #     return self.parent.mci_list[row].name
 
             if role == Qt.ForegroundRole:
-                if self.mci_list[row].nicht_bewirtschaftet == 1:
+                if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
                     return QBrush(Qt.gray)
 
         if index.column() == 2:
 
-            if self.mci_list[row].rel_bearbeitungsstatus is not None:
+            if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
 
                 if role == Qt.DisplayRole:
-                    return self.mci_list[row].rel_bearbeitungsstatus.name
+                    return self.parent.mci_list[row].rel_bearbeitungsstatus.name
                 if role == Qt.EditRole:
-                    return self.mci_list[row].bearbeitungsstatus_id
+                    return self.parent.mci_list[row].bearbeitungsstatus_id
 
         if index.column() == 3:
             if role == Qt.DisplayRole:
-                return self.mci_list[row].stz
+                return self.parent.mci_list[row].stz
 
         if index.column() == 4:
             # if role == Qt.DisplayRole:
-            #     return self.mci_list[row].anm
-            if self.mci_list[row].rel_bewirtschafter is not None:
+            #     return self.parent.mci_list[row].anm
+            if self.parent.mci_list[row].rel_bewirtschafter is not None:
 
                 if role == Qt.DisplayRole:
-                    return self.mci_list[row].rel_bewirtschafter.name
+                    return self.parent.mci_list[row].rel_bewirtschafter.name
                 if role == Qt.EditRole:
-                    return self.mci_list[row].bewirtschafter_id
+                    return self.parent.mci_list[row].bewirtschafter_id
 
         if index.column() == 5:
             if role == Qt.DisplayRole:
-                if self.mci_list[row].wwp == 1:
+                if self.parent.mci_list[row].wwp == 1:
                     return 'X'
 
         if index.column() == 6:
             if role == Qt.DisplayRole:
-                if self.mci_list[row].wwp == 1:
-                    if self.mci_list[row].wwp_date is not None:
-                        return self.mci_list[row].wwp_date
+                if self.parent.mci_list[row].wwp == 1:
+                    if self.parent.mci_list[row].wwp_date is not None:
+                        return self.parent.mci_list[row].wwp_date
                     else:
                         return '---'
                 return ''
@@ -164,7 +164,7 @@ class AktAllModel(QgaTableModel):
         if index.column() == 7:  # im awb eingetragene flaeche
             # anz = 0
             gst_area = 0
-            for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
+            for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
                 # anz += 1
                 if gst_zuord.awb_status_id == 1:
                     gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
@@ -187,7 +187,7 @@ class AktAllModel(QgaTableModel):
             if role in [Qt.DisplayRole, Qt.EditRole]:
 
                 cut_area = 0
-                for gst_zuord in self.mci_list[row].rel_gst_zuordnung:
+                for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
                     # anz += 1
                     if gst_zuord.awb_status_id == 1:
                         gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
@@ -219,11 +219,11 @@ class AktAllModel(QgaTableModel):
 
                 kop_area = 0.00
 
-                # print(f'self.mci_list[row].rel_abgrenzung: {self.mci_list[row].rel_abgrenzung}')
+                # print(f'self.parent.mci_list[row].rel_abgrenzung: {self.parent.mci_list[row].rel_abgrenzung}')
 
-                if self.mci_list[row].rel_abgrenzung != []:
+                if self.parent.mci_list[row].rel_abgrenzung != []:
 
-                    last_abgrenzung = max(self.mci_list[row].rel_abgrenzung,
+                    last_abgrenzung = max(self.parent.mci_list[row].rel_abgrenzung,
                                       key=attrgetter('jahr'))
 
                     for komplex in last_abgrenzung.rel_komplex:

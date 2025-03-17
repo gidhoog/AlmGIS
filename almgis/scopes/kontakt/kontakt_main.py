@@ -40,7 +40,7 @@ class KontaktEntityDialog(AlmEntityDialog):
         if accepted_entity is not False:
 
             if self.dialogWidget.purpose == 'add':
-                self.parent.__class__._new_mci.append(accepted_entity)
+                self.parent.mci_list.append(accepted_entity)
 
             self.parent.update_data_view.emit(self.dialogWidget.purpose,
                                               False)
@@ -97,47 +97,47 @@ class KontaktModel(QgaTableModel):
 
         if index.column() == 0:
             if role == Qt.DisplayRole:
-                return self.parent.__class__._mci_list[row].rel_type.name
+                return self.parent.mci_list[row].rel_type.name
                 # return self.mci_list[row][0]
 
             if role == Qt.EditRole:
-                return self.parent.__class__._mci_list[row].rel_type.id
+                return self.parent.mci_list[row].rel_type.id
 
         if index.column() == 1:
             if role == Qt.DisplayRole:
-                return self.parent.__class__._mci_list[row].name
+                return self.parent.mci_list[row].name
             if role == Qt.EditRole:
-                return self.parent.__class__._mci_list[row].name
+                return self.parent.mci_list[row].name
 
         if index.column() == 2:
             if role == Qt.DisplayRole:
 
-                if self.parent.__class__._mci_list[row].rel_type.id == 0:
+                if self.parent.mci_list[row].rel_type.id == 0:
                     return ''
                 else:
-                    return self.parent.__class__._mci_list[row].rel_vertreter.name
+                    return self.parent.mci_list[row].rel_vertreter.name
 
         if index.column() == 3:
             if role == Qt.DisplayRole:
-                return self.parent.__class__._mci_list[row].adresse
+                return self.parent.mci_list[row].adresse
                 # return self.mci_list[row][1]
 
         if index.column() == 4:
             if role == Qt.DisplayRole:
-                return self.parent.__class__._mci_list[row].telefon_all
+                return self.parent.mci_list[row].telefon_all
 
         if index.column() == 5:
             if role == Qt.DisplayRole:
-                return self.parent.__class__._mci_list[row].mail_all
+                return self.parent.mci_list[row].mail_all
 
         if index.column() == 6:
             if role == Qt.DisplayRole:
                 verwendung = []
-                if self.parent.__class__._mci_list[row].rel_akt is not None:
-                    for a in self.parent.__class__._mci_list[row].rel_akt:
+                if self.parent.mci_list[row].rel_akt is not None:
+                    for a in self.parent.mci_list[row].rel_akt:
                         verwendung.append(f'Akt: {a.name}')
-                if self.parent.__class__._mci_list[row].children is not None:
-                    for n in self.parent.__class__._mci_list[row].children:
+                if self.parent.mci_list[row].children is not None:
+                    for n in self.parent.mci_list[row].children:
                         verwendung.append(f'VertreterIn: {n.name}')
 
                 verwendung_text = ", ".join(str(v) for v in verwendung)
