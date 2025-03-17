@@ -17,34 +17,41 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="12" column="1" colspan="3">
-       <widget class="QLineEdit" name="uiMail2Ledit">
+      <item row="20" column="0" colspan="4">
+       <widget class="Line" name="line_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QComboBox" name="uiTypCombo">
         <property name="font">
          <font>
           <family>Calibri</family>
           <pointsize>11</pointsize>
          </font>
         </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
        </widget>
       </item>
-      <item row="7" column="1" colspan="2">
-       <widget class="QLineEdit" name="uiTelefon1Ledit">
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_6">
         <property name="font">
          <font>
           <family>Calibri</family>
           <pointsize>11</pointsize>
          </font>
         </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
+        <property name="text">
+         <string>Straße:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="16" column="1" colspan="3">
-       <widget class="QLabel" name="uiVertreterAdresse1Lbl">
+      <item row="19" column="1" colspan="3">
+       <widget class="QLabel" name="uiVertreterMailLbl">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -53,6 +60,13 @@
         </property>
         <property name="text">
          <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0" colspan="4">
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -69,8 +83,69 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="uiVornameLbl">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Vorname:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="0">
+       <widget class="QLabel" name="uiVertreterLbl">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Vertreter/Obmann:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="9" column="1" colspan="2">
        <widget class="QLineEdit" name="uiTelefon3Ledit">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>e-Mail:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1" colspan="3">
+       <widget class="QLineEdit" name="uiMail1Ledit">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -95,52 +170,6 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>e-Mail:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Telefon:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0" colspan="4">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="4">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="uiTypLbl">
         <property name="font">
@@ -157,10 +186,16 @@
         </property>
        </widget>
       </item>
-      <item row="10" column="0" colspan="4">
-       <widget class="Line" name="line_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+      <item row="8" column="1" colspan="2">
+       <widget class="QLineEdit" name="uiTelefon2Ledit">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -180,15 +215,8 @@
         </property>
        </widget>
       </item>
-      <item row="14" column="0" colspan="4">
-       <widget class="Line" name="line_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0">
-       <widget class="QLabel" name="label_5">
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_7">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -196,23 +224,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Telefon:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="15" column="0">
-       <widget class="QLabel" name="uiVertreterLbl">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Vertreter/Obmann:</string>
+         <string>Post</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -221,106 +233,6 @@
       </item>
       <item row="13" column="1" colspan="3">
        <widget class="QLineEdit" name="uiMail3Ledit">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="19" column="1" colspan="3">
-       <widget class="QLabel" name="uiVertreterMailLbl">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="3">
-       <widget class="QLineEdit" name="uiNachnameLedit">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Straße:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="13" column="0">
-       <widget class="QLabel" name="label_12">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>e-Mail:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>e-Mail:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="3">
-       <widget class="QLineEdit" name="uiVornameLedit">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="1" colspan="2">
-       <widget class="QLineEdit" name="uiTelefon2Ledit">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -368,8 +280,8 @@
         </item>
        </layout>
       </item>
-      <item row="17" column="1" colspan="3">
-       <widget class="QLabel" name="uiVertreterAdresse2Lbl">
+      <item row="16" column="1" colspan="3">
+       <widget class="QLabel" name="uiVertreterAdresse1Lbl">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -381,8 +293,8 @@
         </property>
        </widget>
       </item>
-      <item row="18" column="1" colspan="3">
-       <widget class="QLabel" name="uiVertreterTelefonLbl">
+      <item row="11" column="0">
+       <widget class="QLabel" name="label_10">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -390,7 +302,62 @@
          </font>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>e-Mail:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Telefon:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1" colspan="2">
+       <widget class="QLineEdit" name="uiTelefon1Ledit">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Telefon:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="0" colspan="4">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -407,8 +374,21 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="1" colspan="3">
-       <widget class="QLineEdit" name="uiMail1Ledit">
+      <item row="18" column="1" colspan="3">
+       <widget class="QLabel" name="uiVertreterTelefonLbl">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QLineEdit" name="uiNachnameLedit">
         <property name="font">
          <font>
           <family>Calibri</family>
@@ -420,13 +400,45 @@
         </property>
        </widget>
       </item>
-      <item row="15" column="1" colspan="3">
-       <widget class="ContactCombo" name="uiVertreterCombo">
+      <item row="17" column="1" colspan="3">
+       <widget class="QLabel" name="uiVertreterAdresse2Lbl">
         <property name="font">
          <font>
           <family>Calibri</family>
           <pointsize>11</pointsize>
          </font>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>e-Mail:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QLineEdit" name="uiVornameLedit">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -443,6 +455,16 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="1" colspan="3">
+       <widget class="ContactCombo" name="uiVertreterCombo">
+        <property name="font">
+         <font>
+          <family>Calibri</family>
+          <pointsize>11</pointsize>
+         </font>
         </property>
        </widget>
       </item>
@@ -465,54 +487,38 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_7">
+      <item row="12" column="1" colspan="3">
+       <widget class="QLineEdit" name="uiMail2Ledit">
         <property name="font">
          <font>
           <family>Calibri</family>
           <pointsize>11</pointsize>
          </font>
         </property>
-        <property name="text">
-         <string>Post</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="uiVornameLbl">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Vorname:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="20" column="0" colspan="4">
-       <widget class="Line" name="line_5">
+      <item row="6" column="0" colspan="4">
+       <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QComboBox" name="uiTypCombo">
-        <property name="font">
-         <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
-         </font>
+      <item row="3" column="0" colspan="4">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="AlmInfoButton" name="uiInfoBtnVorname" native="true"/>
+      </item>
+      <item row="1" column="4">
+       <widget class="AlmInfoButton" name="uiInfoBtnNachname" native="true"/>
       </item>
      </layout>
     </item>
@@ -535,6 +541,12 @@
    <class>ContactCombo</class>
    <extends>QComboBox</extends>
    <header>almgis.scopes.kontakt.contact_combo</header>
+  </customwidget>
+  <customwidget>
+   <class>AlmInfoButton</class>
+   <extends>QWidget</extends>
+   <header>almgis.info_button</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

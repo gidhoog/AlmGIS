@@ -23,3 +23,4 @@ settings_user.updateSettings()
 """"""
 
 AlmSessionCls = sessionmaker()
+InfoBtnSessionCls = sessionmaker()
