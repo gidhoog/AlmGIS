@@ -308,8 +308,6 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.uiVertreterCombo.combo_wdg_cls = KontaktEinzel
         self.uiVertreterCombo.initCombo()
 
-        # self.uiInfoBtnNachname.init_tool_tip()
-
     def finalEntitySettings(self):
         super().finalEntitySettings()
 

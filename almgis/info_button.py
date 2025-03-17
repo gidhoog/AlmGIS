@@ -41,5 +41,3 @@ class AlmInfoButton(InfoButton):
         self.session_cm = info_session_cm
         self.session = InfoBtnSessionCls()
         self.mc_info_button = McInfoButton
-
-        # self.init_tool_tip()
