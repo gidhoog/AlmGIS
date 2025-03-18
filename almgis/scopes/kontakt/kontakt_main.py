@@ -97,7 +97,11 @@ class KontaktModel(QgaTableModel):
 
         if index.column() == 0:
             if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].rel_type.name
+
+                if self.parent.mci_list[row].type_id == 0:
+                    return self.parent.mci_list[row].rel_type.name
+                else:
+                    return self.parent.mci_list[row].rel_gem_type.name
                 # return self.mci_list[row][0]
 
             if role == Qt.EditRole:
