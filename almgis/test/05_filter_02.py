@@ -114,7 +114,6 @@ class MainWindow(QMainWindow):
         """################################"""
         """begin to create the vector layer"""
         """################################"""
-
         # Create a sample vector layer
         self.layer = QgsVectorLayer(
             "Point?crs=EPSG:4326&field=id:integer&field=name:string",
@@ -146,7 +145,6 @@ class MainWindow(QMainWindow):
                                                self.layer.featureCount())
         attribute_table_model = QgsAttributeTableModel(self.layer_cache)
         attribute_table_model.loadLayer()
-
         """#####################"""
         """vector layer complete"""
         """#####################"""
