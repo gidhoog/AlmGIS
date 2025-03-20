@@ -1,5 +1,7 @@
+# https://www.perplexity.ai/search/81fc3e06-c35d-4bc1-a483-9677a341cfce
+
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, \
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, \
     QHBoxLayout, QLineEdit, QTableView
 from PyQt5.QtCore import Qt, QAbstractTableModel, QSortFilterProxyModel
 from qgis._core import QgsVectorLayerCache
