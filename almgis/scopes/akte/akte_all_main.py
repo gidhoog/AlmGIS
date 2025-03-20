@@ -533,12 +533,12 @@ class AkteAllMain(AlmDataView):
             filter = True
         """"""
 
-        """filter remove button"""
-        if filter:
-            self.uiFilterRemovePbtn.setVisible(True)
-        else:
-            self.uiFilterRemovePbtn.setVisible(False)
-        """"""
+        # """filter remove button"""
+        # if filter:
+        #     self.uiFilterRemovePbtn.setVisible(True)
+        # else:
+        #     self.uiFilterRemovePbtn.setVisible(False)
+        # """"""
 
         super().applyFilter()
 
