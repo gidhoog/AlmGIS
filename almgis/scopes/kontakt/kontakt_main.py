@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QVariant
 from PyQt5.QtWidgets import QDialog
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
@@ -21,6 +21,7 @@ from qga.main_widget import QgaMainWidget
 from almgis.data_model import BKontakt, BKontaktGemTyp, BAkt, BKontaktType
 from almgis.entity import AlmEntityDialog
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
+from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol
 
 
 class KontaktEntityDialog(AlmEntityDialog):
@@ -80,73 +81,87 @@ class KontaktModel(QgaTableModel):
         'Verwendung'
     ]
 
-    def data(self, index, role=None):
+    def __init__(self, parent, mci_list, columns):
+        super().__init__(parent, mci_list, columns)
 
-        row = index.row()
-        # col = index.column()
+    def data(self, index, role=Qt.DisplayRole):
+        if not index.isValid():
+            return QVariant()
 
-        # if role == Qt.TextAlignmentRole:
-        #
-        #     if index.column() in [5, 6]:
-        #
-        #         return Qt.AlignRight | Qt.AlignVCenter
-        #
-        #     if index.column() in [1, 2, 4]:
-        #
-        #         return Qt.AlignHCenter | Qt.AlignVCenter
+        column = self._columns[index.column()]
+        # value = self._mci_list[index.row()][index.column()]
+        mci = self._mci_list[index.row()]
 
-        if index.column() == 0:
-            if role == Qt.DisplayRole:
+        # Delegate role handling to the column class
+        return column.handle_role(role, mci)
 
-                if self.parent.mci_list[row].type_id == 0:
-                    return self.parent.mci_list[row].rel_type.name
-                else:
-                    return self.parent.mci_list[row].rel_gem_type.name
-                # return self.mci_list[row][0]
-
-            if role == Qt.EditRole:
-                return self.parent.mci_list[row].rel_type.id
-
-        if index.column() == 1:
-            if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].name
-            if role == Qt.EditRole:
-                return self.parent.mci_list[row].name
-
-        if index.column() == 2:
-            if role == Qt.DisplayRole:
-
-                if self.parent.mci_list[row].rel_type.id == 0:
-                    return ''
-                else:
-                    return self.parent.mci_list[row].rel_vertreter.name
-
-        if index.column() == 3:
-            if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].adresse
-                # return self.mci_list[row][1]
-
-        if index.column() == 4:
-            if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].telefon_all
-
-        if index.column() == 5:
-            if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].mail_all
-
-        if index.column() == 6:
-            if role == Qt.DisplayRole:
-                verwendung = []
-                if self.parent.mci_list[row].rel_akt is not None:
-                    for a in self.parent.mci_list[row].rel_akt:
-                        verwendung.append(f'Akt: {a.name}')
-                if self.parent.mci_list[row].children is not None:
-                    for n in self.parent.mci_list[row].children:
-                        verwendung.append(f'VertreterIn: {n.name}')
-
-                verwendung_text = ", ".join(str(v) for v in verwendung)
-
-                return verwendung_text
+    # def data(self, index, role=None):
+    #
+    #     row = index.row()
+    #     # col = index.column()
+    #
+    #     # if role == Qt.TextAlignmentRole:
+    #     #
+    #     #     if index.column() in [5, 6]:
+    #     #
+    #     #         return Qt.AlignRight | Qt.AlignVCenter
+    #     #
+    #     #     if index.column() in [1, 2, 4]:
+    #     #
+    #     #         return Qt.AlignHCenter | Qt.AlignVCenter
+    #
+    #     if index.column() == 0:
+    #         if role == Qt.DisplayRole:
+    #
+    #             if self.parent.mci_list[row].type_id == 0:
+    #                 return self.parent.mci_list[row].rel_type.name
+    #             else:
+    #                 return self.parent.mci_list[row].rel_gem_type.name
+    #             # return self.mci_list[row][0]
+    #
+    #         if role == Qt.EditRole:
+    #             return self.parent.mci_list[row].rel_type.id
+    #
+    #     if index.column() == 1:
+    #         if role == Qt.DisplayRole:
+    #             return self.parent.mci_list[row].name
+    #         if role == Qt.EditRole:
+    #             return self.parent.mci_list[row].name
+    #
+    #     if index.column() == 2:
+    #         if role == Qt.DisplayRole:
+    #
+    #             if self.parent.mci_list[row].rel_type.id == 0:
+    #                 return ''
+    #             else:
+    #                 return self.parent.mci_list[row].rel_vertreter.name
+    #
+    #     if index.column() == 3:
+    #         if role == Qt.DisplayRole:
+    #             return self.parent.mci_list[row].adresse
+    #             # return self.mci_list[row][1]
+    #
+    #     if index.column() == 4:
+    #         if role == Qt.DisplayRole:
+    #             return self.parent.mci_list[row].telefon_all
+    #
+    #     if index.column() == 5:
+    #         if role == Qt.DisplayRole:
+    #             return self.parent.mci_list[row].mail_all
+    #
+    #     if index.column() == 6:
+    #         if role == Qt.DisplayRole:
+    #             verwendung = []
+    #             if self.parent.mci_list[row].rel_akt is not None:
+    #                 for a in self.parent.mci_list[row].rel_akt:
+    #                     verwendung.append(f'Akt: {a.name}')
+    #             if self.parent.mci_list[row].children is not None:
+    #                 for n in self.parent.mci_list[row].children:
+    #                     verwendung.append(f'VertreterIn: {n.name}')
+    #
+    #             verwendung_text = ", ".join(str(v) for v in verwendung)
+    #
+    #             return verwendung_text
 
 
 class KontaktMain(AlmDataView):
@@ -564,3 +579,8 @@ class KontaktMain(AlmDataView):
     #     custom_data['vertr_kontakte'] = vertr_kontakte_mci
     #
     #     return custom_data
+
+    def set_columns(self):
+
+        self.col_name = KontaktNameCol('Name')
+        self.columns.append(self.col_name)
