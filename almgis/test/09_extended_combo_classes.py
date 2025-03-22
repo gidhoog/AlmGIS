@@ -70,10 +70,10 @@ if __name__ == "__main__":
 
     # Define columns with custom role handlers
     int_col = IntegerColumn("Integer")
-    int_col.set_role_handler(Qt.UserRole, lambda x: f"User Role: {x}")
+    int_col.set_role_handler(Qt.DisplayRole, lambda x: f"User Role: {x}")
 
     float_col = Column("Float", float)
-    float_col.set_role_handler(Qt.UserRole,
+    float_col.set_role_handler(Qt.DisplayRole,
                                lambda x: f"Float User Role: {x:.2f}")
 
     columns = [int_col, float_col]
