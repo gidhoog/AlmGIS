@@ -21,7 +21,8 @@ from qga.main_widget import QgaMainWidget
 from almgis.data_model import BKontakt, BKontaktGemTyp, BAkt, BKontaktType
 from almgis.entity import AlmEntityDialog
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
-from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol
+from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol, \
+    KontaktAdresseCol, KontaktTypeCol, KontaktGemTypeCol
 
 
 class KontaktEntityDialog(AlmEntityDialog):
@@ -582,5 +583,19 @@ class KontaktMain(AlmDataView):
 
     def set_columns(self):
 
-        self.col_name = KontaktNameCol('Name')
-        self.columns.append(self.col_name)
+        # self.col_name = KontaktTypeCol('Typ')
+        # self.columns.append(self.col_name)
+        #
+        # self.col_name = KontaktGemTypeCol('Gemeinschafts-Typ')
+        # self.columns.append(self.col_name)
+        #
+        # self.col_name = KontaktNameCol('Name')
+        # self.columns.append(self.col_name)
+        #
+        # self.col_name = KontaktAdresseCol('Adresse')
+        # self.columns.append(self.col_name)
+
+        self.columns.append(KontaktTypeCol('Typ'))
+        self.columns.append(KontaktGemTypeCol('Gemeinschafts-Typ', False))
+        self.columns.append(KontaktNameCol('Name'))
+        self.columns.append(KontaktAdresseCol('Adresse'))
