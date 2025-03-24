@@ -492,17 +492,17 @@ class AkteAllMain(AlmDataView):
                                  QSizePolicy.Minimum)
         self.uiFilterHlay.addItem(spacerItem1)
 
-        self.uiFilterHlay.addWidget(self.filter_az_lbl)
-        self.uiFilterHlay.addWidget(self.filter_az_input_wdg)
-        self.uiFilterHlay.addWidget(self.filter_name_lbl)
-        self.uiFilterHlay.addWidget(self.filter_name_input_wdg)
-        self.uiFilterHlay.addWidget(self.filter_status_lbl)
-        self.uiFilterHlay.addWidget(self.filter_status_input_wdg)
+        self.uiFilterItemsHlay.addWidget(self.filter_az_lbl)
+        self.uiFilterItemsHlay.addWidget(self.filter_az_input_wdg)
+        self.uiFilterItemsHlay.addWidget(self.filter_name_lbl)
+        self.uiFilterItemsHlay.addWidget(self.filter_name_input_wdg)
+        self.uiFilterItemsHlay.addWidget(self.filter_status_lbl)
+        self.uiFilterItemsHlay.addWidget(self.filter_status_input_wdg)
 
         # self.setFilterRemoveBtn()
 
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.uiFilterHlay.addItem(spacerItem)
+        self.uiFilterItemsHlay.addItem(spacerItem)
         """"""
 
     def applyFilter(self):

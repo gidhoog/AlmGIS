@@ -56,18 +56,18 @@ class KontaktMainWidget(QgaMainWidget):
         super().__init__(parent, session)
 
         self.uiTitleLbl.setText('alle Kontakte')
-        self.kontakt_table = KontaktMain(self)
+        self.main_wdg = KontaktMain(self)
 
     def createMw(self):
 
-        self.kontakt_table.initDataView()
+        self.main_wdg.initDataView()
 
         self.initMainWidget()
 
     def initMainWidget(self):
         super().initMainWidget()
 
-        self.uiMainVlay.addWidget(self.kontakt_table)
+        self.uiMainVlay.addWidget(self.main_wdg)
 
 
 class KontaktModel(QgaTableModel):
@@ -184,7 +184,7 @@ class KontaktMain(AlmDataView):
 
     def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(parent, gis_mode)
-        self.initUi()
+        # self.initUi()
 
     def deleteCheck(self, mci):
 
@@ -415,10 +415,10 @@ class KontaktMain(AlmDataView):
         #                          QSizePolicy.Minimum)
         # filter_lay.addItem(spacerItem1)
 
-        self.uiFilterHlay.addWidget(self.filter_type_lbl)
-        self.uiFilterHlay.addWidget(self.filter_type_input_wdg)
-        self.uiFilterHlay.addWidget(self.filter_name_lbl)
-        self.uiFilterHlay.addWidget(self.filter_name_input_wdg)
+        self.uiFilterItemsHlay.addWidget(self.filter_type_lbl)
+        self.uiFilterItemsHlay.addWidget(self.filter_type_input_wdg)
+        self.uiFilterItemsHlay.addWidget(self.filter_name_lbl)
+        self.uiFilterItemsHlay.addWidget(self.filter_name_input_wdg)
         # filter_lay.addWidget(self.filter_adr_lbl)
         # filter_lay.addWidget(self.filter_adr_input_wdg)
 
@@ -427,9 +427,9 @@ class KontaktMain(AlmDataView):
         # self.setFilterRemoveBtn()
         # 
         # spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        # self.uiFilterHlay.addItem(spacerItem)
+        # self.uiFilterItemsHlay.addItem(spacerItem)
 
-       #  self.uiHeaderHley.insertLayout(1, self.uiFilterHlay)
+       #  self.uiHeaderHley.insertLayout(1, self.uiFilterItemsHlay)
         # self.uiMainVlay.addLayout(filter_lay)
 
         # self.uiMainVlay.addWidget(self.filter_type_lbl)
