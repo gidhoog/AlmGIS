@@ -599,3 +599,7 @@ class KontaktMain(AlmDataView):
         self.columns.append(KontaktGemTypeCol('Gemeinschafts-Typ', False))
         self.columns.append(KontaktNameCol('Name'))
         self.columns.append(KontaktAdresseCol('Adresse'))
+
+        vertreter = KontaktNameCol('Vertreter')
+        vertreter.set_mci_attr('rel_vertreter')
+        self.columns.append(vertreter)

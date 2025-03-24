@@ -134,5 +134,5 @@ dmypy.json
 # .idea/
 
 # Projektdaten
-/data
+# /data
 .idea/
