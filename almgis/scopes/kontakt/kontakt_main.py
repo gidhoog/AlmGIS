@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PyQt5.QtCore import pyqtSlot, QVariant
 from PyQt5.QtWidgets import QDialog
+from qga.filter import QgaFilter
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
@@ -185,6 +186,9 @@ class KontaktMain(AlmDataView):
     def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(parent, gis_mode)
         # self.initUi()
+
+        filter_name = QgaFilter('Name', str)
+        self.filters.append(filter_name)
 
     def deleteCheck(self, mci):
 
