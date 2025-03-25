@@ -552,6 +552,8 @@ class KontaktEinzel(Kontakt):
         # self._entity_mci.vertreter_id = 0
         # self._entity_mci.rel_vertreter = leerer_kontakt
 
+        self._entity_mci.gem_type_id = 0
+
 
 class KontaktNewSelector(QWidget):
     """
