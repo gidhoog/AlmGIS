@@ -45,18 +45,18 @@ class AkteAllMainWidget(QgaMainWidget):
 
         self.uiTitleLbl.setText('alle Akte')
 
-        self.akt_all_table = AkteAllMain(self)
+        self.main_wdg = AkteAllMain(self)
 
     def createMw(self):
         # self.akt_all_table.setDataviewSession(session)
-        self.akt_all_table.initDataView()
+        self.main_wdg.initDataView()
 
         self.initMainWidget()
 
     def initMainWidget(self):
         super().initMainWidget()
 
-        self.uiMainVlay.addWidget(self.akt_all_table)
+        self.uiMainVlay.addWidget(self.main_wdg)
 
 
 class AktAllModel(QgaTableModel):
@@ -313,8 +313,8 @@ class AkteAllMain(AlmDataView):
 
         self.uiAddDataTbtn.setVisible(False)
 
-        self.actionDeleteRow.setParent(None)  # entferne action zeile löschen
-        self.uiToolsTbtn.removeAction(self.actionDeleteRow)
+        # self.actionDeleteRow.setParent(None)  # entferne action zeile löschen
+        # self.uiToolsTbtn.removeAction(self.actionDeleteRow)
 
         self.insertFooterLine('Gesamtweidefläche',
                               'ha', column_id=9, value_width=120,
