@@ -36,7 +36,7 @@ class AktWeideareaCol(QgaAreaHaColumn):
 
     def col_value(self, mci):
 
-        kop_area_ha =''
+        # kop_area_ha =''
         kop_area = 0.00
 
         if mci.rel_abgrenzung != []:
@@ -48,12 +48,12 @@ class AktWeideareaCol(QgaAreaHaColumn):
                 for koppel in komplex.rel_koppel:
                     kop_area = kop_area + koppel.koppel_area
 
-            kop_area_ha = '{:.4f}'.format(
-                round(float(kop_area) / 10000, 4)).replace(".",
-                                                           ",") + ' ha'
+            # kop_area_ha = '{:.4f}'.format(
+            #     round(float(kop_area) / 10000, 4)).replace(".",
+            #                                                ",") + ' ha'
 
         # return kop_area_ha
-        return kop_area / 10000
+        return kop_area
 
         #     if role == Qt.DisplayRole:
         #         kop_area_ha = '{:.4f}'.format(

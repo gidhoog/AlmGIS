@@ -333,7 +333,7 @@ class AkteAllMain(AlmDataView):
 
         self.insertFooterLine('Gesamtweidefläche',
                               'ha', column_id=2, value_width=120,
-                              factor=0.0001, decimal=4)
+                              factor=0.0001, decimal=4, column_type=float)
         self.insertFooterLine('davon beweidet',
                               'ha', column_id=8, value_width=120,
                               factor=0.0001, decimal=4)
