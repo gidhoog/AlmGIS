@@ -73,15 +73,15 @@ class KontaktMainWidget(QgaMainWidget):
 
 class KontaktModel(QgaTableModel):
 
-    header = [
-        'Typ',
-        'Name',
-        'Vertreter',
-        'Adresse',
-        'Telefon',
-        'e-Mail',
-        'Verwendung'
-    ]
+    # header = [
+    #     'Typ',
+    #     'Name',
+    #     'Vertreter',
+    #     'Adresse',
+    #     'Telefon',
+    #     'e-Mail',
+    #     'Verwendung'
+    # ]
 
     def __init__(self, parent, mci_list, columns):
         super().__init__(parent, mci_list, columns)

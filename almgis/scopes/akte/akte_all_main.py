@@ -1,5 +1,6 @@
 from _operator import attrgetter
 
+from PyQt5.QtCore import QVariant
 # from PyQt5.QtWidgets import QDialog
 from qgis.PyQt.QtCore import Qt, QModelIndex
 from qgis.PyQt.QtGui import QColor, QBrush
@@ -19,6 +20,7 @@ from qga.main_widget import QgaMainWidget
 
 from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
+from almgis.scopes.akte.akt_columns import AktNameCol, AktAzCol, AktWeideareaCol
 
 
 # from almgis.scopes.akte.akt import Akt
@@ -61,188 +63,201 @@ class AkteAllMainWidget(QgaMainWidget):
 
 class AktAllModel(QgaTableModel):
 
-    header = ['AZ',
-              'Name',
-              'Status',
-              'Stz',
-              'Bewirtschafter',
-              'WWP',
-              'WWP-Jahr',
-              'AWB-Fläche (GB)',
-              'davon beweidet',
-              'Weidefläche']
+    # header = ['AZ',
+    #           'Name',
+    #           'Status',
+    #           'Stz',
+    #           'Bewirtschafter',
+    #           'WWP',
+    #           'WWP-Jahr',
+    #           'AWB-Fläche (GB)',
+    #           'davon beweidet',
+    #           'Weidefläche']
 
-    def data(self, index: QModelIndex, role: int = ...):
+    def data(self, index, role=Qt.DisplayRole):
 
-        """
-        erzeuge ein basis-model
-        """
-        row = index.row()
-        col = index.column()
+        if not index.isValid():
+            return QVariant()
 
-        if role == Qt.TextAlignmentRole:
+        column = self._columns[index.column()]
+        # value = self._mci_list[index.row()][index.column()]
+        # mci = self._mci_list[index.row()]
+        mci = self.parent.mci_list[index.row()]
 
-            if index.column() in [7, 8, 9]:
+        # Delegate role handling to the column class
+        return column.handle_role(role, mci)
 
-                return Qt.AlignRight | Qt.AlignVCenter
-
-            if index.column() in [0, 2, 3, 5, 6]:
-
-                return Qt.AlignHCenter | Qt.AlignVCenter
-
-        if role == Qt.BackgroundRole:
-
-            if index.column() == 2:
-
-                if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
-
-                    color_str = self.parent.mci_list[row].rel_bearbeitungsstatus.color
-                    color_list = color_str.split(", ")
-
-                    return QColor(int(color_list[0]),
-                                  int(color_list[1]),
-                                  int(color_list[2]))
-
-
-        if index.column() == 0:
-            if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].az
-            # if role == Qt.EditRole:
-            #     return self.parent._mci_list[row].az
-
-            if role == Qt.ForegroundRole:
-                if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
-                    return QBrush(Qt.gray)
-
-        if index.column() == 1:
-            if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].name
-            # if role == Qt.EditRole:
-            #     return self.parent.mci_list[row].name
-
-            if role == Qt.ForegroundRole:
-                if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
-                    return QBrush(Qt.gray)
-
-        if index.column() == 2:
-
-            if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
-
-                if role == Qt.DisplayRole:
-                    return self.parent.mci_list[row].rel_bearbeitungsstatus.name
-                if role == Qt.EditRole:
-                    return self.parent.mci_list[row].bearbeitungsstatus_id
-
-        if index.column() == 3:
-            if role == Qt.DisplayRole:
-                return self.parent.mci_list[row].stz
-
-        if index.column() == 4:
-            # if role == Qt.DisplayRole:
-            #     return self.parent.mci_list[row].anm
-            if self.parent.mci_list[row].rel_bewirtschafter is not None:
-
-                if role == Qt.DisplayRole:
-                    return self.parent.mci_list[row].rel_bewirtschafter.name
-                if role == Qt.EditRole:
-                    return self.parent.mci_list[row].bewirtschafter_id
-
-        if index.column() == 5:
-            if role == Qt.DisplayRole:
-                if self.parent.mci_list[row].wwp == 1:
-                    return 'X'
-
-        if index.column() == 6:
-            if role == Qt.DisplayRole:
-                if self.parent.mci_list[row].wwp == 1:
-                    if self.parent.mci_list[row].wwp_date is not None:
-                        return self.parent.mci_list[row].wwp_date
-                    else:
-                        return '---'
-                return ''
-
-        if index.column() == 7:  # im awb eingetragene flaeche
-            # anz = 0
-            gst_area = 0
-            for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
-                # anz += 1
-                if gst_zuord.awb_status_id == 1:
-                    gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-                    last_gst = max(gst_versionen_list,
-                                   key=attrgetter('rel_alm_gst_ez.datenstand'))
-                    # print(f'last gst: {last_gst.import_time}')
-                    gst_m = 0
-                    for ba in last_gst.rel_alm_gst_nutzung:
-                        gst_m = gst_m + ba.area
-                    gst_area = gst_area + gst_m
-
-            if role == Qt.DisplayRole:
-                gst_area_ha = '{:.4f}'.format(round(float(gst_area) / 10000, 4)).replace(".", ",") + ' ha'
-                return gst_area_ha
-            if role == Qt.EditRole:
-                return gst_area
-
-        if index.column() == 8:  # davon beweidet
-
-            if role in [Qt.DisplayRole, Qt.EditRole]:
-
-                cut_area = 0
-                for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
-                    # anz += 1
-                    if gst_zuord.awb_status_id == 1:
-                        gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
-                        last_gst = max(gst_versionen_list,
-                                       key=attrgetter('rel_alm_gst_ez.datenstand'))
-
-                        for cut in last_gst.rel_cut_koppel_gst:
-                            # cut_area = cut_area + last_gst.rel_cut_koppel_gst.cutarea
-                            cut_area = cut_area + cut.cut_area
-                        # print(f'last gst: {last_gst.import_time}')
-                        # gst_m = 0
-                        # for ba in last_gst.rel_alm_gst_nutzung:
-                        #     gst_m = gst_m + ba.area
-                        # gst_area = gst_area + gst_m
-
-                if role == Qt.DisplayRole:
-                    # cut_area_str = '{:.4f}'.format(round(float(cut_area) / 10000, 4))
-                    cut_area_ha = '{:.4f}'.format(round(float(cut_area) / 10000, 4)).replace(".", ",") + ' ha'
-                    # cut_area_ha = cut_area_str.replace(".", ",") + ' ha'
-                    return cut_area_ha
-
-                if role == Qt.EditRole:
-
-                    return cut_area
-
-        if index.column() == 9:  # weideflaeche
-
-            if role in [Qt.DisplayRole, Qt.EditRole]:
-
-                kop_area = 0.00
-
-                # print(f'self.parent.mci_list[row].rel_abgrenzung: {self.parent.mci_list[row].rel_abgrenzung}')
-
-                if self.parent.mci_list[row].rel_abgrenzung != []:
-
-                    last_abgrenzung = max(self.parent.mci_list[row].rel_abgrenzung,
-                                      key=attrgetter('jahr'))
-
-                    for komplex in last_abgrenzung.rel_komplex:
-                        for koppel in komplex.rel_koppel:
-                            kop_area = kop_area + koppel.koppel_area
-
-                    if role == Qt.DisplayRole:
-                        kop_area_ha = '{:.4f}'.format(
-                            round(float(kop_area) / 10000, 4)).replace(".",
-                                                                       ",") + ' ha'
-                        return kop_area_ha
-                    if role == Qt.EditRole:
-                        return kop_area
-
-                else:
-                    if role == Qt.DisplayRole:
-                        return '---'
-                    if role == Qt.EditRole:
-                        return 0
+    # def data(self, index: QModelIndex, role: int = ...):
+    #
+    #     """
+    #     erzeuge ein basis-model
+    #     """
+    #     row = index.row()
+    #     col = index.column()
+    #
+    #     if role == Qt.TextAlignmentRole:
+    #
+    #         if index.column() in [7, 8, 9]:
+    #
+    #             return Qt.AlignRight | Qt.AlignVCenter
+    #
+    #         if index.column() in [0, 2, 3, 5, 6]:
+    #
+    #             return Qt.AlignHCenter | Qt.AlignVCenter
+    #
+    #     if role == Qt.BackgroundRole:
+    #
+    #         if index.column() == 2:
+    #
+    #             if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
+    #
+    #                 color_str = self.parent.mci_list[row].rel_bearbeitungsstatus.color
+    #                 color_list = color_str.split(", ")
+    #
+    #                 return QColor(int(color_list[0]),
+    #                               int(color_list[1]),
+    #                               int(color_list[2]))
+    #
+    #
+    #     if index.column() == 0:
+    #         if role == Qt.DisplayRole:
+    #             return self.parent.mci_list[row].az
+    #         # if role == Qt.EditRole:
+    #         #     return self.parent._mci_list[row].az
+    #
+    #         if role == Qt.ForegroundRole:
+    #             if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
+    #                 return QBrush(Qt.gray)
+    #
+    #     if index.column() == 1:
+    #         if role == Qt.DisplayRole:
+    #             return self.parent.mci_list[row].name
+    #         # if role == Qt.EditRole:
+    #         #     return self.parent.mci_list[row].name
+    #
+    #         if role == Qt.ForegroundRole:
+    #             if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
+    #                 return QBrush(Qt.gray)
+    #
+    #     if index.column() == 2:
+    #
+    #         if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
+    #
+    #             if role == Qt.DisplayRole:
+    #                 return self.parent.mci_list[row].rel_bearbeitungsstatus.name
+    #             if role == Qt.EditRole:
+    #                 return self.parent.mci_list[row].bearbeitungsstatus_id
+    #
+    #     if index.column() == 3:
+    #         if role == Qt.DisplayRole:
+    #             return self.parent.mci_list[row].stz
+    #
+    #     if index.column() == 4:
+    #         # if role == Qt.DisplayRole:
+    #         #     return self.parent.mci_list[row].anm
+    #         if self.parent.mci_list[row].rel_bewirtschafter is not None:
+    #
+    #             if role == Qt.DisplayRole:
+    #                 return self.parent.mci_list[row].rel_bewirtschafter.name
+    #             if role == Qt.EditRole:
+    #                 return self.parent.mci_list[row].bewirtschafter_id
+    #
+    #     if index.column() == 5:
+    #         if role == Qt.DisplayRole:
+    #             if self.parent.mci_list[row].wwp == 1:
+    #                 return 'X'
+    #
+    #     if index.column() == 6:
+    #         if role == Qt.DisplayRole:
+    #             if self.parent.mci_list[row].wwp == 1:
+    #                 if self.parent.mci_list[row].wwp_date is not None:
+    #                     return self.parent.mci_list[row].wwp_date
+    #                 else:
+    #                     return '---'
+    #             return ''
+    #
+    #     if index.column() == 7:  # im awb eingetragene flaeche
+    #         # anz = 0
+    #         gst_area = 0
+    #         for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
+    #             # anz += 1
+    #             if gst_zuord.awb_status_id == 1:
+    #                 gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+    #                 last_gst = max(gst_versionen_list,
+    #                                key=attrgetter('rel_alm_gst_ez.datenstand'))
+    #                 # print(f'last gst: {last_gst.import_time}')
+    #                 gst_m = 0
+    #                 for ba in last_gst.rel_alm_gst_nutzung:
+    #                     gst_m = gst_m + ba.area
+    #                 gst_area = gst_area + gst_m
+    #
+    #         if role == Qt.DisplayRole:
+    #             gst_area_ha = '{:.4f}'.format(round(float(gst_area) / 10000, 4)).replace(".", ",") + ' ha'
+    #             return gst_area_ha
+    #         if role == Qt.EditRole:
+    #             return gst_area
+    #
+    #     if index.column() == 8:  # davon beweidet
+    #
+    #         if role in [Qt.DisplayRole, Qt.EditRole]:
+    #
+    #             cut_area = 0
+    #             for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
+    #                 # anz += 1
+    #                 if gst_zuord.awb_status_id == 1:
+    #                     gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
+    #                     last_gst = max(gst_versionen_list,
+    #                                    key=attrgetter('rel_alm_gst_ez.datenstand'))
+    #
+    #                     for cut in last_gst.rel_cut_koppel_gst:
+    #                         # cut_area = cut_area + last_gst.rel_cut_koppel_gst.cutarea
+    #                         cut_area = cut_area + cut.cut_area
+    #                     # print(f'last gst: {last_gst.import_time}')
+    #                     # gst_m = 0
+    #                     # for ba in last_gst.rel_alm_gst_nutzung:
+    #                     #     gst_m = gst_m + ba.area
+    #                     # gst_area = gst_area + gst_m
+    #
+    #             if role == Qt.DisplayRole:
+    #                 # cut_area_str = '{:.4f}'.format(round(float(cut_area) / 10000, 4))
+    #                 cut_area_ha = '{:.4f}'.format(round(float(cut_area) / 10000, 4)).replace(".", ",") + ' ha'
+    #                 # cut_area_ha = cut_area_str.replace(".", ",") + ' ha'
+    #                 return cut_area_ha
+    #
+    #             if role == Qt.EditRole:
+    #
+    #                 return cut_area
+    #
+    #     if index.column() == 9:  # weideflaeche
+    #
+    #         if role in [Qt.DisplayRole, Qt.EditRole]:
+    #
+    #             kop_area = 0.00
+    #
+    #             # print(f'self.parent.mci_list[row].rel_abgrenzung: {self.parent.mci_list[row].rel_abgrenzung}')
+    #
+                # if self.parent.mci_list[row].rel_abgrenzung != []:
+                #
+                #     last_abgrenzung = max(self.parent.mci_list[row].rel_abgrenzung,
+                #                       key=attrgetter('jahr'))
+                #
+                #     for komplex in last_abgrenzung.rel_komplex:
+                #         for koppel in komplex.rel_koppel:
+                #             kop_area = kop_area + koppel.koppel_area
+                #
+                #     if role == Qt.DisplayRole:
+                #         kop_area_ha = '{:.4f}'.format(
+                #             round(float(kop_area) / 10000, 4)).replace(".",
+                #                                                        ",") + ' ha'
+                #         return kop_area_ha
+                #     if role == Qt.EditRole:
+                #         return kop_area
+                #
+                # else:
+                #     if role == Qt.DisplayRole:
+                #         return '---'
+                #     if role == Qt.EditRole:
+                #         return 0
 
 
 class AkteAllMain(AlmDataView):
@@ -299,7 +314,7 @@ class AkteAllMain(AlmDataView):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
-        self.initUi()
+        # self.initUi()
 
         # self.entity_dialog_class = AktDialog
         # self.entity_widget_class = Akt
@@ -317,7 +332,7 @@ class AkteAllMain(AlmDataView):
         # self.uiToolsTbtn.removeAction(self.actionDeleteRow)
 
         self.insertFooterLine('Gesamtweidefläche',
-                              'ha', column_id=9, value_width=120,
+                              'ha', column_id=2, value_width=120,
                               factor=0.0001, decimal=4)
         self.insertFooterLine('davon beweidet',
                               'ha', column_id=8, value_width=120,
@@ -378,28 +393,28 @@ class AkteAllMain(AlmDataView):
 
         return mci
 
-    def finalInit(self):
-
-        # self.insertFooterLine('Gesamtweidefläche',
-        #                       'ha', column_id=9, value_width=120,
-        #                       factor=0.0001, decimal=4)
-        # self.insertFooterLine('davon beweidet',
-        #                       'ha', column_id=8, value_width=120,
-        #                       factor=0.0001, decimal=4)
-        # self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
-        #                       'ha', column_id=7, value_width=120,
-        #                       factor=0.0001, decimal=4)
-
-        self.view.setColumnWidth(0, 40)
-        self.view.setColumnWidth(1, 200)
-        self.view.setColumnWidth(2, 150)
-        self.view.setColumnWidth(3, 60)
-        self.view.setColumnWidth(4, 450)
-        self.view.setColumnWidth(5, 80)
-        self.view.setColumnWidth(6, 150)
-        self.view.setColumnWidth(7, 150)
-
-        self.view.sortByColumn(1, Qt.AscendingOrder)
+    # def finalInit(self):
+    #
+    #     # self.insertFooterLine('Gesamtweidefläche',
+    #     #                       'ha', column_id=9, value_width=120,
+    #     #                       factor=0.0001, decimal=4)
+    #     # self.insertFooterLine('davon beweidet',
+    #     #                       'ha', column_id=8, value_width=120,
+    #     #                       factor=0.0001, decimal=4)
+    #     # self.insertFooterLine('im NÖ Alm- und Weidebuch eingetragen',
+    #     #                       'ha', column_id=7, value_width=120,
+    #     #                       factor=0.0001, decimal=4)
+    #
+    #     self.view.setColumnWidth(0, 40)
+    #     self.view.setColumnWidth(1, 200)
+    #     self.view.setColumnWidth(2, 150)
+    #     self.view.setColumnWidth(3, 60)
+    #     self.view.setColumnWidth(4, 450)
+    #     self.view.setColumnWidth(5, 80)
+    #     self.view.setColumnWidth(6, 150)
+    #     self.view.setColumnWidth(7, 150)
+    #
+    #     self.view.sortByColumn(1, Qt.AscendingOrder)
 
     def setFilterUI(self):
         """
@@ -580,3 +595,12 @@ class AkteAllMain(AlmDataView):
         super().signals()
 
         # self.uiAddDataTbtn.clicked.connect(self.add_row)
+
+    def set_columns(self):
+
+        self.columns.append(AktAzCol('AZ'))
+        self.columns.append(AktNameCol('Aktenname'))
+
+        weide_area_col = AktWeideareaCol('Weidefläche')
+        # weide_area_col.set_role_handler(Qt.DisplayRole, lambda x: f"{str(x)} ha")
+        self.columns.append(weide_area_col)
