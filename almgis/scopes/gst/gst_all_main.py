@@ -1,6 +1,6 @@
 from qga.data_view import QgaGisTableModel
 from qga.dialog import DialogBase
-from qga.gis_layer import QgaVectorLayer, setLayerStyle, GstZuordLayer
+from qga.gis_layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, Feature
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
@@ -102,7 +102,7 @@ class GstAllMainWidget(QgaMainWidget):
     def initMainWidget(self):
         super().initMainWidget()
 
-        self.uiMainVLay.addWidget(self.main_wdg)
+        self.uiMainVlay.addWidget(self.main_wdg)
         # self.kontakt_table.loadData()
         # self.kontakt_table.initDataView()
 
@@ -321,34 +321,34 @@ class GstAllDataView(AlmDataView):
 
         return self.custom_entity_data
 
-    # def setFeaturesFromMci(self):
-    #     super().setFeaturesFromMci()
-    #
-    #     for gst_zuor in self.mci_list:
-    #
-    #         for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
-    #
-    #             feat = Feature(self._gis_layer.fields(), self)
-    #
-    #             self.setFeatureAttributes(feat, gst_zuor)
-    #
-    #             # feat.setAttributes([gst_version.id,
-    #             #                     gst_zuor.rel_gst.gst,
-    #             #                     gst_version.rel_alm_gst_ez.ez,
-    #             #                     gst_version.rel_alm_gst_ez.kgnr,
-    #             #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-    #             #                     gst_zuor.awb_status_id,
-    #             #                     gst_zuor.rechtsgrundlage_id,
-    #             #                     '',
-    #             #                     gst_version.rel_alm_gst_ez.datenstand])
-    #
-    #             geom_wkt = to_shape(gst_version.geometry).wkt
-    #             geom_new = QgsGeometry()
-    #             geom = geom_new.fromWkt(geom_wkt)
-    #
-    #             feat.setGeometry(geom)
-    #
-    #             self._gis_layer.data_provider.addFeatures([feat])
+    def setFeaturesFromMci(self):
+        super().setFeaturesFromMci()
+
+        for gst_zuor in self.mci_list:
+
+            for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
+
+                feat = Feature(self._gis_layer.fields(), self)
+
+                self.setFeatureAttributes(feat, gst_zuor)
+
+                # feat.setAttributes([gst_version.id,
+                #                     gst_zuor.rel_gst.gst,
+                #                     gst_version.rel_alm_gst_ez.ez,
+                #                     gst_version.rel_alm_gst_ez.kgnr,
+                #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+                #                     gst_zuor.awb_status_id,
+                #                     gst_zuor.rechtsgrundlage_id,
+                #                     '',
+                #                     gst_version.rel_alm_gst_ez.datenstand])
+
+                geom_wkt = to_shape(gst_version.geometry).wkt
+                geom_new = QgsGeometry()
+                geom = geom_new.fromWkt(geom_wkt)
+
+                feat.setGeometry(geom)
+
+                self._gis_layer.data_provider.addFeatures([feat])
 
     def setFeatureFields(self):
         # super().setFeatureFields()
@@ -770,7 +770,7 @@ class GstAllDataView(AlmDataView):
     def signals(self):
         super().signals()
 
-        self.uiAddDataTbtn.clicked.disconnect(self.add_row)
+        # self.uiAddDataTbtn.clicked.disconnect(self.add_row)
         # self.uiAddDataTbtn.clicked.connect(self.openGstZuordnung)
 
         # self.test_cut_btn.clicked.connect(self.test_cut)
@@ -803,19 +803,19 @@ class GstAllDataView(AlmDataView):
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
-        self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
-                              'ha', 'gb_area', value_width=120,
-                              factor=0.0001, decimal=4, filter_col='awb_id',
-                              filter_operator='==', filter_criterion=1)
-        self.insertFooterLine('davon beweidet (GIS)',
-                              'ha', 'bew_area', value_width=120,
-                              factor=0.0001, decimal=4)
-        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
-                              'ha', 'gis_area', value_width=120,
-                              factor=0.0001, decimal=4)
-        self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GB):',
-                              'ha', 'gb_area', value_width=120,
-                              factor=0.0001, decimal=4)
+        # self.insertFooterLine('im AWB eingetrage Grundstücksfläche (GB):',
+        #                       'ha', 'gb_area', value_width=120,
+        #                       factor=0.0001, decimal=4, filter_col='awb_id',
+        #                       filter_operator='==', filter_criterion=1)
+        # self.insertFooterLine('davon beweidet (GIS)',
+        #                       'ha', 'bew_area', value_width=120,
+        #                       factor=0.0001, decimal=4)
+        # self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GIS):',
+        #                       'ha', 'gis_area', value_width=120,
+        #                       factor=0.0001, decimal=4)
+        # self.insertFooterLine('zugeordnete Grundstücksgesamtfläche (GB):',
+        #                       'ha', 'gb_area', value_width=120,
+        #                       factor=0.0001, decimal=4)
 
         """setzt bestimmte spaltenbreiten"""
         self.view.setColumnWidth(1, 20)
