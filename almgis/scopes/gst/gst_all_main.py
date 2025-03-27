@@ -1,3 +1,6 @@
+from qga.data_view import QgaGisTableModel
+from qga.dialog import DialogBase
+from qga.gis_layer import QgaVectorLayer, setLayerStyle, GstZuordLayer
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
@@ -14,29 +17,29 @@ from geoalchemy2.shape import to_shape
 
 from sqlalchemy import func, select
 
-from app_core import config, color
-from app_core.data_model import BGstZuordnung, BGst, BGstEz, \
+from almgis.data_model import BGstZuordnung, BGst, BGstEz, \
     BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
     BKomplex, BAkt, BKoppel, BAbgrenzung
-from app_core.entity import EntityDialog
-from app_core.gis_item import GisItem
-from app_core.gis_layer import setLayerStyle, ZVectorLayer, Feature
-from app_core.gis_tools import cut_koppel_gstversion
-from app_core.main_dialog import MainDialog
-from app_core.data_view import DataView, TableModel, TableView, GisTableView, \
-    GisTableModel
+from almgis.data_view import AlmDataView
+from almgis.entity import AlmEntityDialog
+# from almgis.gis_item import GisItem
+# from almgis.gis_layer import setLayerStyle, ZVectorLayer, Feature
+# from almgis.gis_tools import cut_koppel_gstversion
+# from almgis.main_dialog import MainDialog
+# from almgis.data_view import AlmDataView, QgaTableModel, TableView, GisTableView, \
+#     almgis, AlmDataView
 import typing
 
 from operator import attrgetter
 
-from app_core.main_gis import MainGis
-from app_core.main_widget import MainWidget
-from app_core.scopes.gst.gst_zuordnung import GstZuordnung
-from app_core.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
-from app_core.tools import getMciState, getMciSession
+# from almgis.main_gis import MainGis
+from qga.main_widget import QgaMainWidget
+# from almgis.scopes.gst.gst_zuordnung import GstZuordnung
+# from almgis.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
+# from almgis.tools import getMciState, getMciSession
 
 
-class GstDialog(EntityDialog):
+class GstDialog(AlmEntityDialog):
     """
     dialog für die anzeige einer grundstückszuordnung
     """
@@ -60,53 +63,54 @@ class GstGisDock(QDockWidget):
         self.setWindowTitle('Kartenansicht')
 
 
-class GstAllMainWidget(MainWidget):
+class GstAllMainWidget(QgaMainWidget):
 
-    def __init__(self, parent=None, session=None):
-        super().__init__(parent, session)
-
-        self.mainwidget_session = session
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         self.uiTitleLbl.setText('zugeordnete Gst')
 
-        self.gst_table = GstAllDataView(self, gis_mode=True)
+        self.main_wdg = GstAllDataView(self, gis_mode=True)
 
         # with session_cm(name='main-widget - kontakt',
         #                    expire_on_commit=False) as session:
 
-        self.gst_table.setDataviewSession(session)
-        self.gst_table.initDataView()
-
-        """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
-        self.uiGisDock = GstGisDock(self)
-        self.guiMainGis = MainGis(self.uiGisDock, self)
-        self.guiMainGis.setMaingisSession(self.mainwidget_session)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
-        self.uiGisDock.setWidget(self.guiMainGis)
-        """"""
-
-        """setzte den 'scope_id'; damit die richtigen layer aus dem 
-        daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
-        # self.guiMainGis.scope_id = 1
-        """"""
-
-        self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
-        """"""
-
-        """setzte die karte auf die ausdehnung des gst-layers"""
-        self.gst_table._gis_layer.updateExtents()
-        extent = self.gst_table._gis_layer.extent()
-        self.guiMainGis.uiCanvas.setExtent(extent)
-        """"""
-
-        self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
+        # """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
+        # self.uiGisDock = GstGisDock(self)
+        # self.guiMainGis = MainGis(self.uiGisDock, self)
+        # self.guiMainGis.setMaingisSession(self.mainwidget_session)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
+        # self.uiGisDock.setWidget(self.guiMainGis)
+        # """"""
+        #
+        # """setzte den 'scope_id'; damit die richtigen layer aus dem
+        # daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
+        # # self.guiMainGis.scope_id = 1
+        # """"""
+        #
+        # self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
+        # """"""
+        #
+        # """setzte die karte auf die ausdehnung des gst-layers"""
+        # self.gst_table._gis_layer.updateExtents()
+        # extent = self.gst_table._gis_layer.extent()
+        # self.guiMainGis.uiCanvas.setExtent(extent)
+        # """"""
+        #
+        # self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
 
     def initMainWidget(self):
         super().initMainWidget()
 
-        self.uiMainVLay.addWidget(self.gst_table)
+        self.uiMainVLay.addWidget(self.main_wdg)
         # self.kontakt_table.loadData()
         # self.kontakt_table.initDataView()
+
+    def createMw(self):
+
+        self.main_wdg.initDataView()
+
+        self.initMainWidget()
 
     def changedGisDockLevel(self, level):
         """
@@ -125,7 +129,7 @@ class GstAllMainWidget(MainWidget):
             self.uiGisDock.widget().uiUnfoatDock.setVisible(False)
 
 
-class GstZuordnungMainDialog(MainDialog):
+class GstZuordnungMainDialog(DialogBase):
     """
     dialog mit dem eine grundstückszuordnung erstellt wird
     """
@@ -139,47 +143,41 @@ class GstZuordnungMainDialog(MainDialog):
         self.set_reject_button_text('&Schließen')
 
 
-class GstAllTableModel(GisTableModel):
+class GstAllTableModel(QgaGisTableModel):
 
     def __init__(self, layerCache, parent=None):
         super(GstAllTableModel, self).__init__(layerCache, parent)
 
     def data(self, index: QModelIndex, role: int = ...):
 
-        if role == Qt.BackgroundRole and getMciState(self.feature(index).attribute('mci')[0]) == "transient":
-
-            return color.added_data
-
-        if role == Qt.TextAlignmentRole:
-
-            if index.column() in [5]:
-
-                return Qt.AlignRight | Qt.AlignVCenter
-
-            if index.column() in [3, 4]:
-
-                return Qt.AlignHCenter | Qt.AlignVCenter
-
-        if role == Qt.BackgroundRole:
-
-            if index.column() == 8:
-
-                if self.feature(index).attribute('awb_id') == 0:  # nicht
-                    return QColor(234, 216, 54)
-                elif self.feature(index).attribute('awb_id') == 1:  # eingetragen
-                    return QColor(189, 239, 255)
-                elif self.feature(index).attribute('awb_id') == 2:  # gelöscht
-                    return QColor(234, 163, 165)
-                elif self.feature(index).attribute('awb_id') == 3:  # teilweise
-                    return QColor(214, 239, 225)
-                else:
-                    return QColor(255, 255, 255)
-
-        # if index.column() == 3:
+        # if role == Qt.BackgroundRole and getMciState(self.feature(index).attribute('mci')[0]) == "transient":
         #
-        #     if role == Qt.DisplayRole:
+        #     return color.added_data
         #
-        #         return str(self.feature(index).attribute('kgnr'))
+        # if role == Qt.TextAlignmentRole:
+        #
+        #     if index.column() in [5]:
+        #
+        #         return Qt.AlignRight | Qt.AlignVCenter
+        #
+        #     if index.column() in [3, 4]:
+        #
+        #         return Qt.AlignHCenter | Qt.AlignVCenter
+        #
+        # if role == Qt.BackgroundRole:
+        #
+        #     if index.column() == 8:
+        #
+        #         if self.feature(index).attribute('awb_id') == 0:  # nicht
+        #             return QColor(234, 216, 54)
+        #         elif self.feature(index).attribute('awb_id') == 1:  # eingetragen
+        #             return QColor(189, 239, 255)
+        #         elif self.feature(index).attribute('awb_id') == 2:  # gelöscht
+        #             return QColor(234, 163, 165)
+        #         elif self.feature(index).attribute('awb_id') == 3:  # teilweise
+        #             return QColor(214, 239, 225)
+        #         else:
+        #             return QColor(255, 255, 255)
 
         if index.column() == 11:  # gis_area
 
@@ -210,7 +208,7 @@ class GstAllTableModel(GisTableModel):
         return super().data(index, role)
 
 
-class GstAllDataView(DataView):
+class GstAllDataView(AlmDataView):
     """
     alle gst mit akt
     """
@@ -224,14 +222,14 @@ class GstAllDataView(DataView):
     _delete_text = ["Das Grundstück", "kann nicht gelöscht werden, da es "
                                           "verwendet wird!"]
 
-    gst_zuordnung_wdg_class = GstZuordnung
-    gst_zuordnung_dlg_class = GstZuordnungMainDialog
+    # gst_zuordnung_wdg_class = GstZuordnung
+    # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
     def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(parent, gis_mode)
 
-        self.entity_dialog_class = GstDialog
-        self.entity_widget_class = GstZuordnungDataForm
+        # self.entity_dialog_class = GstDialog
+        # self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BGstZuordnung
         self._model_gis_class = GstAllTableModel
@@ -275,32 +273,37 @@ class GstAllDataView(DataView):
     #
     #     self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
 
-    def getMciList(self, session):
+    def getMciList(self):
 
         stmt = ((select(BGstZuordnung))
                 .join(BGstZuordnung.rel_gst)
                 .group_by(BGst.id))
         # mci = session.scalars(stmt).unique().all()
-        mci = session.scalars(stmt).all()
+        mci = self.session.scalars(stmt).all()
 
         return mci
 
     def setLayer(self):
 
-        layer = ZVectorLayer(
+        # layer = GstZuordLayer(
+        #     "Polygon?crs=epsg:31259",
+        #     "Grundstücke",
+        #     "memory",
+        #     feature_fields=self.feature_fields,
+        #     data_view=self
+        # )
+        layer = GstZuordLayer(
             "Polygon?crs=epsg:31259",
             "Grundstücke",
-            "memory",
-            feature_fields=self.feature_fields,
-            data_view=self
+            "memory"
         )
         layer.base = True
 
-        layer.entity_dialog = GstDialog
-        layer.entity_form = GstZuordnungDataForm
-        layer.mci_list = self._mci_list
+        # layer.entity_dialog = GstDialog
+        # layer.entity_form = GstZuordnungDataForm
+        layer.mci_list = self.mci_list
 
-        setLayerStyle(layer, 'gst_awbuch_status')
+        # setLayerStyle(layer, 'gst_awbuch_status')
 
         return layer
 
@@ -318,34 +321,34 @@ class GstAllDataView(DataView):
 
         return self.custom_entity_data
 
-    def setFeaturesFromMci(self):
-        super().setFeaturesFromMci()
-
-        for gst_zuor in self._mci_list:
-
-            for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
-
-                feat = Feature(self._gis_layer.fields(), self)
-
-                self.setFeatureAttributes(feat, gst_zuor)
-
-                # feat.setAttributes([gst_version.id,
-                #                     gst_zuor.rel_gst.gst,
-                #                     gst_version.rel_alm_gst_ez.ez,
-                #                     gst_version.rel_alm_gst_ez.kgnr,
-                #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-                #                     gst_zuor.awb_status_id,
-                #                     gst_zuor.rechtsgrundlage_id,
-                #                     '',
-                #                     gst_version.rel_alm_gst_ez.datenstand])
-
-                geom_wkt = to_shape(gst_version.geometry).wkt
-                geom_new = QgsGeometry()
-                geom = geom_new.fromWkt(geom_wkt)
-
-                feat.setGeometry(geom)
-
-                self._gis_layer.data_provider.addFeatures([feat])
+    # def setFeaturesFromMci(self):
+    #     super().setFeaturesFromMci()
+    #
+    #     for gst_zuor in self.mci_list:
+    #
+    #         for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
+    #
+    #             feat = Feature(self._gis_layer.fields(), self)
+    #
+    #             self.setFeatureAttributes(feat, gst_zuor)
+    #
+    #             # feat.setAttributes([gst_version.id,
+    #             #                     gst_zuor.rel_gst.gst,
+    #             #                     gst_version.rel_alm_gst_ez.ez,
+    #             #                     gst_version.rel_alm_gst_ez.kgnr,
+    #             #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+    #             #                     gst_zuor.awb_status_id,
+    #             #                     gst_zuor.rechtsgrundlage_id,
+    #             #                     '',
+    #             #                     gst_version.rel_alm_gst_ez.datenstand])
+    #
+    #             geom_wkt = to_shape(gst_version.geometry).wkt
+    #             geom_new = QgsGeometry()
+    #             geom = geom_new.fromWkt(geom_wkt)
+    #
+    #             feat.setGeometry(geom)
+    #
+    #             self._gis_layer.data_provider.addFeatures([feat])
 
     def setFeatureFields(self):
         # super().setFeatureFields()
@@ -498,271 +501,271 @@ class GstAllDataView(DataView):
     #
     #     self.setFeatureAttributes(update_feat, new_mci)
 
-    def setFilterUI(self):
-        """
-        setze das layout für die filter
-        :return:
-        """
-
-        filter_lay = QHBoxLayout(self)
-
-        """filter gst"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_gst_lbl = QLabel(self)
-
-        gst_lbl_font = self.filter_gst_lbl.font()
-        gst_lbl_font.setFamily(config.font_family)
-        self.filter_gst_lbl.setFont(gst_lbl_font)
-
-        self.filter_gst_lbl.setText('Gst:')
-        self.filter_gst_lbl.setVisible(False)
-
-        self.filter_gst_input_wdg = QLineEdit(self)
-
-        gst_input_wdg_font = self.filter_gst_input_wdg.font()
-        gst_input_wdg_font.setPointSize(11)
-        gst_input_wdg_font.setFamily(config.font_family)
-        self.filter_gst_input_wdg.setFont(gst_input_wdg_font)
-
-        self.filter_gst_input_wdg.setPlaceholderText('Gst')
-        self.filter_gst_input_wdg.setClearButtonEnabled(True)
-        self.filter_gst_input_wdg.setMaximumWidth(80)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_gst_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter ez"""
-        # filter_az = FilterElement(self)
-        # filter_az.uiLabelLbl.setText('AZ:')
-
-        self.filter_ez_lbl = QLabel(self)
-
-        ez_lbl_font = self.filter_ez_lbl.font()
-        ez_lbl_font.setFamily(config.font_family)
-        self.filter_ez_lbl.setFont(ez_lbl_font)
-
-        self.filter_ez_lbl.setText('Ez:')
-        self.filter_ez_lbl.setVisible(False)
-
-        self.filter_ez_input_wdg = QLineEdit(self)
-        self.filter_ez_input_wdg.setPlaceholderText('EZ')
-        ez_input_wdg_font = self.filter_ez_input_wdg.font()
-        ez_input_wdg_font.setPointSize(11)
-        ez_input_wdg_font.setFamily(config.font_family)
-        self.filter_ez_input_wdg.setFont(ez_input_wdg_font)
-        self.filter_ez_input_wdg.setClearButtonEnabled(True)
-        self.filter_ez_input_wdg.setMaximumWidth(80)
-        # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
-
-        self.filter_ez_input_wdg.textChanged.connect(self.useFilter)
-        """"""
-
-        """filter kgnr"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_kgnr_lbl = QLabel(self)
-
-        kgnr_lbl_font = self.filter_kgnr_lbl.font()
-        kgnr_lbl_font.setFamily(config.font_family)
-        self.filter_kgnr_lbl.setFont(kgnr_lbl_font)
-
-        self.filter_kgnr_lbl.setText('KG-Nr:')
-        self.filter_kgnr_lbl.setVisible(False)
-
-        self.filter_kgnr_input_wdg = QLineEdit(self)
-
-        kgnr_input_wdg_font = self.filter_kgnr_input_wdg.font()
-        kgnr_input_wdg_font.setPointSize(11)
-        kgnr_input_wdg_font.setFamily(config.font_family)
-        self.filter_kgnr_input_wdg.setFont(kgnr_input_wdg_font)
-
-        self.filter_kgnr_input_wdg.setPlaceholderText('KG-Nr')
-        self.filter_kgnr_input_wdg.setClearButtonEnabled(True)
-        self.filter_kgnr_input_wdg.setMaximumWidth(80)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_kgnr_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter kgname"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_kgname_lbl = QLabel(self)
-
-        kgname_lbl_font = self.filter_kgname_lbl.font()
-        kgname_lbl_font.setFamily(config.font_family)
-        self.filter_kgname_lbl.setFont(kgname_lbl_font)
-
-        self.filter_kgname_lbl.setText('KG-Name:')
-        self.filter_kgname_lbl.setVisible(False)
-
-        self.filter_kgname_input_wdg = QLineEdit(self)
-
-        kgname_input_wdg_font = self.filter_kgname_input_wdg.font()
-        kgname_input_wdg_font.setPointSize(11)
-        kgname_input_wdg_font.setFamily(config.font_family)
-        self.filter_kgname_input_wdg.setFont(kgname_input_wdg_font)
-
-        self.filter_kgname_input_wdg.setPlaceholderText('KG-Name')
-        self.filter_kgname_input_wdg.setClearButtonEnabled(True)
-        self.filter_kgname_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_kgname_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter awb_status"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_awb_lbl = QLabel(self)
-
-        awb_lbl_font = self.filter_awb_lbl.font()
-        awb_lbl_font.setFamily(config.font_family)
-        self.filter_awb_lbl.setFont(awb_lbl_font)
-
-        self.filter_awb_lbl.setText('AWB-Status:')
-        self.filter_awb_lbl.setVisible(False)
-
-        self.filter_awb_input_wdg = QLineEdit(self)
-
-        awb_input_wdg_font = self.filter_awb_input_wdg.font()
-        awb_input_wdg_font.setPointSize(11)
-        awb_input_wdg_font.setFamily(config.font_family)
-        self.filter_awb_input_wdg.setFont(awb_input_wdg_font)
-
-        self.filter_awb_input_wdg.setPlaceholderText('AWB-Status')
-        self.filter_awb_input_wdg.setClearButtonEnabled(True)
-        self.filter_awb_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_awb_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        """filter recht"""
-        # filter_name = FilterElement(self)
-        # filter_name.uiLabelLbl.setText('Name:')
-        self.filter_recht_lbl = QLabel(self)
-
-        recht_lbl_font = self.filter_recht_lbl.font()
-        recht_lbl_font.setFamily(config.font_family)
-        self.filter_recht_lbl.setFont(recht_lbl_font)
-
-        self.filter_recht_lbl.setText('Rechtsgrundlage:')
-        self.filter_recht_lbl.setVisible(False)
-
-        self.filter_recht_input_wdg = QLineEdit(self)
-
-        recht_input_wdg_font = self.filter_recht_input_wdg.font()
-        recht_input_wdg_font.setPointSize(11)
-        recht_input_wdg_font.setFamily(config.font_family)
-        self.filter_recht_input_wdg.setFont(recht_input_wdg_font)
-
-        self.filter_recht_input_wdg.setPlaceholderText('Rechtsgrundlage')
-        self.filter_recht_input_wdg.setClearButtonEnabled(True)
-        self.filter_recht_input_wdg.setMaximumWidth(200)
-        # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
-
-        self.filter_recht_input_wdg.textChanged.connect(self.useFilter)
-
-        # filter_lay.addWidget(filter_name)
-        """"""
-
-        spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
-                                 QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem1)
-
-        filter_lay.addWidget(self.filter_gst_lbl)
-        filter_lay.addWidget(self.filter_gst_input_wdg)
-        filter_lay.addWidget(self.filter_ez_lbl)
-        filter_lay.addWidget(self.filter_ez_input_wdg)
-        filter_lay.addWidget(self.filter_kgnr_lbl)
-        filter_lay.addWidget(self.filter_kgnr_input_wdg)
-        filter_lay.addWidget(self.filter_kgname_lbl)
-        filter_lay.addWidget(self.filter_kgname_input_wdg)
-        filter_lay.addWidget(self.filter_awb_lbl)
-        filter_lay.addWidget(self.filter_awb_input_wdg)
-        filter_lay.addWidget(self.filter_recht_lbl)
-        filter_lay.addWidget(self.filter_recht_input_wdg)
-        """"""
-
-        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        filter_lay.addItem(spacerItem)
-
-        self.uiHeaderHley.insertLayout(1, filter_lay)
-
-    def useFilter(self):
-
-        gst_text = self.filter_gst_input_wdg.text()
-        ez_text = self.filter_ez_input_wdg.text()
-        kgnr_text = self.filter_kgnr_input_wdg.text()
-        kgname_text = self.filter_kgname_input_wdg.text()
-        awb_text = self.filter_awb_input_wdg.text()
-        recht_text = self.filter_recht_input_wdg.text()
-
-        gst_expr = f"lower(\"gst\") LIKE '%{gst_text}%'"
-        ez_expr = f"to_string(\"ez\") LIKE '%{ez_text}%'"
-        kgnr_expr = f"to_string(\"kgnr\") LIKE '%{kgnr_text}%'"
-        kgname_expr = f"lower(\"kgname\") LIKE '%{kgname_text}%'"
-        awb_expr = f"lower(\"awb_status\") LIKE '%{awb_text}%'"
-        recht_expr = f"lower(\"recht_status\") LIKE '%{recht_text}%'"
-
-        expr_list = []
-
-        if gst_text != '':
-            self.filter_gst_lbl.setVisible(True)
-            expr_list.append(gst_expr)
-        else:
-            self.filter_gst_lbl.setVisible(False)
-
-        if ez_text != '':
-            self.filter_ez_lbl.setVisible(True)
-            expr_list.append(ez_expr)
-        else:
-            self.filter_ez_lbl.setVisible(False)
-
-        if kgnr_text != '':
-            self.filter_kgnr_lbl.setVisible(True)
-            expr_list.append(kgnr_expr)
-        else:
-            self.filter_kgnr_lbl.setVisible(False)
-
-        if kgname_text != '':
-            self.filter_kgname_lbl.setVisible(True)
-            expr_list.append(kgname_expr)
-        else:
-            self.filter_kgname_lbl.setVisible(False)
-
-        if awb_text != '':
-            self.filter_awb_lbl.setVisible(True)
-            expr_list.append(awb_expr)
-        else:
-            self.filter_awb_lbl.setVisible(False)
-
-        if recht_text != '':
-            self.filter_recht_lbl.setVisible(True)
-            expr_list.append(recht_expr)
-        else:
-            self.filter_recht_lbl.setVisible(False)
-
-        if expr_list == []:
-            self._gis_layer.setSubsetString('')
-        else:
-
-            expr_string = " and ".join(expr for expr in expr_list)
-            print(f'expression string: {expr_string}')
-            self._gis_layer.setSubsetString(expr_string)
-
-        self.updateFooter()
+    # def setFilterUI(self):
+    #     """
+    #     setze das layout für die filter
+    #     :return:
+    #     """
+    #
+    #     filter_lay = QHBoxLayout(self)
+    #
+    #     """filter gst"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_gst_lbl = QLabel(self)
+    #
+    #     gst_lbl_font = self.filter_gst_lbl.font()
+    #     gst_lbl_font.setFamily(config.font_family)
+    #     self.filter_gst_lbl.setFont(gst_lbl_font)
+    #
+    #     self.filter_gst_lbl.setText('Gst:')
+    #     self.filter_gst_lbl.setVisible(False)
+    #
+    #     self.filter_gst_input_wdg = QLineEdit(self)
+    #
+    #     gst_input_wdg_font = self.filter_gst_input_wdg.font()
+    #     gst_input_wdg_font.setPointSize(11)
+    #     gst_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_gst_input_wdg.setFont(gst_input_wdg_font)
+    #
+    #     self.filter_gst_input_wdg.setPlaceholderText('Gst')
+    #     self.filter_gst_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_gst_input_wdg.setMaximumWidth(80)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_gst_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter ez"""
+    #     # filter_az = FilterElement(self)
+    #     # filter_az.uiLabelLbl.setText('AZ:')
+    #
+    #     self.filter_ez_lbl = QLabel(self)
+    #
+    #     ez_lbl_font = self.filter_ez_lbl.font()
+    #     ez_lbl_font.setFamily(config.font_family)
+    #     self.filter_ez_lbl.setFont(ez_lbl_font)
+    #
+    #     self.filter_ez_lbl.setText('Ez:')
+    #     self.filter_ez_lbl.setVisible(False)
+    #
+    #     self.filter_ez_input_wdg = QLineEdit(self)
+    #     self.filter_ez_input_wdg.setPlaceholderText('EZ')
+    #     ez_input_wdg_font = self.filter_ez_input_wdg.font()
+    #     ez_input_wdg_font.setPointSize(11)
+    #     ez_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_ez_input_wdg.setFont(ez_input_wdg_font)
+    #     self.filter_ez_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_ez_input_wdg.setMaximumWidth(80)
+    #     # filter_az.uiFilterElementLay.insertWidget(1, self.filter_adr_input_wdg)
+    #
+    #     self.filter_ez_input_wdg.textChanged.connect(self.useFilter)
+    #     """"""
+    #
+    #     """filter kgnr"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_kgnr_lbl = QLabel(self)
+    #
+    #     kgnr_lbl_font = self.filter_kgnr_lbl.font()
+    #     kgnr_lbl_font.setFamily(config.font_family)
+    #     self.filter_kgnr_lbl.setFont(kgnr_lbl_font)
+    #
+    #     self.filter_kgnr_lbl.setText('KG-Nr:')
+    #     self.filter_kgnr_lbl.setVisible(False)
+    #
+    #     self.filter_kgnr_input_wdg = QLineEdit(self)
+    #
+    #     kgnr_input_wdg_font = self.filter_kgnr_input_wdg.font()
+    #     kgnr_input_wdg_font.setPointSize(11)
+    #     kgnr_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_kgnr_input_wdg.setFont(kgnr_input_wdg_font)
+    #
+    #     self.filter_kgnr_input_wdg.setPlaceholderText('KG-Nr')
+    #     self.filter_kgnr_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_kgnr_input_wdg.setMaximumWidth(80)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_kgnr_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter kgname"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_kgname_lbl = QLabel(self)
+    #
+    #     kgname_lbl_font = self.filter_kgname_lbl.font()
+    #     kgname_lbl_font.setFamily(config.font_family)
+    #     self.filter_kgname_lbl.setFont(kgname_lbl_font)
+    #
+    #     self.filter_kgname_lbl.setText('KG-Name:')
+    #     self.filter_kgname_lbl.setVisible(False)
+    #
+    #     self.filter_kgname_input_wdg = QLineEdit(self)
+    #
+    #     kgname_input_wdg_font = self.filter_kgname_input_wdg.font()
+    #     kgname_input_wdg_font.setPointSize(11)
+    #     kgname_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_kgname_input_wdg.setFont(kgname_input_wdg_font)
+    #
+    #     self.filter_kgname_input_wdg.setPlaceholderText('KG-Name')
+    #     self.filter_kgname_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_kgname_input_wdg.setMaximumWidth(200)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_kgname_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter awb_status"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_awb_lbl = QLabel(self)
+    #
+    #     awb_lbl_font = self.filter_awb_lbl.font()
+    #     awb_lbl_font.setFamily(config.font_family)
+    #     self.filter_awb_lbl.setFont(awb_lbl_font)
+    #
+    #     self.filter_awb_lbl.setText('AWB-Status:')
+    #     self.filter_awb_lbl.setVisible(False)
+    #
+    #     self.filter_awb_input_wdg = QLineEdit(self)
+    #
+    #     awb_input_wdg_font = self.filter_awb_input_wdg.font()
+    #     awb_input_wdg_font.setPointSize(11)
+    #     awb_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_awb_input_wdg.setFont(awb_input_wdg_font)
+    #
+    #     self.filter_awb_input_wdg.setPlaceholderText('AWB-Status')
+    #     self.filter_awb_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_awb_input_wdg.setMaximumWidth(200)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_awb_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     """filter recht"""
+    #     # filter_name = FilterElement(self)
+    #     # filter_name.uiLabelLbl.setText('Name:')
+    #     self.filter_recht_lbl = QLabel(self)
+    #
+    #     recht_lbl_font = self.filter_recht_lbl.font()
+    #     recht_lbl_font.setFamily(config.font_family)
+    #     self.filter_recht_lbl.setFont(recht_lbl_font)
+    #
+    #     self.filter_recht_lbl.setText('Rechtsgrundlage:')
+    #     self.filter_recht_lbl.setVisible(False)
+    #
+    #     self.filter_recht_input_wdg = QLineEdit(self)
+    #
+    #     recht_input_wdg_font = self.filter_recht_input_wdg.font()
+    #     recht_input_wdg_font.setPointSize(11)
+    #     recht_input_wdg_font.setFamily(config.font_family)
+    #     self.filter_recht_input_wdg.setFont(recht_input_wdg_font)
+    #
+    #     self.filter_recht_input_wdg.setPlaceholderText('Rechtsgrundlage')
+    #     self.filter_recht_input_wdg.setClearButtonEnabled(True)
+    #     self.filter_recht_input_wdg.setMaximumWidth(200)
+    #     # filter_name.uiFilterElementLay.insertWidget(1, self.filter_name_input_wdg)
+    #
+    #     self.filter_recht_input_wdg.textChanged.connect(self.useFilter)
+    #
+    #     # filter_lay.addWidget(filter_name)
+    #     """"""
+    #
+    #     spacerItem1 = QSpacerItem(10, 20, QSizePolicy.Minimum,
+    #                              QSizePolicy.Minimum)
+    #     filter_lay.addItem(spacerItem1)
+    #
+    #     filter_lay.addWidget(self.filter_gst_lbl)
+    #     filter_lay.addWidget(self.filter_gst_input_wdg)
+    #     filter_lay.addWidget(self.filter_ez_lbl)
+    #     filter_lay.addWidget(self.filter_ez_input_wdg)
+    #     filter_lay.addWidget(self.filter_kgnr_lbl)
+    #     filter_lay.addWidget(self.filter_kgnr_input_wdg)
+    #     filter_lay.addWidget(self.filter_kgname_lbl)
+    #     filter_lay.addWidget(self.filter_kgname_input_wdg)
+    #     filter_lay.addWidget(self.filter_awb_lbl)
+    #     filter_lay.addWidget(self.filter_awb_input_wdg)
+    #     filter_lay.addWidget(self.filter_recht_lbl)
+    #     filter_lay.addWidget(self.filter_recht_input_wdg)
+    #     """"""
+    #
+    #     spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+    #     filter_lay.addItem(spacerItem)
+    #
+    #     self.uiHeaderHley.insertLayout(1, filter_lay)
+    #
+    # def useFilter(self):
+    #
+    #     gst_text = self.filter_gst_input_wdg.text()
+    #     ez_text = self.filter_ez_input_wdg.text()
+    #     kgnr_text = self.filter_kgnr_input_wdg.text()
+    #     kgname_text = self.filter_kgname_input_wdg.text()
+    #     awb_text = self.filter_awb_input_wdg.text()
+    #     recht_text = self.filter_recht_input_wdg.text()
+    #
+    #     gst_expr = f"lower(\"gst\") LIKE '%{gst_text}%'"
+    #     ez_expr = f"to_string(\"ez\") LIKE '%{ez_text}%'"
+    #     kgnr_expr = f"to_string(\"kgnr\") LIKE '%{kgnr_text}%'"
+    #     kgname_expr = f"lower(\"kgname\") LIKE '%{kgname_text}%'"
+    #     awb_expr = f"lower(\"awb_status\") LIKE '%{awb_text}%'"
+    #     recht_expr = f"lower(\"recht_status\") LIKE '%{recht_text}%'"
+    #
+    #     expr_list = []
+    #
+    #     if gst_text != '':
+    #         self.filter_gst_lbl.setVisible(True)
+    #         expr_list.append(gst_expr)
+    #     else:
+    #         self.filter_gst_lbl.setVisible(False)
+    #
+    #     if ez_text != '':
+    #         self.filter_ez_lbl.setVisible(True)
+    #         expr_list.append(ez_expr)
+    #     else:
+    #         self.filter_ez_lbl.setVisible(False)
+    #
+    #     if kgnr_text != '':
+    #         self.filter_kgnr_lbl.setVisible(True)
+    #         expr_list.append(kgnr_expr)
+    #     else:
+    #         self.filter_kgnr_lbl.setVisible(False)
+    #
+    #     if kgname_text != '':
+    #         self.filter_kgname_lbl.setVisible(True)
+    #         expr_list.append(kgname_expr)
+    #     else:
+    #         self.filter_kgname_lbl.setVisible(False)
+    #
+    #     if awb_text != '':
+    #         self.filter_awb_lbl.setVisible(True)
+    #         expr_list.append(awb_expr)
+    #     else:
+    #         self.filter_awb_lbl.setVisible(False)
+    #
+    #     if recht_text != '':
+    #         self.filter_recht_lbl.setVisible(True)
+    #         expr_list.append(recht_expr)
+    #     else:
+    #         self.filter_recht_lbl.setVisible(False)
+    #
+    #     if expr_list == []:
+    #         self._gis_layer.setSubsetString('')
+    #     else:
+    #
+    #         expr_string = " and ".join(expr for expr in expr_list)
+    #         print(f'expression string: {expr_string}')
+    #         self._gis_layer.setSubsetString(expr_string)
+    #
+    #     self.updateFooter()
 
     def signals(self):
         super().signals()

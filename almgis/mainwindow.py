@@ -12,6 +12,7 @@ from almgis.data_model import McSettings
 from almgis.logger import Logger
 from almgis.projectstartselector import AlmStartDialog, AlmProjectStartSelector
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
+from almgis.scopes.gst.gst_all_main import GstAllMainWidget
 
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
 
@@ -110,6 +111,11 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionOpenKontakteMain.triggered.connect(
             lambda x,
                    wid_cls=KontaktMainWidget:
+            self.openMainWidget(wid_cls))
+
+        self.uiAktionOpenGstZuornungMain.triggered.connect(
+            lambda x,
+                   wid_cls=GstAllMainWidget:
             self.openMainWidget(wid_cls))
 
     def createMenuBar(self):

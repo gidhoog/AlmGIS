@@ -10,11 +10,11 @@ from sqlalchemy.orm import joinedload
 
 from geoalchemy2.shape import to_shape
 
-from app_core.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
+from almgis.data_model import BGst, BGstEz, BGstEigentuemer, BGstNutzung, \
     BGstVersion, BSys, BGstZuordnung, BGisScopeLayer
-from app_core.gis_layer import Feature, ZVectorLayer, setLayerStyle
-from app_core.main_gis import MainGis
-from app_core.data_view import DataView, TableModel, TableView,  GisTableModel
+from qga.gis_layer import Feature, GstZuordLayer, setLayerStyle
+# from qga.main_gis import MainGis
+# from almgis.data_view import DataView, TableModel, TableView,  GisTableModel
 
 import zipfile
 from io import TextIOWrapper
@@ -28,11 +28,11 @@ from qgis.PyQt.QtGui import QFont, QIcon
 from qgis.core import QgsVectorLayer, QgsProject, \
     QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsGeometry
 
-from app_core import session_cm, config, main_dialog, settings, \
-    session_cm_data
-from app_core.scopes.gst import gst_zuordnung_UI
-from app_core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
-from app_core.tools import getMciState
+# from app_core import session_cm, config, main_dialog, settings, \
+#     session_cm_data
+# from app_core.scopes.gst import gst_zuordnung_UI
+# from app_core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
+# from app_core.tools import getMciState
 
 
 class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):

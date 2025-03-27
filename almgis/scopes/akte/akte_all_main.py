@@ -346,36 +346,6 @@ class AkteAllMain(AlmDataView):
         # session = DbSession()
 
         stmt = (select(BAkt)
-        # .options(
-        #     joinedload(BAkt.rel_bearbeitungsstatus)
-        # )
-        # .options(
-        #     joinedload(BAkt.rel_gst_zuordnung)
-        #     .joinedload(BGstZuordnung.rel_rechtsgrundlage)
-        # )
-        # .options(
-        #     joinedload(BAkt.rel_gst_zuordnung)
-        #     .joinedload(BGstZuordnung.rel_gst)
-        #     .joinedload(BGst.rel_alm_gst_version)
-        #     .joinedload(BGstVersion.rel_alm_gst_ez)
-        # )
-        # .options(
-        #     joinedload(BAkt.rel_gst_zuordnung)
-        #     .joinedload(BGstZuordnung.rel_gst)
-        #     .joinedload(BGst.rel_alm_gst_version)
-        #     .joinedload(BGstVersion.rel_alm_gst_nutzung)
-        # )
-        # .options(
-        #     joinedload(BAkt.rel_gst_zuordnung)
-        #     .joinedload(BGstZuordnung.rel_gst)
-        #     .joinedload(BGst.rel_alm_gst_version)
-        #     .joinedload(BGstVersion.rel_cut_koppel_gst)
-        # )
-        # .options(
-        #     joinedload(BAkt.rel_abgrenzung)
-        #     .joinedload(BAbgrenzung.rel_komplex)
-        #     .joinedload(BKomplex.rel_koppel)
-        # )
         )
         mci = self.session.scalars(stmt).unique().all()
 
