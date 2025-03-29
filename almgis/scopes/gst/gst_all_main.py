@@ -305,6 +305,11 @@ class GstAllDataView(AlmDataView):
 
         # setLayerStyle(layer, 'gst_awbuch_status')
 
+        layer.data_provider = layer.dataProvider()
+
+        layer.data_provider.addAttributes(self.feature_fields)
+        layer.updateFields()
+
         return layer
 
     def getCustomEntityData(self):

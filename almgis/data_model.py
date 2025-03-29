@@ -339,6 +339,22 @@ class BGst(Base):
         back_populates="rel_alm_gst",
         lazy='joined')
 
+    @hybrid_property
+    def gst_latest(self):
+        return max(self.rel_alm_gst_version,
+                   key=lambda x: x.rel_alm_gst_ez.datenstand) if self.rel_alm_gst_version else None
+
+    # @gst_latest.expression
+    # def gst_latest(cls):
+    #     subq = (
+    #         select(RelatedModel)
+    #         .filter(RelatedModel.my_model_id == cls.id)
+    #         .order_by(RelatedModel.version.desc())
+    #         .limit(1)
+    #         .scalar_subquery()
+    #     )
+    #     return subq
+
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
                f"kg_gst: {self.kg_gst}, gst:{self.gst})>"
