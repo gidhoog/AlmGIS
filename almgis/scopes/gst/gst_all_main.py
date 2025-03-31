@@ -1,4 +1,4 @@
-from qga.data_view import QgaGisTableModel
+from qga.data_view import QgaTableModel
 from qga.dialog import DialogBase
 from qga.gis_layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, Feature
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
@@ -11,7 +11,7 @@ from geoalchemy2.shape import to_shape
 from qgis.core import QgsFeature, QgsGeometry, QgsVectorLayerCache, QgsVectorLayer, QgsField, QgsPointXY
 from qgis.PyQt.QtCore import QVariant
 
-from qgis.gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
+from qgis._gui import QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
 
 from geoalchemy2.shape import to_shape
 
@@ -143,69 +143,91 @@ class GstZuordnungMainDialog(DialogBase):
         self.set_reject_button_text('&Schließen')
 
 
-class GstAllTableModel(QgaGisTableModel):
+class GstAllTableModel(QgaTableModel):
+# class GstAllTableModel(QgsAttributeTableModel):
 
-    def __init__(self, layerCache, parent=None):
-        super(GstAllTableModel, self).__init__(layerCache, parent)
+    def __init__(self, mci_list=None, layerCache=None,
+                 columns=None, parent=None):
+        super().__init__(mci_list, layerCache, columns, parent)
+
+    # def __init__(self, mci_list=None, layerCache=None,
+    #              columns=None, parent=None):
+    #     super().__init__(mci_list, layerCache, columns, parent)
+        print(f'...1')
 
     def data(self, index: QModelIndex, role: int = ...):
 
-        # if role == Qt.BackgroundRole and getMciState(self.feature(index).attribute('mci')[0]) == "transient":
-        #
-        #     return color.added_data
-        #
-        # if role == Qt.TextAlignmentRole:
-        #
-        #     if index.column() in [5]:
-        #
-        #         return Qt.AlignRight | Qt.AlignVCenter
-        #
-        #     if index.column() in [3, 4]:
-        #
-        #         return Qt.AlignHCenter | Qt.AlignVCenter
-        #
-        # if role == Qt.BackgroundRole:
-        #
-        #     if index.column() == 8:
-        #
-        #         if self.feature(index).attribute('awb_id') == 0:  # nicht
-        #             return QColor(234, 216, 54)
-        #         elif self.feature(index).attribute('awb_id') == 1:  # eingetragen
-        #             return QColor(189, 239, 255)
-        #         elif self.feature(index).attribute('awb_id') == 2:  # gelöscht
-        #             return QColor(234, 163, 165)
-        #         elif self.feature(index).attribute('awb_id') == 3:  # teilweise
-        #             return QColor(214, 239, 225)
-        #         else:
-        #             return QColor(255, 255, 255)
+        print(f'////////////////////////////////////////////////////')
 
-        if index.column() == 11:  # gis_area
+        if role == Qt.TextAlignmentRole:
+            # Set alignment for the "Age" column (column index 1)
+            if index.column() == 1:
+                return Qt.AlignHCenter | Qt.AlignVCenter
 
-            if role == Qt.DisplayRole:
-
-                area = self.feature(index).attribute('gis_area')
-                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
-                                         ).replace(".", ",")
-                return area_r + ' ha'
-
-        if index.column() == 12:  # gb_area
-
-            if role == Qt.DisplayRole:
-
-                area = self.feature(index).attribute('gb_area')
-                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
-                                         ).replace(".", ",")
-                return area_r + ' ha'
-
-        if index.column() == 13:  # bew_area
-
-            if role == Qt.DisplayRole:
-                area = self.feature(index).attribute('bew_area')
-                area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
-                                         ).replace(".", ",")
-                return area_r + ' ha'
+        if role == Qt.DisplayRole:
+            # Append a string to the "Name" column (column index 0)
+            if index.column() == 1:
+                current_value = super().data(index, role)
+                return f"{current_value} - Edited"
 
         return super().data(index, role)
+
+    #     # if role == Qt.BackgroundRole and getMciState(self.feature(index).attribute('mci')[0]) == "transient":
+    #     #
+    #     #     return color.added_data
+    #     #
+    #     # if role == Qt.TextAlignmentRole:
+    #     #
+    #     #     if index.column() in [5]:
+    #     #
+    #     #         return Qt.AlignRight | Qt.AlignVCenter
+    #     #
+    #     #     if index.column() in [3, 4]:
+    #     #
+    #     #         return Qt.AlignHCenter | Qt.AlignVCenter
+    #     #
+    #     # if role == Qt.BackgroundRole:
+    #     #
+    #     #     if index.column() == 8:
+    #     #
+    #     #         if self.feature(index).attribute('awb_id') == 0:  # nicht
+    #     #             return QColor(234, 216, 54)
+    #     #         elif self.feature(index).attribute('awb_id') == 1:  # eingetragen
+    #     #             return QColor(189, 239, 255)
+    #     #         elif self.feature(index).attribute('awb_id') == 2:  # gelöscht
+    #     #             return QColor(234, 163, 165)
+    #     #         elif self.feature(index).attribute('awb_id') == 3:  # teilweise
+    #     #             return QColor(214, 239, 225)
+    #     #         else:
+    #     #             return QColor(255, 255, 255)
+    #
+    #     if index.column() == 11:  # gis_area
+    #
+    #         if role == Qt.DisplayRole:
+    #
+    #             area = self.feature(index).attribute('gis_area')
+    #             area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+    #                                      ).replace(".", ",")
+    #             return area_r + ' ha'
+    #
+    #     if index.column() == 12:  # gb_area
+    #
+    #         if role == Qt.DisplayRole:
+    #
+    #             area = self.feature(index).attribute('gb_area')
+    #             area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+    #                                      ).replace(".", ",")
+    #             return area_r + ' ha'
+    #
+    #     if index.column() == 13:  # bew_area
+    #
+    #         if role == Qt.DisplayRole:
+    #             area = self.feature(index).attribute('bew_area')
+    #             area_r = '{:.4f}'.format(round(float(area) / 10000, 4)
+    #                                      ).replace(".", ",")
+    #             return area_r + ' ha'
+    #
+    #     return super().data(index, role)
 
 
 class GstAllDataView(AlmDataView):
@@ -232,7 +254,8 @@ class GstAllDataView(AlmDataView):
         # self.entity_widget_class = GstZuordnungDataForm
 
         self._entity_mc = BGstZuordnung
-        self._model_gis_class = GstAllTableModel
+        self._model_class = GstAllTableModel
+        # self._model_class = QgaTableModel
 
         self.uiAddDataTbtn.setVisible(False)
 

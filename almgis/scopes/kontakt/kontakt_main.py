@@ -72,6 +72,7 @@ class KontaktMainWidget(QgaMainWidget):
 
 
 class KontaktModel(QgaTableModel):
+# class KontaktModel(QgaGisTableModel):
 
     # header = [
     #     'Typ',
@@ -83,19 +84,24 @@ class KontaktModel(QgaTableModel):
     #     'Verwendung'
     # ]
 
-    def __init__(self, parent, mci_list, columns):
-        super().__init__(parent, mci_list, columns)
+    def __init__(self, mci_list=None, layerCache=None,
+                 columns=None, parent=None):
+        super().__init__(mci_list, layerCache, columns, parent)
+
+        print(f'....')
 
     def data(self, index, role=Qt.DisplayRole):
-        if not index.isValid():
-            return QVariant()
 
-        column = self._columns[index.column()]
-        # value = self._mci_list[index.row()][index.column()]
-        mci = self._mci_list[index.row()]
-
-        # Delegate role handling to the column class
-        return column.handle_role(role, mci)
+        return QVariant()
+        # if not index.isValid():
+        #     return QVariant()
+        #
+        # column = self._columns[index.column()]
+        # # value = self._mci_list[index.row()][index.column()]
+        # mci = self._mci_list[index.row()]
+        #
+        # # Delegate role handling to the column class
+        # return column.handle_role(role, mci)
 
     # def data(self, index, role=None):
     #
