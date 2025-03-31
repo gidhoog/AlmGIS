@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PyQt5.QtCore import pyqtSlot, QVariant
+from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel
 from PyQt5.QtWidgets import QDialog
 from qga.filter import QgaFilter
 from qgis.PyQt.QtCore import Qt
@@ -90,9 +90,57 @@ class KontaktModel(QgaTableModel):
 
         print(f'....')
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role):
 
+        if not self.parent.gis_mode:
+
+            if role == Qt.TextAlignmentRole:
+                # Set alignment for the "Age" column (column index 1)
+                if index.column() == 0:
+                    return Qt.AlignHCenter | Qt.AlignVCenter
+
+            if role == Qt.DisplayRole:
+
+                column = self._columns[index.column()]
+                # value = self._mci_list[index.row()][index.column()]
+                mci = self._mci_list[index.row()]
+
+                # Delegate role handling to the column class
+                return column.handle_role(role, mci)
+
+        return super().data(index, role)
+
+    def rowCount(self, parent: QModelIndex = ...):
+        """
+        definiere die zeilenanzahl
+        """
+
+        return len(self._mci_list)
+
+    def columnCount(self, parent: QModelIndex = ...):
+        """
+        definiere die spaltenanzahl
+        """
+        # return len(self.header)
+        return len(self._columns)
+
+    def headerData(self, column, orientation, role=None):
+        """
+        wenn individuelle überschriften gesetzt sind (in 'self.header')
+        dann nehme diese
+        """
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return self._columns[column].name
         return QVariant()
+
+    # def flags(self, index):  # to make the table(-cells) editable
+    #     if not index.isValid():
+    #         return Qt.ItemIsEnabled
+    #
+    #     return Qt.ItemFlags(
+    #         QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
+
+
         # if not index.isValid():
         #     return QVariant()
         #
