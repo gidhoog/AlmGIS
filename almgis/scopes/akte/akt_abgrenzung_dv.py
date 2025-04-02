@@ -114,7 +114,7 @@ class AbgrenzungDataView(DataView):
     def selectedRowsChanged(self):
         super().selectedRowsChanged()
 
-        # sel_rows = self.getSelectedRows()
+        # sel_rows = self.getSelectedIds()
         #
         # self.sel_entity_mci = self._gis_layer.getFeature(sel_rows[0]).attribute('mci')
 

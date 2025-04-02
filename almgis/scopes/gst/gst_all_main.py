@@ -168,7 +168,8 @@ class GstAllTableModel(QgaTableModel):
             # Append a string to the "Name" column (column index 0)
             if index.column() == 1:
                 current_value = super().data(index, role)
-                return f"{current_value} - Edited"
+                # return f"{current_value} - Edited"
+                return f"{current_value} - AAA"
 
         return super().data(index, role)
 
