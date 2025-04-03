@@ -38,6 +38,11 @@ class AlmMainWindow(QgaMainWindow):
 
         Logger.info("create Mainwindwos!!")
 
+        # self.createMenuBar()
+
+    def setupMainWindow(self):
+        super().setupMainWindow()
+
     def declareActions(self):
         super().declareActions()
 
@@ -121,20 +126,20 @@ class AlmMainWindow(QgaMainWindow):
     def createMenuBar(self):
         super().createMenuBar()
 
-        self.uiMenuAkte = self.menuBar().addMenu('Akte')
-        self.uiMenuAkte.addAction(self.uiAktionOpenAkteMain)
-
-        self.uiMenuGst = self.menuBar().addMenu('Grundstücke')
-        self.uiMenuGst.addAction(self.uiAktionOpenGstZuornungMain)
-
-        self.uiMenuKontakte = self.menuBar().addMenu('Kontakte')
-        self.uiMenuKontakte.addAction(self.uiAktionOpenKontakteMain)
-
-        self.uiMenuSonstiges = self.menuBar().addMenu('Sonstiges')
-        self.uiMenuSonstiges.addAction(self.uiAktionCutAwbKomplex)
-        self.uiMenuSonstiges.addAction(self.uiAktionOpenGstImportPath)
-        self.uiMenuSonstiges.addAction(self.uiAktionImportGst)
-        self.uiMenuSonstiges.addAction(self.uiAktionOpenSettings)
+        # self.uiMenuAkte = self.menuBar().addMenu('Akte')
+        # self.uiMenuAkte.addAction(self.uiAktionOpenAkteMain)
+        #
+        # self.uiMenuGst = self.menuBar().addMenu('Grundstücke')
+        # self.uiMenuGst.addAction(self.uiAktionOpenGstZuornungMain)
+        #
+        # self.uiMenuKontakte = self.menuBar().addMenu('Kontakte')
+        # self.uiMenuKontakte.addAction(self.uiAktionOpenKontakteMain)
+        #
+        # self.uiMenuSonstiges = self.menuBar().addMenu('Sonstiges')
+        # self.uiMenuSonstiges.addAction(self.uiAktionCutAwbKomplex)
+        # self.uiMenuSonstiges.addAction(self.uiAktionOpenGstImportPath)
+        # self.uiMenuSonstiges.addAction(self.uiAktionImportGst)
+        # self.uiMenuSonstiges.addAction(self.uiAktionOpenSettings)
 
         # self.uiMenuHilfe = self.menuBar().addMenu('Hilfe')
         # self.uiMenuHilfe.addAction(self.uiActionOpenHelp)
