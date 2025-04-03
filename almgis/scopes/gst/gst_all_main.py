@@ -1,6 +1,7 @@
 from qga.data_view import QgaTableModel
 from qga.dialog import DialogBase
-from qga.layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature
+from qga.layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature, \
+    VectorLayerFactory, GeometryType, QgaField
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
@@ -266,6 +267,12 @@ class GstAllDataView(AlmDataView):
         # self._commit_entity = False
         # self.edit_entity_by = 'mci'
 
+        self.layer = VectorLayerFactory.createLayer(
+            'gst_all_main',
+            geometry_type=GeometryType.POLYGON,
+            fields_list=self.getFeatureFields()
+        )
+
     def openGstZuordnung(self):
         """
         öffne den dialog um gst-zuordnungen durchführen zu können
@@ -357,7 +364,7 @@ class GstAllDataView(AlmDataView):
 
             for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
 
-                feat = QgaFeature(self._gis_layer.fields(), self)
+                feat = QgaFeature(self.layer.fields(), self)
 
                 self.setFeatureAttributes(feat, gst_zuor)
 
@@ -377,54 +384,54 @@ class GstAllDataView(AlmDataView):
 
                 feat.setGeometry(geom)
 
-                self._gis_layer.data_provider.addFeatures([feat])
+                self.layer.provider.addFeatures([feat])
 
-    def setFeatureFields(self):
+    def getFeatureFields(self):
         # super().setFeatureFields()
 
-        gst_version_id_fld = QgsField("id", QVariant.Int)
+        gst_version_id_fld = QgaField("id", QVariant.Int)
 
-        az_fld = QgsField("az", QVariant.Int)
+        az_fld = QgaField("az", QVariant.Int)
         az_fld.setAlias('AZ')
 
-        akt_name_fld = QgsField("akt_name", QVariant.String)
+        akt_name_fld = QgaField("akt_name", QVariant.String)
         akt_name_fld.setAlias('Aktname')
 
-        gst_fld = QgsField("gst", QVariant.String)
+        gst_fld = QgaField("gst", QVariant.String)
         gst_fld.setAlias('Gst')
 
-        ez_fld = QgsField("ez", QVariant.Int)
+        ez_fld = QgaField("ez", QVariant.Int)
         ez_fld.setAlias('EZ')
 
-        kgnr_fld = QgsField("kgnr", QVariant.Int)
+        kgnr_fld = QgaField("kgnr", QVariant.Int)
         kgnr_fld.setAlias('KG-Nr')
 
-        kgname_fld = QgsField("kgname", QVariant.String)
+        kgname_fld = QgaField("kgname", QVariant.String)
         kgname_fld.setAlias('KG-Name')
 
-        awb_id_fld = QgsField("awb_id", QVariant.Int)
+        awb_id_fld = QgaField("awb_id", QVariant.Int)
 
-        awb_status_fld = QgsField("awb_status", QVariant.String)
+        awb_status_fld = QgaField("awb_status", QVariant.String)
         awb_status_fld.setAlias('AWB-Status')
 
-        recht_id_fld = QgsField("recht_id", QVariant.Int)
+        recht_id_fld = QgaField("recht_id", QVariant.Int)
 
-        recht_status_fld = QgsField("recht_status", QVariant.String)
+        recht_status_fld = QgaField("recht_status", QVariant.String)
         recht_status_fld.setAlias('Rechtsgrundlage')
 
-        gis_area_fld = QgsField("gis_area", QVariant.Double)
+        gis_area_fld = QgaField("gis_area", QVariant.Double)
         gis_area_fld.setAlias('GIS-Fläche')
 
-        gb_area_fld = QgsField("gb_area", QVariant.Double)
+        gb_area_fld = QgaField("gb_area", QVariant.Double)
         gb_area_fld.setAlias('GB-Fläche')
 
-        bew_area_fld = QgsField("bew_area", QVariant.Double)
+        bew_area_fld = QgaField("bew_area", QVariant.Double)
         bew_area_fld.setAlias('beweidet')
 
-        datenstand_fld = QgsField("datenstand", QVariant.String)
+        datenstand_fld = QgaField("datenstand", QVariant.String)
         datenstand_fld.setAlias('Datenstand')
 
-        mci_fld = QgsField("mci", QVariant.List)
+        mci_fld = QgaField("mci", QVariant.List)
 
         self.feature_fields.append(gst_version_id_fld)
         self.feature_fields.append(az_fld)
@@ -442,6 +449,8 @@ class GstAllDataView(AlmDataView):
         self.feature_fields.append(bew_area_fld)
         self.feature_fields.append(datenstand_fld)
         self.feature_fields.append(mci_fld)
+
+        return self.feature_fields
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
