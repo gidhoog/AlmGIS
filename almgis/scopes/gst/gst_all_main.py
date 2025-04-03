@@ -528,7 +528,7 @@ class GstAllDataView(AlmDataView):
                   15: [mci]
                   }
 
-        self._gis_layer.changeAttributeValues(feature.id(),
+        self.layer.changeAttributeValues(feature.id(),
                                               attrib)
 
     # def updateFeatureAttributes(self, *args):
