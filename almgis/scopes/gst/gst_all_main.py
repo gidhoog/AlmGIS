@@ -1,6 +1,6 @@
 from qga.data_view import QgaTableModel
 from qga.dialog import DialogBase
-from qga.gis_layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, Feature
+from qga.gis_layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
@@ -357,7 +357,7 @@ class GstAllDataView(AlmDataView):
 
             for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
 
-                feat = Feature(self._gis_layer.fields(), self)
+                feat = QgaFeature(self._gis_layer.fields(), self)
 
                 self.setFeatureAttributes(feat, gst_zuor)
 
