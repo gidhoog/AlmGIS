@@ -1,6 +1,6 @@
 from qga.data_view import QgaTableModel
 from qga.dialog import DialogBase
-from qga.gis_layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature
+from qga.layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,

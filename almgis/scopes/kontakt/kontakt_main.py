@@ -3,6 +3,7 @@ from pathlib import Path
 from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel
 from PyQt5.QtWidgets import QDialog
 from qga.filter import QgaFilter
+from qga.layer import QgaField, VectorLayerFactory, GeometryType, QgaFeature
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
@@ -90,48 +91,64 @@ class KontaktModel(QgaTableModel):
 
         print(f'....')
 
-    def data(self, index, role):
+    def data(self, index: QModelIndex, role: int = ...):
 
-        if not self.parent.gis_mode:
+        if role == Qt.TextAlignmentRole:
+            # Set alignment for the "Age" column (column index 1)
+            if index.column() == 1:
+                return Qt.AlignHCenter | Qt.AlignVCenter
 
-            if role == Qt.TextAlignmentRole:
-                # Set alignment for the "Age" column (column index 1)
-                if index.column() == 0:
-                    return Qt.AlignHCenter | Qt.AlignVCenter
-
-            if role == Qt.DisplayRole:
-
-                column = self._columns[index.column()]
-                # value = self._mci_list[index.row()][index.column()]
-                mci = self._mci_list[index.row()]
-
-                # Delegate role handling to the column class
-                return column.handle_role(role, mci)
+        if role == Qt.DisplayRole:
+            # Append a string to the "Name" column (column index 0)
+            if index.column() == 1:
+                current_value = super().data(index, role)
+                # return f"{current_value} - Edited"
+                return f"{current_value} - AAA"
 
         return super().data(index, role)
 
-    def rowCount(self, parent: QModelIndex = ...):
-        """
-        definiere die zeilenanzahl
-        """
-
-        return len(self._mci_list)
-
-    def columnCount(self, parent: QModelIndex = ...):
-        """
-        definiere die spaltenanzahl
-        """
-        # return len(self.header)
-        return len(self._columns)
-
-    def headerData(self, column, orientation, role=None):
-        """
-        wenn individuelle überschriften gesetzt sind (in 'self.header')
-        dann nehme diese
-        """
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return self._columns[column].name
-        return QVariant()
+    # def data(self, index, role):
+    #
+    #     if not self.parent.gis_mode:
+    #
+    #         if role == Qt.TextAlignmentRole:
+    #             # Set alignment for the "Age" column (column index 1)
+    #             if index.column() == 0:
+    #                 return Qt.AlignHCenter | Qt.AlignVCenter
+    #
+    #         if role == Qt.DisplayRole:
+    #
+    #             column = self._columns[index.column()]
+    #             # value = self._mci_list[index.row()][index.column()]
+    #             mci = self._mci_list[index.row()]
+    #
+    #             # Delegate role handling to the column class
+    #             return column.handle_role(role, mci)
+    #
+    #     return super().data(index, role)
+    #
+    # def rowCount(self, parent: QModelIndex = ...):
+    #     """
+    #     definiere die zeilenanzahl
+    #     """
+    #
+    #     return len(self._mci_list)
+    #
+    # def columnCount(self, parent: QModelIndex = ...):
+    #     """
+    #     definiere die spaltenanzahl
+    #     """
+    #     # return len(self.header)
+    #     return len(self._columns)
+    #
+    # def headerData(self, column, orientation, role=None):
+    #     """
+    #     wenn individuelle überschriften gesetzt sind (in 'self.header')
+    #     dann nehme diese
+    #     """
+    #     if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+    #         return self._columns[column].name
+    #     return QVariant()
 
     # def flags(self, index):  # to make the table(-cells) editable
     #     if not index.isValid():
@@ -243,6 +260,12 @@ class KontaktMain(AlmDataView):
 
         filter_name = QgaFilter('Name', str)
         self.filters.append(filter_name)
+
+        self.layer = VectorLayerFactory.createLayer(
+            'kontakte',
+            geometry_type=GeometryType.NONE,
+            fields_list=self.getFeatureFields()
+        )
 
     def deleteCheck(self, mci):
 
@@ -370,6 +393,57 @@ class KontaktMain(AlmDataView):
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
         self.view.resizeColumnsToContents()
+
+    def getFeatureFields(self):
+
+        type_fld = QgaField("type", QVariant.String)
+        gem_type_fld = QgaField("gem_type", QVariant.String)
+        name_fld = QgaField("name", QVariant.String)
+        adresse_fld = QgaField("adresse", QVariant.String)
+
+        self.feature_fields.append(type_fld)
+        self.feature_fields.append(gem_type_fld)
+        self.feature_fields.append(name_fld)
+        self.feature_fields.append(adresse_fld)
+
+        return self.feature_fields
+
+    def setFeatureFields(self):
+
+        type_fld = QgaField("type", QVariant.String)
+        gem_type_fld = QgaField("gem_type", QVariant.String)
+        name_fld = QgaField("name", QVariant.String)
+        adresse_fld = QgaField("adresse", QVariant.String)
+
+        self.feature_fields.append(type_fld,
+                                   gem_type_fld,
+                                   name_fld,
+                                   adresse_fld
+                                   )
+
+    def setFeatureAttributes(self, feature, mci):
+
+        feature['type'] = mci.rel_type.name
+        feature['gem_type'] = mci.rel_gem_type.name
+        feature['name'] = mci.name
+        feature['adresse'] = mci.adresse
+
+    def setFeaturesFromMci(self):
+        super().setFeaturesFromMci()
+
+        for kontakt in self.mci_list:
+
+            feat = QgaFeature(self.layer.fields(), self)
+
+            self.setFeatureAttributes(feat, kontakt)
+
+            # geom_wkt = to_shape(gst_version.geometry).wkt
+            # geom_new = QgsGeometry()
+            # geom = geom_new.fromWkt(geom_wkt)
+            #
+            # feat.setGeometry(geom)
+
+            self.layer.provider.addFeatures([feat])
 
     def setFilterUI(self):
         """
