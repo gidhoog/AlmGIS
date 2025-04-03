@@ -1,0 +1,4 @@
+#!/bin/sh
+export PYTHONPATH=$PYTHONPATH:/usr/lib/python3.13/site-packages:/home/franz/IT/Dev/Projekte/QGA
+source .venv/bin/activate
+python3 almgis.py
