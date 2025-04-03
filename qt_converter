@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# convert the resouce-file using linux
+pyrcc5 almgis/resources.qrc -o almgis/resources_rc.py
+
+pyuic5 --from-imports almgis/mainwindow.ui -o almgis/mainwindow_UI.py
+
+pyuic5 --from-imports almgis/scopes/kontakt/kontakt.ui -o almgis/scopes/kontakt/kontakt_UI.py
