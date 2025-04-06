@@ -3,7 +3,7 @@ from pathlib import Path
 from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel
 from PyQt5.QtWidgets import QDialog
 from qga.filter import QgaFilter
-from qga.layer import QgaField, VectorLayerFactory, GeometryType, QgaFeature
+from qga.layer import VectorLayerFactory, GeometryType, QgaFeature
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
@@ -22,6 +22,7 @@ from qga.main_widget import QgaMainWidget
 
 from almgis.data_model import BKontakt, BKontaktGemTyp, BAkt, BKontaktType
 from almgis.entity import AlmEntityDialog
+from almgis.fields import KontaktField, GeneralField
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol, \
     KontaktAdresseCol, KontaktTypeCol, KontaktGemTypeCol
@@ -396,37 +397,52 @@ class KontaktMain(AlmDataView):
 
     def getFeatureFields(self):
 
-        type_fld = QgaField("type", QVariant.String)
-        gem_type_fld = QgaField("gem_type", QVariant.String)
-        name_fld = QgaField("name", QVariant.String)
-        adresse_fld = QgaField("adresse", QVariant.String)
+        k_id = GeneralField.Id()
+        k_name = KontaktField.Name()
+        k_adresse = KontaktField.Adresse()
+        k_telefon_all = KontaktField.TelefonAll()
 
-        self.feature_fields.append(type_fld)
-        self.feature_fields.append(gem_type_fld)
-        self.feature_fields.append(name_fld)
-        self.feature_fields.append(adresse_fld)
+        # type_fld = QgaField("type", QVariant.String)
+        # gem_type_fld = QgaField("gem_type", QVariant.String)
+        # name_fld = QgaField("name", QVariant.String)
+        # adresse_fld = QgaField("adresse", QVariant.String)
 
-        return self.feature_fields
+        self.fields.append(k_id)
+        self.fields.append(k_name)
+        self.fields.append(k_adresse)
+        self.fields.append(k_telefon_all)
 
-    def setFeatureFields(self):
+        return self.fields
 
-        type_fld = QgaField("type", QVariant.String)
-        gem_type_fld = QgaField("gem_type", QVariant.String)
-        name_fld = QgaField("name", QVariant.String)
-        adresse_fld = QgaField("adresse", QVariant.String)
-
-        self.feature_fields.append(type_fld,
-                                   gem_type_fld,
-                                   name_fld,
-                                   adresse_fld
-                                   )
+    # def setFeatureFields(self):
+    #
+    #     type_fld = QgaField("type", QVariant.String)
+    #     gem_type_fld = QgaField("gem_type", QVariant.String)
+    #     name_fld = QgaField("name", QVariant.String)
+    #     adresse_fld = QgaField("adresse", QVariant.String)
+    #
+    #     self.fields.append(type_fld,
+    #                        gem_type_fld,
+    #                        name_fld,
+    #                        adresse_fld
+    #                        )
 
     def setFeatureAttributes(self, feature, mci):
 
-        feature['type'] = mci.rel_type.name
-        feature['gem_type'] = mci.rel_gem_type.name
-        feature['name'] = mci.name
-        feature['adresse'] = mci.adresse
+        # feature['type'] = mci.rel_type.name
+        # feature['gem_type'] = mci.rel_gem_type.name
+        # feature['name'] = mci.name
+        # feature['adresse'] = mci.adresse
+
+        for field in self.fields:
+
+            # feature[field.name()] = field.fieldValue(mci)
+            feature[field.name()] = field.getFieldValue(mci)
+
+        # feature['id'] = mci.rel_type.name
+        # feature['name'] = mci.rel_gem_type.name
+        # feature['adresse'] = mci.name
+        # feature['telefon_all'] = mci.adresse
 
     def setFeaturesFromMci(self):
         super().setFeaturesFromMci()

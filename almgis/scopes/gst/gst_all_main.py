@@ -1,7 +1,8 @@
 from qga.data_view import QgaTableModel
 from qga.dialog import DialogBase
+from qga.fields import QgaField
 from qga.layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature, \
-    VectorLayerFactory, GeometryType, QgaField
+    VectorLayerFactory, GeometryType
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
@@ -320,7 +321,7 @@ class GstAllDataView(AlmDataView):
         #     "Polygon?crs=epsg:31259",
         #     "Grundstücke",
         #     "memory",
-        #     feature_fields=self.feature_fields,
+        #     fields=self.fields,
         #     data_view=self
         # )
         layer = GstZuordLayer(
@@ -338,7 +339,7 @@ class GstAllDataView(AlmDataView):
 
         layer.data_provider = layer.dataProvider()
 
-        layer.data_provider.addAttributes(self.feature_fields)
+        layer.data_provider.addAttributes(self.fields)
         layer.updateFields()
 
         return layer
@@ -433,24 +434,24 @@ class GstAllDataView(AlmDataView):
 
         mci_fld = QgaField("mci", QVariant.List)
 
-        self.feature_fields.append(gst_version_id_fld)
-        self.feature_fields.append(az_fld)
-        self.feature_fields.append(akt_name_fld)
-        self.feature_fields.append(gst_fld)
-        self.feature_fields.append(ez_fld)
-        self.feature_fields.append(kgnr_fld)
-        self.feature_fields.append(kgname_fld)
-        self.feature_fields.append(awb_id_fld)
-        self.feature_fields.append(awb_status_fld)
-        self.feature_fields.append(recht_id_fld)
-        self.feature_fields.append(recht_status_fld)
-        self.feature_fields.append(gis_area_fld)
-        self.feature_fields.append(gb_area_fld)
-        self.feature_fields.append(bew_area_fld)
-        self.feature_fields.append(datenstand_fld)
-        self.feature_fields.append(mci_fld)
+        self.fields.append(gst_version_id_fld)
+        self.fields.append(az_fld)
+        self.fields.append(akt_name_fld)
+        self.fields.append(gst_fld)
+        self.fields.append(ez_fld)
+        self.fields.append(kgnr_fld)
+        self.fields.append(kgname_fld)
+        self.fields.append(awb_id_fld)
+        self.fields.append(awb_status_fld)
+        self.fields.append(recht_id_fld)
+        self.fields.append(recht_status_fld)
+        self.fields.append(gis_area_fld)
+        self.fields.append(gb_area_fld)
+        self.fields.append(bew_area_fld)
+        self.fields.append(datenstand_fld)
+        self.fields.append(mci_fld)
 
-        return self.feature_fields
+        return self.fields
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)

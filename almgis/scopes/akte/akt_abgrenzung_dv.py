@@ -147,7 +147,7 @@ class AbgrenzungDataView(DataView):
             "None",
             "Abgrenzungen",
             "memory",
-            feature_fields=self.feature_fields
+            fields=self.fields
         )
 
         # setLayerStyle(layer, 'gst_awbuch_status')
@@ -188,15 +188,15 @@ class AbgrenzungDataView(DataView):
 
         awb_fld = QgsField("awb", QVariant.Int)
 
-        self.feature_fields.append(abgrenzung_id_fld)
-        self.feature_fields.append(jahr_fld)
-        self.feature_fields.append(status_id_fld)
-        self.feature_fields.append(status_name_fld)
-        self.feature_fields.append(bearbeiter_fld)
-        self.feature_fields.append(erfassungsart_id_fld)
-        self.feature_fields.append(erfassungsart_name_fld)
-        self.feature_fields.append(mci_fld)
-        self.feature_fields.append(awb_fld)
+        self.fields.append(abgrenzung_id_fld)
+        self.fields.append(jahr_fld)
+        self.fields.append(status_id_fld)
+        self.fields.append(status_name_fld)
+        self.fields.append(bearbeiter_fld)
+        self.fields.append(erfassungsart_id_fld)
+        self.fields.append(erfassungsart_name_fld)
+        self.fields.append(mci_fld)
+        self.fields.append(awb_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)

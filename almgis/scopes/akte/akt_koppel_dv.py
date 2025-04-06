@@ -208,7 +208,7 @@ class KoppelAktDataView(DataView):
             "Polygon?crs=epsg:31259",
             "Koppeln",
             "memory",
-            feature_fields=self.feature_fields,
+            fields=self.fields,
             data_view=self
         )
 
@@ -294,18 +294,18 @@ class KoppelAktDataView(DataView):
 
         mci_fld = QgsField("mci", QVariant.List)
 
-        self.feature_fields.append(abgrenzung_id_fld)
-        self.feature_fields.append(abgrenzung_jahr_fld)
-        self.feature_fields.append(abgrenzung_status_id_fld)
-        self.feature_fields.append(komplex_id_fld)
-        self.feature_fields.append(komplex_nr_fld)
-        self.feature_fields.append(komplex_name_fld)
-        self.feature_fields.append(koppel_id_fld)
-        self.feature_fields.append(koppel_nr_fld)
-        self.feature_fields.append(koppel_name_fld)
-        self.feature_fields.append(nicht_weide_fld)
-        self.feature_fields.append(koppel_area_fld)
-        self.feature_fields.append(mci_fld)
+        self.fields.append(abgrenzung_id_fld)
+        self.fields.append(abgrenzung_jahr_fld)
+        self.fields.append(abgrenzung_status_id_fld)
+        self.fields.append(komplex_id_fld)
+        self.fields.append(komplex_nr_fld)
+        self.fields.append(komplex_name_fld)
+        self.fields.append(koppel_id_fld)
+        self.fields.append(koppel_nr_fld)
+        self.fields.append(koppel_name_fld)
+        self.fields.append(nicht_weide_fld)
+        self.fields.append(koppel_area_fld)
+        self.fields.append(mci_fld)
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)

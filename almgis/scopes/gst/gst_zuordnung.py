@@ -1043,16 +1043,16 @@ class GstTable(DataView):
 
         gst_mci_fld = QgsField("mci", QVariant.List)
 
-        self.feature_fields.append(gst_id_fld)
-        self.feature_fields.append(gst_fld)
-        self.feature_fields.append(ez_fld)
-        self.feature_fields.append(kgnr_fld)
-        self.feature_fields.append(kgname_fld)
-        self.feature_fields.append(zugeordnet_fld)
-        self.feature_fields.append(zugeordnet_zu_fld)
-        self.feature_fields.append(datenstand_fld)
-        self.feature_fields.append(importzeit_fld)
-        self.feature_fields.append(gst_mci_fld)
+        self.fields.append(gst_id_fld)
+        self.fields.append(gst_fld)
+        self.fields.append(ez_fld)
+        self.fields.append(kgnr_fld)
+        self.fields.append(kgname_fld)
+        self.fields.append(zugeordnet_fld)
+        self.fields.append(zugeordnet_zu_fld)
+        self.fields.append(datenstand_fld)
+        self.fields.append(importzeit_fld)
+        self.fields.append(gst_mci_fld)
 
     def setFeaturesFromMci(self):
         super().setFeaturesFromMci()
@@ -1117,7 +1117,7 @@ class GstTable(DataView):
             "Polygon?crs=epsg:31259",
             "Grundstücke (alle)",
             "memory",
-            feature_fields=self.feature_fields
+            fields=self.fields
         )
 
         setLayerStyle(layer, 'gst_zuordnung')
