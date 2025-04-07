@@ -36,6 +36,10 @@ from operator import attrgetter
 
 # from almgis.main_gis import MainGis
 from qga.main_widget import QgaMainWidget
+
+from almgis.fields import GeneralField, GstZuordnungField
+
+
 # from almgis.scopes.gst.gst_zuordnung import GstZuordnung
 # from almgis.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
 # from almgis.tools import getMciState, getMciSession
@@ -361,135 +365,162 @@ class GstAllDataView(AlmDataView):
     def setFeaturesFromMci(self):
         super().setFeaturesFromMci()
 
-        for gst_zuor in self.mci_list:
+        for mci in self.mci_list:
 
-            for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
+            feat = QgaFeature(self.layer.fields(), self)
 
-                feat = QgaFeature(self.layer.fields(), self)
+            self.setFeatureAttributes(feat, mci)
 
-                self.setFeatureAttributes(feat, gst_zuor)
+            # geom_wkt = to_shape(gst_version.geometry).wkt
+            # geom_new = QgsGeometry()
+            # geom = geom_new.fromWkt(geom_wkt)
+            #
+            # feat.setGeometry(geom)
 
-                # feat.setAttributes([gst_version.id,
-                #                     gst_zuor.rel_gst.gst,
-                #                     gst_version.rel_alm_gst_ez.ez,
-                #                     gst_version.rel_alm_gst_ez.kgnr,
-                #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
-                #                     gst_zuor.awb_status_id,
-                #                     gst_zuor.rechtsgrundlage_id,
-                #                     '',
-                #                     gst_version.rel_alm_gst_ez.datenstand])
+            self.layer.provider.addFeatures([feat])
 
-                geom_wkt = to_shape(gst_version.geometry).wkt
-                geom_new = QgsGeometry()
-                geom = geom_new.fromWkt(geom_wkt)
-
-                feat.setGeometry(geom)
-
-                self.layer.provider.addFeatures([feat])
+        # for gst_zuor in self.mci_list:
+        #
+        #     for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
+        #
+        #         feat = QgaFeature(self.layer.fields(), self)
+        #
+        #         self.setFeatureAttributes(feat, gst_zuor)
+        #
+        #         # feat.setAttributes([gst_version.id,
+        #         #                     gst_zuor.rel_gst.gst,
+        #         #                     gst_version.rel_alm_gst_ez.ez,
+        #         #                     gst_version.rel_alm_gst_ez.kgnr,
+        #         #                     gst_version.rel_alm_gst_ez.rel_kat_gem.kgname,
+        #         #                     gst_zuor.awb_status_id,
+        #         #                     gst_zuor.rechtsgrundlage_id,
+        #         #                     '',
+        #         #                     gst_version.rel_alm_gst_ez.datenstand])
+        #
+        #         geom_wkt = to_shape(gst_version.geometry).wkt
+        #         geom_new = QgsGeometry()
+        #         geom = geom_new.fromWkt(geom_wkt)
+        #
+        #         feat.setGeometry(geom)
+        #
+        #         self.layer.provider.addFeatures([feat])
 
     def getFeatureFields(self):
         # super().setFeatureFields()
 
-        gst_version_id_fld = QgaField("id", QVariant.Int)
+        # gst_version_id_fld = QgaField("id", QVariant.Int)
+        #
+        # az_fld = QgaField("az", QVariant.Int)
+        # az_fld.setAlias('AZ')
+        #
+        # akt_name_fld = QgaField("akt_name", QVariant.String)
+        # akt_name_fld.setAlias('Aktname')
+        #
+        # gst_fld = QgaField("gst", QVariant.String)
+        # gst_fld.setAlias('Gst')
+        #
+        # ez_fld = QgaField("ez", QVariant.Int)
+        # ez_fld.setAlias('EZ')
+        #
+        # kgnr_fld = QgaField("kgnr", QVariant.Int)
+        # kgnr_fld.setAlias('KG-Nr')
+        #
+        # kgname_fld = QgaField("kgname", QVariant.String)
+        # kgname_fld.setAlias('KG-Name')
+        #
+        # awb_id_fld = QgaField("awb_id", QVariant.Int)
+        #
+        # awb_status_fld = QgaField("awb_status", QVariant.String)
+        # awb_status_fld.setAlias('AWB-Status')
+        #
+        # recht_id_fld = QgaField("recht_id", QVariant.Int)
+        #
+        # recht_status_fld = QgaField("recht_status", QVariant.String)
+        # recht_status_fld.setAlias('Rechtsgrundlage')
+        #
+        # gis_area_fld = QgaField("gis_area", QVariant.Double)
+        # gis_area_fld.setAlias('GIS-Fläche')
+        #
+        # gb_area_fld = QgaField("gb_area", QVariant.Double)
+        # gb_area_fld.setAlias('GB-Fläche')
+        #
+        # bew_area_fld = QgaField("bew_area", QVariant.Double)
+        # bew_area_fld.setAlias('beweidet')
+        #
+        # datenstand_fld = QgaField("datenstand", QVariant.String)
+        # datenstand_fld.setAlias('Datenstand')
+        #
+        # mci_fld = QgaField("mci", QVariant.List)
+        #
+        # self.fields.append(gst_version_id_fld)
+        # self.fields.append(az_fld)
+        # self.fields.append(akt_name_fld)
+        # self.fields.append(gst_fld)
+        # self.fields.append(ez_fld)
+        # self.fields.append(kgnr_fld)
+        # self.fields.append(kgname_fld)
+        # self.fields.append(awb_id_fld)
+        # self.fields.append(awb_status_fld)
+        # self.fields.append(recht_id_fld)
+        # self.fields.append(recht_status_fld)
+        # self.fields.append(gis_area_fld)
+        # self.fields.append(gb_area_fld)
+        # self.fields.append(bew_area_fld)
+        # self.fields.append(datenstand_fld)
+        # self.fields.append(mci_fld)
 
-        az_fld = QgaField("az", QVariant.Int)
-        az_fld.setAlias('AZ')
+        gz_id = GeneralField.Id()
+        # gz_id.visible = True
+        gz_awb_id = GstZuordnungField.AwbStatusId()
+        gz_recht_id = GstZuordnungField.RechtsgrundlageId()
 
-        akt_name_fld = QgaField("akt_name", QVariant.String)
-        akt_name_fld.setAlias('Aktname')
-
-        gst_fld = QgaField("gst", QVariant.String)
-        gst_fld.setAlias('Gst')
-
-        ez_fld = QgaField("ez", QVariant.Int)
-        ez_fld.setAlias('EZ')
-
-        kgnr_fld = QgaField("kgnr", QVariant.Int)
-        kgnr_fld.setAlias('KG-Nr')
-
-        kgname_fld = QgaField("kgname", QVariant.String)
-        kgname_fld.setAlias('KG-Name')
-
-        awb_id_fld = QgaField("awb_id", QVariant.Int)
-
-        awb_status_fld = QgaField("awb_status", QVariant.String)
-        awb_status_fld.setAlias('AWB-Status')
-
-        recht_id_fld = QgaField("recht_id", QVariant.Int)
-
-        recht_status_fld = QgaField("recht_status", QVariant.String)
-        recht_status_fld.setAlias('Rechtsgrundlage')
-
-        gis_area_fld = QgaField("gis_area", QVariant.Double)
-        gis_area_fld.setAlias('GIS-Fläche')
-
-        gb_area_fld = QgaField("gb_area", QVariant.Double)
-        gb_area_fld.setAlias('GB-Fläche')
-
-        bew_area_fld = QgaField("bew_area", QVariant.Double)
-        bew_area_fld.setAlias('beweidet')
-
-        datenstand_fld = QgaField("datenstand", QVariant.String)
-        datenstand_fld.setAlias('Datenstand')
-
-        mci_fld = QgaField("mci", QVariant.List)
-
-        self.fields.append(gst_version_id_fld)
-        self.fields.append(az_fld)
-        self.fields.append(akt_name_fld)
-        self.fields.append(gst_fld)
-        self.fields.append(ez_fld)
-        self.fields.append(kgnr_fld)
-        self.fields.append(kgname_fld)
-        self.fields.append(awb_id_fld)
-        self.fields.append(awb_status_fld)
-        self.fields.append(recht_id_fld)
-        self.fields.append(recht_status_fld)
-        self.fields.append(gis_area_fld)
-        self.fields.append(gb_area_fld)
-        self.fields.append(bew_area_fld)
-        self.fields.append(datenstand_fld)
-        self.fields.append(mci_fld)
+        self.fields.append(gz_id)
+        self.fields.append(gz_awb_id)
+        self.fields.append(gz_recht_id)
 
         return self.fields
 
     def setFeatureAttributes(self, feature, mci):
         super().setFeatureAttributes(feature, mci)
 
-        """last_gst"""
-        gst_versionen_list = mci.rel_gst.rel_alm_gst_version
-        last_gst = max(gst_versionen_list,
-                       key=attrgetter('rel_alm_gst_ez.datenstand'))
-        """"""
+        for field in self.fields:
 
-        """gb_area"""
-        gb_area = 0
-        for nutz in last_gst.rel_alm_gst_nutzung:
-            gb_area = gb_area + nutz.area
-        """"""
+            feature[field.name()] = field.getFieldValue(mci)
 
-        """summe der koppel-verschnitt-flächen pro gst"""
-        sum_cut = 0.00
-        for cut in last_gst.rel_cut_koppel_gst:
-            sum_cut = sum_cut + cut.cut_area
-        """"""
-
-        feature['id'] = mci.id
-        feature['az'] = mci.rel_akt.az
-        feature['akt_name'] = mci.rel_akt.name
-        feature['gst'] = mci.rel_gst.gst
-        feature['ez'] = last_gst.rel_alm_gst_ez.ez
-        feature['kgnr'] = mci.rel_gst.kgnr
-        feature['kgname'] = mci.rel_gst.rel_kat_gem.kgname
-        feature['awb_id'] = mci.awb_status_id
-        feature['awb_status'] = mci.rel_awb_status.name
-        feature['recht_id'] = mci.rechtsgrundlage_id
-        feature['recht_status'] = mci.rel_rechtsgrundlage.name
-        feature['gis_area'] = last_gst.gst_gis_area
-        feature['gb_area'] = gb_area
-        feature['bew_area'] = sum_cut
-        feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
-        feature['mci'] = [mci]
+        # """last_gst"""
+        # gst_versionen_list = mci.rel_gst.rel_alm_gst_version
+        # last_gst = max(gst_versionen_list,
+        #                key=attrgetter('rel_alm_gst_ez.datenstand'))
+        # """"""
+        #
+        # """gb_area"""
+        # gb_area = 0
+        # for nutz in last_gst.rel_alm_gst_nutzung:
+        #     gb_area = gb_area + nutz.area
+        # """"""
+        #
+        # """summe der koppel-verschnitt-flächen pro gst"""
+        # sum_cut = 0.00
+        # for cut in last_gst.rel_cut_koppel_gst:
+        #     sum_cut = sum_cut + cut.cut_area
+        # """"""
+        #
+        # feature['id'] = mci.id
+        # feature['az'] = mci.rel_akt.az
+        # feature['akt_name'] = mci.rel_akt.name
+        # feature['gst'] = mci.rel_gst.gst
+        # feature['ez'] = last_gst.rel_alm_gst_ez.ez
+        # feature['kgnr'] = mci.rel_gst.kgnr
+        # feature['kgname'] = mci.rel_gst.rel_kat_gem.kgname
+        # feature['awb_id'] = mci.awb_status_id
+        # feature['awb_status'] = mci.rel_awb_status.name
+        # feature['recht_id'] = mci.rechtsgrundlage_id
+        # feature['recht_status'] = mci.rel_rechtsgrundlage.name
+        # feature['gis_area'] = last_gst.gst_gis_area
+        # feature['gb_area'] = gb_area
+        # feature['bew_area'] = sum_cut
+        # feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
+        # feature['mci'] = [mci]
 
     def changeAttributes(self, feature, mci):
 
@@ -835,10 +866,10 @@ class GstAllDataView(AlmDataView):
 
         self.setStretchMethod(2)
 
-        self.view.setColumnHidden(0, True)
-        self.view.setColumnHidden(7, True)
-        self.view.setColumnHidden(9, True)
-        self.view.setColumnHidden(15, True)
+        # self.view.setColumnHidden(0, True)
+        # self.view.setColumnHidden(7, True)
+        # self.view.setColumnHidden(9, True)
+        # self.view.setColumnHidden(15, True)
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 

@@ -1,6 +1,9 @@
 from qga.fields import QgaField
 from qgis.PyQt.QtCore import QVariant
 
+from almgis.data_model import BGstZuordnung, BGst
+
+
 class GeneralField:
 
     class Id(QgaField):
@@ -8,21 +11,17 @@ class GeneralField:
         def __init__(self, name='id', field_type=QVariant.String):
             super().__init__(name, field_type)
 
-            self.field_value = 'id'
-
+            self.dmi_attr = 'id'
+            self.setAlias('ID')
             self.visible = False
-            # self.dmi_attr = 'rel_gem_type.id'
-
-        # def fieldValue(self, dmi):
-        #     return dmi.rel_gem_type.id
 
     class TypeId(QgaField):
 
         def __init__(self, name='type_id', field_type=QVariant.Int):
             super().__init__(name, field_type)
 
-            self.field_value = 'type_id'
-
+            self.dmi_attr = 'type_id'
+            self.setAlias('Typ ID')
             self.visible = False
 
 
@@ -36,7 +35,8 @@ class KontaktField:
         def __init__(self, name='vertreter_id', field_type=QVariant.Int):
             super().__init__(name, field_type)
 
-            self.field_value = 'rel_vertreter.id'
+            self.dmi_attr = 'rel_vertreter.id'
+            self.setAlias('Vertreter ID')
 
             self.visible = False
 
@@ -46,14 +46,7 @@ class KontaktField:
             super().__init__(name, field_type)
 
             self.setAlias('Name')
-            self.field_value = 'name'
-
-            # self.dmi_attr = 'name'
-            # self.field_value = self.dmi.name
-
-        # def fieldValue(self, dmi):
-        #     self.dmi = dmi
-        #     return self.dmi.name
+            self.dmi_attr = 'name'
 
     class Adresse(QgaField):
 
@@ -61,11 +54,7 @@ class KontaktField:
             super().__init__(name, field_type)
 
             self.setAlias('Adresse')
-            self.field_value = 'adresse'
-            # self.dmi_attr = 'adresse'
-
-        # def fieldValue(self, dmi):
-        #     return dmi.adresse
+            self.dmi_attr = 'adresse'
 
     class Strasse(QgaField):
 
@@ -73,7 +62,7 @@ class KontaktField:
             super().__init__(name, field_type)
 
             self.setAlias('Straße')
-            self.field_value = 'strasse'
+            self.dmi_attr = 'strasse'
 
     class TelefonAll(QgaField):
 
@@ -81,8 +70,52 @@ class KontaktField:
             super().__init__(name, field_type)
 
             self.setAlias('Telefonnummern')
-            self.field_value = 'telefon_all'
-            # self.dmi_attr = 'telefon_all'
+            self.dmi_attr = 'telefon_all'
 
-        # def fieldValue(self, dmi):
-        #     return dmi.telefon_all
+
+class GstField:
+
+    class KgGst(QgaField):
+
+        def __init__(self, name='kg_gst', field_type=QVariant.String):
+            super().__init__(name, field_type)
+
+            self.setAlias('Kg/Gst')
+            self.dmi_attr = 'kg_gst'
+
+
+class GstZuordnungField:
+
+    class KgGst(QgaField):
+
+        dmc = BGstZuordnung
+
+        def __init__(self, name='kg_gst', field_type=QVariant.String):
+            super().__init__(name, field_type)
+
+            self.setAlias('Kg/Gst')
+            self.dmi_attr = 'kg_gst'
+
+    class AwbStatusId(QgaField):
+        dmc = BGstZuordnung
+
+        def __init__(self, name='awb_status_id', field_type=QVariant.Int):
+            super().__init__(name, field_type)
+
+            self.dmi_attr = 'awb_status_id'
+
+    class RechtsgrundlageId(QgaField):
+        dmc = BGstZuordnung
+
+        def __init__(self, name='rechtsgrundlage_id', field_type=QVariant.Int):
+            super().__init__(name, field_type)
+
+            self.dmi_attr = 'rechtsgrundlage_id'
+
+    class GstLastGbArea(QgaField):
+        dmc = BGst
+
+        def __init__(self, name='rechtsgrundlage_id', field_type=QVariant.Int):
+            super().__init__(name, field_type)
+
+            self.dmi_attr = 'rel_gst'
