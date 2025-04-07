@@ -20,7 +20,7 @@ from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
 
-from almgis.data_model import BKontakt, BKontaktGemTyp, BAkt, BKontaktType
+from almgis.data_model import DmKontakt, DmKontaktGemTyp, BAkt, DmKontaktType
 from almgis.entity import AlmEntityDialog
 from almgis.fields import KontaktField, GeneralField
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
@@ -241,8 +241,8 @@ class KontaktModel(QgaTableModel):
 class KontaktMain(AlmDataView):
 
     _model_class = KontaktModel
-    _entity_mc = BKontakt
-    _type_mc = BKontaktType
+    _entity_mc = DmKontakt
+    _type_mc = DmKontaktType
 
     entity_dialog_class = KontaktEntityDialog
 
@@ -271,7 +271,7 @@ class KontaktMain(AlmDataView):
     def deleteCheck(self, mci):
 
         with session_cm() as session:
-            all_vertreter_ids_stmt = select(BKontakt.vertreter_id)
+            all_vertreter_ids_stmt = select(DmKontakt.vertreter_id)
             all_vertreter_ids = session.scalars(all_vertreter_ids_stmt).all()
 
             bewirtschafter_ids_stmt = select(BAkt.bewirtschafter_id)
@@ -487,7 +487,7 @@ class KontaktMain(AlmDataView):
 
         with session_cm(name='contact type filter') as session:
 
-            contact_type_stmt = select(BKontaktGemTyp)
+            contact_type_stmt = select(DmKontaktGemTyp)
             contact_type_list = session.scalars(contact_type_stmt).all()
 
             for kontact_type in contact_type_list:
@@ -701,11 +701,11 @@ class KontaktMain(AlmDataView):
 
         # session = DbSession()
 
-        stmt = (select(BKontakt)
+        stmt = (select(DmKontakt)
                 .options(
-            joinedload(BKontakt.rel_type)
+            joinedload(DmKontakt.rel_type)
         )
-                .where(BKontakt.blank_value == 0))
+                .where(DmKontakt.blank_value == 0))
 
         mci = self.session.scalars(stmt).all()
 

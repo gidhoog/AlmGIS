@@ -39,8 +39,8 @@ class BAkt(Base):
 
     # rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
     rel_bearbeitungsstatus: Mapped["BBearbeitungsstatus"] = relationship(lazy='joined')
-    rel_bewirtschafter: Mapped["BKontakt"] = relationship(lazy='joined',
-                                                          back_populates='rel_akt')
+    rel_bewirtschafter: Mapped["DmKontakt"] = relationship(lazy='joined',
+                                                           back_populates='rel_akt')
 
     # rel_gst_zuordnung = relationship(
     #     'BGstZuordnung',
@@ -764,7 +764,7 @@ class BKomplexName(Base):
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
 
-class BKontakt(Base):
+class DmKontakt(Base):
     __tablename__ = 'a_alm_kontakt'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -791,12 +791,13 @@ class BKontakt(Base):
     inactive: Mapped[bool]
     not_delete: Mapped[bool]
 
-    rel_gem_type: Mapped['BKontaktGemTyp'] = relationship(lazy="joined")
-    rel_type: Mapped['BKontaktType'] = relationship()
+    rel_gem_type: Mapped['DmKontaktGemTyp'] = relationship(lazy="joined")
+    rel_type: Mapped['DmKontaktType'] = relationship()
 
     # children = relationship("BKontakt", back_populates="rel_vertreter")
-    children: Mapped[List["BKontakt"]] = relationship(back_populates="rel_vertreter")
-    rel_vertreter = relationship("BKontakt", lazy="joined", join_depth=1,
+    children: Mapped[List[
+        "DmKontakt"]] = relationship(back_populates="rel_vertreter")
+    rel_vertreter = relationship("DmKontakt", lazy="joined", join_depth=1,
                              remote_side=[id])
 
     rel_akt: Mapped[List["BAkt"]] = relationship(back_populates="rel_bewirtschafter")
@@ -955,24 +956,24 @@ class BKontakt(Base):
         self.not_delete = 0
 
     def __repr__(self):
-       return f"<BKontakt(id={self.id}, nachname='{self.nachname}')>"
+       return f"<DmKontakt(id={self.id}, nachname='{self.nachname}')>"
 
 
-class BKontaktEinzel(BKontakt):
+class DmKontaktEinzel(DmKontakt):
 
     __mapper_args__ = {
         'polymorphic_identity': 0,
     }
 
 
-class BKontaktGem(BKontakt):
+class DmKontaktGem(DmKontakt):
 
     __mapper_args__ = {
         'polymorphic_identity': 1,
     }
 
 
-class BKontaktType(Base):
+class DmKontaktType(Base):
     __tablename__ = 'a_alm_kontakt_type'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -999,7 +1000,7 @@ class BKontaktType(Base):
                f" parent_id={self.parent_id}, name={self.name})>"
 
 
-class BKontaktGemTyp(Base):
+class DmKontaktGemTyp(Base):
     __tablename__ = 'a_alm_kontakt_gem_type'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -1011,7 +1012,7 @@ class BKontaktGemTyp(Base):
     sort: Mapped[int]
 
     def __repr__(self):
-       return (f"<BKontaktGemTyp(id={self.id}, "
+       return (f"<DmKontaktGemTyp(id={self.id}, "
                f"name='{self.name}, "
                f"name_short='{self.name_short}')>")
 

@@ -8,8 +8,8 @@ from sqlalchemy import select, func
 from almgis.entity import AlmEntityDialog
 from almgis.scopes.kontakt import kontakt_UI
 
-from almgis.data_model import BKontakt, BKontaktGemTyp, BKontaktEinzel, \
-    BKontaktGem
+from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmKontaktEinzel, \
+    DmKontaktGem
 from qga.tools import getMciState
 
 from almgis.entity import AlmEntity
@@ -270,7 +270,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.setupCodeUi()
         self.uiVertreterCombo.session = self.session
 
-        self._entity_mc = BKontaktGem
+        self._entity_mc = DmKontaktGem
         # self.data_class = BKontakt
 
     # def addNewEntity(self):
@@ -315,7 +315,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
 
     def setGeminschaftsTypeCombo(self):
 
-        stmt = select(BKontaktGemTyp).order_by(BKontaktGemTyp.sort)
+        stmt = select(DmKontaktGemTyp).order_by(DmKontaktGemTyp.sort)
         gem_type_mci = self.session.scalars(stmt).all()
 
 
@@ -457,8 +457,8 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
     def getEntityMci(self, session, entity_id):
 
         mci = session.scalars(
-            select(BKontakt)
-            .where(BKontakt.id == entity_id)
+            select(DmKontakt)
+            .where(DmKontakt.id == entity_id)
         ).unique().first()
 
         return mci
@@ -504,7 +504,7 @@ class KontaktEinzel(Kontakt):
         super(__class__, self).__init__(parent)
         self.setupCodeUi()
 
-        self._entity_mc = BKontaktEinzel
+        self._entity_mc = DmKontaktEinzel
 
     def setupCodeUi(self):
         super().setupCodeUi()
