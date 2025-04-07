@@ -535,6 +535,9 @@ class BGstVersion(Base):
     # @property
     def gst_gis_area(self):
 
+        # todo: use here 'self.geometry.ST_Area()' instead; but
+        #  'mod_spatialite' must be enabled in SQLite-Db, or use PostGIS
+
         # aa = func.ST_Area(self.geometry)
         aa = to_shape(self.geometry).area  # float
 

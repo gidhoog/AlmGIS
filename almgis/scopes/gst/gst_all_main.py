@@ -3,6 +3,7 @@ from qga.dialog import DialogBase
 from qga.fields import QgaField
 from qga.layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature, \
     VectorLayerFactory, GeometryType
+from qga.tools import convertMtoHaWithHa
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
@@ -171,11 +172,15 @@ class GstAllTableModel(QgaTableModel):
                 return Qt.AlignHCenter | Qt.AlignVCenter
 
         if role == Qt.DisplayRole:
-            # Append a string to the "Name" column (column index 0)
-            if index.column() == 1:
-                current_value = super().data(index, role)
-                # return f"{current_value} - Edited"
-                return f"{current_value} - AAA"
+
+            if self.layer().fields().field(index.column()).name() == 'akt_name':
+                current_value = super().data(index, Qt.EditRole)
+                return f"Akt: {current_value}"
+
+            if (self.layer().fields().field(index.column()).name() in
+                    ['last_gb_area', 'last_koppel_area', 'last_gis_area']):
+                current_value = super().data(index, Qt.EditRole)
+                return convertMtoHaWithHa(current_value)
 
         return super().data(index, role)
 
@@ -470,13 +475,24 @@ class GstAllDataView(AlmDataView):
         # self.fields.append(mci_fld)
 
         gz_id = GeneralField.Id()
+        gz_id.setAlias('gst_zuordnung_id')
         # gz_id.visible = True
+        gz_akt_id = GstZuordnungField.AktId()
+        gz_akt_name = GstZuordnungField.AktName()
         gz_awb_id = GstZuordnungField.AwbStatusId()
         gz_recht_id = GstZuordnungField.RechtsgrundlageId()
+        gz_gb_area = GstZuordnungField.GstLastGbArea()
+        gz_koppel_area = GstZuordnungField.GstLastKoppelArea()
+        gz_gis_area = GstZuordnungField.GstLastGisArea()
 
         self.fields.append(gz_id)
+        self.fields.append(gz_akt_id)
+        self.fields.append(gz_akt_name)
         self.fields.append(gz_awb_id)
         self.fields.append(gz_recht_id)
+        self.fields.append(gz_gb_area)
+        self.fields.append(gz_koppel_area)
+        self.fields.append(gz_gis_area)
 
         return self.fields
 

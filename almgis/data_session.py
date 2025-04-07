@@ -1,5 +1,7 @@
 from contextlib import contextmanager
 
+from qga import data_session
+
 from almgis import AlmSessionCls
 # from almgis.data_model import McSettings
 from almgis.logger import Logger
