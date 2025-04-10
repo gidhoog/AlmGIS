@@ -1,4 +1,4 @@
-from qga.tools import getMciState
+from qga.tools import getDmiState
 from sqlalchemy import select, or_
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
@@ -56,7 +56,7 @@ class ContactCombo(AlmExtendedCombo):
         :return:
         """
 
-        self._mci_list = []
+        self._dmi_list = []
 
         if session is not None:
             self.session = session
@@ -72,7 +72,7 @@ class ContactCombo(AlmExtendedCombo):
                     or_((DmKontaktGemTyp.gemeinschaft == 1), (DmKontakt.blank_value == 1))
                 )
 
-        self._mci_list = self.session.scalars(stmt).unique().all()
+        self._dmi_list = self.session.scalars(stmt).unique().all()
 
 
 class ContactComboModel(AlmComboModel):
@@ -80,8 +80,8 @@ class ContactComboModel(AlmComboModel):
     header = ['Name',
               'Anschrift']
 
-    def __init__(self, parent, mci_list=None):
-        super(ContactComboModel, self).__init__(parent, mci_list)
+    def __init__(self, parent, dmi_list=None):
+        super(ContactComboModel, self).__init__(parent, dmi_list)
 
     def data(self, index: QModelIndex, role: int = ...):
         # super().data(index, role)
@@ -90,27 +90,27 @@ class ContactComboModel(AlmComboModel):
         #
         #     if role == Qt.DisplayRole:
         #
-        #         return self.parent._mci_list[index.row()].id
+        #         return self.parent._dmi_list[index.row()].id
 
         if index.column() == 0:
 
             if role == AlmComboModel.IdRole:
 
-                return self._mci_list[index.row()].id
+                return self._dmi_list[index.row()].id
 
-            if role == AlmComboModel.MciRole:
+            if role == AlmComboModel.DmiRole:
 
-                return self._mci_list[index.row()]
+                return self._dmi_list[index.row()]
 
             if role == Qt.DisplayRole:
 
-                return self._mci_list[index.row()].name
+                return self._dmi_list[index.row()].name
 
             if role == Qt.EditRole:
 
-                return self._mci_list[index.row()].name
+                return self._dmi_list[index.row()].name
 
         if index.column() == 1:
 
             if role == Qt.DisplayRole:
-                return self._mci_list[index.row()].strasse
+                return self._dmi_list[index.row()].strasse
