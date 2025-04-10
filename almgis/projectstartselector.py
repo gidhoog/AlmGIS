@@ -24,6 +24,6 @@ class AlmProjectStartSelector(QgaProjectStartSelector):
                               QgaStartOptionOther(self),
                               QgaStartOptionNew(self)]
 
-        self.settings_dmc = DmcSettings
+        self.settings_dmc = DmSettings
 
         self._last_project_file = settings_user.value('paths/last_project_file')
