@@ -1,11 +1,11 @@
 from contextlib import contextmanager
 from pathlib import Path
 
-from qga.info_button import InfoButton
+from qga.info_button import QgaInfoButton
 from sqlalchemy import create_engine
 
 from almgis import InfoBtnSessionCls
-from almgis.data_model import McInfoButton
+from almgis.data_model import DmInfoButton
 from almgis.data_session import session_cm
 
 info_btn_db = (Path().absolute()
@@ -33,11 +33,11 @@ def info_session_cm():
     finally:
         session.close()
 
-class AlmInfoButton(InfoButton):
+class AlmInfoButton(QgaInfoButton):
 
     def __init__(self, parent=None):
         super(AlmInfoButton, self).__init__(parent)
 
         self.session_cm = info_session_cm
         self.session = InfoBtnSessionCls()
-        self.mc_info_button = McInfoButton
+        self.dmc_info_button = DmInfoButton
