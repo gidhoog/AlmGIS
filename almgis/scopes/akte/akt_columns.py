@@ -2,7 +2,7 @@ from _operator import attrgetter
 
 from qga.column import QgaTextColumn, QgaFloatColumn, QgaAreaHaColumn
 
-from almgis.data_model import BAkt
+from almgis.data_model import DmAkt
 
 
 class AktNameCol(QgaTextColumn):
@@ -10,10 +10,10 @@ class AktNameCol(QgaTextColumn):
     def __init__(self, name):
         super().__init__(name)
 
-        self.base_mc = BAkt
+        self.base_dmc = DmAkt
 
-    def col_value(self, mci):
-        return mci.name
+    def col_value(self, dmi):
+        return dmi.name
 
 
 class AktAzCol(QgaTextColumn):
@@ -21,10 +21,10 @@ class AktAzCol(QgaTextColumn):
     def __init__(self, name):
         super().__init__(name)
 
-        self.base_mc = BAkt
+        self.base_dmc = DmAkt
 
-    def col_value(self, mci):
-        return mci.az
+    def col_value(self, dmi):
+        return dmi.az
 
 
 class AktWeideareaCol(QgaAreaHaColumn):
@@ -32,16 +32,16 @@ class AktWeideareaCol(QgaAreaHaColumn):
     def __init__(self, name):
         super().__init__(name)
 
-        self.base_mc = BAkt
+        self.base_dmc = DmAkt
 
-    def col_value(self, mci):
+    def col_value(self, dmi):
 
         # kop_area_ha =''
         kop_area = 0.00
 
-        if mci.rel_abgrenzung != []:
+        if dmi.rel_abgrenzung != []:
 
-            last_abgrenzung = max(mci.rel_abgrenzung,
+            last_abgrenzung = max(dmi.rel_abgrenzung,
                               key=attrgetter('jahr'))
 
             for komplex in last_abgrenzung.rel_komplex:
@@ -68,4 +68,4 @@ class AktWeideareaCol(QgaAreaHaColumn):
         #         return '---'
         #     if role == Qt.EditRole:
         #         return 0
-        # return mci.az
+        # return dmi.az
