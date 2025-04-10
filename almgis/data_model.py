@@ -10,11 +10,11 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.hybrid import hybrid_property
 
-class Base(DeclarativeBase):
+class DmBase(DeclarativeBase):
     pass
 
 
-class BAkt(Base):
+class DmAkt(DmBase):
     """
     basisdatenebene für akte
     """
@@ -37,34 +37,34 @@ class BAkt(Base):
     max_gve: Mapped[float]
     nicht_bewirtschaftet: Mapped[bool]
 
-    # rel_bearbeitungsstatus = relationship('BBearbeitungsstatus')
-    rel_bearbeitungsstatus: Mapped["BBearbeitungsstatus"] = relationship(lazy='joined')
+    # rel_bearbeitungsstatus = relationship('DmBearbeitungsstatus')
+    rel_bearbeitungsstatus: Mapped["DmBearbeitungsstatus"] = relationship(lazy='joined')
     rel_bewirtschafter: Mapped["DmKontakt"] = relationship(lazy='joined',
                                                            back_populates='rel_akt')
 
     # rel_gst_zuordnung = relationship(
-    #     'BGstZuordnung',
+    #     'DmGstZuordnung',
     #     back_populates='rel_akt')
-    rel_gst_zuordnung: Mapped[List["BGstZuordnung"]] = relationship(
+    rel_gst_zuordnung: Mapped[List["DmGstZuordnung"]] = relationship(
         back_populates='rel_akt')
 
-    # rel_komplex_name = relationship('BKomplexName', back_populates='rel_akt')
-    rel_komplex_name: Mapped[List["BKomplexName"]] = relationship(
+    # rel_komplex_name = relationship('DmKomplexName', back_populates='rel_akt')
+    rel_komplex_name: Mapped[List["DmKomplexName"]] = relationship(
         back_populates='rel_akt')
 
-    # rel_abgrenzung = relationship('BAbgrenzung',
+    # rel_abgrenzung = relationship('DmAbgrenzung',
     #                               back_populates='rel_akt',
     #                               cascade="all, delete, delete-orphan")
-    rel_abgrenzung: Mapped[List["BAbgrenzung"]] = relationship(
+    rel_abgrenzung: Mapped[List["DmAbgrenzung"]] = relationship(
         back_populates='rel_akt',
         cascade="all, delete, delete-orphan")
 
     def __repr__(self):
-        return "<BAkt(id='%s', name='%s', az='%s')>" % (
+        return "<DmAkt(id='%s', name='%s', az='%s')>" % (
                             self.id, self.name, self.az)
 
 
-class BBanu(Base):
+class DmBanu(DmBase):
     """
     Datenebene für den banu-Wert
     """
@@ -79,11 +79,11 @@ class BBanu(Base):
     nu_name_short: Mapped[str]
     symbol: Mapped[int]
 
-    rel_alm_gst_nutzung: Mapped["BGstNutzung"] = relationship(
+    rel_alm_gst_nutzung: Mapped["DmGstNutzung"] = relationship(
         back_populates='rel_banu')
 
 
-class BBearbeitungsstatus(Base):
+class DmBearbeitungsstatus(DmBase):
     """
     basisdatenebene für den bearbeitungsstatus
     """
@@ -96,10 +96,10 @@ class BBearbeitungsstatus(Base):
     color = Column(String)
 
     def __repr__(self):
-        return f"<BBearbeitungsstatus(id={self.id}, name='{self.name}')>"
+        return f"<DmBearbeitungsstatus(id={self.id}, name='{self.name}')>"
 
 
-class BCutKoppelGstAktuell(Base):
+class DmCutKoppelGstAktuell(DmBase):
     """
     basisdatenebene für den verschnitt von koppel und gst-version
     """
@@ -112,8 +112,8 @@ class BCutKoppelGstAktuell(Base):
     geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
                                srid=31259))
 
-    rel_koppel: Mapped["BKoppel"] = relationship(back_populates='rel_cut_koppel_gst')
-    rel_gstversion: Mapped["BGstVersion"] = relationship(back_populates='rel_cut_koppel_gst')
+    rel_koppel: Mapped["DmKoppel"] = relationship(back_populates='rel_cut_koppel_gst')
+    rel_gstversion: Mapped["DmGstVersion"] = relationship(back_populates='rel_cut_koppel_gst')
 
     # id = Column(Integer, primary_key=True)
     # komplex_id = Column(Integer, ForeignKey('a_alm_koppel.id'))
@@ -122,9 +122,9 @@ class BCutKoppelGstAktuell(Base):
     # geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
     #                            srid=31259))
 
-    # rel_koppel = relationship('BKomplex',
+    # rel_koppel = relationship('DmKomplex',
     #                            back_populates="rel_cut_komplex_gstversion")
-    # rel_gstversion = relationship('BGstVersion',
+    # rel_gstversion = relationship('DmGstVersion',
     #                               back_populates="rel_cut_komplex_gstversion")
 
     @hybrid_property
@@ -142,7 +142,7 @@ class BCutKoppelGstAktuell(Base):
                f"gstversion_id:{self.gst_version_id})"
 
 
-class BErfassungsart(Base):
+class DmErfassungsart(DmBase):
     """
     Mapperklasse für die Erfassungsart einer Abgrenzung
     """
@@ -152,15 +152,15 @@ class BErfassungsart(Base):
     name: Mapped[str]
     name_short: Mapped[str]
 
-    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(
+    rel_abgrenzung: Mapped["DmAbgrenzung"] = relationship(
         back_populates='rel_erfassungsart')
 
     def __repr__(self):
-        return f"<BErfassungsart(id: {self.id}, " \
+        return f"<DmErfassungsart(id: {self.id}, " \
                f"name: {self.name})>"
 
 
-class BGisLayer(Base):
+class DmGisLayer(DmBase):
     """
     Basisdatenebene für gis_layer
     """
@@ -175,15 +175,15 @@ class BGisLayer(Base):
     provider = Column(String)
     layer_typ = Column(String)
 
-    rel_gis_style = relationship('BGisStyle', back_populates="rel_gis_layer")
+    rel_gis_style = relationship('DmGisStyle', back_populates="rel_gis_layer")
 
     def __repr__(self):
-        return f"<BGisLayer(id: {self.id}, " \
+        return f"<DmGisLayer(id: {self.id}, " \
                f"name: {self.name}, " \
                f"provider: {self.provider})>"
 
 
-class BGisLayerMenu(Base):
+class DmGisLayerMenu(DmBase):
     """
     basisdatenebene für menübäume, mit denen man layer auswählen und einfügen
     kann
@@ -197,16 +197,16 @@ class BGisLayerMenu(Base):
     style_id = Column(Integer, ForeignKey('a_gis_style.id'))
     sort = Column(String)
 
-    rel_gis_style = relationship('BGisStyle',
+    rel_gis_style = relationship('DmGisStyle',
                                  back_populates='rel_gis_layer_menu')
 
     def __repr__(self):
-        return f"<BGisLayerMenu(id: {self.id}, " \
+        return f"<DmGisLayerMenu(id: {self.id}, " \
                f"parent_id: {self.parent_id}, " \
                f"name: {self.name})>"
 
 
-class BGisStyle(Base):
+class DmGisStyle(DmBase):
     """
     basisdatenebene für gis_style
     """
@@ -220,25 +220,25 @@ class BGisStyle(Base):
     dataform_modul = Column(String)
     dataform_class = Column(String)
 
-    rel_gis_layer = relationship('BGisLayer',
+    rel_gis_layer = relationship('DmGisLayer',
                                  back_populates="rel_gis_style",
                                  lazy='joined')
-    rel_gis_scope_layer = relationship('BGisScopeLayer',
+    rel_gis_scope_layer = relationship('DmGisScopeLayer',
                                        back_populates="rel_gis_style")
-    rel_gis_style_layer_var = relationship('BGisStyleLayerVar',
+    rel_gis_style_layer_var = relationship('DmGisStyleLayerVar',
                                            back_populates='rel_gis_style',
                                            lazy='joined')
-    rel_gis_layer_menu = relationship('BGisLayerMenu',
+    rel_gis_layer_menu = relationship('DmGisLayerMenu',
                                       back_populates='rel_gis_style',
                                       lazy='joined')
 
     def __repr__(self):
-        return f"<BGisStyle(id: {self.id}, " \
+        return f"<DmGisStyle(id: {self.id}, " \
                f"gis_layer_id: {self.gis_layer_id}, " \
                f"name: {self.name})>"
 
 
-class BGisStyleLayerVar(Base):
+class DmGisStyleLayerVar(DmBase):
     """
     basisdatenebene für layervariablen die je gis-style definiert werden
     können
@@ -251,16 +251,16 @@ class BGisStyleLayerVar(Base):
     value = Column(String)  # wert der variable
     code_value = Column(Boolean)  # True wenn 'value' ein code ist
 
-    rel_gis_style = relationship('BGisStyle',
+    rel_gis_style = relationship('DmGisStyle',
                                  back_populates='rel_gis_style_layer_var')
 
     def __repr__(self):
-        return f"<BGisStyleLayerVar(id: {self.id}, " \
+        return f"<DmGisStyleLayerVar(id: {self.id}, " \
                f"gis_style_id: {self.gis_style_id}, " \
                f"name: {self.name})>"
 
 
-class BGisScope(Base):
+class DmGisScope(DmBase):
     """
     basisdatenebene für gis_scope
     """
@@ -269,15 +269,15 @@ class BGisScope(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
 
-    rel_gis_scope_layer = relationship('BGisScopeLayer',
+    rel_gis_scope_layer = relationship('DmGisScopeLayer',
                                        back_populates="rel_gis_scope")
 
     def __repr__(self):
-        return f"<BGisScope(id: {self.id}, " \
+        return f"<DmGisScope(id: {self.id}, " \
                f"name: {self.name})>"
 
 
-class BGisScopeLayer(Base):
+class DmGisScopeLayer(DmBase):
     """
     basisdatenebene für gis_scope_layer
     """
@@ -293,20 +293,20 @@ class BGisScopeLayer(Base):
     feat_filt_expr = Column(String)
     add = Column(Boolean)
 
-    rel_gis_scope = relationship('BGisScope',
+    rel_gis_scope = relationship('DmGisScope',
                                  back_populates="rel_gis_scope_layer",
                                  lazy='joined')
-    rel_gis_style = relationship('BGisStyle',
+    rel_gis_style = relationship('DmGisStyle',
                                  back_populates="rel_gis_scope_layer",
                                  lazy='joined')
 
     def __repr__(self):
-        return f"<BGisScopeLayer(id: {self.id}, " \
+        return f"<DmGisScopeLayer(id: {self.id}, " \
                f"gis_scope_id: {self.gis_scope_id}, " \
                f"gis_style_id: {self.gis_style_id})>"
 
 
-class BGst(Base):
+class DmGst(DmBase):
     """
     alle grundstücke die aktuell in der DB verfügbar sind
     (alle bereits zugeordneten und die gst, die im gst-importverzeichis sind)
@@ -319,23 +319,23 @@ class BGst(Base):
     gst: Mapped[str]
 
     """folgende Beziehungen sind 'child' Beziehungen"""
-    # rel_alm_gst_version = relationship('BGstVersion',
+    # rel_alm_gst_version = relationship('DmGstVersion',
     #                                    back_populates="rel_alm_gst",
     #                                    cascade="all, delete, delete-orphan",
     #                                    passive_deletes=True)
-    rel_alm_gst_version: Mapped[List["BGstVersion"]] = relationship(
+    rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
         back_populates="rel_alm_gst",
         cascade="all, delete, delete-orphan",
         passive_deletes=True,
         lazy='joined')
 
-    # rel_gst_zuordnung = relationship('BGstZuordnung',
+    # rel_gst_zuordnung = relationship('DmGstZuordnung',
     #                                  back_populates="rel_gst")
-    rel_gst_zuordnung: Mapped[List["BGstZuordnung"]] = relationship(
+    rel_gst_zuordnung: Mapped[List["DmGstZuordnung"]] = relationship(
         back_populates="rel_gst")
     """"""
 
-    rel_kat_gem: Mapped["BKatGem"] = relationship(
+    rel_kat_gem: Mapped["DmKatGem"] = relationship(
         back_populates="rel_alm_gst",
         lazy='joined')
 
@@ -360,7 +360,7 @@ class BGst(Base):
                f"kg_gst: {self.kg_gst}, gst:{self.gst})>"
 
 
-class BGstAwbStatus(Base):
+class DmGstAwbStatus(DmBase):
     """
     alm- und weidebuch-status_id eines grundstückes
     """
@@ -373,14 +373,14 @@ class BGstAwbStatus(Base):
     sort = Column(Integer)
     color_main = Column(String)
 
-    rel_gst_zuordnung = relationship('BGstZuordnung',
+    rel_gst_zuordnung = relationship('DmGstZuordnung',
                                      back_populates='rel_awb_status')
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id={self.id}, name='{self.name}')>"
 
 
-class BGstEigentuemer(Base):
+class DmGstEigentuemer(DmBase):
     """
     basisdatenebene für eigentuemer
     """
@@ -396,9 +396,9 @@ class BGstEigentuemer(Base):
     geb_dat: Mapped[str]
     adresse: Mapped[str]
 
-    # rel_alm_gst_ez = relationship("BGstEz",
+    # rel_alm_gst_ez = relationship("DmGstEz",
     #                               back_populates="rel_alm_gst_eigentuemer")
-    rel_alm_gst_ez: Mapped["BGstEz"] = relationship(
+    rel_alm_gst_ez: Mapped["DmGstEz"] = relationship(
         back_populates="rel_alm_gst_eigentuemer")
 
     def __repr__(self):
@@ -406,7 +406,7 @@ class BGstEigentuemer(Base):
                f"ez_id: {self.ez_id}, kg_ez:{self.kg_ez}, name: {self.name})"
 
 
-class BGstEz(Base):
+class DmGstEz(DmBase):
     """
     basisdatenebene für einlagezahlen (ez)
     """
@@ -421,22 +421,22 @@ class BGstEz(Base):
     datenstand: Mapped[str]
     import_time: Mapped[str]
 
-    # rel_alm_gst_version = relationship("BGstVersion",
+    # rel_alm_gst_version = relationship("DmGstVersion",
     #                                    back_populates="rel_alm_gst_ez")
-    rel_alm_gst_version: Mapped[List["BGstVersion"]] = relationship(
+    rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
         back_populates="rel_alm_gst_ez")
 
-    # rel_alm_gst_eigentuemer = relationship("BGstEigentuemer",
+    # rel_alm_gst_eigentuemer = relationship("DmGstEigentuemer",
     #                                        back_populates="rel_alm_gst_ez",
     #                                        cascade="all, delete-orphan")
-    rel_alm_gst_eigentuemer: Mapped[List["BGstEigentuemer"]] = relationship(
+    rel_alm_gst_eigentuemer: Mapped[List["DmGstEigentuemer"]] = relationship(
         back_populates="rel_alm_gst_ez",
         cascade="all, delete-orphan",
         lazy='joined')
 
-    # rel_kat_gem = relationship("BKatGem",
+    # rel_kat_gem = relationship("DmKatGem",
     #                            back_populates="rel_alm_gst_ez")
-    rel_kat_gem: Mapped["BKatGem"] = relationship(
+    rel_kat_gem: Mapped["DmKatGem"] = relationship(
         back_populates="rel_alm_gst_ez",
         lazy='joined')
 
@@ -445,7 +445,7 @@ class BGstEz(Base):
                f"kgnr: {self.kgnr}, ez: {self.ez})>"
 
 
-class BGstNutzung(Base):
+class DmGstNutzung(DmBase):
     """
     basisdatenebene für die benützungsarten der gst
     """
@@ -459,12 +459,12 @@ class BGstNutzung(Base):
     nu_id: Mapped[int]
     area: Mapped[int]
 
-    # rel_alm_gst_version = relationship("BGstVersion",
+    # rel_alm_gst_version = relationship("DmGstVersion",
     #                                    back_populates="rel_alm_gst_nutzung")
-    rel_alm_gst_version: Mapped["BGstVersion"] = relationship(
+    rel_alm_gst_version: Mapped["DmGstVersion"] = relationship(
         back_populates="rel_alm_gst_nutzung")
 
-    rel_banu: Mapped["BBanu"] = relationship(
+    rel_banu: Mapped["DmBanu"] = relationship(
         back_populates="rel_alm_gst_nutzung",
         lazy='joined')
 
@@ -473,7 +473,7 @@ class BGstNutzung(Base):
                f"gst_version_id: {self.gst_version_id}, ba_id: {self.ba_id})"
 
 
-class BGstVersion(Base):
+class DmGstVersion(DmBase):
     """
     die versionsabhängigen informationen der gst;
     ein jüngerer gst-import (= jüngerer datenstand) bedeutet z.B. eine neue
@@ -500,33 +500,33 @@ class BGstVersion(Base):
     """"""
 
     """'child' Beziehungen:"""
-    # rel_alm_gst_nutzung = relationship('BGstNutzung',
+    # rel_alm_gst_nutzung = relationship('DmGstNutzung',
     #                                    back_populates="rel_alm_gst_version",
     #                                    cascade="all, delete-orphan")
-    rel_alm_gst_nutzung: Mapped[List["BGstNutzung"]] = relationship(
+    rel_alm_gst_nutzung: Mapped[List["DmGstNutzung"]] = relationship(
         back_populates="rel_alm_gst_version",
         cascade="all, delete-orphan",
         lazy='joined')
 
-    # rel_cut_koppel_gst = relationship('BCutKoppelGstAktuell',
+    # rel_cut_koppel_gst = relationship('DmCutKoppelGstAktuell',
     #                                           back_populates="rel_gstversion",
     #                                           cascade="all, delete, delete-orphan")
-    rel_cut_koppel_gst: Mapped[List["BCutKoppelGstAktuell"]] = relationship(
+    rel_cut_koppel_gst: Mapped[List["DmCutKoppelGstAktuell"]] = relationship(
         back_populates="rel_gstversion",
         cascade="all, delete, delete-orphan",
         lazy='joined')
     """"""
 
     """'parent' Beziehungen:"""
-    # rel_alm_gst = relationship('BGst',
+    # rel_alm_gst = relationship('DmGst',
     #                            back_populates="rel_alm_gst_version")
-    rel_alm_gst: Mapped["BGst"] = relationship(
+    rel_alm_gst: Mapped["DmGst"] = relationship(
         back_populates="rel_alm_gst_version",
         lazy='immediate')
 
-    # rel_alm_gst_ez = relationship('BGstEz',
+    # rel_alm_gst_ez = relationship('DmGstEz',
     #                               back_populates="rel_alm_gst_version")
-    rel_alm_gst_ez: Mapped["BGstEz"] = relationship(
+    rel_alm_gst_ez: Mapped["DmGstEz"] = relationship(
         back_populates="rel_alm_gst_version",
         lazy='joined')
     """"""
@@ -548,7 +548,7 @@ class BGstVersion(Base):
                f"gst_id: {self.gst_id}, source_id:{self.source_id})"
 
 
-class BGstZuordnung(Base):
+class DmGstZuordnung(DmBase):
     """
     zuordnung der grundstücke zu einem akt
     """
@@ -577,26 +577,26 @@ class BGstZuordnung(Base):
     # update_user = Column(String, onupdate=os.getlogin())
 
     """alle Beziehungen sind 'parent' Beziehungen"""
-    # rel_akt = relationship('BAkt',
+    # rel_akt = relationship('DmAkt',
     #                        back_populates='rel_gst_zuordnung')
-    rel_akt: Mapped["BAkt"] = relationship(
+    rel_akt: Mapped["DmAkt"] = relationship(
         back_populates="rel_gst_zuordnung",
         lazy='immediate')
 
-    # rel_gst = relationship('BGst',
+    # rel_gst = relationship('DmGst',
     #                        back_populates='rel_gst_zuordnung')
-    rel_gst: Mapped["BGst"] = relationship(
+    rel_gst: Mapped["DmGst"] = relationship(
         back_populates="rel_gst_zuordnung")
 
-    # rel_awb_status = relationship('BGstAwbStatus',
+    # rel_awb_status = relationship('DmGstAwbStatus',
     #                               back_populates='rel_gst_zuordnung')
-    rel_awb_status: Mapped["BGstAwbStatus"] = relationship(
+    rel_awb_status: Mapped["DmGstAwbStatus"] = relationship(
         back_populates="rel_gst_zuordnung",
         lazy='joined')
 
-    # rel_rechtsgrundlage = relationship('BRechtsgrundlage',
+    # rel_rechtsgrundlage = relationship('DmRechtsgrundlage',
     #                                    back_populates='rel_gst_zuordnung')
-    rel_rechtsgrundlage: Mapped["BRechtsgrundlage"] = relationship(
+    rel_rechtsgrundlage: Mapped["DmRechtsgrundlage"] = relationship(
         back_populates="rel_gst_zuordnung",
         lazy='joined')
     """"""
@@ -606,7 +606,7 @@ class BGstZuordnung(Base):
                f"akt_id: {self.akt_id}, gst_id:{self.gst_id})>"
 
 
-class BGstZuordnungMain(Base):
+class DmGstZuordnungMain(DmBase):
     """
     view mit den jüngsten gst die einem akt zugeordnet sind
     """
@@ -631,7 +631,7 @@ class BGstZuordnungMain(Base):
                f"gst: {self.gst})"
 
 
-class McInfoButton(Base):
+class DmInfoButton(DmBase):
     __tablename__ = 'info_button'
 
     id = Column(Integer, primary_key=True)
@@ -640,10 +640,10 @@ class McInfoButton(Base):
     content = Column(String)
 
     def __repr__(self):
-       return f"<<McInfoButton(id='{self.id}', title='{self.title}')>>"
+       return f"<<DmInfoButton(id='{self.id}', title='{self.title}')>>"
 
 
-class BKatGem(Base):
+class DmKatGem(DmBase):
     """
     liste der katastralgemeinden in nö
     """
@@ -656,20 +656,20 @@ class BKatGem(Base):
     pbnr: Mapped[int]
     pbname: Mapped[str]
 
-    # rel_alm_gst_ez = relationship("BGstEz",
+    # rel_alm_gst_ez = relationship("DmGstEz",
     #                               back_populates="rel_kat_gem")
-    rel_alm_gst_ez: Mapped["BGstEz"] = relationship(
+    rel_alm_gst_ez: Mapped["DmGstEz"] = relationship(
         back_populates="rel_kat_gem")
 
-    rel_alm_gst: Mapped["BGst"] = relationship(
+    rel_alm_gst: Mapped["DmGst"] = relationship(
         back_populates="rel_kat_gem")
 
     def __repr__(self):
-        return f"<BKatGem(kgnr: {self.kgnr}, kgname: {self.kgname}, " \
+        return f"<DmKatGem(kgnr: {self.kgnr}, kgname: {self.kgname}, " \
                f"pgname: {self.pgname})"
 
 
-class BAbgrenzung(Base):
+class DmAbgrenzung(DmBase):
     """
     Mapperklasse für eine Abgrenzung der Alm/Weide;
     innerhalb eines Aktes können daher unterschiedliche Abgrenzungen angelegt
@@ -689,21 +689,21 @@ class BAbgrenzung(Base):
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 
-    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_abgrenzung')
-    rel_komplex: Mapped[List["BKomplex"]] = relationship(back_populates='rel_abgrenzung',
+    rel_akt: Mapped["DmAkt"] = relationship(back_populates='rel_abgrenzung')
+    rel_komplex: Mapped[List["DmKomplex"]] = relationship(back_populates='rel_abgrenzung',
                                                          cascade="all, delete, delete-orphan")
-    # rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex_version')
+    # rel_koppel: Mapped[List["DmKoppel"]] = relationship(back_populates='rel_komplex_version')
 
-    rel_erfassungsart: Mapped["BErfassungsart"] = relationship(back_populates='rel_abgrenzung')
-    rel_status: Mapped["BAbgrenzungStatus"] = relationship(back_populates='rel_abgrenzung')
+    rel_erfassungsart: Mapped["DmErfassungsart"] = relationship(back_populates='rel_abgrenzung')
+    rel_status: Mapped["DmAbgrenzungStatus"] = relationship(back_populates='rel_abgrenzung')
 
     def __repr__(self):
-        return f"<BAbgrenzung(id: {self.id}, " \
+        return f"<DmAbgrenzung(id: {self.id}, " \
                f"akt_id: {self.akt_id}, " \
                f"jahr: {self.jahr})>"
 
 
-class BAbgrenzungStatus(Base):
+class DmAbgrenzungStatus(DmBase):
     """
     Mapperklasse für den Status einer Abgrenzung
     """
@@ -713,15 +713,15 @@ class BAbgrenzungStatus(Base):
     name: Mapped[str]
     name_short: Mapped[str]
 
-    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(
+    rel_abgrenzung: Mapped["DmAbgrenzung"] = relationship(
         back_populates='rel_status')
 
     def __repr__(self):
-        return f"<BAbgrenzungStatus(id: {self.id}, " \
+        return f"<DmAbgrenzungStatus(id: {self.id}, " \
                f"name: {self.name})>"
 
 
-class BKomplex(Base):
+class DmKomplex(DmBase):
     """
     Mapperklasse für die Komplexe eines Aktes (entsprechend einer Abgrenzung)
     """
@@ -731,18 +731,18 @@ class BKomplex(Base):
     abgrenzung_id: Mapped[int] = mapped_column(ForeignKey("a_alm_abgrenzung.id"))
     komplex_name_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_name.id"))
 
-    rel_koppel: Mapped[List["BKoppel"]] = relationship(back_populates='rel_komplex',
+    rel_koppel: Mapped[List["DmKoppel"]] = relationship(back_populates='rel_komplex',
                                                        cascade="all, delete, delete-orphan")
-    rel_abgrenzung: Mapped["BAbgrenzung"] = relationship(back_populates='rel_komplex')
-    rel_komplex_name: Mapped["BKomplexName"] = relationship(back_populates='rel_komplex')
+    rel_abgrenzung: Mapped["DmAbgrenzung"] = relationship(back_populates='rel_komplex')
+    rel_komplex_name: Mapped["DmKomplexName"] = relationship(back_populates='rel_komplex')
 
     def __repr__(self):
-        return f"<BKomplex(id: {self.id}, " \
+        return f"<DmKomplex(id: {self.id}, " \
                f"abgrenzung_id: {self.abgrenzung_id}, " \
                f"komplex_name_id: {self.komplex_name_id})>"
 
 
-class BKomplexName(Base):
+class DmKomplexName(DmBase):
     """
     Mapperklasse für die Komplexnamen eines Aktes
     """
@@ -755,16 +755,16 @@ class BKomplexName(Base):
     anmerkung: Mapped[str]
     inaktiv: Mapped[bool]
 
-    rel_akt: Mapped["BAkt"] = relationship(back_populates='rel_komplex_name')
-    # rel_komplex_version: Mapped[List["BKomplexVersion"]] = relationship(back_populates="rel_komplex")
-    rel_komplex: Mapped[List[BKomplex]] = relationship(back_populates='rel_komplex_name')
+    rel_akt: Mapped["DmAkt"] = relationship(back_populates='rel_komplex_name')
+    # rel_komplex_version: Mapped[List["DmKomplexVersion"]] = relationship(back_populates="rel_komplex")
+    rel_komplex: Mapped[List[DmKomplex]] = relationship(back_populates='rel_komplex_name')
 
     def __repr__(self):
-        return f"<BKomplexName(id: {self.id}, " \
+        return f"<DmKomplexName(id: {self.id}, " \
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
 
-class DmKontakt(Base):
+class DmKontakt(DmBase):
     __tablename__ = 'a_alm_kontakt'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -794,13 +794,13 @@ class DmKontakt(Base):
     rel_gem_type: Mapped['DmKontaktGemTyp'] = relationship(lazy="joined")
     rel_type: Mapped['DmKontaktType'] = relationship()
 
-    # children = relationship("BKontakt", back_populates="rel_vertreter")
+    # children = relationship("DmKontakt", back_populates="rel_vertreter")
     children: Mapped[List[
         "DmKontakt"]] = relationship(back_populates="rel_vertreter")
     rel_vertreter = relationship("DmKontakt", lazy="joined", join_depth=1,
                              remote_side=[id])
 
-    rel_akt: Mapped[List["BAkt"]] = relationship(back_populates="rel_bewirtschafter")
+    rel_akt: Mapped[List["DmAkt"]] = relationship(back_populates="rel_bewirtschafter")
 
     __mapper_args__ = {
         'polymorphic_on': type_id
@@ -973,7 +973,7 @@ class DmKontaktGem(DmKontakt):
     }
 
 
-class DmKontaktType(Base):
+class DmKontaktType(DmBase):
     __tablename__ = 'a_alm_kontakt_type'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -987,7 +987,7 @@ class DmKontaktType(Base):
     shortcut_01: Mapped[str]
     module: Mapped[str]
     type_class: Mapped[str]
-    mci_class: Mapped[str]
+    dmi_class: Mapped[str]
     value: Mapped[str]
 
     blank_value: Mapped[bool]
@@ -1000,7 +1000,7 @@ class DmKontaktType(Base):
                f" parent_id={self.parent_id}, name={self.name})>"
 
 
-class DmKontaktGemTyp(Base):
+class DmKontaktGemTyp(DmBase):
     __tablename__ = 'a_alm_kontakt_gem_type'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -1016,7 +1016,7 @@ class DmKontaktGemTyp(Base):
                f"name='{self.name}, "
                f"name_short='{self.name_short}')>")
 
-class BKoppel(Base):
+class DmKoppel(DmBase):
     """
     Datenebene für Koppeln
     """
@@ -1037,8 +1037,8 @@ class BKoppel(Base):
     geometry = Column(Geometry(geometry_type="POLYGON", srid=31259))
     # geometry: Mapped[str]
 
-    rel_komplex: Mapped["BKomplex"] = relationship(back_populates='rel_koppel')
-    rel_cut_koppel_gst: Mapped[List["BCutKoppelGstAktuell"]] = relationship(
+    rel_komplex: Mapped["DmKomplex"] = relationship(back_populates='rel_koppel')
+    rel_cut_koppel_gst: Mapped[List["DmCutKoppelGstAktuell"]] = relationship(
         back_populates='rel_koppel',
         cascade="all, delete, delete-orphan")
 
@@ -1063,12 +1063,12 @@ class BKoppel(Base):
         return aa
 
     def __repr__(self):
-        return f"<BKoppel(id: {self.id}, " \
+        return f"<DmKoppel(id: {self.id}, " \
                f"komplex_id: {self.komplex_id}, " \
                f"nr: {self.nr})>"
 
 
-class BRechtsgrundlage(Base):
+class DmRechtsgrundlage(DmBase):
     """
     basisdatenebene für die rechstgrundlage der grundstücksbewirtschaftung;
     d.h. auf grund welcher rechtlichen situation ein grundstück beweidet wird;
@@ -1082,7 +1082,7 @@ class BRechtsgrundlage(Base):
     sort = Column(Integer)
     color_main = Column(String)
 
-    rel_gst_zuordnung = relationship('BGstZuordnung',
+    rel_gst_zuordnung = relationship('DmGstZuordnung',
                                      back_populates='rel_rechtsgrundlage')
 
     def __repr__(self):
@@ -1090,7 +1090,7 @@ class BRechtsgrundlage(Base):
                f"name='{self.name}')>"
 
 
-class McSettings(Base):
+class DmSettings(DmBase):
     """
     Einstellungen die vom Benutzer verändert werden können
     """
@@ -1106,7 +1106,7 @@ class McSettings(Base):
         return f"<{self.__class__.__name__}(id={self.id}, " \
                f"code='{self.code}, name='{self.name}')>"
 
-class BSys(Base):
+class DmSys(DmBase):
     """
     Systemwerte
     """
