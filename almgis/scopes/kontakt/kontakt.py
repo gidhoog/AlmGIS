@@ -10,7 +10,7 @@ from almgis.scopes.kontakt import kontakt_UI
 
 from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmKontaktEinzel, \
     DmKontaktGem
-from qga.tools import getMciState
+from qga.tools import getDmiState
 
 from almgis.entity import AlmEntity
 
@@ -37,11 +37,11 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
     @property  # getter
     def vertreter_id(self):
 
-        # type_mci = self.uiTypCombo.currentData(Qt.UserRole)
+        # type_dmi = self.uiTypCombo.currentData(Qt.UserRole)
 
-        # self._type_id = type_mci.id
+        # self._type_id = type_dmi.id
         self._vertreter_id = self.uiVertreterCombo.currentData(Qt.UserRole + 1)
-        # self.rel_type = type_mci
+        # self.rel_type = type_dmi
         return self._vertreter_id
 
     @vertreter_id.setter
@@ -70,11 +70,11 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
             self._vertreter_id = 0
 
     @property  # getter
-    def vertreter_mci(self):
+    def vertreter_dmi(self):
 
-        vertreter_mci = self.uiVertreterCombo.currentData(Qt.UserRole + 2)
-        # self.rel_type = type_mci
-        return vertreter_mci
+        vertreter_dmi = self.uiVertreterCombo.currentData(Qt.UserRole + 2)
+        # self.rel_type = type_dmi
+        return vertreter_dmi
 
     @property  # getter
     def gem_type_id(self):
@@ -108,11 +108,11 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
             self._gem_type_id = 0
 
     @property  # getter
-    def gem_type_mci(self):
+    def gem_type_dmi(self):
 
-        gem_type_mci = self.uiTypCombo.currentData(Qt.UserRole)
-        # self.rel_type = type_mci
-        return gem_type_mci
+        gem_type_dmi = self.uiTypCombo.currentData(Qt.UserRole)
+        # self.rel_type = type_dmi
+        return gem_type_dmi
 
     @property  # getter
     def nachname(self):
@@ -270,7 +270,7 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
         self.setupCodeUi()
         self.uiVertreterCombo.session = self.session
 
-        self._entity_mc = DmKontaktGem
+        self._entity_dmc = DmKontaktGem
         # self.data_class = BKontakt
 
     # def addNewEntity(self):
@@ -316,18 +316,18 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
     def setGeminschaftsTypeCombo(self):
 
         stmt = select(DmKontaktGemTyp).order_by(DmKontaktGemTyp.sort)
-        gem_type_mci = self.session.scalars(stmt).all()
+        gem_type_dmi = self.session.scalars(stmt).all()
 
 
         """erstelle ein model mit 1 spalten für das type-combo"""
-        type_model = QStandardItemModel(len(gem_type_mci), 1)
-        for i in range(len(gem_type_mci)):
+        type_model = QStandardItemModel(len(gem_type_dmi), 1)
+        for i in range(len(gem_type_dmi)):
             type_model.setData(type_model.index(i, 0),
-                                          gem_type_mci[i].name, Qt.DisplayRole)
+                                          gem_type_dmi[i].name, Qt.DisplayRole)
             type_model.setData(type_model.index(i, 0),
-                                          gem_type_mci[i].id, Qt.UserRole + 1)
+                                          gem_type_dmi[i].id, Qt.UserRole + 1)
             type_model.setData(type_model.index(i, 0),
-                                          gem_type_mci[i], Qt.UserRole)
+                                          gem_type_dmi[i], Qt.UserRole)
         """"""
 
         """weise dem combo das model zu"""
@@ -340,17 +340,17 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
     #         BKontakt).where(
     #         BKontakt.type_id == 0).order_by(
     #         func.lower(BKontakt.name))
-    #     vertreter_mci_list = self.entity_session.scalars(vertreter_stmt).all()
+    #     vertreter_dmi_list = self.entity_session.scalars(vertreter_stmt).all()
     #
     #     """erstelle ein model mit 1 spalten für das type-combo"""
-    #     vertreter_model = QStandardItemModel(len(vertreter_mci_list), 1)
-    #     for i in range(len(vertreter_mci_list)):
+    #     vertreter_model = QStandardItemModel(len(vertreter_dmi_list), 1)
+    #     for i in range(len(vertreter_dmi_list)):
     #         vertreter_model.setData(vertreter_model.index(i, 0),
-    #                                       vertreter_mci_list[i].name, Qt.DisplayRole)
+    #                                       vertreter_dmi_list[i].name, Qt.DisplayRole)
     #         vertreter_model.setData(vertreter_model.index(i, 0),
-    #                                       vertreter_mci_list[i].id, Qt.UserRole + 1)
+    #                                       vertreter_dmi_list[i].id, Qt.UserRole + 1)
     #         vertreter_model.setData(vertreter_model.index(i, 0),
-    #                                       vertreter_mci_list[i], Qt.UserRole + 2)
+    #                                       vertreter_dmi_list[i], Qt.UserRole + 2)
     #     """"""
     #
     #     """weise dem combo das model zu"""
@@ -359,30 +359,30 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
 
     def mapEntityData(self, model=None):
 
-        if self._entity_mci.gem_type_id != 0:  # keine Einzelperson
-            self.gem_type_id = self._entity_mci.gem_type_id
+        if self._entity_dmi.gem_type_id != 0:  # keine Einzelperson
+            self.gem_type_id = self._entity_dmi.gem_type_id
 
-        self.nachname = self._entity_mci.nachname
-        self.vorname = self._entity_mci.vorname
-        self.strasse = self._entity_mci.strasse
-        self.plz = self._entity_mci.plz
-        self.ort = self._entity_mci.ort
+        self.nachname = self._entity_dmi.nachname
+        self.vorname = self._entity_dmi.vorname
+        self.strasse = self._entity_dmi.strasse
+        self.plz = self._entity_dmi.plz
+        self.ort = self._entity_dmi.ort
 
-        self.telefon1 = self._entity_mci.telefon1
-        self.telefon2 = self._entity_mci.telefon2
-        self.telefon3 = self._entity_mci.telefon3
-        self.mail1 = self._entity_mci.mail1
-        self.mail2 = self._entity_mci.mail2
-        self.mail3 = self._entity_mci.mail3
+        self.telefon1 = self._entity_dmi.telefon1
+        self.telefon2 = self._entity_dmi.telefon2
+        self.telefon3 = self._entity_dmi.telefon3
+        self.mail1 = self._entity_dmi.mail1
+        self.mail2 = self._entity_dmi.mail2
+        self.mail3 = self._entity_dmi.mail3
 
-        self.anm = self._entity_mci.anm
+        self.anm = self._entity_dmi.anm
 
-        self.vertreter_id = self._entity_mci.vertreter_id
+        self.vertreter_id = self._entity_dmi.vertreter_id
         self.displayVertreterAdresse()
 
     def displayVertreterAdresse(self):
 
-        # vertreter = self.uiVertreterCombo.currentData(ComboModel.MciRole)
+        # vertreter = self.uiVertreterCombo.currentData(ComboModel.DmiRole)
         vertreter = self.uiVertreterCombo.currentData(Qt.UserRole + 2)
 
         if vertreter is None:
@@ -454,40 +454,40 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
                 self.uiMail3Ledit.setFocus()
                 self.valid = False
 
-    def getEntityMci(self, session, entity_id):
+    def getEntityDmi(self, session, entity_id):
 
-        mci = session.scalars(
+        dmi = session.scalars(
             select(DmKontakt)
             .where(DmKontakt.id == entity_id)
         ).unique().first()
 
-        return mci
+        return dmi
 
     def submitEntity(self):
         """
         set the shown_name befor submitting
         :return:
         """
-        self._entity_mci.gem_type_id = self.gem_type_id
-        self._entity_mci.rel_gem_type = self.gem_type_mci
-        self._entity_mci.nachname = self.nachname
-        self._entity_mci.vorname = self.vorname
-        self._entity_mci.strasse = self.strasse
+        self._entity_dmi.gem_type_id = self.gem_type_id
+        self._entity_dmi.rel_gem_type = self.gem_type_dmi
+        self._entity_dmi.nachname = self.nachname
+        self._entity_dmi.vorname = self.vorname
+        self._entity_dmi.strasse = self.strasse
 
-        self._entity_mci.plz = self.plz
+        self._entity_dmi.plz = self.plz
 
-        self._entity_mci.ort = self.ort
-        self._entity_mci.telefon1 = self.telefon1
-        self._entity_mci.telefon2 = self.telefon2
-        self._entity_mci.telefon3 = self.telefon3
-        self._entity_mci.mail1 = self.mail1
-        self._entity_mci.mail2 = self.mail2
-        self._entity_mci.mail3 = self.mail3
+        self._entity_dmi.ort = self.ort
+        self._entity_dmi.telefon1 = self.telefon1
+        self._entity_dmi.telefon2 = self.telefon2
+        self._entity_dmi.telefon3 = self.telefon3
+        self._entity_dmi.mail1 = self.mail1
+        self._entity_dmi.mail2 = self.mail2
+        self._entity_dmi.mail3 = self.mail3
 
-        self._entity_mci.anm = self.anm
+        self._entity_dmi.anm = self.anm
 
-        self._entity_mci.vertreter_id = self.vertreter_id
-        self._entity_mci.rel_vertreter = self.vertreter_mci
+        self._entity_dmi.vertreter_id = self.vertreter_id
+        self._entity_dmi.rel_vertreter = self.vertreter_dmi
 
     def signals(self):
         super().signals()
@@ -504,7 +504,7 @@ class KontaktEinzel(Kontakt):
         super(__class__, self).__init__(parent)
         self.setupCodeUi()
 
-        self._entity_mc = DmKontaktEinzel
+        self._entity_dmc = DmKontaktEinzel
 
     def setupCodeUi(self):
         super().setupCodeUi()
@@ -527,32 +527,32 @@ class KontaktEinzel(Kontakt):
 
     def submitEntity(self):
 
-        # einzel_typ_mci = self.session.get(BKontaktGemTyp, 0)
+        # einzel_typ_dmi = self.session.get(BKontaktGemTyp, 0)
         # leerer_kontakt = self.session.get(BKontakt, 0)
 
-        # self._entity_mci.type_id = 0
-        # self._entity_mci.rel_type = einzel_typ_mci
+        # self._entity_dmi.type_id = 0
+        # self._entity_dmi.rel_type = einzel_typ_dmi
 
-        self._entity_mci.nachname = self.nachname
-        self._entity_mci.vorname = self.vorname
-        self._entity_mci.strasse = self.strasse
+        self._entity_dmi.nachname = self.nachname
+        self._entity_dmi.vorname = self.vorname
+        self._entity_dmi.strasse = self.strasse
 
-        self._entity_mci.plz = self.plz
+        self._entity_dmi.plz = self.plz
 
-        self._entity_mci.ort = self.ort
-        self._entity_mci.telefon1 = self.telefon1
-        self._entity_mci.telefon2 = self.telefon2
-        self._entity_mci.telefon3 = self.telefon3
-        self._entity_mci.mail1 = self.mail1
-        self._entity_mci.mail2 = self.mail2
-        self._entity_mci.mail3 = self.mail3
+        self._entity_dmi.ort = self.ort
+        self._entity_dmi.telefon1 = self.telefon1
+        self._entity_dmi.telefon2 = self.telefon2
+        self._entity_dmi.telefon3 = self.telefon3
+        self._entity_dmi.mail1 = self.mail1
+        self._entity_dmi.mail2 = self.mail2
+        self._entity_dmi.mail3 = self.mail3
 
-        self._entity_mci.anm = self.anm
+        self._entity_dmi.anm = self.anm
 
-        # self._entity_mci.vertreter_id = 0
-        # self._entity_mci.rel_vertreter = leerer_kontakt
+        # self._entity_dmi.vertreter_id = 0
+        # self._entity_dmi.rel_vertreter = leerer_kontakt
 
-        self._entity_mci.gem_type_id = 0
+        self._entity_dmi.gem_type_id = 0
 
 
 class KontaktNewSelector(QWidget):
@@ -596,17 +596,17 @@ class KontaktNewSelector(QWidget):
     #
     #     entity_widget.initEntityWidget()
     #
-    #     mci = BKontakt()
+    #     dmi = BKontakt()
     #
     #     entity_widget.purpose = 'add'
     #     entity_widget._commit_on_apply = False
     #
-    #     self.edit_entity = mci
-    #     self.parent.session.add(mci)
+    #     self.edit_entity = dmi
+    #     self.parent.session.add(dmi)
     #
     #
     #     entity_widget.setEntitySession(self.parent.session)
-    #     entity_widget.editEntity(entity_mci=mci)
+    #     entity_widget.editEntity(entity_dmi=dmi)
     #
     #     entity_dialog = AlmEntityDialog(parent=self.parent.uiBewirtschafterCombo)
     #
@@ -617,7 +617,7 @@ class KontaktNewSelector(QWidget):
     #     entity_dialog.insertWidget(entity_widget)
     #     # entity_dialog.resize(self.minimumSizeHint())
     #
-    #     akt_status_vor = getMciState(self.parent._entity_mci)
+    #     akt_status_vor = getDmiState(self.parent._entity_dmi)
     #     print(f'akt_status_vor: {akt_status_vor}')
     #
     #     # entity_dialog.show()
@@ -625,14 +625,14 @@ class KontaktNewSelector(QWidget):
     #
     #     if result:
     #         self.parent.uiBewirtschafterCombo.combo_view.model().sourceModel().layoutAboutToBeChanged.emit()
-    #         self.parent.uiBewirtschafterCombo._mci_list.append(mci)
+    #         self.parent.uiBewirtschafterCombo._dmi_list.append(dmi)
     #         self.parent.uiBewirtschafterCombo.combo_view.model().sourceModel().layoutChanged.emit()
     #
-    #     akt_status_nach = getMciState(self.parent._entity_mci)
+    #     akt_status_nach = getDmiState(self.parent._entity_dmi)
     #     print(f'akt_status_nach: {akt_status_nach}')
     #
     #     print('new kontakt added!')
     #
-    #     self.parent.uiBewirtschafterCombo.setCurrentIndex(self.parent.uiBewirtschafterCombo.combo_view.model().sourceModel()._mci_list.index(mci))
+    #     self.parent.uiBewirtschafterCombo.setCurrentIndex(self.parent.uiBewirtschafterCombo.combo_view.model().sourceModel()._dmi_list.index(dmi))
     #
     #     self.close()
