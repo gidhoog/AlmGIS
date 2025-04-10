@@ -20,7 +20,7 @@ from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
 
-from almgis.data_model import DmKontakt, DmKontaktGemTyp, BAkt, DmKontaktType
+from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType
 from almgis.entity import AlmEntityDialog
 from almgis.fields import KontaktField, GeneralField
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
@@ -274,7 +274,7 @@ class KontaktMain(AlmDataView):
             all_vertreter_ids_stmt = select(DmKontakt.vertreter_id)
             all_vertreter_ids = session.scalars(all_vertreter_ids_stmt).all()
 
-            bewirtschafter_ids_stmt = select(BAkt.bewirtschafter_id)
+            bewirtschafter_ids_stmt = select(DmAkt.bewirtschafter_id)
             bewirtschafter_ids = session.scalars(bewirtschafter_ids_stmt).all()
 
         if dmi.id in all_vertreter_ids or dmi.id in bewirtschafter_ids:
