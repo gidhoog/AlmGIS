@@ -45,7 +45,7 @@ class KontaktEntityDialog(AlmEntityDialog):
         if accepted_entity is not False:
 
             if self.dialogWidget.purpose == 'add':
-                self.parent.mci_list.append(accepted_entity)
+                self.parent.dmi_list.append(accepted_entity)
 
             self.parent.update_data_view.emit(self.dialogWidget.purpose,
                                               False)
@@ -86,9 +86,9 @@ class KontaktModel(QgaTableModel):
     #     'Verwendung'
     # ]
 
-    def __init__(self, mci_list=None, layerCache=None,
+    def __init__(self, dmi_list=None, layerCache=None,
                  columns=None, parent=None):
-        super().__init__(mci_list, layerCache, columns, parent)
+        super().__init__(dmi_list, layerCache, columns, parent)
 
         print(f'....')
 
@@ -120,11 +120,11 @@ class KontaktModel(QgaTableModel):
     #         if role == Qt.DisplayRole:
     #
     #             column = self._columns[index.column()]
-    #             # value = self._mci_list[index.row()][index.column()]
-    #             mci = self._mci_list[index.row()]
+    #             # value = self._dmi_list[index.row()][index.column()]
+    #             dmi = self._dmi_list[index.row()]
     #
     #             # Delegate role handling to the column class
-    #             return column.handle_role(role, mci)
+    #             return column.handle_role(role, dmi)
     #
     #     return super().data(index, role)
     #
@@ -133,7 +133,7 @@ class KontaktModel(QgaTableModel):
     #     definiere die zeilenanzahl
     #     """
     #
-    #     return len(self._mci_list)
+    #     return len(self._dmi_list)
     #
     # def columnCount(self, parent: QModelIndex = ...):
     #     """
@@ -163,11 +163,11 @@ class KontaktModel(QgaTableModel):
         #     return QVariant()
         #
         # column = self._columns[index.column()]
-        # # value = self._mci_list[index.row()][index.column()]
-        # mci = self._mci_list[index.row()]
+        # # value = self._dmi_list[index.row()][index.column()]
+        # dmi = self._dmi_list[index.row()]
         #
         # # Delegate role handling to the column class
-        # return column.handle_role(role, mci)
+        # return column.handle_role(role, dmi)
 
     # def data(self, index, role=None):
     #
@@ -187,50 +187,50 @@ class KontaktModel(QgaTableModel):
     #     if index.column() == 0:
     #         if role == Qt.DisplayRole:
     #
-    #             if self.parent.mci_list[row].type_id == 0:
-    #                 return self.parent.mci_list[row].rel_type.name
+    #             if self.parent.dmi_list[row].type_id == 0:
+    #                 return self.parent.dmi_list[row].rel_type.name
     #             else:
-    #                 return self.parent.mci_list[row].rel_gem_type.name
-    #             # return self.mci_list[row][0]
+    #                 return self.parent.dmi_list[row].rel_gem_type.name
+    #             # return self.dmi_list[row][0]
     #
     #         if role == Qt.EditRole:
-    #             return self.parent.mci_list[row].rel_type.id
+    #             return self.parent.dmi_list[row].rel_type.id
     #
     #     if index.column() == 1:
     #         if role == Qt.DisplayRole:
-    #             return self.parent.mci_list[row].name
+    #             return self.parent.dmi_list[row].name
     #         if role == Qt.EditRole:
-    #             return self.parent.mci_list[row].name
+    #             return self.parent.dmi_list[row].name
     #
     #     if index.column() == 2:
     #         if role == Qt.DisplayRole:
     #
-    #             if self.parent.mci_list[row].rel_type.id == 0:
+    #             if self.parent.dmi_list[row].rel_type.id == 0:
     #                 return ''
     #             else:
-    #                 return self.parent.mci_list[row].rel_vertreter.name
+    #                 return self.parent.dmi_list[row].rel_vertreter.name
     #
     #     if index.column() == 3:
     #         if role == Qt.DisplayRole:
-    #             return self.parent.mci_list[row].adresse
-    #             # return self.mci_list[row][1]
+    #             return self.parent.dmi_list[row].adresse
+    #             # return self.dmi_list[row][1]
     #
     #     if index.column() == 4:
     #         if role == Qt.DisplayRole:
-    #             return self.parent.mci_list[row].telefon_all
+    #             return self.parent.dmi_list[row].telefon_all
     #
     #     if index.column() == 5:
     #         if role == Qt.DisplayRole:
-    #             return self.parent.mci_list[row].mail_all
+    #             return self.parent.dmi_list[row].mail_all
     #
     #     if index.column() == 6:
     #         if role == Qt.DisplayRole:
     #             verwendung = []
-    #             if self.parent.mci_list[row].rel_akt is not None:
-    #                 for a in self.parent.mci_list[row].rel_akt:
+    #             if self.parent.dmi_list[row].rel_akt is not None:
+    #                 for a in self.parent.dmi_list[row].rel_akt:
     #                     verwendung.append(f'Akt: {a.name}')
-    #             if self.parent.mci_list[row].children is not None:
-    #                 for n in self.parent.mci_list[row].children:
+    #             if self.parent.dmi_list[row].children is not None:
+    #                 for n in self.parent.dmi_list[row].children:
     #                     verwendung.append(f'VertreterIn: {n.name}')
     #
     #             verwendung_text = ", ".join(str(v) for v in verwendung)
@@ -241,8 +241,8 @@ class KontaktModel(QgaTableModel):
 class KontaktMain(AlmDataView):
 
     _model_class = KontaktModel
-    _entity_mc = DmKontakt
-    _type_mc = DmKontaktType
+    _entity_dmc = DmKontakt
+    _type_dmc = DmKontaktType
 
     entity_dialog_class = KontaktEntityDialog
 
@@ -268,7 +268,7 @@ class KontaktMain(AlmDataView):
             fields_list=self.getFeatureFields()
         )
 
-    def deleteCheck(self, mci):
+    def deleteCheck(self, dmi):
 
         with session_cm() as session:
             all_vertreter_ids_stmt = select(DmKontakt.vertreter_id)
@@ -277,8 +277,8 @@ class KontaktMain(AlmDataView):
             bewirtschafter_ids_stmt = select(BAkt.bewirtschafter_id)
             bewirtschafter_ids = session.scalars(bewirtschafter_ids_stmt).all()
 
-        if mci.id in all_vertreter_ids or mci.id in bewirtschafter_ids:
-            print(f'====> mci in use: {mci}')
+        if dmi.id in all_vertreter_ids or dmi.id in bewirtschafter_ids:
+            print(f'====> dmi in use: {dmi}')
             return False
         else:
             return True
@@ -353,15 +353,15 @@ class KontaktMain(AlmDataView):
     #     # entity_widget.initEntityWidget()
     #     entity_widget.setupCodeUi()
     #
-    #     mci = BKontakt()
+    #     dmi = BKontakt()
     #
     #     entity_widget.purpose = 'add'
     #
-    #     self.edit_entity = mci
-    #     self.session.add(mci)
+    #     self.edit_entity = dmi
+    #     self.session.add(dmi)
     #
     #     self.editRow(entity_widget=entity_widget,
-    #                  entity_mci=mci)
+    #                  entity_dmi=dmi)
 
     # def addKontakt(self, type='einzel'):
     #
@@ -374,15 +374,15 @@ class KontaktMain(AlmDataView):
     #
     #     entity_widget.initEntityWidget()
     #
-    #     mci = BKontakt()
+    #     dmi = BKontakt()
     #
     #     entity_widget.purpose = 'add'
     #
-    #     self.edit_entity = mci
-    #     self.dataview_session.add(mci)
+    #     self.edit_entity = dmi
+    #     self.dataview_session.add(dmi)
     #
     #     self.editRow(entity_widget=entity_widget,
-    #                  entity_mci=mci)
+    #                  entity_dmi=dmi)
 
     def finalInit(self):
         super().finalInit()
@@ -427,27 +427,27 @@ class KontaktMain(AlmDataView):
     #                        adresse_fld
     #                        )
 
-    def setFeatureAttributes(self, feature, mci):
+    def setFeatureAttributes(self, feature, dmi):
 
-        # feature['type'] = mci.rel_type.name
-        # feature['gem_type'] = mci.rel_gem_type.name
-        # feature['name'] = mci.name
-        # feature['adresse'] = mci.adresse
+        # feature['type'] = dmi.rel_type.name
+        # feature['gem_type'] = dmi.rel_gem_type.name
+        # feature['name'] = dmi.name
+        # feature['adresse'] = dmi.adresse
 
         for field in self.fields:
 
-            # feature[field.name()] = field.fieldValue(mci)
-            feature[field.name()] = field.getFieldValue(mci)
+            # feature[field.name()] = field.fieldValue(dmi)
+            feature[field.name()] = field.getFieldValue(dmi)
 
-        # feature['id'] = mci.rel_type.name
-        # feature['name'] = mci.rel_gem_type.name
-        # feature['adresse'] = mci.name
-        # feature['telefon_all'] = mci.adresse
+        # feature['id'] = dmi.rel_type.name
+        # feature['name'] = dmi.rel_gem_type.name
+        # feature['adresse'] = dmi.name
+        # feature['telefon_all'] = dmi.adresse
 
-    def setFeaturesFromMci(self):
-        super().setFeaturesFromMci()
+    def setFeaturesFromDmi(self):
+        super().setFeaturesFromDmi()
 
-        for kontakt in self.mci_list:
+        for kontakt in self.dmi_list:
 
             feat = QgaFeature(self.layer.fields(), self)
 
@@ -690,14 +690,14 @@ class KontaktMain(AlmDataView):
 
         return del_info
 
-    # def get_entity_widget_class(self, entity_mci):
+    # def get_entity_widget_class(self, entity_dmi):
     #
-    #     if entity_mci.rel_type.gemeinschaft:
+    #     if entity_dmi.rel_type.gemeinschaft:
     #         return Kontakt
     #     else:
     #         return KontaktEinzel
 
-    def getMciList(self):
+    def getDmiList(self):
 
         # session = DbSession()
 
@@ -707,25 +707,25 @@ class KontaktMain(AlmDataView):
         )
                 .where(DmKontakt.blank_value == 0))
 
-        mci = self.session.scalars(stmt).all()
+        dmi = self.session.scalars(stmt).all()
 
-        return mci
+        return dmi
 
     # def getCustomData(self, session):
     #
     #     custom_data = {}
     #
     #     type_stmt = select(BKontaktGemTyp).order_by(BKontaktGemTyp.sort)
-    #     type_mci = session.scalars(type_stmt).all()
+    #     type_dmi = session.scalars(type_stmt).all()
     #
-    #     custom_data['typ'] = type_mci
+    #     custom_data['typ'] = type_dmi
     #
     #     vertr_kontakte_stmt = ((select(BKontakt)
     #                      .options(joinedload(BKontakt.rel_type)))
     #                            .where(BKontaktGemTyp.gemeinschaft == 0))
-    #     vertr_kontakte_mci = session.scalars(vertr_kontakte_stmt).all()
+    #     vertr_kontakte_dmi = session.scalars(vertr_kontakte_stmt).all()
     #
-    #     custom_data['vertr_kontakte'] = vertr_kontakte_mci
+    #     custom_data['vertr_kontakte'] = vertr_kontakte_dmi
     #
     #     return custom_data
 
@@ -749,5 +749,5 @@ class KontaktMain(AlmDataView):
         self.columns.append(KontaktAdresseCol('Adresse'))
 
         vertreter = KontaktNameCol('Vertreter')
-        vertreter.set_mci_attr('rel_vertreter')
+        vertreter.set_dmi_attr('rel_vertreter')
         self.columns.append(vertreter)
