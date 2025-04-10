@@ -20,9 +20,9 @@ from geoalchemy2.shape import to_shape
 
 from sqlalchemy import func, select
 
-from almgis.data_model import BGstZuordnung, BGst, BGstEz, \
-    BGstVersion, BKatGem, BGstAwbStatus, BRechtsgrundlage, BCutKoppelGstAktuell, \
-    BKomplex, BAkt, BKoppel, BAbgrenzung
+from almgis.data_model import DmGstZuordnung, DmGst, DmGstEz, \
+    DmGstVersion, DmKatGem, DmGstAwbStatus, DmRechtsgrundlage, DmCutKoppelGstAktuell, \
+    DmKomplex, DmAkt, DmKoppel, DmAbgrenzung
 from almgis.data_view import AlmDataView
 from almgis.entity import AlmEntityDialog
 # from almgis.gis_item import GisItem
@@ -265,7 +265,7 @@ class GstAllDataView(AlmDataView):
         # self.entity_dialog_class = GstDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
-        self._entity_dmc = BGstZuordnung
+        self._entity_dmc = DmGstZuordnung
         self._model_class = GstAllTableModel
         # self._model_class = QgaTableModel
 
@@ -316,9 +316,9 @@ class GstAllDataView(AlmDataView):
 
     def getDmiList(self):
 
-        stmt = ((select(BGstZuordnung))
-                .join(BGstZuordnung.rel_gst)
-                .group_by(BGst.id))
+        stmt = ((select(DmGstZuordnung))
+                .join(DmGstZuordnung.rel_gst)
+                .group_by(DmGst.id))
         # dmi = session.scalars(stmt).unique().all()
         dmi = self.session.scalars(stmt).all()
 
