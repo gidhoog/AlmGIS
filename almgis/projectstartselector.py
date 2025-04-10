@@ -1,7 +1,7 @@
 from qga.projectstartselector import *
 
 from almgis import settings_user
-from almgis.data_model import McSettings
+from almgis.data_model import DmSettings
 from almgis.logger import Logger
 
 
@@ -24,6 +24,6 @@ class AlmProjectStartSelector(QgaProjectStartSelector):
                               QgaStartOptionOther(self),
                               QgaStartOptionNew(self)]
 
-        self.settings_mc = McSettings
+        self.settings_dmc = DmcSettings
 
         self._last_project_file = settings_user.value('paths/last_project_file')
