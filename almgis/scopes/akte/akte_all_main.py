@@ -13,7 +13,7 @@ from almgis import settings_general
 # from almgis import session_cm, DbSession
 # from almgis.data_session import session_cm, DbSession
 # from almgis.config import Config
-from almgis.data_model import BAkt, BBearbeitungsstatus
+from almgis.data_model import DmAkt, DmBearbeitungsstatus
 # from qga.entity import EntityDialog
 from qga.data_view import QgaDataView, QgaTableModel
 from qga.main_widget import QgaMainWidget
@@ -80,12 +80,12 @@ class AktAllModel(QgaTableModel):
             return QVariant()
 
         column = self._columns[index.column()]
-        # value = self._mci_list[index.row()][index.column()]
-        # mci = self._mci_list[index.row()]
-        mci = self.parent.mci_list[index.row()]
+        # value = self._dmi_list[index.row()][index.column()]
+        # dmi = self._dmi_list[index.row()]
+        dmi = self.parent.dmi_list[index.row()]
 
         # Delegate role handling to the column class
-        return column.handle_role(role, mci)
+        return column.handle_role(role, dmi)
 
     # def data(self, index: QModelIndex, role: int = ...):
     #
@@ -109,9 +109,9 @@ class AktAllModel(QgaTableModel):
     #
     #         if index.column() == 2:
     #
-    #             if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
+    #             if self.parent.dmi_list[row].rel_bearbeitungsstatus is not None:
     #
-    #                 color_str = self.parent.mci_list[row].rel_bearbeitungsstatus.color
+    #                 color_str = self.parent.dmi_list[row].rel_bearbeitungsstatus.color
     #                 color_list = color_str.split(", ")
     #
     #                 return QColor(int(color_list[0]),
@@ -121,57 +121,57 @@ class AktAllModel(QgaTableModel):
     #
     #     if index.column() == 0:
     #         if role == Qt.DisplayRole:
-    #             return self.parent.mci_list[row].az
+    #             return self.parent.dmi_list[row].az
     #         # if role == Qt.EditRole:
-    #         #     return self.parent._mci_list[row].az
+    #         #     return self.parent._dmi_list[row].az
     #
     #         if role == Qt.ForegroundRole:
-    #             if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
+    #             if self.parent.dmi_list[row].nicht_bewirtschaftet == 1:
     #                 return QBrush(Qt.gray)
     #
     #     if index.column() == 1:
     #         if role == Qt.DisplayRole:
-    #             return self.parent.mci_list[row].name
+    #             return self.parent.dmi_list[row].name
     #         # if role == Qt.EditRole:
-    #         #     return self.parent.mci_list[row].name
+    #         #     return self.parent.dmi_list[row].name
     #
     #         if role == Qt.ForegroundRole:
-    #             if self.parent.mci_list[row].nicht_bewirtschaftet == 1:
+    #             if self.parent.dmi_list[row].nicht_bewirtschaftet == 1:
     #                 return QBrush(Qt.gray)
     #
     #     if index.column() == 2:
     #
-    #         if self.parent.mci_list[row].rel_bearbeitungsstatus is not None:
+    #         if self.parent.dmi_list[row].rel_bearbeitungsstatus is not None:
     #
     #             if role == Qt.DisplayRole:
-    #                 return self.parent.mci_list[row].rel_bearbeitungsstatus.name
+    #                 return self.parent.dmi_list[row].rel_bearbeitungsstatus.name
     #             if role == Qt.EditRole:
-    #                 return self.parent.mci_list[row].bearbeitungsstatus_id
+    #                 return self.parent.dmi_list[row].bearbeitungsstatus_id
     #
     #     if index.column() == 3:
     #         if role == Qt.DisplayRole:
-    #             return self.parent.mci_list[row].stz
+    #             return self.parent.dmi_list[row].stz
     #
     #     if index.column() == 4:
     #         # if role == Qt.DisplayRole:
-    #         #     return self.parent.mci_list[row].anm
-    #         if self.parent.mci_list[row].rel_bewirtschafter is not None:
+    #         #     return self.parent.dmi_list[row].anm
+    #         if self.parent.dmi_list[row].rel_bewirtschafter is not None:
     #
     #             if role == Qt.DisplayRole:
-    #                 return self.parent.mci_list[row].rel_bewirtschafter.name
+    #                 return self.parent.dmi_list[row].rel_bewirtschafter.name
     #             if role == Qt.EditRole:
-    #                 return self.parent.mci_list[row].bewirtschafter_id
+    #                 return self.parent.dmi_list[row].bewirtschafter_id
     #
     #     if index.column() == 5:
     #         if role == Qt.DisplayRole:
-    #             if self.parent.mci_list[row].wwp == 1:
+    #             if self.parent.dmi_list[row].wwp == 1:
     #                 return 'X'
     #
     #     if index.column() == 6:
     #         if role == Qt.DisplayRole:
-    #             if self.parent.mci_list[row].wwp == 1:
-    #                 if self.parent.mci_list[row].wwp_date is not None:
-    #                     return self.parent.mci_list[row].wwp_date
+    #             if self.parent.dmi_list[row].wwp == 1:
+    #                 if self.parent.dmi_list[row].wwp_date is not None:
+    #                     return self.parent.dmi_list[row].wwp_date
     #                 else:
     #                     return '---'
     #             return ''
@@ -179,7 +179,7 @@ class AktAllModel(QgaTableModel):
     #     if index.column() == 7:  # im awb eingetragene flaeche
     #         # anz = 0
     #         gst_area = 0
-    #         for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
+    #         for gst_zuord in self.parent.dmi_list[row].rel_gst_zuordnung:
     #             # anz += 1
     #             if gst_zuord.awb_status_id == 1:
     #                 gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
@@ -202,7 +202,7 @@ class AktAllModel(QgaTableModel):
     #         if role in [Qt.DisplayRole, Qt.EditRole]:
     #
     #             cut_area = 0
-    #             for gst_zuord in self.parent.mci_list[row].rel_gst_zuordnung:
+    #             for gst_zuord in self.parent.dmi_list[row].rel_gst_zuordnung:
     #                 # anz += 1
     #                 if gst_zuord.awb_status_id == 1:
     #                     gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
@@ -234,11 +234,11 @@ class AktAllModel(QgaTableModel):
     #
     #             kop_area = 0.00
     #
-    #             # print(f'self.parent.mci_list[row].rel_abgrenzung: {self.parent.mci_list[row].rel_abgrenzung}')
+    #             # print(f'self.parent.dmi_list[row].rel_abgrenzung: {self.parent.dmi_list[row].rel_abgrenzung}')
     #
-                # if self.parent.mci_list[row].rel_abgrenzung != []:
+                # if self.parent.dmi_list[row].rel_abgrenzung != []:
                 #
-                #     last_abgrenzung = max(self.parent.mci_list[row].rel_abgrenzung,
+                #     last_abgrenzung = max(self.parent.dmi_list[row].rel_abgrenzung,
                 #                       key=attrgetter('jahr'))
                 #
                 #     for komplex in last_abgrenzung.rel_komplex:
@@ -270,10 +270,10 @@ class AkteAllMain(AlmDataView):
     _delete_window_text_plural = ["Sollen die ausgewählten",
                                   "Akte wirklich gelöscht werden?"]
 
-    def get_weide_area(self, mci):
+    def get_weide_area(self, dmi):
         weide_area = 0.00
-        if mci.rel_abgrenzung != []:
-            last_abgrenzung = max(mci.rel_abgrenzung,
+        if dmi.rel_abgrenzung != []:
+            last_abgrenzung = max(dmi.rel_abgrenzung,
                                   key=attrgetter('jahr'))
             for komplex in last_abgrenzung.rel_komplex:
                 for koppel in komplex.rel_koppel:
@@ -281,10 +281,10 @@ class AkteAllMain(AlmDataView):
 
         return weide_area
 
-    def get_awb_gb_area(self, mci):
+    def get_awb_gb_area(self, dmi):
 
         awb_area = 0
-        for gst_zuord in mci.rel_gst_zuordnung:
+        for gst_zuord in dmi.rel_gst_zuordnung:
 
             if gst_zuord.awb_status_id == 1:
                 gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
@@ -297,10 +297,10 @@ class AkteAllMain(AlmDataView):
                 awb_area = awb_area + gst_nutz_area
         return awb_area
 
-    def get_awb_beweidet(self, mci):
+    def get_awb_beweidet(self, dmi):
 
         awb_beweidet_area = 0
-        for gst_zuord in mci.rel_gst_zuordnung:
+        for gst_zuord in dmi.rel_gst_zuordnung:
 
             if gst_zuord.awb_status_id == 1:
                 gst_versionen_list = gst_zuord.rel_gst.rel_alm_gst_version
@@ -318,7 +318,7 @@ class AkteAllMain(AlmDataView):
 
         # self.entity_dialog_class = AktDialog
         # self.entity_widget_class = Akt
-        self._entity_mc = BAkt
+        self._entity_dmc = DmAkt
         self._model_class = AktAllModel
 
     def initUi(self):
@@ -341,18 +341,18 @@ class AkteAllMain(AlmDataView):
                               'ha', column_id=7, value_width=120,
                               factor=0.0001, decimal=4)
 
-    def getMciList(self):
+    def getDmiList(self):
 
         # session = DbSession()
 
-        stmt = (select(BAkt)
+        stmt = (select(DmAkt)
         )
-        mci = self.session.scalars(stmt).unique().all()
+        dmi = self.session.scalars(stmt).unique().all()
 
         """test um direkter mit geometrien arbeiten zu können"""
-        # # ).where(BAkt.id == 1090)
-        # mci = session.scalars(stmt).unique().all()
-        # geom = mci[0].rel_gst_zuordnung[3].rel_gst.rel_alm_gst_version[0].geometry
+        # # ).where(DmAkt.id == 1090)
+        # dmi = session.scalars(stmt).unique().all()
+        # geom = dmi[0].rel_gst_zuordnung[3].rel_gst.rel_alm_gst_version[0].geometry
         # g = QgsGeometry()
         # # wkb = geom.hex()
         # # wkb = geom.tobytes()
@@ -361,7 +361,7 @@ class AkteAllMain(AlmDataView):
         # print(f'...')
         """"""
 
-        return mci
+        return dmi
 
     # def finalInit(self):
     #
@@ -456,10 +456,10 @@ class AkteAllMain(AlmDataView):
 
         with session_cm(name='contact type filter') as session:
 
-            status_stmt = select(BBearbeitungsstatus)
-            status_mci_list = session.scalars(status_stmt).all()
+            status_stmt = select(DmBearbeitungsstatus)
+            status_dmi_list = session.scalars(status_stmt).all()
 
-            for status in status_mci_list:
+            for status in status_dmi_list:
                 self.filter_status_input_wdg.addItem(status.name,
                                                    status.id)
 
