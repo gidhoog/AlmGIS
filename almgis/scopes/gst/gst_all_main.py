@@ -43,7 +43,7 @@ from almgis.fields import GeneralField, GstZuordnungField
 
 # from almgis.scopes.gst.gst_zuordnung import GstZuordnung
 # from almgis.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
-# from almgis.tools import getMciState, getMciSession
+# from almgis.tools import getDmiState, getDmiSession
 
 
 class GstDialog(AlmEntityDialog):
@@ -153,13 +153,13 @@ class GstZuordnungMainDialog(DialogBase):
 class GstAllTableModel(QgaTableModel):
 # class GstAllTableModel(QgsAttributeTableModel):
 
-    def __init__(self, mci_list=None, layerCache=None,
+    def __init__(self, dmi_list=None, layerCache=None,
                  columns=None, parent=None):
-        super().__init__(mci_list, layerCache, columns, parent)
+        super().__init__(dmi_list, layerCache, columns, parent)
 
-    # def __init__(self, mci_list=None, layerCache=None,
+    # def __init__(self, dmi_list=None, layerCache=None,
     #              columns=None, parent=None):
-    #     super().__init__(mci_list, layerCache, columns, parent)
+    #     super().__init__(dmi_list, layerCache, columns, parent)
         print(f'...1')
 
     def data(self, index: QModelIndex, role: int = ...):
@@ -184,7 +184,7 @@ class GstAllTableModel(QgaTableModel):
 
         return super().data(index, role)
 
-    #     # if role == Qt.BackgroundRole and getMciState(self.feature(index).attribute('mci')[0]) == "transient":
+    #     # if role == Qt.BackgroundRole and getDmiState(self.feature(index).attribute('dmi')[0]) == "transient":
     #     #
     #     #     return color.added_data
     #     #
@@ -265,7 +265,7 @@ class GstAllDataView(AlmDataView):
         # self.entity_dialog_class = GstDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
-        self._entity_mc = BGstZuordnung
+        self._entity_dmc = BGstZuordnung
         self._model_class = GstAllTableModel
         # self._model_class = QgaTableModel
 
@@ -275,7 +275,7 @@ class GstAllDataView(AlmDataView):
         # _view_gis_class = GisTableView
 
         # self._commit_entity = False
-        # self.edit_entity_by = 'mci'
+        # self.edit_entity_by = 'dmi'
 
         self.layer = VectorLayerFactory.createLayer(
             'gst_all_main',
@@ -312,17 +312,17 @@ class GstAllDataView(AlmDataView):
 
     # def loadData(self, session=None):
     #
-    #     self._mci_list = self.parent._entity_mci.rel_gst_zuordnung
+    #     self._dmi_list = self.parent._entity_dmi.rel_gst_zuordnung
 
-    def getMciList(self):
+    def getDmiList(self):
 
         stmt = ((select(BGstZuordnung))
                 .join(BGstZuordnung.rel_gst)
                 .group_by(BGst.id))
-        # mci = session.scalars(stmt).unique().all()
-        mci = self.session.scalars(stmt).all()
+        # dmi = session.scalars(stmt).unique().all()
+        dmi = self.session.scalars(stmt).all()
 
-        return mci
+        return dmi
 
     def setLayer(self):
 
@@ -342,7 +342,7 @@ class GstAllDataView(AlmDataView):
 
         # layer.entity_dialog = GstDialog
         # layer.entity_form = GstZuordnungDataForm
-        layer.mci_list = self.mci_list
+        layer.dmi_list = self.dmi_list
 
         # setLayerStyle(layer, 'gst_awbuch_status')
 
@@ -356,7 +356,7 @@ class GstAllDataView(AlmDataView):
     def getCustomEntityData(self):
 
         print(f'...')
-        """erhalte die mci-liste mit den gst-awb-statusen von der session
+        """erhalte die dmi-liste mit den gst-awb-statusen von der session
         bei der initialisierung des aktes"""
 
         self.custom_entity_data['awb_status'] \
@@ -367,14 +367,14 @@ class GstAllDataView(AlmDataView):
 
         return self.custom_entity_data
 
-    def setFeaturesFromMci(self):
-        super().setFeaturesFromMci()
+    def setFeaturesFromDmi(self):
+        super().setFeaturesFromDmi()
 
-        for mci in self.mci_list:
+        for dmi in self.dmi_list:
 
             feat = QgaFeature(self.layer.fields(), self)
 
-            self.setFeatureAttributes(feat, mci)
+            self.setFeatureAttributes(feat, dmi)
 
             # geom_wkt = to_shape(gst_version.geometry).wkt
             # geom_new = QgsGeometry()
@@ -384,7 +384,7 @@ class GstAllDataView(AlmDataView):
 
             self.layer.provider.addFeatures([feat])
 
-        # for gst_zuor in self.mci_list:
+        # for gst_zuor in self.dmi_list:
         #
         #     for gst_version in gst_zuor.rel_gst.rel_alm_gst_version:
         #
@@ -455,7 +455,7 @@ class GstAllDataView(AlmDataView):
         # datenstand_fld = QgaField("datenstand", QVariant.String)
         # datenstand_fld.setAlias('Datenstand')
         #
-        # mci_fld = QgaField("mci", QVariant.List)
+        # dmi_fld = QgaField("dmi", QVariant.List)
         #
         # self.fields.append(gst_version_id_fld)
         # self.fields.append(az_fld)
@@ -472,7 +472,7 @@ class GstAllDataView(AlmDataView):
         # self.fields.append(gb_area_fld)
         # self.fields.append(bew_area_fld)
         # self.fields.append(datenstand_fld)
-        # self.fields.append(mci_fld)
+        # self.fields.append(dmi_fld)
 
         gz_id = GeneralField.Id()
         gz_id.setAlias('gst_zuordnung_id')
@@ -496,15 +496,15 @@ class GstAllDataView(AlmDataView):
 
         return self.fields
 
-    def setFeatureAttributes(self, feature, mci):
-        super().setFeatureAttributes(feature, mci)
+    def setFeatureAttributes(self, feature, dmi):
+        super().setFeatureAttributes(feature, dmi)
 
         for field in self.fields:
 
-            feature[field.name()] = field.getFieldValue(mci)
+            feature[field.name()] = field.getFieldValue(dmi)
 
         # """last_gst"""
-        # gst_versionen_list = mci.rel_gst.rel_alm_gst_version
+        # gst_versionen_list = dmi.rel_gst.rel_alm_gst_version
         # last_gst = max(gst_versionen_list,
         #                key=attrgetter('rel_alm_gst_ez.datenstand'))
         # """"""
@@ -521,27 +521,27 @@ class GstAllDataView(AlmDataView):
         #     sum_cut = sum_cut + cut.cut_area
         # """"""
         #
-        # feature['id'] = mci.id
-        # feature['az'] = mci.rel_akt.az
-        # feature['akt_name'] = mci.rel_akt.name
-        # feature['gst'] = mci.rel_gst.gst
+        # feature['id'] = dmi.id
+        # feature['az'] = dmi.rel_akt.az
+        # feature['akt_name'] = dmi.rel_akt.name
+        # feature['gst'] = dmi.rel_gst.gst
         # feature['ez'] = last_gst.rel_alm_gst_ez.ez
-        # feature['kgnr'] = mci.rel_gst.kgnr
-        # feature['kgname'] = mci.rel_gst.rel_kat_gem.kgname
-        # feature['awb_id'] = mci.awb_status_id
-        # feature['awb_status'] = mci.rel_awb_status.name
-        # feature['recht_id'] = mci.rechtsgrundlage_id
-        # feature['recht_status'] = mci.rel_rechtsgrundlage.name
+        # feature['kgnr'] = dmi.rel_gst.kgnr
+        # feature['kgname'] = dmi.rel_gst.rel_kat_gem.kgname
+        # feature['awb_id'] = dmi.awb_status_id
+        # feature['awb_status'] = dmi.rel_awb_status.name
+        # feature['recht_id'] = dmi.rechtsgrundlage_id
+        # feature['recht_status'] = dmi.rel_rechtsgrundlage.name
         # feature['gis_area'] = last_gst.gst_gis_area
         # feature['gb_area'] = gb_area
         # feature['bew_area'] = sum_cut
         # feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
-        # feature['mci'] = [mci]
+        # feature['dmi'] = [dmi]
 
-    def changeAttributes(self, feature, mci):
+    def changeAttributes(self, feature, dmi):
 
         """last_gst"""
-        gst_versionen_list = mci.rel_gst.rel_alm_gst_version
+        gst_versionen_list = dmi.rel_gst.rel_alm_gst_version
         last_gst = max(gst_versionen_list,
                        key=attrgetter('rel_alm_gst_ez.datenstand'))
         """"""
@@ -558,22 +558,22 @@ class GstAllDataView(AlmDataView):
             sum_cut = sum_cut + cut.cut_area
         """"""
 
-        attrib = {0: mci.id,
-                  1: mci.rel_akt.az,
-                  2: mci.rel_akt.name,
-                  3: mci.rel_gst.gst,
+        attrib = {0: dmi.id,
+                  1: dmi.rel_akt.az,
+                  2: dmi.rel_akt.name,
+                  3: dmi.rel_gst.gst,
                   4: last_gst.rel_alm_gst_ez.ez,
-                  5: mci.rel_gst.kgnr,
-                  6: mci.rel_gst.rel_kat_gem.kgname,
-                  7: mci.awb_status_id,
-                  8: mci.rel_awb_status.name,
-                  9: mci.rechtsgrundlage_id,
-                  10: mci.rel_rechtsgrundlage.name,
+                  5: dmi.rel_gst.kgnr,
+                  6: dmi.rel_gst.rel_kat_gem.kgname,
+                  7: dmi.awb_status_id,
+                  8: dmi.rel_awb_status.name,
+                  9: dmi.rechtsgrundlage_id,
+                  10: dmi.rel_rechtsgrundlage.name,
                   11: last_gst.gst_gis_area,
                   12: gb_area,
                   13: sum_cut,
                   14: last_gst.rel_alm_gst_ez.datenstand,
-                  15: [mci]
+                  15: [dmi]
                   }
 
         self.layer.changeAttributeValues(feature.id(),
@@ -582,10 +582,10 @@ class GstAllDataView(AlmDataView):
     # def updateFeatureAttributes(self, *args):
     #     super().updateFeatureAttributes(args)
     #
-    #     new_mci = args[0][0]
+    #     new_dmi = args[0][0]
     #     update_feat = args[0][2]
     #
-    #     self.setFeatureAttributes(update_feat, new_mci)
+    #     self.setFeatureAttributes(update_feat, new_dmi)
 
     # def setFilterUI(self):
     #     """
@@ -942,10 +942,10 @@ class GstAllDataView(AlmDataView):
 
 # class GstModelNew(QAbstractTableModel):
 #
-#     def __init__(self, parent, mci_list=None):
+#     def __init__(self, parent, dmi_list=None):
 #         super(__class__, self).__init__(parent)
 #
-#         self.mci_list = mci_list
+#         self.dmi_list = dmi_list
 #
 #         self.header = ['aa', 'bb', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc', 'cc']
 #
@@ -959,8 +959,8 @@ class GstAllDataView(AlmDataView):
 #         definiere die zeilenanzahl
 #         """
 #
-#         if self.mci_list:
-#             return len(self.mci_list)
+#         if self.dmi_list:
+#             return len(self.dmi_list)
 #         else:
 #             return 0
 #
