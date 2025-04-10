@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from qga import data_session
 
 from almgis import AlmSessionCls
-# from almgis.data_model import McSettings
+# from almgis.data_model import DmSettings
 from almgis.logger import Logger
 
 """verwende den Contextmanager 'session_cm' für schnelle Datenbankzugriffe;
@@ -42,7 +42,7 @@ def session_cm(expire_on_commit=True, name=''):
 #     """
 #     with session_cm(expire_on_commit=False,
 #                     name=f'get project setting value \'{code}\'') as session:
-#         stmt = select(McSettings).where(McSettings.code == code)
+#         stmt = select(DmSettings).where(DmSettings.code == code)
 #         query = session.scalars(stmt).first()
 #
 #     return query.value
