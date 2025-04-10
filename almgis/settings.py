@@ -5,7 +5,7 @@ from PyQt5.QtCore import QSettings
 from qga.settings import QgaSettings, QgaSettingsProject, QgaSettingsGeneral, \
     QgaSettingsColors, QgaSettingsPaths, QgaSettingsConstants
 
-from almgis.data_model import McSettings
+from almgis.data_model import DmSettings
 
 
 class AlmSettingsGeneral(QgaSettingsGeneral):
@@ -118,4 +118,4 @@ class AlmSettingsApp(QgaSettings):
 class AlmSettingsProject(QgaSettingsProject):
 
     # session_cm = session_cm
-    settings_mc = McSettings
+    settings_dmc = DmSettings
