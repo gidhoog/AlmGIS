@@ -8,7 +8,7 @@ from almgis import settings_user, settings_app, settings_project, \
     AlmSessionCls
 # from almgis import DbSession
 from almgis.about import AlmAboutDialog
-from almgis.data_model import McSettings
+from almgis.data_model import DmSettings
 from almgis.logger import Logger
 from almgis.projectstartselector import AlmStartDialog, AlmProjectStartSelector
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
@@ -26,7 +26,7 @@ class AlmMainWindow(QgaMainWindow):
 
         self.session_cls = AlmSessionCls
         self.logger = Logger
-        self.mc_settings = McSettings
+        self.dmc_settings = DmSettings
 
         self.about_dialog_cls = AlmAboutDialog
 
