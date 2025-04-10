@@ -3,7 +3,7 @@ from operator import attrgetter
 from qga.fields import QgaField
 from qgis.PyQt.QtCore import QVariant
 
-from almgis.data_model import BGstZuordnung, BGst
+from almgis.data_model import DmGstZuordnung, DmGst
 
 
 class GeneralField:
@@ -90,7 +90,7 @@ class GstZuordnungField:
 
     class KgGst(QgaField):
 
-        dmc = BGstZuordnung
+        dmc = DmGstZuordnung
 
         def __init__(self, name='kg_gst', field_type=QVariant.String):
             super().__init__(name, field_type)
@@ -100,7 +100,7 @@ class GstZuordnungField:
 
 
     class AktId(QgaField):
-        dmc = BGstZuordnung
+        dmc = DmGstZuordnung
 
         def __init__(self, name='akt_id', field_type=QVariant.Int):
             super().__init__(name, field_type)
@@ -109,7 +109,7 @@ class GstZuordnungField:
 
 
     class AktName(QgaField):
-        dmc = BGstZuordnung
+        dmc = DmGstZuordnung
 
         def __init__(self, name='akt_name', field_type=QVariant.String):
             super().__init__(name, field_type)
@@ -121,7 +121,7 @@ class GstZuordnungField:
         #     return dmi.rel_akt.name
 
     class AwbStatusId(QgaField):
-        dmc = BGstZuordnung
+        dmc = DmGstZuordnung
 
         def __init__(self, name='awb_status_id', field_type=QVariant.Int):
             super().__init__(name, field_type)
@@ -129,7 +129,7 @@ class GstZuordnungField:
             self.dmi_attr = 'awb_status_id'
 
     class RechtsgrundlageId(QgaField):
-        dmc = BGstZuordnung
+        dmc = DmGstZuordnung
 
         def __init__(self, name='rechtsgrundlage_id', field_type=QVariant.Int):
             super().__init__(name, field_type)
@@ -140,7 +140,7 @@ class GstZuordnungField:
         """
         GB-Fläche der letzten Gst-Version
         """
-        dmc = BGst
+        dmc = DmGst
 
         def __init__(self, name='last_gb_area', field_type=QVariant.Int):
             super().__init__(name, field_type)
@@ -165,7 +165,7 @@ class GstZuordnungField:
         Summe der Koppel-Verschnittflächen für die letzte Gst-Version
         (aus der Tabelle 'cut_koppel_aktuell_gstversion')
         """
-        dmc = BGst
+        dmc = DmGst
 
         def __init__(self, name='last_koppel_area', field_type=QVariant.Int):
             super().__init__(name, field_type)
@@ -195,7 +195,7 @@ class GstZuordnungField:
         """
         GB-Fläche der letzten Gst-Version
         """
-        dmc = BGst
+        dmc = DmGst
 
         def __init__(self, name='last_gis_area', field_type=QVariant.Double):
             super().__init__(name, field_type)
