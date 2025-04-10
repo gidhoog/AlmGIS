@@ -32,7 +32,7 @@ from qgis.core import QgsVectorLayer, QgsProject, \
 #     session_cm_data
 # from app_core.scopes.gst import gst_zuordnung_UI
 # from app_core.scopes.gst.gst_gemeinsame_werte import GstGemeinsameWerte
-# from app_core.tools import getMciState
+# from app_core.tools import getDmiState
 
 
 class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
@@ -50,7 +50,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         self.akt_id = akt_id
 
         # self.checked_gst_instances = []  # liste mit den vorgemerkten gst-instanzen
-        self.preselected_gst_mci = []  # list der vorgemerkten gst-mci'S
+        self.preselected_gst_dmi = []  # list der vorgemerkten gst-dmi'S
 
         self.guiGisDock = GisDock(self)
         self.guiMainGis = MainGis(self.guiGisDock, self, akt_id)
@@ -319,12 +319,12 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                     """"""
 
                     # gst_feature_id = feat.id()
-                    # if gst_feature_id not in [g[0] for g in self.preselected_gst_mci]:
+                    # if gst_feature_id not in [g[0] for g in self.preselected_gst_dmi]:
 
-                    if feat['mci'][0].kg_gst not in [g.kg_gst for g in self.preselected_gst_mci]:
+                    if feat['dmi'][0].kg_gst not in [g.kg_gst for g in self.preselected_gst_dmi]:
 
-                        self.preselected_gst_mci.append(feat['mci'][0])
-                        # self.preselected_gst_mci.append([
+                        self.preselected_gst_dmi.append(feat['dmi'][0])
+                        # self.preselected_gst_dmi.append([
                         #     gst_feature_id,
                         #     feat.attribute('gst_id'),
                         #     feat.attribute('gst'),
@@ -333,11 +333,11 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
                         #     feat.attribute('kgname')
                         #     ])
 
-                    print(f'vorgemerkte gst: {self.preselected_gst_mci}')
+                    print(f'vorgemerkte gst: {self.preselected_gst_dmi}')
 
-            self.updatePreSelTable(self.preselected_gst_mci)
+            self.updatePreSelTable(self.preselected_gst_dmi)
 
-            # self.preselected_gst_mci.clear()
+            # self.preselected_gst_dmi.clear()
 
             self.guiGstTable._gis_layer.commitChanges()
 
@@ -351,7 +351,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         """
         print(f'updatePreSelTable')
 
-        self.guiGstPreSelTview._mci_list = gst_list
+        self.guiGstPreSelTview._dmi_list = gst_list
 
         self.guiGstPreSelTview.view.model().sourceModel().layoutChanged.emit()
         self.guiGstPreSelTview.updateFooter()
@@ -360,8 +360,8 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         # # self.guiGstPreSelTview._gis_layer.data_provider.truncate()
         #
-        # # self.guiGstPreSelTview.addFeaturesFromMciList(gst_list)
-        # self.guiGstPreSelTview.setFeaturesFromMci()
+        # # self.guiGstPreSelTview.addFeaturesFromDmiList(gst_list)
+        # self.guiGstPreSelTview.setFeaturesFromDmi()
         #
         # self.guiGstPreSelTview._gis_layer.commitChanges()
         #
@@ -768,10 +768,10 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
         if result:
 
-            awb_status_mci = gemeinsame_werte.awb_status_model.data(gemeinsame_werte.awb_status_model.index(
+            awb_status_dmi = gemeinsame_werte.awb_status_model.data(gemeinsame_werte.awb_status_model.index(
                 gemeinsame_werte.uiAwbStatusCombo.currentIndex(),0), Qt.UserRole)
 
-            rechtsgrundlage_mci = gemeinsame_werte.rechtsgrundlage_model.data(gemeinsame_werte.rechtsgrundlage_model.index(
+            rechtsgrundlage_dmi = gemeinsame_werte.rechtsgrundlage_model.data(gemeinsame_werte.rechtsgrundlage_model.index(
                 gemeinsame_werte.uiRechtsformCombo.currentIndex(),0), Qt.UserRole)
 
             anm = gemeinsame_werte.uiAnmerkungTedit.toPlainText()
@@ -784,33 +784,33 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
             #
             #     gst_feat = self.guiGstTable._gis_layer.getFeature(feat.attribute('feat_id'))
             #
-            #     gst_mci = self.guiGstTable._mci_list[
+            #     gst_dmi = self.guiGstTable._dmi_list[
             #         self.guiGstTable.model.idToIndex(gst_feat.id()).row()]
 
-            for gst_mci in self.guiGstPreSelTview._mci_list:
+            for gst_dmi in self.guiGstPreSelTview._dmi_list:
 
                 new_gst_zuordnung = BGstZuordnung()
                 new_gst_zuordnung.akt_id = self.parent.parent.entity_id
-                new_gst_zuordnung.gst_id = gst_mci.id
-                new_gst_zuordnung.rel_gst = gst_mci
+                new_gst_zuordnung.gst_id = gst_dmi.id
+                new_gst_zuordnung.rel_gst = gst_dmi
 
-                new_gst_zuordnung.awb_status_id = awb_status_mci.id
-                new_gst_zuordnung.rel_awb_status = awb_status_mci
-                new_gst_zuordnung.rechtsgrundlage_id = rechtsgrundlage_mci.id
-                new_gst_zuordnung.rel_rechtsgrundlage = rechtsgrundlage_mci
+                new_gst_zuordnung.awb_status_id = awb_status_dmi.id
+                new_gst_zuordnung.rel_awb_status = awb_status_dmi
+                new_gst_zuordnung.rechtsgrundlage_id = rechtsgrundlage_dmi.id
+                new_gst_zuordnung.rel_rechtsgrundlage = rechtsgrundlage_dmi
                 new_gst_zuordnung.anmerkung = anm
                 new_gst_zuordnung.probleme = problem
 
                 # self.parent.view.model().sourceModel().layoutAboutToBeChanged.emit()
 
-                # self.parent._mci_list.append(new_gst_zuordnung)
+                # self.parent._dmi_list.append(new_gst_zuordnung)
 
-                if self.parent.parent._entity_mci.rel_gst_zuordnung == []:
+                if self.parent.parent._entity_dmi.rel_gst_zuordnung == []:
                     first_entity = True
                 else:
                     first_entity = False
 
-                self.parent.parent._entity_mci.rel_gst_zuordnung.append(new_gst_zuordnung)
+                self.parent.parent._entity_dmi.rel_gst_zuordnung.append(new_gst_zuordnung)
 
                 """"""
 
@@ -820,7 +820,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
 
                 self.parent._gis_layer.data_provider.truncate()
 
-                self.parent.setFeaturesFromMci()
+                self.parent.setFeaturesFromDmi()
 
                 for feat in self.parent._gis_layer.getFeatures():
                     self.parent._gis_layer.updateFeature(feat)
@@ -943,13 +943,13 @@ class GstPreSelTableModel(TableModel):
         if index.column() == 0:
 
             if role == Qt.DisplayRole:
-                return self.mci_list[row].gst
+                return self.dmi_list[row].gst
 
         if index.column() == 1:
 
             if role == Qt.DisplayRole:
                 """last_gst"""
-                gst_versionen_list = self.mci_list[row].rel_alm_gst_version
+                gst_versionen_list = self.dmi_list[row].rel_alm_gst_version
                 last_gst = max(gst_versionen_list,
                                key=attrgetter('rel_alm_gst_ez.datenstand'))
                 """"""
@@ -958,12 +958,12 @@ class GstPreSelTableModel(TableModel):
         if index.column() == 2:
 
             if role == Qt.DisplayRole:
-                return self.mci_list[row].kgnr
+                return self.dmi_list[row].kgnr
 
         if index.column() == 3:
 
             if role == Qt.DisplayRole:
-                return self.mci_list[row].rel_kat_gem.kgname
+                return self.dmi_list[row].rel_kat_gem.kgname
 
         return super().data(index, role)
 
@@ -1041,7 +1041,7 @@ class GstTable(DataView):
         importzeit_fld = QgsField("importzeit", QVariant.String)
         importzeit_fld.setAlias('Importzeit')
 
-        gst_mci_fld = QgsField("mci", QVariant.List)
+        gst_dmi_fld = QgsField("dmi", QVariant.List)
 
         self.fields.append(gst_id_fld)
         self.fields.append(gst_fld)
@@ -1052,12 +1052,12 @@ class GstTable(DataView):
         self.fields.append(zugeordnet_zu_fld)
         self.fields.append(datenstand_fld)
         self.fields.append(importzeit_fld)
-        self.fields.append(gst_mci_fld)
+        self.fields.append(gst_dmi_fld)
 
-    def setFeaturesFromMci(self):
-        super().setFeaturesFromMci()
+    def setFeaturesFromDmi(self):
+        super().setFeaturesFromDmi()
 
-        for gst in self._mci_list:
+        for gst in self._dmi_list:
 
             feat = Feature(self._gis_layer.fields(), self)
 
@@ -1077,10 +1077,10 @@ class GstTable(DataView):
 
             self._gis_layer.data_provider.addFeatures([feat])
 
-    def setFeatureAttributes(self, feature, mci):
+    def setFeatureAttributes(self, feature, dmi):
 
         """last_gst"""
-        gst_versionen_list = mci.rel_alm_gst_version
+        gst_versionen_list = dmi.rel_alm_gst_version
         last_gst = max(gst_versionen_list,
                        key=attrgetter('rel_alm_gst_ez.datenstand'))
         """"""
@@ -1088,8 +1088,8 @@ class GstTable(DataView):
         zugeordnet = '--'
 
         zugeordnet_list = []
-        if mci.rel_gst_zuordnung != []:
-            for gst_zuord in mci.rel_gst_zuordnung:
+        if dmi.rel_gst_zuordnung != []:
+            for gst_zuord in dmi.rel_gst_zuordnung:
                 zugeordnet_list.append(gst_zuord.rel_akt.name)
 
                 if gst_zuord.rel_akt.id == self.parent.akt_id:
@@ -1100,16 +1100,16 @@ class GstTable(DataView):
         else:
             zugeordnet_zu = '---'
 
-        feature['gst_id'] = mci.id
-        feature['gst'] = mci.gst
+        feature['gst_id'] = dmi.id
+        feature['gst'] = dmi.gst
         feature['ez'] = last_gst.rel_alm_gst_ez.ez
-        feature['kgnr'] = mci.kgnr
-        feature['kgname'] = mci.rel_kat_gem.kgname
+        feature['kgnr'] = dmi.kgnr
+        feature['kgname'] = dmi.rel_kat_gem.kgname
         feature['zugeordnet'] = zugeordnet
         feature['zugeordnet_zu'] = zugeordnet_zu
         feature['datenstand'] = last_gst.rel_alm_gst_ez.datenstand
         feature['importzeit'] = last_gst.rel_alm_gst_ez.import_time
-        feature['mci'] = [mci]
+        feature['dmi'] = [dmi]
 
     def setLayer(self):
 
@@ -1143,7 +1143,7 @@ class GstTable(DataView):
         self.actionDeleteRow.setParent(None)  # entferne action zeile löschen
         self.uiToolsTbtn.removeAction(self.actionDeleteRow)
 
-    def getMciList(self, session):
+    def getDmiList(self, session):
 
         stmt = (select(BGst)
         # .options(
@@ -1163,9 +1163,9 @@ class GstTable(DataView):
         # )
         )
 
-        mci = session.scalars(stmt).unique().all()
+        dmi = session.scalars(stmt).unique().all()
 
-        return mci
+        return dmi
 
     def finalInit(self):
         super().finalInit()
@@ -1443,7 +1443,7 @@ class GstPreSelTable(DataView):
 
     def loadData(self, session=None):
 
-        self._mci_list = self.parent.preselected_gst_mci
+        self._dmi_list = self.parent.preselected_gst_dmi
 
     def removePreSelGst(self):
         """
@@ -1464,13 +1464,13 @@ class GstPreSelTable(DataView):
 
             """setzte die markierung in der gst-tabelle für das gst zurück"""
             for feat in gst_lyr.getFeatures():
-                if feat.attribute('gst_id') == self._mci_list[i].id:
+                if feat.attribute('gst_id') == self._dmi_list[i].id:
                     feat.setAttribute(5, '--')
                     gst_lyr.updateFeature(feat)
             """"""
 
             """entferne das gst aus der liste mit den vorgemerkten gst"""
-            del self._mci_list[i]
+            del self._dmi_list[i]
             """"""
 
         gst_lyr.commitChanges()
@@ -1520,7 +1520,7 @@ class GstPreSelTable(DataView):
 
         self.parent.guiGstTable._gis_layer.removeSelection()
 
-        gst_id_list = [self._mci_list[g.row()].id for g in self.getSelectedRows()]
+        gst_id_list = [self._dmi_list[g.row()].id for g in self.getSelectedRows()]
 
         gst_lyr.select(
             [f.id() for f in gst_lyr.getFeatures() if f['gst_id'] in gst_id_list]
