@@ -9,6 +9,7 @@ from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
                                  QMenu, QAction, QToolButton)
 from qgis.PyQt.QtGui import QIcon
+from qgis.gui import QgsAttributeTableModel
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
@@ -450,6 +451,8 @@ class KontaktMain(AlmDataView):
         for kontakt in self.dmi_list:
 
             feat = QgaFeature(self.layer.fields(), self)
+
+            feat.dmi = kontakt
 
             self.setFeatureAttributes(feat, kontakt)
 

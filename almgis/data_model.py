@@ -10,8 +10,8 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.hybrid import hybrid_property
 
-class DmBase(DeclarativeBase):
-    pass
+# class DmBase(DeclarativeBase):
+#     pass
 
 
 class DmAkt(DmBase):
