@@ -80,11 +80,14 @@ class AlmSettingsConstants(QgaSettingsConstants):
 
 
 class AlmSettingsUser(QgaSettings):
-
-    # klasse für benutzer-spezifischen Einstellungen;
-    # Einstellungen werden in eine ini-datei im benutzerverzeichnis geschrieben (
-    # e.g.: '/home/user/.config/NoeAbb/AlmGIS.ini' oder
-    # 'C:\Users\ZNFF\AppData\Roaming\NoeAbb.AlmGIS.ini')
+    """
+    klasse für benutzer-spezifischen Einstellungen;
+    Einstellungen werden in eine ini-datei im benutzerverzeichnis geschrieben
+    (e.g.: '/home/user/.config/NoeAbb/AlmGIS.ini'
+    oder C:/Users/ZNFF/AppData/Roaming/NoeAbb/AlmGIS.ini
+    oder /home/franz/IT/_distroboxes/.config/NoeAbb/AlmGIS.ini bei einer
+    distrobox)
+    """
 
     attr_list = [
         ('project_start_selector', 'True'),
