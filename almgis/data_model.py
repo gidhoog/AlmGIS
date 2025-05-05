@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from typing import List
 
-# from qga.data_model import DmBase
+from qga.data_model import DmBase, DmNonSpatialObject
 from qgis.core import QgsGeometry
 
 from geoalchemy2 import Geometry, WKBElement
@@ -11,11 +11,11 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.hybrid import hybrid_property
 
-class DmBase(DeclarativeBase):
-    pass
+# class DmBase(DeclarativeBase):
+#     pass
 
 
-class DmAkt(DmBase):
+class DmAkt(DmBase, DmNonSpatialObject):
     """
     basisdatenebene für akte
     """
@@ -765,10 +765,12 @@ class DmKomplexName(DmBase):
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
 
-class DmKontakt(DmBase):
+class DmKontakt(DmBase, DmNonSpatialObject):
     __tablename__ = 'a_alm_kontakt'
 
+    """class with self-relation!"""
     id: Mapped[int] = mapped_column(primary_key=True)
+    """"""
 
     type_id: Mapped[int] = mapped_column(ForeignKey('a_alm_kontakt_type.id'))
     vertreter_id: Mapped[int] = mapped_column(ForeignKey("a_alm_kontakt.id"))
