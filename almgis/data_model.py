@@ -19,14 +19,14 @@ class DmAkt(DmBase, DmNonSpatialObject):
     """
     basisdatenebene für akte
     """
-    __tablename__ = "a_alm_akt"
+    __tablename__ = "_tbl_alm_akt"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     alias: Mapped[str]
     az: Mapped[int]
-    bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("a_alm_kontakt.id"))
-    bearbeitungsstatus_id: Mapped[int] = mapped_column(ForeignKey("a_alm_bearbeitungsstatus.id"))
+    bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"))
+    bearbeitungsstatus_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_bearbeitungsstatus.id"))
     # bearbeitungsstatus_id = Column(Integer, ForeignKey('a_alm_bearbeitungsstatus.id'))
     alm_bnr: Mapped[int]
     anm: Mapped[str]
@@ -69,7 +69,7 @@ class DmBanu(DmBase):
     """
     Datenebene für den banu-Wert
     """
-    __tablename__ = 'a_sys_banu'
+    __tablename__ = '_tbl_alm_banu'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     ba_id: Mapped[int]
@@ -88,7 +88,7 @@ class DmBearbeitungsstatus(DmBase):
     """
     basisdatenebene für den bearbeitungsstatus
     """
-    __tablename__ = 'a_alm_bearbeitungsstatus'
+    __tablename__ = '_tbl_alm_bearbeitungsstatus'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -104,11 +104,11 @@ class DmCutKoppelGstAktuell(DmBase):
     """
     basisdatenebene für den verschnitt von koppel und gst-version
     """
-    __tablename__ = 'a_cut_koppel_aktuell_gstversion'
+    __tablename__ = '_tbl_alm_cut_koppel_aktuell_gstversion'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    koppel_id: Mapped[int] = mapped_column(ForeignKey("a_alm_koppel.id"))
-    gst_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_version.id"))
+    koppel_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_koppel.id"))
+    gst_version_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_version.id"))
     timestamp: Mapped[str]
     geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
                                srid=31259))
@@ -147,7 +147,7 @@ class DmErfassungsart(DmBase):
     """
     Mapperklasse für die Erfassungsart einer Abgrenzung
     """
-    __tablename__ = "a_alm_erfassungsart"
+    __tablename__ = "_tbl_alm_erfassungsart"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
@@ -165,7 +165,7 @@ class DmGisLayer(DmBase):
     """
     Basisdatenebene für gis_layer
     """
-    __tablename__ = "a_gis_layer"
+    __tablename__ = "_tbl_app_gis_layer"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -189,13 +189,13 @@ class DmGisLayerMenu(DmBase):
     basisdatenebene für menübäume, mit denen man layer auswählen und einfügen
     kann
     """
-    __tablename__ = "a_gis_layer_menu"
+    __tablename__ = "_tbl_app_gis_layer_menu"
 
     id = Column(Integer, primary_key=True)
     menu_id = Column(Integer)
     parent_id = Column(Integer)
     name = Column(String)
-    style_id = Column(Integer, ForeignKey('a_gis_style.id'))
+    style_id = Column(Integer, ForeignKey('_tbl_app_gis_style.id'))
     sort = Column(String)
 
     rel_gis_style = relationship('DmGisStyle',
@@ -211,10 +211,10 @@ class DmGisStyle(DmBase):
     """
     basisdatenebene für gis_style
     """
-    __tablename__ = "a_gis_style"
+    __tablename__ = "_tbl_app_gis_style"
 
     id = Column(Integer, primary_key=True)
-    gis_layer_id = Column(Integer, ForeignKey('a_gis_layer.id'))
+    gis_layer_id = Column(Integer, ForeignKey('_tbl_app_gis_layer.id'))
     name = Column(String)
     background = Column(Boolean)
     qml_file = Column(String)
@@ -244,10 +244,10 @@ class DmGisStyleLayerVar(DmBase):
     basisdatenebene für layervariablen die je gis-style definiert werden
     können
     """
-    __tablename__ = "a_gis_style_layer_var"
+    __tablename__ = "_tbl_app_gis_style_layer_var"
 
     id = Column(Integer, primary_key=True)
-    gis_style_id = Column(Integer, ForeignKey('a_gis_style.id'))
+    gis_style_id = Column(Integer, ForeignKey('_tbl_app_gis_style.id'))
     name = Column(String)  # name der variable (ohne führendes '@')
     value = Column(String)  # wert der variable
     code_value = Column(Boolean)  # True wenn 'value' ein code ist
@@ -265,7 +265,7 @@ class DmGisScope(DmBase):
     """
     basisdatenebene für gis_scope
     """
-    __tablename__ = "a_gis_scope"
+    __tablename__ = "_tbl_app_gis_scope"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -282,11 +282,11 @@ class DmGisScopeLayer(DmBase):
     """
     basisdatenebene für gis_scope_layer
     """
-    __tablename__ = "a_gis_scope_layer"
+    __tablename__ = "_tbl_app_scope_layer"
 
     id = Column(Integer, primary_key=True)
-    gis_scope_id = Column(Integer, ForeignKey('a_gis_scope.id'))
-    gis_style_id = Column(Integer, ForeignKey('a_gis_style.id'))
+    gis_scope_id = Column(Integer, ForeignKey('_tbl_app_gis_scope.id'))
+    gis_style_id = Column(Integer, ForeignKey('_tbl_app_gis_style.id'))
     order = Column(Integer)
     background = Column(Boolean)
     baselayer = Column(Boolean)
@@ -312,11 +312,11 @@ class DmGst(DmBase):
     alle grundstücke die aktuell in der DB verfügbar sind
     (alle bereits zugeordneten und die gst, die im gst-importverzeichis sind)
     """
-    __tablename__ = 'a_alm_gst'
+    __tablename__ = '_tbl_alm_gst'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     kg_gst: Mapped[str]
-    kgnr: Mapped[int] = mapped_column(ForeignKey("a_sys_kg.kgnr"))
+    kgnr: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kg.kgnr"))
     gst: Mapped[str]
 
     """folgende Beziehungen sind 'child' Beziehungen"""
@@ -365,7 +365,7 @@ class DmGstAwbStatus(DmBase):
     """
     alm- und weidebuch-status_id eines grundstückes
     """
-    __tablename__ = 'a_alm_awb_status'
+    __tablename__ = '_tbl_alm_awb_status'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -385,11 +385,11 @@ class DmGstEigentuemer(DmBase):
     """
     basisdatenebene für eigentuemer
     """
-    __tablename__ = "a_alm_gst_eigentuemer"
+    __tablename__ = "_tbl_alm_gst_eigentuemer"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
-    ez_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_ez.id"))
+    ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id"))
     kg_ez: Mapped[int]
     anteil: Mapped[int]
     anteil_von: Mapped[int]
@@ -411,11 +411,11 @@ class DmGstEz(DmBase):
     """
     basisdatenebene für einlagezahlen (ez)
     """
-    __tablename__ = "a_alm_gst_ez"
+    __tablename__ = "_tbl_alm_gst_ez"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # kgnr = Column(Integer, ForeignKey('a_sys_kg.kgnr'))
-    kgnr: Mapped[int] = mapped_column(ForeignKey("a_sys_kg.kgnr"))
+    kgnr: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kg.kgnr"))
 
     ez: Mapped[int]
     kg_ez: Mapped[str]
@@ -450,12 +450,12 @@ class DmGstNutzung(DmBase):
     """
     basisdatenebene für die benützungsarten der gst
     """
-    __tablename__ = "a_alm_gst_nutzung"
+    __tablename__ = "_tbl_alm_gst_nutzung"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
-    gst_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_version.id"))
-    banu_id: Mapped[int] = mapped_column(ForeignKey("a_sys_banu.id"))
+    gst_version_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_version.id"))
+    banu_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_banu.id"))
     ba_id: Mapped[int]
     nu_id: Mapped[int]
     area: Mapped[int]
@@ -480,14 +480,14 @@ class DmGstVersion(DmBase):
     ein jüngerer gst-import (= jüngerer datenstand) bedeutet z.B. eine neue
     version des gst
     """
-    __tablename__ = 'a_alm_gst_version'
+    __tablename__ = '_tbl_alm_gst_version'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # gst_id = Column(Integer, ForeignKey('a_alm_gst.id', ondelete='CASCADE'))
-    gst_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst.id", ondelete='CASCADE'))
+    gst_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst.id", ondelete='CASCADE'))
 
     # ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
-    ez_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst_ez.id"))
+    ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id"))
 
     gk: Mapped[str]
     source_id: Mapped[int]
@@ -553,13 +553,13 @@ class DmGstZuordnung(DmBase):
     """
     zuordnung der grundstücke zu einem akt
     """
-    __tablename__ = "a_alm_gst_zuordnung"
+    __tablename__ = "_tbl_alm_gst_zuordnung"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    akt_id: Mapped[int] = mapped_column(ForeignKey("a_alm_akt.id"))
-    gst_id: Mapped[int] = mapped_column(ForeignKey("a_alm_gst.id"))
-    awb_status_id: Mapped[int] = mapped_column(ForeignKey("a_alm_awb_status.id"))
-    rechtsgrundlage_id: Mapped[int] = mapped_column(ForeignKey("a_alm_rechtsgrundlage.id"))
+    akt_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_akt.id"))
+    gst_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst.id"))
+    awb_status_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_awb_status.id"))
+    rechtsgrundlage_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_rechtsgrundlage.id"))
 
     anmerkung: Mapped[str]
     probleme: Mapped[str]
@@ -611,7 +611,7 @@ class DmGstZuordnungMain(DmBase):
     """
     view mit den jüngsten gst die einem akt zugeordnet sind
     """
-    __tablename__ = "v_gst_zuordnung_main"
+    __tablename__ = "_tbl_alm_gst_zuordnung_main"
 
     id = Column(Integer, primary_key=True)
     zuord_id = Column(Integer)
@@ -633,7 +633,7 @@ class DmGstZuordnungMain(DmBase):
 
 
 class DmInfoButton(DmBase):
-    __tablename__ = 'info_button'
+    __tablename__ = '_tbl_global_info_button'
 
     id = Column(Integer, primary_key=True)
     btn = Column(String)
@@ -648,7 +648,7 @@ class DmKatGem(DmBase):
     """
     liste der katastralgemeinden in nö
     """
-    __tablename__ = "a_sys_kg"
+    __tablename__ = "_tbl_alm_kg"
 
     kgnr: Mapped[int] = mapped_column(primary_key=True)
     kgname: Mapped[str]
@@ -676,15 +676,15 @@ class DmAbgrenzung(DmBase):
     innerhalb eines Aktes können daher unterschiedliche Abgrenzungen angelegt
     werden (diese können sich unterscheiden in Jahr, Bearbeiter, Status, ...)
     """
-    __tablename__ = "a_alm_abgrenzung"
+    __tablename__ = "_tbl_alm_abgrenzung"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    akt_id: Mapped[int] = mapped_column(ForeignKey("a_alm_akt.id"))
+    akt_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_akt.id"))
     # komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
     jahr: Mapped[int]
     bearbeiter: Mapped[str]
-    erfassungsart_id: Mapped[int] = mapped_column(ForeignKey("a_alm_erfassungsart.id"))
-    status_id: Mapped[int] = mapped_column(ForeignKey("a_alm_abgrenzung_status.id"))
+    erfassungsart_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_erfassungsart.id"))
+    status_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_abgrenzung_status.id"))
     awb: Mapped[bool]
     bezeichnung: Mapped[str]
     anmerkung: Mapped[str]
@@ -708,7 +708,7 @@ class DmAbgrenzungStatus(DmBase):
     """
     Mapperklasse für den Status einer Abgrenzung
     """
-    __tablename__ = "a_alm_abgrenzung_status"
+    __tablename__ = "_tbl_alm_abgrenzung_status"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
@@ -726,11 +726,11 @@ class DmKomplex(DmBase):
     """
     Mapperklasse für die Komplexe eines Aktes (entsprechend einer Abgrenzung)
     """
-    __tablename__ = "a_alm_komplex"
+    __tablename__ = "_tbl_alm_komplex"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    abgrenzung_id: Mapped[int] = mapped_column(ForeignKey("a_alm_abgrenzung.id"))
-    komplex_name_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_name.id"))
+    abgrenzung_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_abgrenzung.id"))
+    komplex_name_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_komplex_name.id"))
 
     rel_koppel: Mapped[List["DmKoppel"]] = relationship(back_populates='rel_komplex',
                                                        cascade="all, delete, delete-orphan")
@@ -747,10 +747,10 @@ class DmKomplexName(DmBase):
     """
     Mapperklasse für die Komplexnamen eines Aktes
     """
-    __tablename__ = "a_alm_komplex_name"
+    __tablename__ = "_tbl_alm_komplex_name"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    akt_id: Mapped[int] = mapped_column(ForeignKey('a_alm_akt.id'))
+    akt_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_akt.id'))
     nr: Mapped[int]
     name: Mapped[str]
     anmerkung: Mapped[str]
@@ -766,14 +766,14 @@ class DmKomplexName(DmBase):
                f"name: {self.name})>"
 
 class DmKontakt(DmBase, DmNonSpatialObject):
-    __tablename__ = 'a_alm_kontakt'
+    __tablename__ = '_tbl_alm_kontakt'
 
     """class with self-relation!"""
     id: Mapped[int] = mapped_column(primary_key=True)
     """"""
 
-    type_id: Mapped[int] = mapped_column(ForeignKey('a_alm_kontakt_type.id'))
-    vertreter_id: Mapped[int] = mapped_column(ForeignKey("a_alm_kontakt.id"))
+    type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'))
+    vertreter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"))
 
     nachname: Mapped[str]
     vorname: Mapped[str]
@@ -788,7 +788,7 @@ class DmKontakt(DmBase, DmNonSpatialObject):
     mail3: Mapped[str]
 
     anm: Mapped[str]
-    gem_type_id: Mapped[int] = mapped_column(ForeignKey('a_alm_kontakt_gem_type.id'))
+    gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'))
 
     blank_value: Mapped[bool]
     inactive: Mapped[bool]
@@ -977,7 +977,7 @@ class DmKontaktGem(DmKontakt):
 
 
 class DmKontaktType(DmBase):
-    __tablename__ = 'a_alm_kontakt_type'
+    __tablename__ = '_tbl_alm_kontakt_type'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     parent_id: Mapped[int]
@@ -1004,7 +1004,7 @@ class DmKontaktType(DmBase):
 
 
 class DmKontaktGemTyp(DmBase):
-    __tablename__ = 'a_alm_kontakt_gem_type'
+    __tablename__ = '_tbl_alm_kontakt_gem_type'
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -1023,10 +1023,10 @@ class DmKoppel(DmBase):
     """
     Datenebene für Koppeln
     """
-    __tablename__ = "a_alm_koppel"
+    __tablename__ = "_tbl_alm_koppel"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    komplex_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex.id"))
+    komplex_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_komplex.id"))
     # komplex_version_id: Mapped[int] = mapped_column(ForeignKey("a_alm_komplex_version.id"))
     nr: Mapped[int]
     name: Mapped[str]
@@ -1076,7 +1076,7 @@ class DmRechtsgrundlage(DmBase):
     basisdatenebene für die rechstgrundlage der grundstücksbewirtschaftung;
     d.h. auf grund welcher rechtlichen situation ein grundstück beweidet wird;
     """
-    __tablename__ = 'a_alm_rechtsgrundlage'
+    __tablename__ = '_tbl_alm_rechtsgrundlage'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -1097,7 +1097,7 @@ class DmSettings(DmBase):
     """
     Einstellungen die vom Benutzer verändert werden können
     """
-    __tablename__ = 'settings'
+    __tablename__ = '_tbl_settings'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     code: Mapped[str]
@@ -1113,7 +1113,7 @@ class DmSys(DmBase):
     """
     Systemwerte
     """
-    __tablename__ = 'a_alm_sys'
+    __tablename__ = '_tbl_qga_sys'
 
     id = Column(Integer, primary_key=True)
     key = Column(String)
