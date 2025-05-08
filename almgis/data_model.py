@@ -1055,7 +1055,7 @@ class DmKoppel(DmBase):
             aa = to_shape(self.geometry).area  # float
             """"""
         else:
-            """notwendig für neu erzeugte koppeln, die noch nicht 
+            """notwendig für neu erzeugte koppeln, die noch nicht
             in der db sind"""
             geom_wkt = self.geometry
             geom_new = QgsGeometry()
