@@ -6,9 +6,9 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'AlmGIS'
-copyright = '2025, Fischlmair'
-author = 'Fischlmair'
+project = 'Agronaut'
+copyright = '2025, Franz'
+author = 'Franz'
 release = '0.1'
 
 # -- General configuration ---------------------------------------------------
@@ -24,6 +24,5 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-# html_theme = 'alabaster'
-html_theme = 'python_docs_theme'
+html_theme = 'alabaster'
 html_static_path = ['_static']
