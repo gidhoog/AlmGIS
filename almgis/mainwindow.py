@@ -154,7 +154,7 @@ class AlmMainWindow(QgaMainWindow):
     def initStatusBar(self):
         super().initStatusBar()
 
-    def _selectStartproject(self):
+    def useProjectSelector(self):
         """open the projectstartselector on start"""
 
         self.startDialog = AlmStartDialog(self)

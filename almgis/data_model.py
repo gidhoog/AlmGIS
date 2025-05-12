@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from typing import List
 
-from qga.data_model import DmBase, DmNonSpatialObject
+from qga.alchemy import DmBaseProject, DmNonSpatialObject
 from qgis.core import QgsGeometry
 
 from geoalchemy2 import Geometry, WKBElement
@@ -11,11 +11,11 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.hybrid import hybrid_property
 
-# class DmBase(DeclarativeBase):
+# class DmBaseProject(DeclarativeBase):
 #     pass
 
 
-class DmAkt(DmBase, DmNonSpatialObject):
+class DmAkt(DmBaseProject, DmNonSpatialObject):
     """
     basisdatenebene für akte
     """
@@ -65,7 +65,7 @@ class DmAkt(DmBase, DmNonSpatialObject):
                             self.id, self.name, self.az)
 
 
-class DmBanu(DmBase):
+class DmBanu(DmBaseProject):
     """
     Datenebene für den banu-Wert
     """
@@ -84,7 +84,7 @@ class DmBanu(DmBase):
         back_populates='rel_banu')
 
 
-class DmBearbeitungsstatus(DmBase):
+class DmBearbeitungsstatus(DmBaseProject):
     """
     basisdatenebene für den bearbeitungsstatus
     """
@@ -100,7 +100,7 @@ class DmBearbeitungsstatus(DmBase):
         return f"<DmBearbeitungsstatus(id={self.id}, name='{self.name}')>"
 
 
-class DmCutKoppelGstAktuell(DmBase):
+class DmCutKoppelGstAktuell(DmBaseProject):
     """
     basisdatenebene für den verschnitt von koppel und gst-version
     """
@@ -143,7 +143,7 @@ class DmCutKoppelGstAktuell(DmBase):
                f"gstversion_id:{self.gst_version_id})"
 
 
-class DmErfassungsart(DmBase):
+class DmErfassungsart(DmBaseProject):
     """
     Mapperklasse für die Erfassungsart einer Abgrenzung
     """
@@ -161,7 +161,7 @@ class DmErfassungsart(DmBase):
                f"name: {self.name})>"
 
 
-class DmGisLayer(DmBase):
+class DmGisLayer(DmBaseProject):
     """
     Basisdatenebene für gis_layer
     """
@@ -184,7 +184,7 @@ class DmGisLayer(DmBase):
                f"provider: {self.provider})>"
 
 
-class DmGisLayerMenu(DmBase):
+class DmGisLayerMenu(DmBaseProject):
     """
     basisdatenebene für menübäume, mit denen man layer auswählen und einfügen
     kann
@@ -207,7 +207,7 @@ class DmGisLayerMenu(DmBase):
                f"name: {self.name})>"
 
 
-class DmGisStyle(DmBase):
+class DmGisStyle(DmBaseProject):
     """
     basisdatenebene für gis_style
     """
@@ -239,7 +239,7 @@ class DmGisStyle(DmBase):
                f"name: {self.name})>"
 
 
-class DmGisStyleLayerVar(DmBase):
+class DmGisStyleLayerVar(DmBaseProject):
     """
     basisdatenebene für layervariablen die je gis-style definiert werden
     können
@@ -261,7 +261,7 @@ class DmGisStyleLayerVar(DmBase):
                f"name: {self.name})>"
 
 
-class DmGisScope(DmBase):
+class DmGisScope(DmBaseProject):
     """
     basisdatenebene für gis_scope
     """
@@ -278,7 +278,7 @@ class DmGisScope(DmBase):
                f"name: {self.name})>"
 
 
-class DmGisScopeLayer(DmBase):
+class DmGisScopeLayer(DmBaseProject):
     """
     basisdatenebene für gis_scope_layer
     """
@@ -307,7 +307,7 @@ class DmGisScopeLayer(DmBase):
                f"gis_style_id: {self.gis_style_id})>"
 
 
-class DmGst(DmBase):
+class DmGst(DmBaseProject):
     """
     alle grundstücke die aktuell in der DB verfügbar sind
     (alle bereits zugeordneten und die gst, die im gst-importverzeichis sind)
@@ -361,7 +361,7 @@ class DmGst(DmBase):
                f"kg_gst: {self.kg_gst}, gst:{self.gst})>"
 
 
-class DmGstAwbStatus(DmBase):
+class DmGstAwbStatus(DmBaseProject):
     """
     alm- und weidebuch-status_id eines grundstückes
     """
@@ -381,7 +381,7 @@ class DmGstAwbStatus(DmBase):
         return f"<{self.__class__.__name__}(id={self.id}, name='{self.name}')>"
 
 
-class DmGstEigentuemer(DmBase):
+class DmGstEigentuemer(DmBaseProject):
     """
     basisdatenebene für eigentuemer
     """
@@ -407,7 +407,7 @@ class DmGstEigentuemer(DmBase):
                f"ez_id: {self.ez_id}, kg_ez:{self.kg_ez}, name: {self.name})"
 
 
-class DmGstEz(DmBase):
+class DmGstEz(DmBaseProject):
     """
     basisdatenebene für einlagezahlen (ez)
     """
@@ -446,7 +446,7 @@ class DmGstEz(DmBase):
                f"kgnr: {self.kgnr}, ez: {self.ez})>"
 
 
-class DmGstNutzung(DmBase):
+class DmGstNutzung(DmBaseProject):
     """
     basisdatenebene für die benützungsarten der gst
     """
@@ -474,7 +474,7 @@ class DmGstNutzung(DmBase):
                f"gst_version_id: {self.gst_version_id}, ba_id: {self.ba_id})"
 
 
-class DmGstVersion(DmBase):
+class DmGstVersion(DmBaseProject):
     """
     die versionsabhängigen informationen der gst;
     ein jüngerer gst-import (= jüngerer datenstand) bedeutet z.B. eine neue
@@ -549,7 +549,7 @@ class DmGstVersion(DmBase):
                f"gst_id: {self.gst_id}, source_id:{self.source_id})"
 
 
-class DmGstZuordnung(DmBase):
+class DmGstZuordnung(DmBaseProject):
     """
     zuordnung der grundstücke zu einem akt
     """
@@ -607,7 +607,7 @@ class DmGstZuordnung(DmBase):
                f"akt_id: {self.akt_id}, gst_id:{self.gst_id})>"
 
 
-class DmGstZuordnungMain(DmBase):
+class DmGstZuordnungMain(DmBaseProject):
     """
     view mit den jüngsten gst die einem akt zugeordnet sind
     """
@@ -632,7 +632,7 @@ class DmGstZuordnungMain(DmBase):
                f"gst: {self.gst})"
 
 
-class DmInfoButton(DmBase):
+class DmInfoButton(DmBaseProject):
     __tablename__ = '_tbl_global_info_button'
 
     id = Column(Integer, primary_key=True)
@@ -644,7 +644,7 @@ class DmInfoButton(DmBase):
        return f"<<DmInfoButton(id='{self.id}', title='{self.title}')>>"
 
 
-class DmKatGem(DmBase):
+class DmKatGem(DmBaseProject):
     """
     liste der katastralgemeinden in nö
     """
@@ -670,7 +670,7 @@ class DmKatGem(DmBase):
                f"pgname: {self.pgname})"
 
 
-class DmAbgrenzung(DmBase):
+class DmAbgrenzung(DmBaseProject):
     """
     Mapperklasse für eine Abgrenzung der Alm/Weide;
     innerhalb eines Aktes können daher unterschiedliche Abgrenzungen angelegt
@@ -704,7 +704,7 @@ class DmAbgrenzung(DmBase):
                f"jahr: {self.jahr})>"
 
 
-class DmAbgrenzungStatus(DmBase):
+class DmAbgrenzungStatus(DmBaseProject):
     """
     Mapperklasse für den Status einer Abgrenzung
     """
@@ -722,7 +722,7 @@ class DmAbgrenzungStatus(DmBase):
                f"name: {self.name})>"
 
 
-class DmKomplex(DmBase):
+class DmKomplex(DmBaseProject):
     """
     Mapperklasse für die Komplexe eines Aktes (entsprechend einer Abgrenzung)
     """
@@ -743,7 +743,7 @@ class DmKomplex(DmBase):
                f"komplex_name_id: {self.komplex_name_id})>"
 
 
-class DmKomplexName(DmBase):
+class DmKomplexName(DmBaseProject):
     """
     Mapperklasse für die Komplexnamen eines Aktes
     """
@@ -765,8 +765,12 @@ class DmKomplexName(DmBase):
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
 
-class DmKontakt(DmBase, DmNonSpatialObject):
+class DmKontakt(DmBaseProject, DmNonSpatialObject):
     __tablename__ = '_tbl_alm_kontakt'
+
+    loadingTime = 'p'  # p = project, a = application
+    storageLocation = 'p'  # p = project, a = application, g = global
+
 
     """class with self-relation!"""
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -976,7 +980,7 @@ class DmKontaktGem(DmKontakt):
     }
 
 
-class DmKontaktType(DmBase):
+class DmKontaktType(DmBaseProject):
     __tablename__ = '_tbl_alm_kontakt_type'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -1003,7 +1007,7 @@ class DmKontaktType(DmBase):
                f" parent_id={self.parent_id}, name={self.name})>"
 
 
-class DmKontaktGemTyp(DmBase):
+class DmKontaktGemTyp(DmBaseProject):
     __tablename__ = '_tbl_alm_kontakt_gem_type'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -1019,7 +1023,7 @@ class DmKontaktGemTyp(DmBase):
                f"name='{self.name}, "
                f"name_short='{self.name_short}')>")
 
-class DmKoppel(DmBase):
+class DmKoppel(DmBaseProject):
     """
     Datenebene für Koppeln
     """
@@ -1071,7 +1075,7 @@ class DmKoppel(DmBase):
                f"nr: {self.nr})>"
 
 
-class DmRechtsgrundlage(DmBase):
+class DmRechtsgrundlage(DmBaseProject):
     """
     basisdatenebene für die rechstgrundlage der grundstücksbewirtschaftung;
     d.h. auf grund welcher rechtlichen situation ein grundstück beweidet wird;
@@ -1093,7 +1097,7 @@ class DmRechtsgrundlage(DmBase):
                f"name='{self.name}')>"
 
 
-class DmSettings(DmBase):
+class DmSettings(DmBaseProject):
     """
     Einstellungen die vom Benutzer verändert werden können
     """
@@ -1109,7 +1113,7 @@ class DmSettings(DmBase):
         return f"<{self.__class__.__name__}(id={self.id}, " \
                f"code='{self.code}, name='{self.name}')>"
 
-class DmSys(DmBase):
+class DmSys(DmBaseProject):
     """
     Systemwerte
     """
