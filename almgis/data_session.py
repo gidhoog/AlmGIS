@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from qga import data_session
+# from qga import data_session
 
 from almgis import AlmSessionCls
 # from almgis.data_model import DmSettings
