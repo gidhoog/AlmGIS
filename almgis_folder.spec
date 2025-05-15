@@ -23,12 +23,13 @@ a = Analysis(
     hiddenimports=[
     'sqlalchemy', 'shapely._geos', 'pkgutil', 'PyQt5.QtPositioning',
     'PyQt5.QtPrintSupport', 'PyQt5.QtSql', 'PyQt5.QtNetwork', 'PyQt5.QtXml',
-    'PyQt5.Qsci', 'PyQt5.sip', 'PyQt5.QtMultimedia'
+    'PyQt5.Qsci', 'PyQt5.sip', 'PyQt5.QtMultimedia', 'PyQt5.QtSerialPort',
+    'sqlalchemy_serializer', 'qgis.PyQt.QtSvg', 'html.parser'
     ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[
+    excludes=['PyQt6'
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,

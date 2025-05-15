@@ -1,3 +1,3 @@
-call C:\work\Projekte\AlmGIS\almgis\dist\almgis\almgis.exe
+call C:\work\Projekte\AlmGIS\dist\almgis\almgis.exe
 
 pause
