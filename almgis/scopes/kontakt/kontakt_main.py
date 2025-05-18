@@ -16,6 +16,7 @@ from sqlalchemy.orm import joinedload
 from almgis import settings_general
 # from almgis.data_session import session_cm
 from qga.data_view import QgaTableModel, QgaDataView
+from qga.info_button import QgaInfoButton
 
 from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
@@ -260,7 +261,9 @@ class KontaktMain(AlmDataView):
         super(__class__, self).__init__(parent, gis_mode)
         # self.initUi()
 
-        filter_name = QgaFilter('Name', str)
+        # filter_name = QgaFilter('Name', str)
+        filter_name = QgaFilter('Name  <a href="https://www.w3schools.com/">Visit W3Schools.com!</a>', str)
+        filter_name.label.setOpenExternalLinks(True)
         self.filters.append(filter_name)
 
         self.layer = VectorLayerFactory.createLayer(
@@ -293,6 +296,9 @@ class KontaktMain(AlmDataView):
         super().initUi()
 
         self.setStretchMethod(2)
+
+        self.uiInfoBtnFilter = QgaInfoButton(self)
+        self.uiFilterItemsHlay.addWidget(self.uiInfoBtnFilter)
 
         # """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
         # kontakt wählen zu können"""
