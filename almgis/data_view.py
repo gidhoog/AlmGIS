@@ -12,3 +12,6 @@ class AlmDataView(QgaDataView):
         super(__class__, self).__init__(parent, gis_mode)
 
         self.session = AlmSessionCls()
+
+    def __call__(self, *args, **kwargs):
+        pass
