@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QPushButton
 from qga.filter import QgaFilter
 from qga.layer import VectorLayerFactory, GeometryType, QgaFeature
 from qgis.PyQt.QtCore import Qt
@@ -299,6 +299,11 @@ class KontaktMain(AlmDataView):
 
         self.uiInfoBtnFilter = QgaInfoButton(self)
         self.uiFilterItemsHlay.addWidget(self.uiInfoBtnFilter)
+
+        self.uiTestNotify = QPushButton(self)
+        self.uiTestNotify.setText("Test Notify")
+        self.uiFilterItemsHlay.addWidget(self.uiTestNotify)
+        # self.uiTestNotify.clicked.connect()
 
         # """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
         # kontakt wählen zu können"""
