@@ -3,6 +3,13 @@
     <file>resources/icons/nordpfeil01.png</file>
     <file>resources/icons/abb_logo_ohne_schrift.svg</file>
   </qresource>
+  <qresource prefix="notify">
+    <file>resources/notify/close.png</file>
+    <file>resources/notify/error.png</file>
+    <file>resources/notify/information.png</file>
+    <file>resources/notify/success.png</file>
+    <file>resources/notify/warning.png</file>
+  </qresource>
   <qresource prefix="svg">
     <file>resources/icons/mActionFileNew.svg</file>
     <file>resources/icons/gst_all.svg</file>
