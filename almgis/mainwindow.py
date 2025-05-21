@@ -102,6 +102,12 @@ class AlmMainWindow(QgaMainWindow):
         self.settings_paths = settings_paths
         self.settings_constants = settings_constants
 
+    def configureDatabases(self):
+
+        # todo: see https://docs.sqlalchemy.org/en/20/orm/persistence_techniques.html#partitioning-strategies-e-g-multiple-database-backends-per-session
+
+        self.settings_user.value('project_start_selector')
+
     def signalsAction(self):
         super().signalsAction()
 

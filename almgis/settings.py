@@ -92,7 +92,8 @@ class AlmSettingsUser(QgaSettings):
     attr_list = [
         ('project_start_selector', 'True'),
         ('default_start_option', 'LAST'),  # LAST, OTHER, NEW, NONE
-        ('paths/last_project_file', '--')
+        ('paths/last_project_file', '--'),
+        ('paths/community_db_file', '')
     ]
 
     def __init__(self):
