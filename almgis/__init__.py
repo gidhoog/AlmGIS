@@ -22,5 +22,5 @@ settings_app.updateSettings()
 settings_user.updateSettings()
 """"""
 
-AlmSessionCls = sessionmaker()
+ProjectSessionCls = sessionmaker()
 InfoBtnSessionCls = sessionmaker()

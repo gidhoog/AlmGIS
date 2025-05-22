@@ -5,7 +5,7 @@ from qgis.PyQt.QtGui import QIcon
 
 from almgis import settings_user, settings_app, settings_project, \
     settings_general, settings_colors, settings_paths, settings_constants, \
-    AlmSessionCls
+    ProjectSessionCls
 # from almgis import DbSession
 from almgis.about import AlmAboutDialog
 from almgis.data_model import DmSettings
@@ -24,7 +24,7 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self, parent=None):
         super(AlmMainWindow, self).__init__(parent)
 
-        self.session_cls = AlmSessionCls
+        self.session_cls = ProjectSessionCls
         self.logger = Logger
         self.dmc_settings = DmSettings
 
@@ -106,7 +106,8 @@ class AlmMainWindow(QgaMainWindow):
 
         # todo: see https://docs.sqlalchemy.org/en/20/orm/persistence_techniques.html#partitioning-strategies-e-g-multiple-database-backends-per-session
 
-        self.settings_user.value('project_start_selector')
+        community_db_file = self.settings_user.value('paths/community_db_file')
+        print(f'...')
 
     def signalsAction(self):
         super().signalsAction()

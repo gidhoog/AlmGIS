@@ -2,7 +2,7 @@ from contextlib import contextmanager
 
 # from qga import data_session
 
-from almgis import AlmSessionCls
+from almgis import ProjectSessionCls
 # from almgis.data_model import DmSettings
 from almgis.logger import Logger
 
@@ -13,7 +13,7 @@ def session_cm(expire_on_commit=True, name=''):
     # print(f"- create SESSION - {name}")
     Logger.info(f"--- create SESSION: {name} "
                 f"(expire_on_commit={expire_on_commit})")
-    session = AlmSessionCls()
+    session = ProjectSessionCls()
     session.expire_on_commit = expire_on_commit
     try:
         yield session
