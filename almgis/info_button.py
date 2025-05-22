@@ -4,7 +4,7 @@ from pathlib import Path
 from qga.info_button import QgaInfoButton
 from sqlalchemy import create_engine
 
-from almgis import InfoBtnSessionCls
+from almgis import CommunitySessionCls
 from almgis.data_model import DmInfoButton
 from almgis.data_session import session_cm
 
@@ -18,11 +18,11 @@ app_engine = create_engine(engine_string, echo=False)
 #        'connect',
 #        (lambda x, l=logger: loadSpatialite(x, l))
 #        )
-InfoBtnSessionCls.configure(bind=app_engine)
+CommunitySessionCls.configure(bind=app_engine)
 
 @contextmanager
 def info_session_cm():
-    session = InfoBtnSessionCls()
+    session = CommunitySessionCls()
     try:
         yield session
         session.commit()
@@ -39,5 +39,5 @@ class AlmInfoButton(QgaInfoButton):
         super(AlmInfoButton, self).__init__(parent)
 
         self.session_cm = info_session_cm
-        self.session = InfoBtnSessionCls()
+        self.session = CommunitySessionCls()
         self.dmc_info_button = DmInfoButton

@@ -23,4 +23,4 @@ settings_user.updateSettings()
 """"""
 
 ProjectSessionCls = sessionmaker()
-InfoBtnSessionCls = sessionmaker()
+CommunitySessionCls = sessionmaker()
