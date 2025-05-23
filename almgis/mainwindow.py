@@ -93,6 +93,16 @@ class AlmMainWindow(QgaMainWindow):
         # # self.uiAktionOpenSettings.setIcon(
         # #     QIcon(':/svg/resources/icons/contacts.svg'))
 
+        self.uiAktionTestSuccess = QAction()
+        self.uiAktionTestSuccess.setText('Erfolg')
+        self.uiAktionTestWarning = QAction()
+        self.uiAktionTestWarning.setText('Wahrnung')
+        self.uiAktionTestError = QAction()
+        self.uiAktionTestError.setText('Error')
+        self.uiAktionTestInfo = QAction()
+        self.uiAktionTestInfo.setText('Info')
+
+
     def bindSettings(self):
 
         self.settings_app = settings_app
@@ -141,8 +151,25 @@ class AlmMainWindow(QgaMainWindow):
                    wid_cls=GstAllMainWidget:
             self.openMainWidget(wid_cls))
 
+        self.uiAktionTestInfo.triggered.connect(self.testNotifyInfo)
+        self.uiAktionTestSuccess.triggered.connect(self.testNotifySuccess)
+        self.uiAktionTestWarning.triggered.connect(self.testNotifyWarning)
+        self.uiAktionTestError.triggered.connect(self.testNotifyError)
+
+    def testNotifyInfo(self): ...
+    def testNotifySuccess(self): ...
+    def testNotifyWarning(self): ...
+    def testNotifyError(self): ...
+
     def createMenuBar(self):
         super().createMenuBar()
+
+        self.uiMenuTest = self.uiMenuBar.addMenu('Test')
+        self.uiMenuTestNotify = self.uiMenuTest.addMenu('Benachrichtigungen')
+        self.uiMenuTestNotify.addAction(self.uiAktionTestInfo)
+        self.uiMenuTestNotify.addAction(self.uiAktionTestSuccess)
+        self.uiMenuTestNotify.addAction(self.uiAktionTestWarning)
+        self.uiMenuTestNotify.addAction(self.uiAktionTestError)
 
         # self.uiMenuAkte = self.menuBar().addMenu('Akte')
         # self.uiMenuAkte.addAction(self.uiAktionOpenAkteMain)
