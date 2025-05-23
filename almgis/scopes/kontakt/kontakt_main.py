@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel
-from PyQt5.QtWidgets import QDialog, QPushButton
+from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel, \
+    QTimer
+from PyQt5.QtWidgets import QDialog, QPushButton, QMessageBox
 from qga.filter import QgaFilter
 from qga.layer import VectorLayerFactory, GeometryType, QgaFeature
 from qgis.PyQt.QtCore import Qt
@@ -25,6 +26,7 @@ from qga.main_widget import QgaMainWidget
 from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType
 from almgis.entity import AlmEntityDialog
 from almgis.fields import KontaktField, GeneralField
+from almgis.info_button import AlmInfoButton
 from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
 from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol, \
     KontaktAdresseCol, KontaktTypeCol, KontaktGemTypeCol
@@ -297,13 +299,14 @@ class KontaktMain(AlmDataView):
 
         self.setStretchMethod(2)
 
-        self.uiInfoBtnFilter = QgaInfoButton(self)
+        self.uiInfoBtnFilter = AlmInfoButton(self)
+        self.uiInfoBtnFilter.setObjectName('FilterBtn')
         self.uiFilterItemsHlay.addWidget(self.uiInfoBtnFilter)
 
         self.uiTestNotify = QPushButton(self)
         self.uiTestNotify.setText("Test Notify")
         self.uiFilterItemsHlay.addWidget(self.uiTestNotify)
-        # self.uiTestNotify.clicked.connect()
+        self.uiTestNotify.clicked.connect(self.testNotify)
 
         # """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
         # kontakt wählen zu können"""
@@ -331,6 +334,16 @@ class KontaktMain(AlmDataView):
         #
         # # self.uiAddDataTbtn.setMenu(self.add_menu)
         # self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
+
+    def testNotify(self):
+
+        self.msgBox = QMessageBox()
+        self.msgBox.setText("My List")
+        self.msgBox.setStyleSheet("QDialog { border: 1px solid black;}")
+        self.msgBox.setStandardButtons(QMessageBox.NoButton)
+        timer = QTimer()
+        timer.singleShot(5000, self.msgBox.accept)
+        self.msgBox.exec()
 
     def testAction(self, bbb):
 

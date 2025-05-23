@@ -92,6 +92,7 @@ class AlmSettingsUser(QgaSettings):
     attr_list = [
         ('project_start_selector', 'True'),
         ('default_start_option', 'LAST'),  # LAST, OTHER, NEW, NONE
+        ('info_btn_editable', 'True'),
         ('paths/last_project_file', '--'),
         ('paths/community_db_file', 'com_db_file')
     ]

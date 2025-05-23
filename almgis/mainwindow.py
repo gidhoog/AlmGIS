@@ -1,11 +1,13 @@
+from qga.alchemy import configureSession, DmBaseCommunity
 from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
+from sqlalchemy import create_engine
 
 from almgis import settings_user, settings_app, settings_project, \
     settings_general, settings_colors, settings_paths, settings_constants, \
-    ProjectSessionCls
+    ProjectSessionCls, CommunitySessionCls
 # from almgis import DbSession
 from almgis.about import AlmAboutDialog
 from almgis.data_model import DmSettings
@@ -108,6 +110,15 @@ class AlmMainWindow(QgaMainWindow):
 
         community_db_file = self.settings_user.value('paths/community_db_file')
         print(f'...')
+        # community_engine = configureSession(CommunitySessionCls,
+        #                                     self.logger,
+        #                                     community_db_file)
+        engine_string = 'sqlite:///' + community_db_file
+        community_engine = create_engine(engine_string, echo=False)
+
+        CommunitySessionCls.configure(binds={DmBaseCommunity: community_engine})
+
+
 
     def signalsAction(self):
         super().signalsAction()
