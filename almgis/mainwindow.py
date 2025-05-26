@@ -1,5 +1,7 @@
+from PyQt5.QtWidgets import QDialog, QLabel, QHBoxLayout
 from pyqttoast import Toast, ToastPreset, ToastPosition
 from qga.alchemy import configureSession, DmBaseCommunity
+from qga.info_my import QgaInfoDlg
 from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
@@ -105,6 +107,9 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionTestInfo = QAction()
         self.uiAktionTestInfo.setText('Info')
 
+        self.uiAktionTestMyInfo = QAction()
+        self.uiAktionTestMyInfo.setText('MyInfo')
+
 
     def bindSettings(self):
 
@@ -158,6 +163,22 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionTestSuccess.triggered.connect(self.testNotifySuccess)
         self.uiAktionTestWarning.triggered.connect(self.testNotifyWarning)
         self.uiAktionTestError.triggered.connect(self.testNotifyError)
+
+        self.uiAktionTestMyInfo.triggered.connect(self.testMyInfo)
+
+    def testMyInfo(self):
+
+        dlg = QgaInfoDlg()
+
+        # lbl = QLabel(dlg)
+        # lbl.setText('TEST')
+        # layout = QHBoxLayout()
+        # dlg.setLayout(layout)
+        #
+        # layout.addWidget(lbl)
+
+        dlg.exec()
+
 
     def testNotifyInfo(self):
 
@@ -217,6 +238,8 @@ class AlmMainWindow(QgaMainWindow):
         self.uiMenuTestNotify.addAction(self.uiAktionTestSuccess)
         self.uiMenuTestNotify.addAction(self.uiAktionTestWarning)
         self.uiMenuTestNotify.addAction(self.uiAktionTestError)
+
+        self.uiMenuTest.addAction(self.uiAktionTestMyInfo)
 
         # self.uiMenuAkte = self.menuBar().addMenu('Akte')
         # self.uiMenuAkte.addAction(self.uiAktionOpenAkteMain)
