@@ -168,7 +168,7 @@ class AlmMainWindow(QgaMainWindow):
 
     def testMyInfo(self):
 
-        dlg = QgaInfoDlg()
+        dlg = QgaInfoDlg(self)
 
         # lbl = QLabel(dlg)
         # lbl.setText('TEST')
@@ -178,7 +178,6 @@ class AlmMainWindow(QgaMainWindow):
         # layout.addWidget(lbl)
 
         dlg.exec()
-
 
     def testNotifyInfo(self):
 
