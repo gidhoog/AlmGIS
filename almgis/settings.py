@@ -94,7 +94,7 @@ class AlmSettingsUser(QgaSettings):
         ('default_start_option', 'LAST'),  # LAST, OTHER, NEW, NONE
         ('info_btn_editable', 'True'),
         ('paths/last_project_file', '--'),
-        ('paths/community_db_file', 'com_db_file')
+        ('paths/community_db_file', '*.almgis_common.db')
     ]
 
     def __init__(self):

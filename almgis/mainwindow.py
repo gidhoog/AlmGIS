@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QDialog, QLabel, QHBoxLayout
-from pyqttoast import Toast, ToastPreset, ToastPosition
+# from pyqttoast import Toast, ToastPreset, ToastPosition
 from qga.alchemy import configureSession, DmBaseCommunity
 from qga.info_my import QgaInfoDlg
+from qga.notify import Toast, ToastPreset, ToastPosition
 from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
