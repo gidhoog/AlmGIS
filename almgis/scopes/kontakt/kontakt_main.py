@@ -23,7 +23,8 @@ from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
 
-from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType
+from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType, \
+    DmKontaktEinzel
 from almgis.entity import AlmEntityDialog
 from almgis.fields import KontaktField, GeneralField
 from almgis.info_button import AlmInfoButton
@@ -401,6 +402,19 @@ class KontaktMain(AlmDataView):
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
         self.view.resizeColumnsToContents()
+
+        new_contact = DmKontakt()
+        new_contact.id = 999
+        new_contact.vorname = 'aaa1'
+        new_contact.nachname = 'AAA'
+        new_contact.type_id = 1
+        new_contact.vertreter_id = 0
+        new_contact.strasse = 'sss'
+
+        self.session.add(new_contact)
+        self.session.commit()
+
+        print(f'...')
 
     def getFeatureFields(self):
 

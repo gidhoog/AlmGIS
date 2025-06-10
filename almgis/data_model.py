@@ -632,7 +632,7 @@ class DmGstZuordnungMain(DmBaseProject):
                f"gst: {self.gst})"
 
 
-class DmInfoButton(DmBaseCommon):
+class DmInfoButton(DmBaseCommon, DmNonSpatialObject):
     __tablename__ = '_tbl_info_button'
 
     id = Column(Integer, primary_key=True)
@@ -765,38 +765,42 @@ class DmKomplexName(DmBaseProject):
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
 
-class DmKontakt(DmBaseProject, DmNonSpatialObject):
+# class DmKontakt(DmBaseProject, DmNonSpatialObject):
+class DmKontakt(DmBaseProject):
     __tablename__ = '_tbl_alm_kontakt'
 
-    loadingTime = 'p'  # p = project, a = application
-    storageLocation = 'p'  # p = project, a = application, g = global
+    # loadingTime = 'p'  # p = project, a = application
+    # storageLocation = 'p'  # p = project, a = application, g = global
 
 
     """class with self-relation!"""
     id: Mapped[int] = mapped_column(primary_key=True)
     """"""
 
-    type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'))
-    vertreter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"))
+    type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'),
+                                         nullable=True)
+    vertreter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
+                                              nullable=True)
 
-    nachname: Mapped[str]
-    vorname: Mapped[str]
-    strasse: Mapped[str]
-    plz: Mapped[str]
-    ort: Mapped[str]
-    telefon1: Mapped[str]
-    telefon2: Mapped[str]
-    telefon3: Mapped[str]
-    mail1: Mapped[str]
-    mail2: Mapped[str]
-    mail3: Mapped[str]
+    nachname: Mapped[str] = mapped_column(nullable=True)
+    vorname: Mapped[str] = mapped_column(nullable=True)
+    strasse: Mapped[str] = mapped_column(nullable=True)
+    plz: Mapped[str] = mapped_column(nullable=True)
+    ort: Mapped[str] = mapped_column(nullable=True)
+    telefon1: Mapped[str] = mapped_column(nullable=True)
+    telefon2: Mapped[str] = mapped_column(nullable=True)
+    telefon3: Mapped[str] = mapped_column(nullable=True)
+    mail1: Mapped[str] = mapped_column(nullable=True)
+    mail2: Mapped[str] = mapped_column(nullable=True)
+    mail3: Mapped[str] = mapped_column(nullable=True)
 
-    anm: Mapped[str]
-    gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'))
+    anm: Mapped[str] = mapped_column(nullable=True)
+    gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'),
+                                             nullable=True)
 
-    blank_value: Mapped[bool]
-    inactive: Mapped[bool]
-    not_delete: Mapped[bool]
+    blank_value: Mapped[bool] = mapped_column(nullable=True)
+    inactive: Mapped[bool] = mapped_column(nullable=True)
+    not_delete: Mapped[bool] = mapped_column(nullable=True)
 
     rel_gem_type: Mapped['DmKontaktGemTyp'] = relationship(lazy="joined")
     rel_type: Mapped['DmKontaktType'] = relationship()
@@ -809,161 +813,161 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
 
     rel_akt: Mapped[List["DmAkt"]] = relationship(back_populates="rel_bewirtschafter")
 
-    __mapper_args__ = {
-        'polymorphic_on': type_id
-    }
-
-    @hybrid_property
-    def name(self):
-
-        name = ''
-
-        if self.nachname != '':
-            name += self.nachname
-
-        if self.vorname != '':
-            name += ' '
-            name += self.vorname
-
-        return name
-
-    @hybrid_property
-    def adresse(self):
-
-        adresse = ''
-
-        if str(self.plz) != '':
-            adresse += str(self.plz)
-
-        if self.ort != '':
-            adresse += ' '
-            adresse += self.ort
-
-        if self.strasse != '':
-            adresse += ', '
-            adresse += self.strasse
-
-        return adresse
-
-    @hybrid_property
-    def telefon_all(self):
-
-        telfon_list = []
-
-        if self.telefon1 != '':
-            telfon_list.append(self.telefon1)
-
-        if self.telefon2 != '':
-            telfon_list.append(self.telefon2)
-
-        if self.telefon3 != '':
-            telfon_list.append(self.telefon3)
-
-        telefon_all = ", ".join(str(t) for t in telfon_list)
-
-        return telefon_all
-
-    @hybrid_property
-    def mail_all(self):
-
-        mail_list = []
-
-        if self.mail1 != '':
-            mail_list.append(self.mail1)
-
-        if self.mail2 != '':
-            mail_list.append(self.mail2)
-
-        if self.mail3 != '':
-            mail_list.append(self.mail3)
-
-        mail_all = ", ".join(str(m) for m in mail_list)
-
-        return mail_all
-
-    @hybrid_property
-    def name(self):
-
-        name = ''
-
-        try:
-            if self.nachname != '':
-                name += self.nachname
-
-            if self.vorname != '':
-                name += ' '
-                name += self.vorname
-        except:
-            pass
-
-        return name
-
-    @hybrid_property
-    def adresse(self):
-
-        adresse = ''
-
-        if str(self.plz) != '':
-            adresse += str(self.plz)
-
-        # print(f'self.ort: {self.ort}')
-
-        if self.ort != '' and self.ort is not None:
-            adresse += ' '
-            adresse += self.ort
-
-        if self.strasse != '' and self.strasse is not None:
-            adresse += ', '
-            adresse += self.strasse
-
-        return adresse
-
-    @hybrid_property
-    def telefon_all(self):
-
-        telfon_list = []
-
-        if self.telefon1 != '':
-            telfon_list.append(self.telefon1)
-
-        if self.telefon2 != '':
-            telfon_list.append(self.telefon2)
-
-        if self.telefon3 != '':
-            telfon_list.append(self.telefon3)
-
-        telefon_all = ", ".join(str(t) for t in telfon_list)
-
-        return telefon_all
-
-    @hybrid_property
-    def mail_all(self):
-
-        mail_list = []
-
-        if self.mail1 != '':
-            mail_list.append(self.mail1)
-
-        if self.mail2 != '':
-            mail_list.append(self.mail2)
-
-        if self.mail3 != '':
-            mail_list.append(self.mail3)
-
-        mail_all = ", ".join(str(m) for m in mail_list)
-
-        return mail_all
-
-    def __init__(self):  # set default values
-
-        # self.type_id = 0
-
-        self.blank_value = 0
-        self.inactive = 0
-        self.not_delete = 0
-
-    def __repr__(self):
-       return f"<DmKontakt(id={self.id}, nachname='{self.nachname}')>"
+    # __mapper_args__ = {
+    #     'polymorphic_on': type_id
+    # }
+    #
+    # @hybrid_property
+    # def name(self):
+    #
+    #     name = ''
+    #
+    #     if self.nachname != '':
+    #         name += self.nachname
+    #
+    #     if self.vorname != '':
+    #         name += ' '
+    #         name += self.vorname
+    #
+    #     return name
+    #
+    # @hybrid_property
+    # def adresse(self):
+    #
+    #     adresse = ''
+    #
+    #     if str(self.plz) != '':
+    #         adresse += str(self.plz)
+    #
+    #     if self.ort != '':
+    #         adresse += ' '
+    #         adresse += self.ort
+    #
+    #     if self.strasse != '':
+    #         adresse += ', '
+    #         adresse += self.strasse
+    #
+    #     return adresse
+    #
+    # @hybrid_property
+    # def telefon_all(self):
+    #
+    #     telfon_list = []
+    #
+    #     if self.telefon1 != '':
+    #         telfon_list.append(self.telefon1)
+    #
+    #     if self.telefon2 != '':
+    #         telfon_list.append(self.telefon2)
+    #
+    #     if self.telefon3 != '':
+    #         telfon_list.append(self.telefon3)
+    #
+    #     telefon_all = ", ".join(str(t) for t in telfon_list)
+    #
+    #     return telefon_all
+    #
+    # @hybrid_property
+    # def mail_all(self):
+    #
+    #     mail_list = []
+    #
+    #     if self.mail1 != '':
+    #         mail_list.append(self.mail1)
+    #
+    #     if self.mail2 != '':
+    #         mail_list.append(self.mail2)
+    #
+    #     if self.mail3 != '':
+    #         mail_list.append(self.mail3)
+    #
+    #     mail_all = ", ".join(str(m) for m in mail_list)
+    #
+    #     return mail_all
+    #
+    # @hybrid_property
+    # def name(self):
+    #
+    #     name = ''
+    #
+    #     try:
+    #         if self.nachname != '':
+    #             name += self.nachname
+    #
+    #         if self.vorname != '':
+    #             name += ' '
+    #             name += self.vorname
+    #     except:
+    #         pass
+    #
+    #     return name
+    #
+    # @hybrid_property
+    # def adresse(self):
+    #
+    #     adresse = ''
+    #
+    #     if str(self.plz) != '':
+    #         adresse += str(self.plz)
+    #
+    #     # print(f'self.ort: {self.ort}')
+    #
+    #     if self.ort != '' and self.ort is not None:
+    #         adresse += ' '
+    #         adresse += self.ort
+    #
+    #     if self.strasse != '' and self.strasse is not None:
+    #         adresse += ', '
+    #         adresse += self.strasse
+    #
+    #     return adresse
+    #
+    # @hybrid_property
+    # def telefon_all(self):
+    #
+    #     telfon_list = []
+    #
+    #     if self.telefon1 != '':
+    #         telfon_list.append(self.telefon1)
+    #
+    #     if self.telefon2 != '':
+    #         telfon_list.append(self.telefon2)
+    #
+    #     if self.telefon3 != '':
+    #         telfon_list.append(self.telefon3)
+    #
+    #     telefon_all = ", ".join(str(t) for t in telfon_list)
+    #
+    #     return telefon_all
+    #
+    # @hybrid_property
+    # def mail_all(self):
+    #
+    #     mail_list = []
+    #
+    #     if self.mail1 != '':
+    #         mail_list.append(self.mail1)
+    #
+    #     if self.mail2 != '':
+    #         mail_list.append(self.mail2)
+    #
+    #     if self.mail3 != '':
+    #         mail_list.append(self.mail3)
+    #
+    #     mail_all = ", ".join(str(m) for m in mail_list)
+    #
+    #     return mail_all
+    #
+    # def __init__(self):  # set default values
+    #
+    #     # self.type_id = 0
+    #
+    #     self.blank_value = 0
+    #     self.inactive = 0
+    #     self.not_delete = 0
+    #
+    # def __repr__(self):
+    #    return f"<DmKontakt(id={self.id}, nachname='{self.nachname}')>"
 
 
 class DmKontaktEinzel(DmKontakt):
