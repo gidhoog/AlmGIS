@@ -115,18 +115,20 @@ class AlmMainWindow(QgaMainWindow):
         self.settings_constants = settings_constants
 
     def configureDatabases(self):
+        """
+        richte die datenbanken für almgis ein;
+        siehe: https://docs.sqlalchemy.org/en/20/orm/persistence_techniques.html#partitioning-strategies-e-g-multiple-database-backends-per-session
+        """
 
-        # todo: see https://docs.sqlalchemy.org/en/20/orm/persistence_techniques.html#partitioning-strategies-e-g-multiple-database-backends-per-session
+        """hole file_path der common_db"""
+        common_db_file = self.settings_user.value('paths/common_db_file')
+        """"""
 
-        community_db_file = self.settings_user.value('paths/community_db_file')
-        print(f'...')
-        # community_engine = configureSession(CommunitySessionCls,
-        #                                     self.logger,
-        #                                     community_db_file)
-        engine_string = 'sqlite:///' + community_db_file
+        """richte die session 'CommunitySessionCls' ein"""
+        engine_string = 'sqlite:///' + common_db_file
         community_engine = create_engine(engine_string, echo=False)
-
         CommunitySessionCls.configure(binds={DmBaseCommunity: community_engine})
+        """"""
 
     def signalsAction(self):
         super().signalsAction()
