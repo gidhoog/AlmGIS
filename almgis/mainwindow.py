@@ -1,4 +1,4 @@
-from qga.alchemy import DmBaseCommunity
+from qga.alchemy import DmBaseCommon
 from qga.notify import QgaToast, QgaToastPreset, QgaToastPosition
 from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
@@ -127,7 +127,7 @@ class AlmMainWindow(QgaMainWindow):
         """richte die session 'CommunitySessionCls' ein"""
         engine_string = 'sqlite:///' + common_db_file
         community_engine = create_engine(engine_string, echo=False)
-        CommunitySessionCls.configure(binds={DmBaseCommunity: community_engine})
+        CommunitySessionCls.configure(binds={DmBaseCommon: community_engine})
         """"""
 
     def signalsAction(self):

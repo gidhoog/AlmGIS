@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from typing import List
 
-from qga.alchemy import DmBaseProject, DmNonSpatialObject, DmBaseCommunity
+from qga.alchemy import DmBaseProject, DmNonSpatialObject, DmBaseCommon
 from qgis.core import QgsGeometry
 
 from geoalchemy2 import Geometry, WKBElement
@@ -632,7 +632,7 @@ class DmGstZuordnungMain(DmBaseProject):
                f"gst: {self.gst})"
 
 
-class DmInfoButton(DmBaseCommunity):
+class DmInfoButton(DmBaseCommon):
     __tablename__ = '_tbl_info_button'
 
     id = Column(Integer, primary_key=True)
