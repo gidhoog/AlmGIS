@@ -1,8 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QLabel, QHBoxLayout
-# from pyqttoast import Toast, ToastPreset, ToastPosition
-from qga.alchemy import configureSession, DmBaseCommunity
-from qga.info_my import QgaInfoDlg
-from qga.notify import Toast, ToastPreset, ToastPosition
+from qga.alchemy import DmBaseCommunity
+from qga.notify import QgaToast, QgaToastPreset, QgaToastPosition
 from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
@@ -12,7 +9,7 @@ from sqlalchemy import create_engine
 from almgis import settings_user, settings_app, settings_project, \
     settings_general, settings_colors, settings_paths, settings_constants, \
     ProjectSessionCls, CommunitySessionCls
-# from almgis import DbSession
+
 from almgis.about import AlmAboutDialog
 from almgis.data_model import DmSettings
 from almgis.logger import Logger
@@ -34,7 +31,7 @@ class AlmMainWindow(QgaMainWindow):
         self.logger = Logger
         self.dmc_settings = DmSettings
 
-        Toast.setMaximumOnScreen(4)
+        QgaToast.setMaximumOnScreen(4)
 
         self.about_dialog_cls = AlmAboutDialog
 
@@ -45,8 +42,6 @@ class AlmMainWindow(QgaMainWindow):
         self._selected_mainarea = None
 
         Logger.info("create Mainwindwos!!")
-
-        # self.createMenuBar()
 
     def setupMainWindow(self):
         super().setupMainWindow()
@@ -108,10 +103,6 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionTestInfo = QAction()
         self.uiAktionTestInfo.setText('Info')
 
-        self.uiAktionTestMyInfo = QAction()
-        self.uiAktionTestMyInfo.setText('MyInfo')
-
-
     def bindSettings(self):
 
         self.settings_app = settings_app
@@ -136,8 +127,6 @@ class AlmMainWindow(QgaMainWindow):
         community_engine = create_engine(engine_string, echo=False)
 
         CommunitySessionCls.configure(binds={DmBaseCommunity: community_engine})
-
-
 
     def signalsAction(self):
         super().signalsAction()
@@ -165,34 +154,19 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionTestWarning.triggered.connect(self.testNotifyWarning)
         self.uiAktionTestError.triggered.connect(self.testNotifyError)
 
-        self.uiAktionTestMyInfo.triggered.connect(self.testMyInfo)
-
-    def testMyInfo(self):
-
-        dlg = QgaInfoDlg(self)
-
-        # lbl = QLabel(dlg)
-        # lbl.setText('TEST')
-        # layout = QHBoxLayout()
-        # dlg.setLayout(layout)
-        #
-        # layout.addWidget(lbl)
-
-        dlg.exec()
-
     def testNotifyInfo(self):
 
-        toast = Toast(self)
+        toast = QgaToast(self)
         toast.setDuration(5000)  # Hide after x seconds
         toast.setTitle('Information')
         toast.setText('Das ist eine wichtige Information.')
-        toast.applyPreset(ToastPreset.INFORMATION)  # Apply style preset
-        toast.setPosition(ToastPosition.BOTTOM_RIGHT)
+        toast.applyPreset(QgaToastPreset.INFORMATION)  # Apply style preset
+        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
         toast.show()
 
     def testNotifySuccess(self, title=None, text=None):
 
-        toast = Toast(self)
+        toast = QgaToast(self)
         toast.setDuration(5000)  # Hide after x seconds
 
         if title:
@@ -205,28 +179,28 @@ class AlmMainWindow(QgaMainWindow):
         else:
             toast.setText('Die wichtige Aufgabe wurde erfogreich beendet.')
 
-        toast.applyPreset(ToastPreset.SUCCESS)  # Apply style preset
-        toast.setPosition(ToastPosition.BOTTOM_RIGHT)
+        toast.applyPreset(QgaToastPreset.SUCCESS)  # Apply style preset
+        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
         toast.show()
 
     def testNotifyWarning(self):
 
-        toast = Toast(self)
+        toast = QgaToast(self)
         toast.setDuration(5000)  # Hide after x seconds
         toast.setTitle('Wahrnung')
         toast.setText('Achtung, das ist eine Wahrnung!')
-        toast.applyPreset(ToastPreset.WARNING)  # Apply style preset
-        toast.setPosition(ToastPosition.BOTTOM_RIGHT)
+        toast.applyPreset(QgaToastPreset.WARNING)  # Apply style preset
+        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
         toast.show()
 
     def testNotifyError(self):
 
-        toast = Toast(self)
+        toast = QgaToast(self)
         toast.setDuration(5000)  # Hide after x seconds
         toast.setTitle('Fehler')
         toast.setText('Die wichtige Aufgabe konnte nicht erledigt werden!')
-        toast.applyPreset(ToastPreset.ERROR)  # Apply style preset
-        toast.setPosition(ToastPosition.BOTTOM_RIGHT)
+        toast.applyPreset(QgaToastPreset.ERROR)  # Apply style preset
+        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
         toast.show()
 
     def createMenuBar(self):
@@ -238,8 +212,6 @@ class AlmMainWindow(QgaMainWindow):
         self.uiMenuTestNotify.addAction(self.uiAktionTestSuccess)
         self.uiMenuTestNotify.addAction(self.uiAktionTestWarning)
         self.uiMenuTestNotify.addAction(self.uiAktionTestError)
-
-        self.uiMenuTest.addAction(self.uiAktionTestMyInfo)
 
         # self.uiMenuAkte = self.menuBar().addMenu('Akte')
         # self.uiMenuAkte.addAction(self.uiAktionOpenAkteMain)
