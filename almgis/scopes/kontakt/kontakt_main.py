@@ -263,8 +263,8 @@ class KontaktMain(AlmDataView):
         super(__class__, self).__init__(parent, gis_mode)
         # self.initUi()
 
-        # filter_name = QgaFilter('Name', str)
-        filter_name = QgaFilter('Name  <a href="https://www.w3schools.com/">Visit W3Schools.com!</a>', str)
+        filter_name = QgaFilter('Name', str)
+        # filter_name = QgaFilter('Name  <a href="https://www.w3schools.com/">Visit W3Schools.com!</a>', str)
         filter_name.label.setOpenExternalLinks(True)
         self.filters.append(filter_name)
 
@@ -292,21 +292,10 @@ class KontaktMain(AlmDataView):
     def signals(self):
         super().signals()
 
-        # self.uiAddDataTbtn.clicked.disconnect(self.add_row)
-
     def initUi(self):
         super().initUi()
 
         self.setStretchMethod(2)
-
-        self.uiInfoBtnFilter = AlmInfoButton(self)
-        self.uiInfoBtnFilter.setObjectName('FilterBtn')
-        self.uiFilterItemsHlay.addWidget(self.uiInfoBtnFilter)
-
-        self.uiTestNotify = QPushButton(self)
-        self.uiTestNotify.setText("Test Notify")
-        self.uiFilterItemsHlay.addWidget(self.uiTestNotify)
-        self.uiTestNotify.clicked.connect(self.testNotify)
 
         # """auswahl in der 'add-toolbox' um aus einzel- und gemeinschafts-
         # kontakt wählen zu können"""
@@ -335,26 +324,12 @@ class KontaktMain(AlmDataView):
         # # self.uiAddDataTbtn.setMenu(self.add_menu)
         # self.uiAddDataTbtn.setPopupMode(QToolButton.InstantPopup)
 
-    def testNotify(self):
-
-        self.msgBox = QMessageBox()
-        self.msgBox.setText("My List")
-        self.msgBox.setStyleSheet("QDialog { border: 1px solid black;}")
-        self.msgBox.setStandardButtons(QMessageBox.NoButton)
-        timer = QTimer()
-        timer.singleShot(5000, self.msgBox.accept)
-        self.msgBox.exec()
-
-    def testAction(self, bbb):
-
-        print(f'test action: {bbb}')
-
-    # @pyqtSlot()
-    @staticmethod
-    def fn(checked):
-
-        print(f'ff: {checked}')
-        # self.addKontakt('einzel')
+    # # @pyqtSlot()
+    # @staticmethod
+    # def fn(checked):
+    #
+    #     print(f'ff: {checked}')
+    #     # self.addKontakt('einzel')
 
     def addEinzelKontakt(self):
 
@@ -415,6 +390,13 @@ class KontaktMain(AlmDataView):
         # self.view.setColumnHidden(0, True)
         # self.view.setColumnHidden(1, True)
         # self.view.setColumnHidden(3, True)
+
+        """füge den button erst nach dem einfügen der filter ein!!!"""
+        self.uiInfoBtnFilter = AlmInfoButton(self)
+        self.uiInfoBtnFilter.setObjectName('FilterBtn')
+        self.uiFilterItemsHlay.insertWidget(self.uiFilterItemsHlay.count(),
+                                            self.uiInfoBtnFilter)
+        """"""
 
         self.view.sortByColumn(1, Qt.AscendingOrder)
 
