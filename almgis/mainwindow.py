@@ -27,7 +27,7 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self, parent=None):
         super(AlmMainWindow, self).__init__(parent)
 
-        self.session_cls = ProjectSessionCls
+        self.session_prj_cls = ProjectSessionCls
         self.logger = Logger
         self.dmc_settings = DmSettings
 
@@ -46,8 +46,8 @@ class AlmMainWindow(QgaMainWindow):
     def setupMainWindow(self):
         super().setupMainWindow()
 
-    def declareActions(self):
-        super().declareActions()
+    def setupActions(self):
+        super().setupActions()
 
         self.uiAktionOpenAkteMain = QAction()
         self.uiAktionOpenAkteMain.setText('Alle Akte')
@@ -103,7 +103,7 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionTestInfo = QAction()
         self.uiAktionTestInfo.setText('Info')
 
-    def bindSettings(self):
+    def setupSettings(self):
 
         self.settings_app = settings_app
         self.settings_user = settings_user
@@ -114,7 +114,7 @@ class AlmMainWindow(QgaMainWindow):
         self.settings_paths = settings_paths
         self.settings_constants = settings_constants
 
-    def configureDatabases(self):
+    def setupDatabases(self):
         """
         richte die datenbanken für almgis ein;
         siehe: https://docs.sqlalchemy.org/en/20/orm/persistence_techniques.html#partitioning-strategies-e-g-multiple-database-backends-per-session
@@ -234,14 +234,14 @@ class AlmMainWindow(QgaMainWindow):
         # self.uiMenuHilfe.addAction(self.uiActionOpenHelp)
         # self.uiMenuHilfe.addAction(self.uiActionOpenAbout)
 
-    def createToolBar(self):
+    def setupToolBar(self):
 
         self.uiToolBar.addAction(self.uiAktionOpenAkteMain)
         self.uiToolBar.addAction(self.uiAktionOpenKontakteMain)
         self.uiToolBar.addAction(self.uiAktionOpenGstZuornungMain)
 
-    def initStatusBar(self):
-        super().initStatusBar()
+    def setupStatusBar(self):
+        super().setupStatusBar()
 
     def useProjectSelector(self):
         """open the projectstartselector on start"""
