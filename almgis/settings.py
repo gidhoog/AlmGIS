@@ -119,15 +119,3 @@ class AlmSettingsApp(QgaSettings):
 
 
 class AlmSettingsProject(QgaSettingsProject): ...
-
-    # def __init__(self):
-    #     super().__init__()
-
-    # from almgis import ProjectSessionCls
-    # from almgis.data_model import DmSettings
-    # from almgis.logger import Logger
-    #
-    # # session_cm = session_cm
-    # logger = Logger
-    # prj_session_cls = ProjectSessionCls
-    # settings_dmc = DmSettings
