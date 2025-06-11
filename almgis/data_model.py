@@ -632,7 +632,8 @@ class DmGstZuordnungMain(DmBaseProject):
                f"gst: {self.gst})"
 
 
-class DmInfoButton(DmBaseCommon, DmNonSpatialObject):
+# class DmInfoButton(DmBaseCommon, DmNonSpatialObject):
+class DmInfoButton(DmBaseCommon):
     __tablename__ = '_tbl_info_button'
 
     id = Column(Integer, primary_key=True)
