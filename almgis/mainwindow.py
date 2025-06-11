@@ -163,54 +163,21 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionTestWarning.triggered.connect(self.testNotifyWarning)
         self.uiAktionTestError.triggered.connect(self.testNotifyError)
 
+    def testNotifySuccess(self):
+
+        self.showNotify(QgaToastPreset.SUCCESS)
+
     def testNotifyInfo(self):
 
-        toast = QgaToast(self)
-        toast.setDuration(5000)  # Hide after x seconds
-        toast.setTitle('Information')
-        toast.setText('Das ist eine wichtige Information.')
-        toast.applyPreset(QgaToastPreset.INFORMATION)  # Apply style preset
-        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
-        toast.show()
-
-    def testNotifySuccess(self, title=None, text=None):
-
-        toast = QgaToast(self)
-        toast.setDuration(5000)  # Hide after x seconds
-
-        if title:
-            toast.setTitle(title)
-        else:
-            toast.setTitle('Wichtige Aufgabe')
-
-        if text:
-            toast.setText(text)
-        else:
-            toast.setText('Die wichtige Aufgabe wurde erfogreich beendet.')
-
-        toast.applyPreset(QgaToastPreset.SUCCESS)  # Apply style preset
-        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
-        toast.show()
+        self.showNotify(QgaToastPreset.INFORMATION)
 
     def testNotifyWarning(self):
 
-        toast = QgaToast(self)
-        toast.setDuration(5000)  # Hide after x seconds
-        toast.setTitle('Wahrnung')
-        toast.setText('Achtung, das ist eine Wahrnung!')
-        toast.applyPreset(QgaToastPreset.WARNING)  # Apply style preset
-        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
-        toast.show()
+        self.showNotify(QgaToastPreset.WARNING)
 
     def testNotifyError(self):
 
-        toast = QgaToast(self)
-        toast.setDuration(5000)  # Hide after x seconds
-        toast.setTitle('Fehler')
-        toast.setText('Die wichtige Aufgabe konnte nicht erledigt werden!')
-        toast.applyPreset(QgaToastPreset.ERROR)  # Apply style preset
-        toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
-        toast.show()
+        self.showNotify(QgaToastPreset.ERROR)
 
     def setupMenuBar(self):
         super().setupMenuBar()
