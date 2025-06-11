@@ -205,8 +205,8 @@ class AlmMainWindow(QgaMainWindow):
         toast.setPosition(QgaToastPosition.BOTTOM_RIGHT)
         toast.show()
 
-    def createMenuBar(self):
-        super().createMenuBar()
+    def setupMenuBar(self):
+        super().setupMenuBar()
 
         self.uiMenuTest = self.uiMenuBar.addMenu('Test')
         self.uiMenuTestNotify = self.uiMenuTest.addMenu('Benachrichtigungen')
