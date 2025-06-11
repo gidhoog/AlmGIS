@@ -1109,10 +1109,10 @@ class DmSettings(DmBaseProject):
     __tablename__ = '_tbl_settings'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    code: Mapped[str]
-    name: Mapped[str]
-    description: Mapped[str]
-    value: Mapped[str]
+    code: Mapped[str] = mapped_column(nullable=True)
+    name: Mapped[str] = mapped_column(nullable=True)
+    description: Mapped[str] = mapped_column(nullable=True)
+    value: Mapped[str] = mapped_column(nullable=True)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id={self.id}, " \

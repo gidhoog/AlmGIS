@@ -107,7 +107,14 @@ class AlmMainWindow(QgaMainWindow):
 
         self.settings_app = settings_app
         self.settings_user = settings_user
+
+        """setze verschiedene attribute für die projekt-settings"""
         self.settings_project = settings_project
+        self.settings_project.prj_session_cls = ProjectSessionCls
+        self.settings_project.settings_dmc = DmSettings
+        self.settings_project.logger = Logger
+        """"""
+
 
         self.settings_general = settings_general
         self.settings_colors = settings_colors

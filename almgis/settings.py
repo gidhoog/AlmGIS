@@ -5,8 +5,6 @@ from PyQt5.QtCore import QSettings
 from qga.settings import QgaSettings, QgaSettingsProject, QgaSettingsGeneral, \
     QgaSettingsColors, QgaSettingsPaths, QgaSettingsConstants
 
-from almgis.data_model import DmSettings
-
 
 class AlmSettingsGeneral(QgaSettingsGeneral):
     """
@@ -120,7 +118,16 @@ class AlmSettingsApp(QgaSettings):
         self.sync()
 
 
-class AlmSettingsProject(QgaSettingsProject):
+class AlmSettingsProject(QgaSettingsProject): ...
 
-    # session_cm = session_cm
-    settings_dmc = DmSettings
+    # def __init__(self):
+    #     super().__init__()
+
+    # from almgis import ProjectSessionCls
+    # from almgis.data_model import DmSettings
+    # from almgis.logger import Logger
+    #
+    # # session_cm = session_cm
+    # logger = Logger
+    # prj_session_cls = ProjectSessionCls
+    # settings_dmc = DmSettings
