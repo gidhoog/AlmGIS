@@ -61,7 +61,6 @@ def run():
     main_window.setWindowState(Qt.WindowMaximized)
     main_window.show()
     main_window.setupMainWindow()
-    # main_window.selectStartProject()
 
     splash.finish(main_window)
 
