@@ -403,18 +403,17 @@ class KontaktMain(AlmDataView):
 
         self.view.resizeColumnsToContents()
 
-        # new_contact = DmKontakt()
+        new_contact = DmKontakt()
         # new_contact.id = 999
-        # new_contact.vorname = 'aaa1'
-        # new_contact.nachname = 'AAA'
-        # new_contact.type_id = 1
+        new_contact.vorname = 'aaa1'
+        new_contact.nachname = 'AAA'
+        new_contact.type_id = 1
         # new_contact.vertreter_id = 0
-        # new_contact.strasse = 'sss'
-        #
-        # self.session.add(new_contact)
-        # self.session.commit()
-        #
-        # print(f'...')
+
+        self.session.add(new_contact)
+        self.session.commit()
+
+        print(f'...')
 
     def getFeatureFields(self):
 

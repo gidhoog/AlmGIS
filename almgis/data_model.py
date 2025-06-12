@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 from typing import List
 
+from uuid import uuid4, UUID
+
 from qga.alchemy import DmBaseProject, DmNonSpatialObject, DmBaseCommon
 from qgis.core import QgsGeometry
 
@@ -775,13 +777,16 @@ class DmKontakt(DmBaseProject):
 
 
     """class with self-relation!"""
-    id: Mapped[int] = mapped_column(primary_key=True)
+    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     """"""
 
     type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'),
                                          nullable=True)
-    vertreter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
+    """self-relation to id!!"""
+    vertreter_id: Mapped[str] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
                                               nullable=True)
+    """"""
 
     nachname: Mapped[str] = mapped_column(nullable=True)
     vorname: Mapped[str] = mapped_column(nullable=True)
