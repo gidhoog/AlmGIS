@@ -4,6 +4,7 @@ from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
+from requests import session
 from sqlalchemy import create_engine
 
 from almgis import settings_user, settings_app, settings_project, \
@@ -11,7 +12,7 @@ from almgis import settings_user, settings_app, settings_project, \
     ProjectSessionCls, CommunitySessionCls
 
 from almgis.about import AlmAboutDialog
-from almgis.data_model import DmSettings
+from almgis.data_model import DmSettings, DmKontaktType
 from almgis.logger import Logger
 from almgis.projectstartselector import AlmStartDialog, AlmProjectStartSelector
 from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
@@ -238,3 +239,21 @@ class AlmMainWindow(QgaMainWindow):
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
 
         self.settings_dlg.exec()
+
+    def loadDefaultProjectData(self):
+
+        default_session = ProjectSessionCls()
+
+        kt1 = DmKontaktType()
+        kt1.id = 0
+        kt1.name = "Einzelperson"
+        kt1.name_short = "E"
+        default_session.add(kt1)
+
+        kt2 = DmKontaktType()
+        kt2.id = 1
+        kt2.name = "Gemeinschaft"
+        kt2.name_short = "G"
+        default_session.add(kt2)
+
+        default_session.commit()

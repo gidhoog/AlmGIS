@@ -24,7 +24,7 @@ from almgis.data_view import AlmDataView
 from qga.main_widget import QgaMainWidget
 
 from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType, \
-    DmKontaktEinzel
+    DmKontaktEinzel, DmKontaktGem
 from almgis.entity import AlmEntityDialog
 from almgis.fields import KontaktField, GeneralField
 from almgis.info_button import AlmInfoButton
@@ -403,11 +403,11 @@ class KontaktMain(AlmDataView):
 
         self.view.resizeColumnsToContents()
 
-        new_contact = DmKontakt()
+        new_contact = DmKontaktEinzel()
         # new_contact.id = 999
         new_contact.vorname = 'aaa1'
         new_contact.nachname = 'AAA'
-        new_contact.type_id = 1
+        # new_contact.type_id = 1
         # new_contact.vertreter_id = 0
 
         self.session.add(new_contact)
