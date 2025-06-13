@@ -248,12 +248,26 @@ class AlmMainWindow(QgaMainWindow):
         kt1.id = 0
         kt1.name = "Einzelperson"
         kt1.name_short = "E"
+        kt1.sort = 0
+        kt1.icon_01 = ":/svg/resources/icons/person.svg"
+        kt1.module = "almgis.scopes.kontakt.kontakt"
+        kt1.type_class = "KontaktEinzel"
+        kt1.dmi_class = "BKontaktEinzel"
+        kt1.not_delete = 1
+        kt1.sys_data = 1
         default_session.add(kt1)
 
         kt2 = DmKontaktType()
         kt2.id = 1
         kt2.name = "Gemeinschaft"
         kt2.name_short = "G"
+        kt2.sort = 0
+        kt2.icon_01 = ":/svg/resources/icons/group.svg"
+        kt2.module = "almgis.scopes.kontakt.kontakt"
+        kt2.type_class = "Kontakt"
+        kt2.dmi_class = "BKontaktGem"
+        kt2.not_delete = 1
+        kt2.sys_data = 1
         default_session.add(kt2)
 
         default_session.commit()
