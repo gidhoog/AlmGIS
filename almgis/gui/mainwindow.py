@@ -1,6 +1,7 @@
 # from qga.alchemy import DmBaseCommon
 # from qga.notify import QgaToast, QgaToastPreset, QgaToastPosition
 # from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
+from qga.database.alchemy import DmBaseCommon
 from qga.gui.mainwindow import QgaMainWindow
 from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
@@ -16,6 +17,7 @@ from almgis import settings_user, settings_app, settings_project, \
 from almgis.core.logger import Logger
 from almgis.database.models import DmSettings
 from almgis.gui.about import AlmAboutDialog
+from almgis.gui.projectstartselector import AlmStartDialog
 
 
 # from almgis.about import AlmAboutDialog
@@ -35,21 +37,21 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self, parent=None):
         super(AlmMainWindow, self).__init__(parent)
 
-        # self.session_prj_cls = ProjectSessionCls
-        # self.logger = Logger
-        # self.dmc_settings = DmSettings
-        #
-        # QgaToast.setMaximumOnScreen(4)
-        #
-        # self.about_dialog_cls = AlmAboutDialog
-        #
-        # self.settings_dlg_cls = QgaSettingsDialog
-        # self.settings_wdg_cls = QgaSettingsWdg
-        #
-        # self._project_file = None
-        # self._selected_mainarea = None
-        #
-        # Logger.info("create Mainwindwos!!")
+        self.session_prj_cls = ProjectSessionCls
+        self.logger = Logger
+        self.dmc_settings = DmSettings
+
+        QgaToast.setMaximumOnScreen(4)
+
+        self.about_dialog_cls = AlmAboutDialog
+
+        self.settings_dlg_cls = QgaSettingsDialog
+        self.settings_wdg_cls = QgaSettingsWdg
+
+        self._project_file = None
+        self._selected_mainarea = None
+
+        Logger.info("create Mainwindwos!!")
 
     def setupMainWindow(self):
         super().setupMainWindow()
@@ -151,25 +153,25 @@ class AlmMainWindow(QgaMainWindow):
         # self.uiActionOpenHelp.triggered.connect(self.openHelpUrl)
         # self.uiActionOpenAbout.triggered.connect(self.openAboutDialog)
 
-        self.uiAktionOpenAkteMain.triggered.connect(
-            lambda x,
-                   wid_cls=AkteAllMainWidget:
-            self.openMainWidget(wid_cls))
-
-        self.uiAktionOpenKontakteMain.triggered.connect(
-            lambda x,
-                   wid_cls=KontaktMainWidget:
-            self.openMainWidget(wid_cls))
-
-        self.uiAktionOpenGstZuornungMain.triggered.connect(
-            lambda x,
-                   wid_cls=GstAllMainWidget:
-            self.openMainWidget(wid_cls))
-
-        self.uiAktionTestInfo.triggered.connect(self.testNotifyInfo)
-        self.uiAktionTestSuccess.triggered.connect(self.testNotifySuccess)
-        self.uiAktionTestWarning.triggered.connect(self.testNotifyWarning)
-        self.uiAktionTestError.triggered.connect(self.testNotifyError)
+        # self.uiAktionOpenAkteMain.triggered.connect(
+        #     lambda x,
+        #            wid_cls=AkteAllMainWidget:
+        #     self.openMainWidget(wid_cls))
+        #
+        # self.uiAktionOpenKontakteMain.triggered.connect(
+        #     lambda x,
+        #            wid_cls=KontaktMainWidget:
+        #     self.openMainWidget(wid_cls))
+        #
+        # self.uiAktionOpenGstZuornungMain.triggered.connect(
+        #     lambda x,
+        #            wid_cls=GstAllMainWidget:
+        #     self.openMainWidget(wid_cls))
+        #
+        # self.uiAktionTestInfo.triggered.connect(self.testNotifyInfo)
+        # self.uiAktionTestSuccess.triggered.connect(self.testNotifySuccess)
+        # self.uiAktionTestWarning.triggered.connect(self.testNotifyWarning)
+        # self.uiAktionTestError.triggered.connect(self.testNotifyError)
 
     def testNotifySuccess(self):
 

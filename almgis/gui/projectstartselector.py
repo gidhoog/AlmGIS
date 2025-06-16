@@ -1,16 +1,22 @@
-from qga.projectstartselector import *
+from qga.gui.projectstartselector_gui import QgaProjectStartSelector, \
+    QgaStartOptionLast, QgaStartOptionOther, QgaStartOptionNew, StartDlgGui
+# from qga.projectstartselector import *
 
 from almgis import settings_user
-from almgis.data_model import DmSettings
-from almgis.logger import Logger
+from almgis.core.logger import Logger
+from almgis.database.models import DmSettings
 
 
-class AlmStartDialog(StartDialog):
+# from almgis.data_model import DmSettings
+# from almgis.logger import Logger
 
-    def __init__(self, parent=None):
-        super(AlmStartDialog, self).__init__(parent)
 
-        self.logger = Logger
+# class AlmStartDialog(StartDlgGui):
+#
+#     def __init__(self, parent=None):
+#         super(AlmStartDialog, self).__init__(parent)
+#
+#         self.logger = Logger
 
 
 class AlmProjectStartSelector(QgaProjectStartSelector):
