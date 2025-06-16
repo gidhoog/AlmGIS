@@ -2,15 +2,19 @@ import platform
 import sys
 from time import sleep, time
 
-from qga.splash import QgaSplash
+from qga.core.splash import QgaSplash
+# from qga.splash import QgaSplash
 from qgis.core import QgsApplication
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 
 from almgis import settings_user, settings_app
+from almgis.core.logger import Logger
+from almgis.gui.mainwindow import AlmMainWindow
+
 """import after the settings"""
-from almgis.mainwindow import AlmMainWindow
-from almgis.logger import Logger
+# from almgis.mainwindow import AlmMainWindow
+# from almgis.logger import Logger
 """"""
 
 # print(f'PATH: ++++++++++++++++++++++++++++++++++++++++++++++')
@@ -60,7 +64,7 @@ def run():
     main_window = AlmMainWindow()
     main_window.setWindowState(Qt.WindowMaximized)
     main_window.show()
-    main_window.setupMainWindow()
+    # main_window.setupMainWindow()
 
     splash.finish(main_window)
 

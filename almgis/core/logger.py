@@ -1,4 +1,6 @@
-from qga.logger import getQgaLogger
+# from qga.logger import getQgaLogger
+from qga.core.logger import getQgaLogger
+
 from almgis import settings_general
 
 """definiere logger"""

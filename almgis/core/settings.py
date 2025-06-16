@@ -2,8 +2,11 @@ from enum import Enum
 from pathlib import Path
 
 from PyQt5.QtCore import QSettings
-from qga.settings import QgaSettings, QgaSettingsProject, QgaSettingsGeneral, \
-    QgaSettingsColors, QgaSettingsPaths, QgaSettingsConstants
+# from qga.settings import QgaSettings, QgaSettingsProject, QgaSettingsGeneral, \
+#     QgaSettingsColors, QgaSettingsPaths, QgaSettingsConstants
+
+from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
+    QgaSettingsPaths, QgaSettingsConstants, QgaSettings, QgaSettingsProject
 
 
 class AlmSettingsGeneral(QgaSettingsGeneral):

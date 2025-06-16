@@ -1,6 +1,9 @@
-from qga.alchemy import DmBaseCommon
-from qga.notify import QgaToast, QgaToastPreset, QgaToastPosition
-from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
+# from qga.alchemy import DmBaseCommon
+# from qga.notify import QgaToast, QgaToastPreset, QgaToastPosition
+# from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
+from qga.gui.mainwindow import QgaMainWindow
+from qga.gui.notify import QgaToast
+from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
 from qgis.PyQt.QtGui import QIcon
@@ -10,17 +13,21 @@ from sqlalchemy import create_engine
 from almgis import settings_user, settings_app, settings_project, \
     settings_general, settings_colors, settings_paths, settings_constants, \
     ProjectSessionCls, CommunitySessionCls
+from almgis.core.logger import Logger
+from almgis.database.models import DmSettings
+from almgis.gui.about import AlmAboutDialog
 
-from almgis.about import AlmAboutDialog
-from almgis.data_model import DmSettings, DmKontaktType
-from almgis.logger import Logger
-from almgis.projectstartselector import AlmStartDialog, AlmProjectStartSelector
-from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
-from almgis.scopes.gst.gst_all_main import GstAllMainWidget
 
-from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
+# from almgis.about import AlmAboutDialog
+# from almgis.data_model import DmSettings, DmKontaktType
+# from almgis.logger import Logger
+# from almgis.projectstartselector import AlmStartDialog, AlmProjectStartSelector
+# from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
+# from almgis.scopes.gst.gst_all_main import GstAllMainWidget
 
-from qga.mainwindow import QgaMainWindow
+# from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
+
+# from qga.mainwindow import QgaMainWindow
 
 
 class AlmMainWindow(QgaMainWindow):
@@ -28,21 +35,21 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self, parent=None):
         super(AlmMainWindow, self).__init__(parent)
 
-        self.session_prj_cls = ProjectSessionCls
-        self.logger = Logger
-        self.dmc_settings = DmSettings
-
-        QgaToast.setMaximumOnScreen(4)
-
-        self.about_dialog_cls = AlmAboutDialog
-
-        self.settings_dlg_cls = QgaSettingsDialog
-        self.settings_wdg_cls = QgaSettingsWdg
-
-        self._project_file = None
-        self._selected_mainarea = None
-
-        Logger.info("create Mainwindwos!!")
+        # self.session_prj_cls = ProjectSessionCls
+        # self.logger = Logger
+        # self.dmc_settings = DmSettings
+        #
+        # QgaToast.setMaximumOnScreen(4)
+        #
+        # self.about_dialog_cls = AlmAboutDialog
+        #
+        # self.settings_dlg_cls = QgaSettingsDialog
+        # self.settings_wdg_cls = QgaSettingsWdg
+        #
+        # self._project_file = None
+        # self._selected_mainarea = None
+        #
+        # Logger.info("create Mainwindwos!!")
 
     def setupMainWindow(self):
         super().setupMainWindow()

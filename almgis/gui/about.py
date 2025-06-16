@@ -1,7 +1,11 @@
-from qga.about import QgaAboutDialog
+# from qga.about import QgaAboutDialog
+from qga.gui.about import QgaAboutDialog
 
 from almgis import AlmSettingsGeneral
-from almgis.logger import Logger
+from almgis.core.logger import Logger
+
+
+# from almgis.logger import Logger
 
 
 class AlmAboutDialog(QgaAboutDialog):

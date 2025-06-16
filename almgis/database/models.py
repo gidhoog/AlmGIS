@@ -4,7 +4,8 @@ from typing import List
 
 from uuid import uuid4, UUID
 
-from qga.alchemy import DmBaseProject, DmNonSpatialObject, DmBaseCommon
+from qga.database.alchemy import DmBaseProject, DmNonSpatialObject, DmBaseCommon
+# from qga.alchemy import DmBaseProject, DmNonSpatialObject, DmBaseCommon
 from qgis.core import QgsGeometry
 
 from geoalchemy2 import Geometry, WKBElement
