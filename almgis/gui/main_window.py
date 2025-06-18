@@ -2,7 +2,7 @@
 # from qga.notify import QgaToast, QgaToastPreset, QgaToastPosition
 # from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qga.database.alchemy import DmBaseCommon
-from qga.gui.mainwindow import QgaMainWindow
+from qga.controller.main_window import QgaMainWindow
 from qga.gui.notify import QgaToast, QgaToastPreset
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
@@ -33,8 +33,8 @@ from almgis.gui.about import AlmAboutDialog
 
 class AlmMainWindow(QgaMainWindow):
 
-    def __init__(self, parent=None):
-        super(AlmMainWindow, self).__init__(parent)
+    def __init__(self):
+        super(AlmMainWindow, self).__init__()
 
         self.session_prj_cls = ProjectSessionCls
         self.logger = Logger
