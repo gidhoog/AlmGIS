@@ -62,11 +62,11 @@ def run():
     app.initQgis()
 
     main_window = AlmMainWindow()
-    main_window.setWindowState(Qt.WindowMaximized)
-    main_window.show()
+    # main_window.setWindowState(Qt.WindowMaximized)
+    # main_window.show()
     # main_window.setupMainWindow()
 
-    splash.finish(main_window)
+    splash.finish(main_window.ui)
 
     sys.exit(app.exec_())
 
