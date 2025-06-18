@@ -1,34 +1,11 @@
-# from qga.alchemy import DmBaseCommon
-# from qga.notify import QgaToast, QgaToastPreset, QgaToastPosition
-# from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
-from qga.database.alchemy import DmBaseCommon
-from qga.controller.main_window import QgaMainWindow
-from qga.gui.notify import QgaToast, QgaToastPreset
+from qga.core.main_window import QgaMainWindow
+from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
-from qgis.PyQt.QtGui import QAction
 
-from qgis.PyQt.QtGui import QIcon
-from requests import session
-from sqlalchemy import create_engine
-
-from almgis import settings_user, settings_app, settings_project, \
-    settings_general, settings_colors, settings_paths, settings_constants, \
-    ProjectSessionCls, CommunitySessionCls
+from almgis import ProjectSessionCls
 from almgis.core.logger import Logger
 from almgis.database.models import DmSettings
 from almgis.gui.about import AlmAboutDialog
-
-
-# from almgis.about import AlmAboutDialog
-# from almgis.data_model import DmSettings, DmKontaktType
-# from almgis.logger import Logger
-# from almgis.projectstartselector import AlmStartDialog, AlmProjectStartSelector
-# from almgis.scopes.akte.akte_all_main import AkteAllMainWidget
-# from almgis.scopes.gst.gst_all_main import GstAllMainWidget
-
-# from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
-
-# from qga.mainwindow import QgaMainWindow
 
 
 class AlmMainWindow(QgaMainWindow):

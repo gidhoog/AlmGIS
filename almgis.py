@@ -10,7 +10,7 @@ from PyQt5.QtGui import QPixmap
 
 from almgis import settings_user, settings_app
 from almgis.core.logger import Logger
-from almgis.gui.main_window import AlmMainWindow
+from almgis.core.main_window import AlmMainWindow
 
 """import after the settings"""
 # from almgis.mainwindow import AlmMainWindow
@@ -63,7 +63,7 @@ def run():
 
     main_window = AlmMainWindow()
     # main_window.setWindowState(Qt.WindowMaximized)
-    # main_window.show()
+    main_window.ui.show()
     # main_window.setupMainWindow()
 
     splash.finish(main_window.ui)
