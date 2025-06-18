@@ -1,5 +1,6 @@
-from qga.gui.projectstartselector_gui import QgaProjectStartSelector, \
-    QgaStartOptionLast, QgaStartOptionOther, QgaStartOptionNew, StartDlgGui
+from qga.controller.projectstartselector import QgaProjectStartSelector, \
+    QgaStartOptionLast, QgaStartOptionOther, QgaStartOptionNew
+
 # from qga.projectstartselector import *
 
 from almgis import settings_user

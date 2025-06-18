@@ -3,7 +3,7 @@
 # from qga.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qga.database.alchemy import DmBaseCommon
 from qga.gui.mainwindow import QgaMainWindow
-from qga.gui.notify import QgaToast
+from qga.gui.notify import QgaToast, QgaToastPreset
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from qgis.PyQt.QtGui import QAction
 
@@ -17,7 +17,6 @@ from almgis import settings_user, settings_app, settings_project, \
 from almgis.core.logger import Logger
 from almgis.database.models import DmSettings
 from almgis.gui.about import AlmAboutDialog
-from almgis.gui.projectstartselector import AlmStartDialog
 
 
 # from almgis.about import AlmAboutDialog
@@ -227,17 +226,17 @@ class AlmMainWindow(QgaMainWindow):
     def setupStatusBar(self):
         super().setupStatusBar()
 
-    def useProjectSelector(self):
-        """open the projectstartselector on start"""
-
-        self.startDialog = AlmStartDialog(self)
-        ps = AlmProjectStartSelector(self.startDialog)
-        ps.setupProjectStartSelector()
-
-        self.startDialog.enableApply = True
-        self.startDialog.insertWidget(ps)
-
-        result = self.startDialog.exec()
+    # def useProjectSelector(self):
+    #     """open the projectstartselector on start"""
+    #
+    #     self.startDialog = AlmStartDialog(self)
+    #     ps = AlmProjectStartSelector(self.startDialog)
+    #     ps.setupProjectStartSelector()
+    #
+    #     self.startDialog.enableApply = True
+    #     self.startDialog.insertWidget(ps)
+    #
+    #     result = self.startDialog.exec()
 
     def openSettings(self):
         super().openSettings()
