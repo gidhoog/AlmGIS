@@ -54,7 +54,7 @@
      <x>0</x>
      <y>0</y>
      <width>1039</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAkten">
@@ -107,7 +107,7 @@
   <widget class="QStatusBar" name="uiStatusBar"/>
   <action name="uiAkteAllAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/svg/resources/icons/akte.svg</normaloff>:/svg/resources/icons/akte.svg</iconset>
    </property>
    <property name="text">
@@ -121,7 +121,7 @@
   </action>
   <action name="actionAllGst">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/svg/resources/icons/gst_all.svg</normaloff>:/svg/resources/icons/gst_all.svg</iconset>
    </property>
    <property name="text">
@@ -130,7 +130,7 @@
   </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/svg/resources/icons/mActionOptions.svg</normaloff>:/svg/resources/icons/mActionOptions.svg</iconset>
    </property>
    <property name="text">
@@ -139,7 +139,7 @@
   </action>
   <action name="uiKontakteAllAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/svg/resources/icons/contacts.svg</normaloff>:/svg/resources/icons/contacts.svg</iconset>
    </property>
    <property name="text">
@@ -149,7 +149,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
  <slots>

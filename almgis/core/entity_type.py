@@ -10,7 +10,7 @@ class KontaktEinzel(KontaktTyp):
     name = 'Einzelperson'
     name_short = 'E'
     sort = 0
-    icon = ":/svg/resources/icons/person.svg"
+    icon = ":/svg/icons/person.svg"
     ui_class = KontaktEinzel
 
 class KontaktGem(KontaktTyp):
@@ -18,5 +18,5 @@ class KontaktGem(KontaktTyp):
     name = 'Gemeinschaft'
     name_short = 'G'
     sort = 2
-    icon = ":/svg/resources/icons/group.svg"
+    icon = ":/svg/icons/group.svg"
     ui_class = Kontakt

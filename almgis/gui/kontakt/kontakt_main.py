@@ -305,12 +305,12 @@ class KontaktMain(AlmDataView):
 
         # self.action_einzel = QAction(self.uiAddDataTbtn)
         # self.action_einzel.setText('Einzelperson')
-        # self.action_einzel.setIcon(QIcon(":/svg/resources/icons/person.svg"))
+        # self.action_einzel.setIcon(QIcon(":/svg/icons/person.svg"))
         # self.uiAddDataTbtn.addAction(self.action_einzel)
         #
         # self.action_gemeinschaft = QAction(self.uiAddDataTbtn)
         # self.action_gemeinschaft.setText('Gemeinschaft')
-        # self.action_gemeinschaft.setIcon(QIcon(":/svg/resources/icons/group.svg"))
+        # self.action_gemeinschaft.setIcon(QIcon(":/svg/icons/group.svg"))
         # self.uiAddDataTbtn.addAction(self.action_gemeinschaft)
         #
         # self.action_einzel.triggered.connect(self.addEinzelKontakt)

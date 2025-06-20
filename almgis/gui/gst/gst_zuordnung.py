@@ -105,7 +105,7 @@ class GstZuordnung(gst_zuordnung_UI.Ui_GstZuordnung, QMainWindow):
         # self.presel_wid = QWidget(self)
         # self.guiMatchPreSelGstPbtn = QPushButton(self)
         # self.guiMatchPreSelGstPbtn.setText('Grundstücke zuordnen')
-        # self.guiMatchPreSelGstPbtn.setIcon(QIcon(":/svg/resources/icons/tick_green.svg"))
+        # self.guiMatchPreSelGstPbtn.setIcon(QIcon(":/svg/icons/tick_green.svg"))
         # self.guiMatchPreSelGstPbtn.setToolTip('übernehme die <p>vorgemerkten</p> Grundstücke<br>'
         #                                       'in den aktuellen Akt')
         # self.guiMatchPreSelGstPbtn.setIconSize(QSize(30, 30))
@@ -987,13 +987,13 @@ class GstTable(DataView):
         self.actionOpenImportPath = QAction(self.uiToolsTbtn)
         self.actionOpenImportPath.setText('öffne Gst-Importverzeichnis')
         self.actionOpenImportPath.setIcon(
-            QIcon(':/svg/resources/icons/mActionFileOpen.svg'))
+            QIcon(':/svg/icons/mActionFileOpen.svg'))
         self.uiToolsTbtn.addAction(self.actionOpenImportPath)
 
         self.actionLoadGdb = QAction(self.uiToolsTbtn)
         self.actionLoadGdb.setText('Gst-Importverzeichnis neu einlesen')
         self.actionLoadGdb.setIcon(
-            QIcon(':/svg/resources/icons/import.svg'))
+            QIcon(':/svg/icons/import.svg'))
         self.uiToolsTbtn.addAction(self.actionLoadGdb)
 
         self.uiImportTimeLabelLbl = QLabel(self)

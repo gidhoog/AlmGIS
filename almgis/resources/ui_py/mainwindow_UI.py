@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'almgis/mainwindow.ui'
+# Form implementation generated from reading ui file 'ui/mainwindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.uiMainHLay, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1039, 21))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1039, 22))
         self.menuBar.setObjectName("menuBar")
         self.menuAkten = QtWidgets.QMenu(self.menuBar)
         self.menuAkten.setObjectName("menuAkten")

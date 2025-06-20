@@ -38,47 +38,47 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionOpenAkteMain = QAction()
         self.uiAktionOpenAkteMain.setText('Alle Akte')
         self.uiAktionOpenAkteMain.setIcon(
-            QIcon(':/svg/resources/icons/akte.svg'))
+            QIcon(':/svg/icons/akte.svg'))
 
         self.uiAktionOpenGstZuornungMain = QAction()
         self.uiAktionOpenGstZuornungMain.setText('zugeordnete Grundstücke')
         self.uiAktionOpenGstZuornungMain.setIcon(
-            QIcon(':/svg/resources/icons/gst_all.svg'))
+            QIcon(':/svg/icons/gst_all.svg'))
 
         self.uiAktionOpenKontakteMain = QAction()
         self.uiAktionOpenKontakteMain.setText('alle Kontakte')
         self.uiAktionOpenKontakteMain.setIcon(
-            QIcon(':/svg/resources/icons/contacts.svg'))
+            QIcon(':/svg/icons/contacts.svg'))
 
         self.uiAktionCutAwbKomplex = QAction()
         self.uiAktionCutAwbKomplex.setText('Verschnitt: Gst und Komplexe')
         # self.uiAktionCutAwbKomplex.setIcon(
-        #     QIcon(':/svg/resources/icons/contacts.svg'))
+        #     QIcon(':/svg/icons/contacts.svg'))
 
         self.uiAktionOpenSettings = QAction()
         self.uiAktionOpenSettings.setText('Einstellungen')
         # self.uiAktionOpenSettings.setIcon(
-        #     QIcon(':/svg/resources/icons/contacts.svg'))
+        #     QIcon(':/svg/icons/contacts.svg'))
 
         self.uiAktionOpenGstImportPath = QAction()
         self.uiAktionOpenGstImportPath.setText('öffne Gst-Importverzeichnis')
         self.uiAktionOpenGstImportPath.setIcon(
-            QIcon(':/svg/resources/icons/mActionFileOpen.svg'))
+            QIcon(':/svg/icons/mActionFileOpen.svg'))
 
         self.uiAktionImportGst = QAction()
         self.uiAktionImportGst.setText('Gst-Importverzeichnis neu einlesen')
         self.uiAktionImportGst.setIcon(
-            QIcon(':/svg/resources/icons/import.svg'))
+            QIcon(':/svg/icons/import.svg'))
 
         # self.uiActionOpenHelp = QAction()
         # self.uiActionOpenHelp.setText('öffne AlmGIS-Wiki')
         # # self.uiAktionOpenSettings.setIcon(
-        # #     QIcon(':/svg/resources/icons/contacts.svg'))
+        # #     QIcon(':/svg/icons/contacts.svg'))
         #
         # self.uiActionOpenAbout = QAction()
         # self.uiActionOpenAbout.setText('über AlmGIS')
         # # self.uiAktionOpenSettings.setIcon(
-        # #     QIcon(':/svg/resources/icons/contacts.svg'))
+        # #     QIcon(':/svg/icons/contacts.svg'))
 
         self.uiAktionTestSuccess = QAction()
         self.uiAktionTestSuccess.setText('Erfolg')
@@ -234,7 +234,7 @@ class AlmMainWindow(QgaMainWindow):
         kt1.name = "Einzelperson"
         kt1.name_short = "E"
         kt1.sort = 0
-        kt1.icon_01 = ":/svg/resources/icons/person.svg"
+        kt1.icon_01 = ":/svg/icons/person.svg"
         kt1.module = "almgis.scopes.kontakt.kontakt"
         kt1.type_class = "KontaktEinzel"
         kt1.dmi_class = "BKontaktEinzel"
@@ -247,7 +247,7 @@ class AlmMainWindow(QgaMainWindow):
         kt2.name = "Gemeinschaft"
         kt2.name_short = "G"
         kt2.sort = 0
-        kt2.icon_01 = ":/svg/resources/icons/group.svg"
+        kt2.icon_01 = ":/svg/icons/group.svg"
         kt2.module = "almgis.scopes.kontakt.kontakt"
         kt2.type_class = "Kontakt"
         kt2.dmi_class = "BKontaktGem"

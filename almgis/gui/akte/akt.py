@@ -1167,11 +1167,11 @@ class KomplexModel(QStandardItemModel):
                         first_item.setData(1, GisItem.Current_Role)
                         self.parent.current_abgrenzung_item = first_item
                         print(f'--> set current layer')
-                        return QIcon(":/svg/resources/icons/triangle_right_green.svg")
+                        return QIcon(":/svg/icons/triangle_right_green.svg")
                     # if first_item.data(GisItem.Current_Role) == 0:
                     else:
                         first_item.setData(0, GisItem.Current_Role)
-                        return QIcon(":/svg/resources/icons/_leeres_icon.svg")
+                        return QIcon(":/svg/icons/_leeres_icon.svg")
                     """"""
 
         if index.column() == 2:  # status_id

@@ -67,7 +67,7 @@ class AbgrenzungModel(GisTableModel):
 
                 if self.feature(index).attribute('awb') == 1:
 
-                    return QIcon(':/svg/resources/icons/awb.svg')
+                    return QIcon(':/svg/icons/awb.svg')
 
         return super().data(index, role)
 
