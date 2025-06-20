@@ -6,12 +6,15 @@ from almgis import ProjectSessionCls
 from almgis.core.logger import Logger
 from almgis.database.models import DmSettings
 from almgis.gui.about import AlmAboutDialog
+from almgis.gui.main_window_gui import AlmMainWindowGui
 
 
 class AlmMainWindow(QgaMainWindow):
 
     def __init__(self):
         super(AlmMainWindow, self).__init__()
+
+        self.ui = AlmMainWindowGui()
 
         self.session_prj_cls = ProjectSessionCls
         self.logger = Logger

@@ -63,8 +63,8 @@ def run():
 
     main_window = AlmMainWindow()
     # main_window.setWindowState(Qt.WindowMaximized)
+    main_window.setupMainWindow()
     main_window.ui.show()
-    # main_window.setupMainWindow()
 
     splash.finish(main_window.ui)
 
