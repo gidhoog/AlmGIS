@@ -6,3 +6,6 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
     def __init__(self):
         super(AlmMainWindowGui, self).__init__()
+
+        # self.useMenuBar = False
+
