@@ -9,6 +9,7 @@ from almgis.core.logger import Logger
 from almgis.database.models import DmSettings
 from almgis.gui.about import AlmAboutDialog
 from almgis.gui.main_window_gui import AlmMainWindowGui
+from almgis.gui.start_wdg_gui import AlmStartWdg
 
 
 class AlmMainWindow(QgaMainWindow):
@@ -17,6 +18,8 @@ class AlmMainWindow(QgaMainWindow):
         super(AlmMainWindow, self).__init__()
 
         self.ui = AlmMainWindowGui()
+
+        self.pss_cls = AlmStartWdg
 
         self.session_prj_cls = ProjectSessionCls
         self.logger = Logger

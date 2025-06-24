@@ -1,5 +1,5 @@
-from qga.controller.projectstartselector import QgaProjectStartSelector, \
-    QgaStartOptionLast, QgaStartOptionOther, QgaStartOptionNew
+from qga.core.start_wdg import QgaStartWdg, QgaStartOptionLast, \
+    QgaStartOptionOther, QgaStartOptionNew
 
 # from qga.projectstartselector import *
 
@@ -20,10 +20,10 @@ from almgis.database.models import DmSettings
 #         self.logger = Logger
 
 
-class AlmProjectStartSelector(QgaProjectStartSelector):
+class AlmStartWdg(QgaStartWdg):
 
     def __init__(self, parent=None):
-        super(AlmProjectStartSelector, self).__init__(parent)
+        super(AlmStartWdg, self).__init__(parent)
 
         self.logger = Logger
 
