@@ -19,7 +19,7 @@ class AlmMainWindow(QgaMainWindow):
 
         self.ui = AlmMainWindowGui()
 
-        self.pss_cls = AlmStartWdg
+        self.start_wdg_cls = AlmStartWdg
 
         self.session_prj_cls = ProjectSessionCls
         self.logger = Logger
