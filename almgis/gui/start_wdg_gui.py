@@ -1,24 +1,9 @@
 from qga.core.start_wdg import QgaStartWdg, QgaStartOptionLast, \
     QgaStartOptionOther, QgaStartOptionNew
 
-# from qga.projectstartselector import *
-
 from almgis import settings_user
 from almgis.core.logger import Logger
 from almgis.database.models import DmSettings
-
-
-# from almgis.data_model import DmSettings
-# from almgis.logger import Logger
-
-
-# class AlmStartDialog(StartDlgGui):
-#
-#     def __init__(self, parent=None):
-#         super(AlmStartDialog, self).__init__(parent)
-#
-#         self.logger = Logger
-
 
 class AlmStartWdg(QgaStartWdg):
 
