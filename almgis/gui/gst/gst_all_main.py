@@ -1,5 +1,5 @@
 from qga.data_view import QgaTableModel
-from qga.dialog import DialogBase
+from qga.dialog import QgaDialog
 from qga.fields import QgaField
 from qga.layer import QgaVectorLayer, setLayerStyle, GstZuordLayer, QgaFeature, \
     VectorLayerFactory, GeometryType
@@ -136,7 +136,7 @@ class GstAllMainWidget(QgaMainWidget):
             self.uiGisDock.widget().uiUnfoatDock.setVisible(False)
 
 
-class GstZuordnungMainDialog(DialogBase):
+class GstZuordnungMainDialog(QgaDialog):
     """
     dialog mit dem eine grundstückszuordnung erstellt wird
     """
