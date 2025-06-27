@@ -91,7 +91,7 @@ class AlmSettingsUser(QgaSettings):
     """
 
     attr_list = [
-        ('project_start_selector', 'True'),
+        ('start_dialog', 'True'),
         ('default_start_option', 'LAST'),  # LAST, OTHER, NEW, NONE
         ('info_btn_editable', 'True'),
         ('paths/last_project_file', '--'),
