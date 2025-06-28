@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QMenu
 from qga.gui.main_window_gui import QgaMainWindowGui
 
 
@@ -19,10 +19,16 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.actionAlleAkte.setIcon(
             QIcon(':/svg/icons/mActionFileNew.svg'))
 
-    def setupMenuBar(self):
-        super().setupMenuBar()
+    def createMenus(self):
+        super().createMenus()
 
-        self.menuAkte = self.menuBar().addMenu('Akte')
+        self.menuAkte = QMenu()
+        self.menuAkte.setTitle('Akte')
+
         self.menuAkte.addAction(self.actionAlleAkte)
 
+    def addMenus(self):
+
         self.menuBar().addMenu(self.menuProject)
+        self.menuBar().addMenu(self.menuAkte)
+        self.menuBar().addMenu(self.menuHelp)
