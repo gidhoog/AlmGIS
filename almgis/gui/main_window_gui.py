@@ -24,3 +24,5 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
         self.menuAkte = self.menuBar().addMenu('Akte')
         self.menuAkte.addAction(self.actionAlleAkte)
+
+        self.menuBar().addMenu(self.menuProject)
