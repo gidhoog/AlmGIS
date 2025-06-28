@@ -6,7 +6,7 @@ from almgis import ProjectSessionCls, settings_app, settings_user, \
     settings_project, settings_general, settings_colors, settings_paths, \
     settings_constants
 from almgis.core.logger import Logger
-from almgis.database.models import DmSettings
+from almgis.database.models import DmSettings, DmKontaktType
 from almgis.gui.about import AlmAboutDialog
 from almgis.gui.main_window_gui import AlmMainWindowGui
 from almgis.gui.start_wdg_gui import AlmStartWdg
