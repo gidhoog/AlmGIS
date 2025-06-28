@@ -231,7 +231,7 @@ class AlmMainWindow(QgaMainWindow):
         elif self.settings_user.value('project_start_selector') == 'False':
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
 
-        self.settings_dlg.exec()
+        self.settings_dlg.exec_qga()
 
     def loadDefaultProjectData(self):
 
