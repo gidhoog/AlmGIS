@@ -109,7 +109,6 @@ class AlmMainWindow(QgaMainWindow):
         self.settings_project.logger = Logger
         """"""
 
-
         self.settings_general = settings_general
         self.settings_colors = settings_colors
         self.settings_paths = settings_paths
