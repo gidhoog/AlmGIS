@@ -1,3 +1,5 @@
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QAction
 from qga.core.main_window import QgaMainWindow
 from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
@@ -5,6 +7,8 @@ from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from almgis import ProjectSessionCls, settings_app, settings_user, \
     settings_project, settings_general, settings_colors, settings_paths, \
     settings_constants
+from almgis.core.kontakt.kontakt_main import KontaktMainWidget
+# from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 from almgis.core.logger import Logger
 from almgis.database.models import DmSettings, DmKontaktType
 from almgis.gui.about import AlmAboutDialog
@@ -53,9 +57,9 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionOpenGstZuornungMain.setIcon(
             QIcon(':/svg/icons/gst_all.svg'))
 
-        self.uiAktionOpenKontakteMain = QAction()
-        self.uiAktionOpenKontakteMain.setText('alle Kontakte')
-        self.uiAktionOpenKontakteMain.setIcon(
+        self.actionOpenKontakteAlle = QAction()
+        self.actionOpenKontakteAlle.setText('alle Kontakte')
+        self.actionOpenKontakteAlle.setIcon(
             QIcon(':/svg/icons/contacts.svg'))
 
         self.uiAktionCutAwbKomplex = QAction()
@@ -96,6 +100,12 @@ class AlmMainWindow(QgaMainWindow):
         self.uiAktionTestError.setText('Error')
         self.uiAktionTestInfo = QAction()
         self.uiAktionTestInfo.setText('Info')
+
+    def connectSignals(self):
+        super().connectSignals()
+
+        self.ui.actionOpenKontakteAlle.triggered.connect(
+            self.openMainWdgKontakteAlle)
 
     def setupSettings(self):
 
@@ -204,7 +214,7 @@ class AlmMainWindow(QgaMainWindow):
     def setupToolBar(self):
 
         self.uiToolBar.addAction(self.uiAktionOpenAkteMain)
-        self.uiToolBar.addAction(self.uiAktionOpenKontakteMain)
+        self.uiToolBar.addAction(self.actionOpenKontakteAlle)
         self.uiToolBar.addAction(self.uiAktionOpenGstZuornungMain)
 
     def setupStatusBar(self):
@@ -221,6 +231,10 @@ class AlmMainWindow(QgaMainWindow):
     #     self.startDialog.insertWidget(ps)
     #
     #     result = self.startDialog.exec()
+
+    def openMainWdgKontakteAlle(self):
+
+        self.openMainWidget(KontaktMainWidget)
 
     def openSettings(self):
         super().openSettings()

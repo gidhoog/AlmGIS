@@ -1,10 +1,13 @@
 from PyQt5.QtWidgets import QDialog
-from qga.entity import QgaEntity, QgaEntityDialog
+from qga.gui.entity import QgaEntity
 
-from almgis import ProjectSessionCls
-# from almgis import DbSession
-# from almgis.data_view import AlmDataView
-from almgis.logger import Logger
+
+# from qga.entity import QgaEntity, QgaEntityDialog
+#
+# from almgis import ProjectSessionCls
+# # from almgis import DbSession
+# # from almgis.data_view import AlmDataView
+# from almgis.logger import Logger
 
 
 class AlmEntity(QgaEntity):

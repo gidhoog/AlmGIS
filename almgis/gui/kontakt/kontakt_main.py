@@ -3,8 +3,9 @@ from pathlib import Path
 from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel, \
     QTimer
 from PyQt5.QtWidgets import QDialog, QPushButton, QMessageBox
-from qga.filter import QgaFilter
-from qga.layer import VectorLayerFactory, GeometryType, QgaFeature
+from qga.core.filter import QgaFilter
+from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
+from qga.gui.main_widget_gui import QgaMainWidgetGui
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,
@@ -15,67 +16,69 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from almgis import settings_general
+# from almgis.gui.entity import AlmEntityDialog
+
+
+# from qga.data_view import QgaTableModel, QgaDataView
+# from qga.info_button import QgaInfoButton
+#
 # from almgis.data_session import session_cm
-from qga.data_view import QgaTableModel, QgaDataView
-from qga.info_button import QgaInfoButton
-
-from almgis.data_session import session_cm
-from almgis.data_view import AlmDataView
-from qga.main_widget import QgaMainWidget
-
-from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType, \
-    DmKontaktEinzel, DmKontaktGem
-from almgis.entity import AlmEntityDialog
-from almgis.fields import KontaktField, GeneralField
-from almgis.info_button import AlmInfoButton
-from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
-from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol, \
-    KontaktAdresseCol, KontaktTypeCol, KontaktGemTypeCol
+# from almgis.data_view import AlmDataView
+# from qga.main_widget import QgaMainWidget
+#
+# from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType, \
+#     DmKontaktEinzel, DmKontaktGem
+# from almgis.entity import AlmEntityDialog
+# from almgis.fields import KontaktField, GeneralField
+# from almgis.info_button import AlmInfoButton
+# from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
+# from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol, \
+#     KontaktAdresseCol, KontaktTypeCol, KontaktGemTypeCol
 
 
-class KontaktEntityDialog(AlmEntityDialog):
+# class KontaktEntityDialog(AlmEntityDialog):
+#
+#     def __init__(self, parent):
+#         super(__class__, self).__init__(parent)
+#
+#         self.parent = parent
+#
+#         self.dialog_window_title = 'Kontakt'
+#
+#     def accept(self):
+#         # super().accept()
+#
+#         accepted_entity = self.dialogWidget.acceptEntity()
+#
+#         if accepted_entity is not False:
+#
+#             if self.dialogWidget.purpose == 'add':
+#                 self.parent.dmi_list.append(accepted_entity)
+#
+#             self.parent.update_data_view.emit(self.dialogWidget.purpose,
+#                                               False)
+#
+#             QDialog.accept(self)
 
-    def __init__(self, parent):
-        super(__class__, self).__init__(parent)
 
-        self.parent = parent
+class KontaktMainWdgGui(QgaMainWidgetGui): ...
 
-        self.dialog_window_title = 'Kontakt'
-
-    def accept(self):
-        # super().accept()
-
-        accepted_entity = self.dialogWidget.acceptEntity()
-
-        if accepted_entity is not False:
-
-            if self.dialogWidget.purpose == 'add':
-                self.parent.dmi_list.append(accepted_entity)
-
-            self.parent.update_data_view.emit(self.dialogWidget.purpose,
-                                              False)
-
-            QDialog.accept(self)
-
-
-class KontaktMainWidget(QgaMainWidget):
-
-    def __init__(self, parent=None, session=None):
-        super().__init__(parent, session)
-
-        self.uiTitleLbl.setText('alle Kontakte')
-        self.main_wdg = KontaktMain(self)
-
-    def createMw(self):
-
-        self.main_wdg.initDataView()
-
-        self.initMainWidget()
-
-    def initMainWidget(self):
-        super().initMainWidget()
-
-        self.uiMainVlay.addWidget(self.main_wdg)
+    # def __init__(self, parent=None, session=None):
+    #     super().__init__(parent, session)
+    #
+    #     self.uiTitleLbl.setText('alle Kontakte')
+    #     self.main_wdg = KontaktMain(self)
+    #
+    # def createMw(self):
+    #
+    #     self.main_wdg.initDataView()
+    #
+    #     self.initMainWidget()
+    #
+    # def initMainWidget(self):
+    #     super().initMainWidget()
+    #
+    #     self.uiMainVlay.addWidget(self.main_wdg)
 
 
 class KontaktModel(QgaTableModel):

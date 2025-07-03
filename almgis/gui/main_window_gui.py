@@ -19,16 +19,25 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.actionAlleAkte.setIcon(
             QIcon(':/svg/icons/mActionFileNew.svg'))
 
+        self.actionOpenKontakteAlle = QAction()
+        self.actionOpenKontakteAlle.setText('alle Kontakte')
+        self.actionOpenKontakteAlle.setIcon(
+            QIcon(':/svg/icons/contacts.svg'))
+
     def createMenus(self):
         super().createMenus()
 
+        self.menuKontakte = QMenu()
+        self.menuKontakte.setTitle('Kontakte')
+        self.menuKontakte.addAction(self.actionOpenKontakteAlle)
+
         self.menuAkte = QMenu()
         self.menuAkte.setTitle('Akte')
-
         self.menuAkte.addAction(self.actionAlleAkte)
 
     def addMenus(self):
 
         self.menuBar().addMenu(self.menuProject)
+        self.menuBar().addMenu(self.menuKontakte)
         self.menuBar().addMenu(self.menuAkte)
         self.menuBar().addMenu(self.menuHelp)
