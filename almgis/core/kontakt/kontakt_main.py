@@ -68,7 +68,7 @@ class KontaktMainWidget(QgaMainWidget):
         super().__init__()
 
         # self.ui = KontaktMainWdgGui(self)
-        self.ui = QgaMainWidgetGui(self)
+        # self.ui = QgaMainWidgetGui(self)
 
         self.ui.titleLbl.setText('aaaalle Kontakte')
         # self.main_wdg = KontaktMain(self)
