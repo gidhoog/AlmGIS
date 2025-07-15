@@ -7,6 +7,10 @@
 # from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
 from qga.core.main_widget import QgaMainWidget
 from qga.gui.main_widget_gui import QgaMainWidgetGui
+
+from almgis.core.data_view import AlmDataView
+
+
 # from qgis.PyQt.QtCore import Qt
 # from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
 #                                  QSpacerItem, QSizePolicy, QHBoxLayout,
@@ -71,18 +75,18 @@ class KontaktMainWidget(QgaMainWidget):
         # self.ui = QgaMainWidgetGui(self)
 
         self.ui.titleLbl.setText('aaaalle Kontakte')
-        # self.main_wdg = KontaktMain(self)
+        self.main_wdg = KontaktMain(self)
 
     def createMw(self):
 
-        self.main_wdg.initDataView()
+        # self.main_wdg.initDataView()
 
         self.initMainWidget()
 
     def initMainWidget(self):
-        super().initMainWidget()
+        # super().initMainWidget()
 
-        self.uiMainVlay.addWidget(self.main_wdg)
+        self.ui.mainVlay.addWidget(self.main_wdg.ui)
 
 
 # class KontaktModel(QgaTableModel):
@@ -248,27 +252,27 @@ class KontaktMainWidget(QgaMainWidget):
 #     #             verwendung_text = ", ".join(str(v) for v in verwendung)
 #     #
 #     #             return verwendung_text
-#
-#
-# class KontaktMain(AlmDataView):
-#
-#     _model_class = KontaktModel
-#     _entity_dmc = DmKontakt
-#     _type_dmc = DmKontaktType
-#
-#     entity_dialog_class = KontaktEntityDialog
-#
-#     entitiy_amount_text = ["Kontakt", "Kontakte", "kein Kontakt"]
-#     _delete_window_title = ["Kontakt löschen", "Kontakte löschen"]
-#     _delete_window_text_single = "Soll der ausgewählte Kontakt " \
-#                                  "wirklich gelöscht werden?"
-#     _delete_window_text_plural = ["Sollen die ausgewählten",
-#                                   "Kontakte wirklich gelöscht werden?"]
-#     _delete_text = ["Der Kontakt", "kann nicht gelöscht werden, da er "
-#                     "verwendet wird!"]
-#
-#     def __init__(self, parent=None, gis_mode=False):
-#         super(__class__, self).__init__(parent, gis_mode)
+
+
+class KontaktMain(AlmDataView):
+
+    # _model_class = KontaktModel
+    # _entity_dmc = DmKontakt
+    # _type_dmc = DmKontaktType
+    #
+    # entity_dialog_class = KontaktEntityDialog
+
+    _entity_amount_text = ["Kontakt", "Kontakte", "kein Kontakt"]
+    _delete_window_title = ["Kontakt löschen", "Kontakte löschen"]
+    _delete_window_text_single = "Soll der ausgewählte Kontakt " \
+                                 "wirklich gelöscht werden?"
+    _delete_window_text_plural = ["Sollen die ausgewählten",
+                                  "Kontakte wirklich gelöscht werden?"]
+    _delete_text = ["Der Kontakt", "kann nicht gelöscht werden, da er "
+                    "verwendet wird!"]
+
+    def __init__(self, parent=None, gis_mode=False):
+        super(__class__, self).__init__(gis_mode)
 #         # self.initUi()
 #
 #         filter_name = QgaFilter('Name', str)
