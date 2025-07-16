@@ -74,18 +74,19 @@ class KontaktMainWidget(QgaMainWidget):
         # self.ui = KontaktMainWdgGui(self)
         # self.ui = QgaMainWidgetGui(self)
 
-        self.ui.titleLbl.setText('aaaalle Kontakte')
+        self.ui.setTitle('alle Kontakte')
         self.main_wdg = KontaktMain(self)
 
-    def createMw(self):
+    # def createMw(self):
+    #
+    #     # self.main_wdg.initDataView()
+    #
+    #     self.setupMainWidget()
 
-        # self.main_wdg.initDataView()
+    def setupMainWidget(self):
+        super().setupMainWidget()
 
-        self.initMainWidget()
-
-    def initMainWidget(self):
-        # super().initMainWidget()
-
+        self.main_wdg.setupDataView()
         self.ui.mainVlay.addWidget(self.main_wdg.ui)
 
 
