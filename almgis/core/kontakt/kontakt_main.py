@@ -7,8 +7,11 @@
 # from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
 from qga.core.main_widget import QgaMainWidget
 from qga.gui.main_widget_gui import QgaMainWidgetGui
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from almgis.core.data_view import AlmDataView
+from almgis.database.models import DmKontakt
 
 
 # from qgis.PyQt.QtCore import Qt
@@ -275,6 +278,8 @@ class KontaktMain(AlmDataView):
     def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(gis_mode)
 #         # self.initUi()
+
+        self._entity_dmc = DmKontakt
 #
 #         filter_name = QgaFilter('Name', str)
 #         # filter_name = QgaFilter('Name  <a href="https://www.w3schools.com/">Visit W3Schools.com!</a>', str)
@@ -287,6 +292,25 @@ class KontaktMain(AlmDataView):
 #             fields_list=self.getFeatureFields()
 #         )
 #
+    def getDmiList(self):
+
+        # session = DbSession()
+
+        stmt = select(self._entity_dmc)
+        dmi = self.session.scalars(stmt).all()
+
+        # stmt = (select(DmKontakt)
+        #         .options(
+        #     joinedload(DmKontakt.rel_type)
+        # )
+        #         .where(DmKontakt.blank_value == 0))
+        #
+        # dmi = self.session.scalars(stmt).all()
+
+        print(f'dmi: {dmi}')
+
+        return dmi
+
 #     def deleteCheck(self, dmi):
 #
 #         with session_cm() as session:
