@@ -292,6 +292,15 @@ class KontaktMain(AlmDataView):
 #             fields_list=self.getFeatureFields()
 #         )
 #
+    def getDefaultDmi(self):
+
+        dmi = self._entity_dmc()
+
+        dmi.nachname = 'AA'
+        dmi.vorname = 'aa'
+
+        return dmi
+
     def getDmiList(self):
 
         # session = DbSession()
