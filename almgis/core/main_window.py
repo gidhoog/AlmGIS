@@ -234,7 +234,7 @@ class AlmMainWindow(QgaMainWindow):
 
     def openMainWdgKontakteAlle(self):
 
-        self.openMainWidget(KontaktMainWidget, debug=False)
+        self.openMainWidget(KontaktMainWidget, debug=True)
 
     def openSettings(self):
         super().openSettings()

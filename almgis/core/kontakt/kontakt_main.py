@@ -7,6 +7,8 @@
 # from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
 from qga.core.main_widget import QgaMainWidget
 from qga.gui.main_widget_gui import QgaMainWidgetGui
+from qgis._core import QgsField
+from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
@@ -292,6 +294,35 @@ class KontaktMain(AlmDataView):
 #             fields_list=self.getFeatureFields()
 #         )
 #
+    def createLayer(self):
+
+        # layer = GstZuordLayer(
+        #     "Polygon?crs=epsg:31259",
+        #     "Grundstücke",
+        #     "memory",
+        #     fields=self.fields,
+        #     data_view=self
+        # )
+        layer = GstZuordLayer(
+            "Polygon?crs=epsg:31259",
+            "Grundstücke",
+            "memory"
+        )
+        layer.base = True
+
+        # layer.entity_dialog = GstDialog
+        # layer.entity_form = GstZuordnungDataForm
+        layer.dmi_list = self.dmi_list
+
+        # setLayerStyle(layer, 'gst_awbuch_status')
+
+        layer.data_provider = layer.dataProvider()
+
+        layer.data_provider.addAttributes(self.fields)
+        layer.updateFields()
+
+        return layer
+
     def getDefaultDmi(self):
 
         dmi = self._entity_dmc()
@@ -319,6 +350,24 @@ class KontaktMain(AlmDataView):
         print(f'dmi: {dmi}')
 
         return dmi
+
+    def setFeatureFields(self):
+
+        gst_version_id_fld = QgsField("id", QVariant.Int)
+
+        nachname_fld = QgsField("nachname", QVariant.String)
+        nachname_fld.setAlias('Nachname')
+
+        vorname_fld = QgsField("vorname", QVariant.String)
+        vorname_fld.setAlias('Vorname')
+
+        name_fld = QgsField("name", QVariant.String)
+        name_fld.setAlias('Name')
+
+        self._fields.append(gst_version_id_fld)
+        self._fields.append(nachname_fld)
+        self._fields.append(vorname_fld)
+        self._fields.append(name_fld)
 
 #     def deleteCheck(self, dmi):
 #
