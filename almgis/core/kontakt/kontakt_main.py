@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from almgis.core.data_view import AlmDataView
+from almgis.core.fields import GeneralField, KontaktField
 from almgis.database.models import DmKontakt
 
 
@@ -353,21 +354,31 @@ class KontaktMain(AlmDataView):
 
     def setFeatureFields(self):
 
-        gst_version_id_fld = QgsField("id", QVariant.Int)
+        # gst_version_id_fld = QgsField("id", QVariant.Int)
+        #
+        # nachname_fld = QgsField("nachname", QVariant.String)
+        # nachname_fld.setAlias('Nachname')
+        #
+        # vorname_fld = QgsField("vorname", QVariant.String)
+        # vorname_fld.setAlias('Vorname')
+        #
+        # name_fld = QgsField("name", QVariant.String)
+        # name_fld.setAlias('Name')
+        #
+        # self._fields.append(gst_version_id_fld)
+        # self._fields.append(nachname_fld)
+        # self._fields.append(vorname_fld)
+        # self._fields.append(name_fld)
 
-        nachname_fld = QgsField("nachname", QVariant.String)
-        nachname_fld.setAlias('Nachname')
+        k_id = GeneralField.Id()
+        k_name = KontaktField.Name()
+        k_adresse = KontaktField.Adresse()
+        k_telefon_all = KontaktField.TelefonAll()
 
-        vorname_fld = QgsField("vorname", QVariant.String)
-        vorname_fld.setAlias('Vorname')
-
-        name_fld = QgsField("name", QVariant.String)
-        name_fld.setAlias('Name')
-
-        self._fields.append(gst_version_id_fld)
-        self._fields.append(nachname_fld)
-        self._fields.append(vorname_fld)
-        self._fields.append(name_fld)
+        self._fields.append(k_id)
+        self._fields.append(k_name)
+        self._fields.append(k_adresse)
+        self._fields.append(k_telefon_all)
 
 #     def deleteCheck(self, dmi):
 #
