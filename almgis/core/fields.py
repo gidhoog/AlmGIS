@@ -1,9 +1,9 @@
 from operator import attrgetter
 
-from qga.fields import QgaField
+from qga.core.fields import QgaField
 from qgis.PyQt.QtCore import QVariant
 
-from almgis.data_model import DmGstZuordnung, DmGst
+from almgis.database.models import DmGstZuordnung, DmGst
 
 
 class GeneralField:
@@ -27,52 +27,52 @@ class GeneralField:
             self.visible = False
 
 
-class KontaktField:
-    """
-    represent the fields according to the data_model 'Kontakt'
-    """
-
-    class VertreterId(QgaField):
-
-        def __init__(self, name='vertreter_id', field_type=QVariant.Int):
-            super().__init__(name, field_type)
-
-            self.dmi_attr = 'rel_vertreter.id'
-            self.setAlias('Vertreter ID')
-
-            self.visible = False
-
-    class Name(QgaField):
-
-        def __init__(self, name='name', field_type=QVariant.String):
-            super().__init__(name, field_type)
-
-            self.setAlias('Name')
-            self.dmi_attr = 'name'
-
-    class Adresse(QgaField):
-
-        def __init__(self, name='adresse', field_type=QVariant.String):
-            super().__init__(name, field_type)
-
-            self.setAlias('Adresse')
-            self.dmi_attr = 'adresse'
-
-    class Strasse(QgaField):
-
-        def __init__(self, name='strasse', field_type=QVariant.String):
-            super().__init__(name, field_type)
-
-            self.setAlias('Straße')
-            self.dmi_attr = 'strasse'
-
-    class TelefonAll(QgaField):
-
-        def __init__(self, name='telefon_all', field_type=QVariant.String):
-            super().__init__(name, field_type)
-
-            self.setAlias('Telefonnummern')
-            self.dmi_attr = 'telefon_all'
+# class KontaktField:
+#     """
+#     represent the fields according to the data_model 'Kontakt'
+#     """
+#
+#     class VertreterId(QgaField):
+#
+#         def __init__(self, name='vertreter_id', field_type=QVariant.Int):
+#             super().__init__(name, field_type)
+#
+#             self.dmi_attr = 'rel_vertreter.id'
+#             self.setAlias('Vertreter ID')
+#
+#             self.visible = False
+#
+#     class Name(QgaField):
+#
+#         def __init__(self, name='name', field_type=QVariant.String):
+#             super().__init__(name, field_type)
+#
+#             self.setAlias('Name')
+#             self.dmi_attr = 'name'
+#
+#     class Adresse(QgaField):
+#
+#         def __init__(self, name='adresse', field_type=QVariant.String):
+#             super().__init__(name, field_type)
+#
+#             self.setAlias('Adresse')
+#             self.dmi_attr = 'adresse'
+#
+#     class Strasse(QgaField):
+#
+#         def __init__(self, name='strasse', field_type=QVariant.String):
+#             super().__init__(name, field_type)
+#
+#             self.setAlias('Straße')
+#             self.dmi_attr = 'strasse'
+#
+#     class TelefonAll(QgaField):
+#
+#         def __init__(self, name='telefon_all', field_type=QVariant.String):
+#             super().__init__(name, field_type)
+#
+#             self.setAlias('Telefonnummern')
+#             self.dmi_attr = 'telefon_all'
 
 
 class GstField:

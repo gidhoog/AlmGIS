@@ -5,6 +5,8 @@
 # from PyQt5.QtWidgets import QDialog, QPushButton, QMessageBox
 # from qga.core.filter import QgaFilter
 # from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
+from qga.core.fields import QgaField
+from qga.core.layer import VectorLayerFactory
 from qga.core.main_widget import QgaMainWidget
 from qga.gui.main_widget_gui import QgaMainWidgetGui
 from qgis._core import QgsField
@@ -13,7 +15,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from almgis.core.data_view import AlmDataView
-from almgis.core.fields import GeneralField, KontaktField
+from almgis.core.fields import GeneralField
 from almgis.database.models import DmKontakt
 
 
@@ -288,41 +290,47 @@ class KontaktMain(AlmDataView):
 #         # filter_name = QgaFilter('Name  <a href="https://www.w3schools.com/">Visit W3Schools.com!</a>', str)
 #         filter_name.label.setOpenExternalLinks(True)
 #         self.filters.append(filter_name)
-#
-#         self.layer = VectorLayerFactory.createLayer(
-#             'kontakte',
-#             geometry_type=GeometryType.NONE,
-#             fields_list=self.getFeatureFields()
-#         )
-#
-    def createLayer(self):
 
+        # self.layer = VectorLayerFactory.createLayer(
+        #     'kontakte',
+        #     geometry_type=GeometryType.NONE,
+        #     fields_list=self.getFeatureFields()
+        # )
+
+    # def createLayer(self):
+    #
+    #     layer = VectorLayerFactory.createLayer(
+    #         'kontakte',
+    #         geometry_type=self.geometry_type,
+    #         fields_list=self.getFeatureFields()
+    #     )
+
+        # # layer = GstZuordLayer(
+        # #     "Polygon?crs=epsg:31259",
+        # #     "Grundstücke",
+        # #     "memory",
+        # #     fields=self.fields,
+        # #     data_view=self
+        # # )
         # layer = GstZuordLayer(
         #     "Polygon?crs=epsg:31259",
         #     "Grundstücke",
-        #     "memory",
-        #     fields=self.fields,
-        #     data_view=self
+        #     "memory"
         # )
-        layer = GstZuordLayer(
-            "Polygon?crs=epsg:31259",
-            "Grundstücke",
-            "memory"
-        )
-        layer.base = True
-
-        # layer.entity_dialog = GstDialog
-        # layer.entity_form = GstZuordnungDataForm
-        layer.dmi_list = self.dmi_list
-
-        # setLayerStyle(layer, 'gst_awbuch_status')
-
-        layer.data_provider = layer.dataProvider()
-
-        layer.data_provider.addAttributes(self.fields)
-        layer.updateFields()
-
-        return layer
+        # layer.base = True
+        #
+        # # layer.entity_dialog = GstDialog
+        # # layer.entity_form = GstZuordnungDataForm
+        # layer.dmi_list = self.dmi_list
+        #
+        # # setLayerStyle(layer, 'gst_awbuch_status')
+        #
+        # layer.data_provider = layer.dataProvider()
+        #
+        # layer.data_provider.addAttributes(self.fields)
+        # layer.updateFields()
+        #
+        # return layer
 
     def getDefaultDmi(self):
 
@@ -371,9 +379,9 @@ class KontaktMain(AlmDataView):
         # self._fields.append(name_fld)
 
         k_id = GeneralField.Id()
-        k_name = KontaktField.Name()
-        k_adresse = KontaktField.Adresse()
-        k_telefon_all = KontaktField.TelefonAll()
+        k_name = Fields.Name()
+        k_adresse = Fields.Adresse()
+        k_telefon_all = Fields.TelefonAll()
 
         self._fields.append(k_id)
         self._fields.append(k_name)
@@ -878,3 +886,50 @@ class KontaktMain(AlmDataView):
 #         vertreter = KontaktNameCol('Vertreter')
 #         vertreter.set_dmi_attr('rel_vertreter')
 #         self.columns.append(vertreter)
+
+class Fields:
+    """
+    represent the fields according to the data_model 'Kontakt'
+    """
+
+    class VertreterId(QgaField):
+
+        def __init__(self, name='vertreter_id', field_type=QVariant.Int):
+            super().__init__(name, field_type)
+
+            self.dmi_attr = 'rel_vertreter.id'
+            self.setAlias('Vertreter ID')
+
+            self.visible = False
+
+    class Name(QgaField):
+
+        def __init__(self, name='name', field_type=QVariant.String):
+            super().__init__(name, field_type)
+
+            self.setAlias('Name')
+            self.dmi_attr = 'name'
+
+    class Adresse(QgaField):
+
+        def __init__(self, name='adresse', field_type=QVariant.String):
+            super().__init__(name, field_type)
+
+            self.setAlias('Adresse')
+            self.dmi_attr = 'adresse'
+
+    class Strasse(QgaField):
+
+        def __init__(self, name='strasse', field_type=QVariant.String):
+            super().__init__(name, field_type)
+
+            self.setAlias('Straße')
+            self.dmi_attr = 'strasse'
+
+    class TelefonAll(QgaField):
+
+        def __init__(self, name='telefon_all', field_type=QVariant.String):
+            super().__init__(name, field_type)
+
+            self.setAlias('Telefonnummern')
+            self.dmi_attr = 'telefon_all'
