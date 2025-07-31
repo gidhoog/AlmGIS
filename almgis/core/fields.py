@@ -17,6 +17,9 @@ class GeneralField:
             self.setAlias('ID')
             self.visible = False
 
+        def fieldObj(self, obj):
+            return str(obj)  # return the string not the uuid-object
+
     class TypeId(QgaField):
 
         def __init__(self, name='type_id', field_type=QVariant.Int):
