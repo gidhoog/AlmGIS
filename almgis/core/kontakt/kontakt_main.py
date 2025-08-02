@@ -5,6 +5,8 @@
 # from PyQt5.QtWidgets import QDialog, QPushButton, QMessageBox
 # from qga.core.filter import QgaFilter
 # from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
+from PyQt5.QtCore import Qt, QModelIndex
+from PyQt5.QtGui import QColor
 from qga.core.fields import QgaField
 from qga.core.layer import VectorLayerFactory
 from qga.core.main_widget import QgaMainWidget
@@ -14,7 +16,7 @@ from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from almgis.core.data_view import AlmDataView
+from almgis.core.data_view import AlmDataView, AlmTableModel
 from almgis.core.fields import GeneralField
 from almgis.database.models import DmKontakt
 
@@ -96,6 +98,30 @@ class KontaktMainWidget(QgaMainWidget):
 
         self.main_wdg.setupDataView()
         self.ui.mainVlay.addWidget(self.main_wdg.ui)
+
+
+class KontaktTableModel(AlmTableModel):
+
+    def __init__(self, dmi_list=None, layerCache=None,
+                     columns=None, parent=None):
+            super().__init__(dmi_list, layerCache, columns, parent)
+
+    def data(self, index: QModelIndex, role: int = ...):
+
+        print(f'////////////////////////////////////////////////////')
+
+        # if role == Qt.TextAlignmentRole:
+        #     # Set alignment for the "Age" column (column index 1)
+        #     if index.column() == 1:
+        #         return Qt.AlignHCenter | Qt.AlignVCenter
+
+        if index.column() == 1:
+
+            if role == Qt.BackgroundRole:
+
+                return QColor(200, 100, 120)
+
+        return super().data(index, role)
 
 
 # class KontaktModel(QgaTableModel):
@@ -285,6 +311,8 @@ class KontaktMain(AlmDataView):
 #         # self.initUi()
 
         self._entity_dmc = DmKontakt
+
+        self.model_cls = KontaktTableModel
 #
 #         filter_name = QgaFilter('Name', str)
 #         # filter_name = QgaFilter('Name  <a href="https://www.w3schools.com/">Visit W3Schools.com!</a>', str)

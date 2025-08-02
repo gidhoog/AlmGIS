@@ -1,4 +1,4 @@
-from qga.core.data_view import QgaDataView
+from qga.core.data_view import QgaDataView, QgaTableModel
 
 from almgis import ProjectSessionCls
 
@@ -15,3 +15,11 @@ class AlmDataView(QgaDataView):
 
     def __call__(self, *args, **kwargs):
         pass
+
+
+class AlmTableModel(QgaTableModel):
+
+    def __init__(self, dmi_list=None, layerCache=None,
+                 columns=None, parent=None):
+        super(AlmTableModel, self).__init__(dmi_list, layerCache,
+        columns, parent)
