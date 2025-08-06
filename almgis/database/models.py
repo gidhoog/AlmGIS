@@ -18,7 +18,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 #     pass
 
 
-class DmAkt(DmBaseProject, DmNonSpatialObject):
+class DmAkt(DmNonSpatialObject, DmBaseProject):
     """
     basisdatenebene für akte
     """
@@ -28,7 +28,7 @@ class DmAkt(DmBaseProject, DmNonSpatialObject):
     name: Mapped[str]
     alias: Mapped[str]
     az: Mapped[int]
-    bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"))
+    bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.uuid"))
     bearbeitungsstatus_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_bearbeitungsstatus.id"))
     # bearbeitungsstatus_id = Column(Integer, ForeignKey('a_alm_bearbeitungsstatus.id'))
     alm_bnr: Mapped[int]
@@ -769,21 +769,21 @@ class DmKomplexName(DmBaseProject):
                f"akt_id: {self.akt_id}, " \
                f"name: {self.name})>"
 
-# class DmKontakt(DmBaseProject, DmNonSpatialObject):
-class DmKontakt(DmBaseProject):
+class DmKontakt(DmBaseProject, DmNonSpatialObject):
+# class DmKontakt(DmBaseProject):
     __tablename__ = '_tbl_alm_kontakt'
 
     """class with self-relation!"""
     # id: Mapped[int] = mapped_column(primary_key=True)
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    # id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     """"""
 
-    type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'),
-                                         nullable=True)
-    """self-relation to id!!"""
-    vertreter_id: Mapped[str] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
-                                              nullable=True)
-    """"""
+    # type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'),
+    #                                      nullable=True)
+    # """self-relation to id!!"""
+    # vertreter_id: Mapped[str] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
+    #                                           nullable=True)
+    # """"""
 
     nachname: Mapped[str] = mapped_column(nullable=True)
     vorname: Mapped[str] = mapped_column(nullable=True)
@@ -798,8 +798,8 @@ class DmKontakt(DmBaseProject):
     mail3: Mapped[str] = mapped_column(nullable=True)
 
     anm: Mapped[str] = mapped_column(nullable=True)
-    gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'),
-                                             nullable=True)
+    # gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'),
+    #                                          nullable=True)
 
     blank_value: Mapped[bool] = mapped_column(default=0)
     inactive: Mapped[bool] = mapped_column(default=0)
@@ -810,20 +810,20 @@ class DmKontakt(DmBaseProject):
     time_edit: Mapped[str] = mapped_column(default=datetime.now(),
                                            onupdate=datetime.now())
 
-    rel_gem_type: Mapped['DmKontaktGemTyp'] = relationship(lazy="joined")
-    rel_type: Mapped['DmKontaktType'] = relationship()
+    # rel_gem_type: Mapped['DmKontaktGemTyp'] = relationship(lazy="joined")
+    # rel_type: Mapped['DmKontaktType'] = relationship()
 
     # children = relationship("DmKontakt", back_populates="rel_vertreter")
-    children: Mapped[List[
-        "DmKontakt"]] = relationship(back_populates="rel_vertreter")
-    rel_vertreter = relationship("DmKontakt", lazy="joined", join_depth=1,
-                             remote_side=[id])
+    # children: Mapped[List[
+    #     "DmKontakt"]] = relationship(back_populates="rel_vertreter")
+    # rel_vertreter = relationship("DmKontakt", lazy="joined", join_depth=1,
+    #                          remote_side=[id])
 
     rel_akt: Mapped[List["DmAkt"]] = relationship(back_populates="rel_bewirtschafter")
 
-    __mapper_args__ = {
-        'polymorphic_on': type_id
-    }
+    # __mapper_args__ = {
+    #     'polymorphic_on': type_id
+    # }
 
     @hybrid_property
     def name(self):
