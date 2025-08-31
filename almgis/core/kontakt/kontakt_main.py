@@ -108,7 +108,7 @@ class KontaktTableModel(AlmTableModel):
 
     def data(self, index: QModelIndex, role: int = ...):
 
-        print(f'////////////////////////////////////////////////////')
+        # print(f'////////////////////////////////////////////////////')
 
         # if role == Qt.TextAlignmentRole:
         #     # Set alignment for the "Age" column (column index 1)

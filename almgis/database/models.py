@@ -975,7 +975,7 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
         self.not_delete = 0
 
     def __repr__(self):
-       return f"<DmKontakt(id={self.id}, nachname='{self.nachname}')>"
+       return f"<DmKontakt(id={self.uuid}, nachname='{self.nachname}')>"
 
 
 class DmKontaktEinzel(DmKontakt):
