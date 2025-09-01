@@ -295,7 +295,7 @@ class KontaktMain(AlmDataView):
     # _entity_dmc = DmKontakt
     # _type_dmc = DmKontaktType
     #
-    # entity_dialog_class = KontaktEntityDialog
+    # _entity_dialog_class = KontaktEntityDialog
 
     _entity_amount_text = ["Kontakt", "Kontakte", "kein Kontakt"]
     _delete_window_title = ["Kontakt löschen", "Kontakte löschen"]

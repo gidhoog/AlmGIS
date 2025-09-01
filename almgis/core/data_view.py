@@ -8,6 +8,8 @@ from almgis import ProjectSessionCls
 
 class AlmDataView(QgaDataView):
 
+    _entity_dialog_class = AlmEntityDialog
+
     def __init__(self, gis_mode=False):
         super(__class__, self).__init__(gis_mode)
 
