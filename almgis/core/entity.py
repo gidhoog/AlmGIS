@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QDialog
-from qga.gui.entity import QgaEntity
+from qga.core.entity import QgaEntity
 
 
-# from qga.entity import QgaEntity, QgaEntityDialog
+from qga.core.entity import QgaEntity, QgaEntityDialog
 #
 # from almgis import ProjectSessionCls
 # # from almgis import DbSession
@@ -15,8 +15,8 @@ class AlmEntity(QgaEntity):
     def __init__(self, parent=None):
         super(AlmEntity, self).__init__(parent)
 
-        self.session = ProjectSessionCls()
-        self.logger = Logger
+        # self.session = ProjectSessionCls()
+        # self.logger = Logger
 
 
 class AlmEntityDialog(QgaEntityDialog):

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Kontakt</class>
- <widget class="QMainWindow" name="Kontakt">
+ <class>KontaktGui</class>
+ <widget class="QMainWindow" name="KontaktGui">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
-    <height>633</height>
+    <width>487</width>
+    <height>610</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,13 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="spacing">
+       <number>4</number>
+      </property>
       <item row="20" column="0" colspan="4">
        <widget class="Line" name="line_5">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -28,8 +31,8 @@
        <widget class="QComboBox" name="uiTypCombo">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
        </widget>
@@ -38,15 +41,12 @@
        <widget class="QLabel" name="label_6">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Straße:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -54,8 +54,8 @@
        <widget class="QLabel" name="uiVertreterMailLbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -66,7 +66,7 @@
       <item row="10" column="0" colspan="4">
        <widget class="Line" name="line_4">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -74,8 +74,8 @@
        <widget class="QPlainTextEdit" name="uiAnmPedit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="tabChangesFocus">
@@ -87,15 +87,12 @@
        <widget class="QLabel" name="uiVornameLbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Vorname:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -103,15 +100,12 @@
        <widget class="QLabel" name="uiVertreterLbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Vertreter/Obmann:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -119,8 +113,8 @@
        <widget class="QLineEdit" name="uiTelefon3Ledit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -132,15 +126,12 @@
        <widget class="QLabel" name="label_12">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>e-Mail:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -148,8 +139,8 @@
        <widget class="QLineEdit" name="uiMail1Ledit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -161,8 +152,8 @@
        <widget class="QLineEdit" name="uiStrasseLedit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -174,15 +165,12 @@
        <widget class="QLabel" name="uiTypLbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Typ:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -190,8 +178,8 @@
        <widget class="QLineEdit" name="uiTelefon2Ledit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -203,15 +191,12 @@
        <widget class="QLabel" name="uiNachnameLbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Gemeinschaft/Organisation:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -219,15 +204,12 @@
        <widget class="QLabel" name="label_7">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Post</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -235,8 +217,8 @@
        <widget class="QLineEdit" name="uiMail3Ledit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -253,15 +235,12 @@
          <widget class="QLabel" name="label_11">
           <property name="font">
            <font>
-            <family>Calibri</family>
-            <pointsize>11</pointsize>
+            <family>Sans Serif</family>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
            <string>Anmerkung:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -284,8 +263,8 @@
        <widget class="QLabel" name="uiVertreterAdresse1Lbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -297,15 +276,12 @@
        <widget class="QLabel" name="label_10">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>e-Mail:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -313,15 +289,12 @@
        <widget class="QLabel" name="label_3">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Telefon:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -329,8 +302,8 @@
        <widget class="QLineEdit" name="uiTelefon1Ledit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -342,22 +315,19 @@
        <widget class="QLabel" name="label_5">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Telefon:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
       <item row="14" column="0" colspan="4">
        <widget class="Line" name="line_3">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -365,8 +335,8 @@
        <widget class="QLineEdit" name="uiOrtLedit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -378,8 +348,8 @@
        <widget class="QLabel" name="uiVertreterTelefonLbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -391,8 +361,8 @@
        <widget class="QLineEdit" name="uiNachnameLedit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -404,8 +374,8 @@
        <widget class="QLabel" name="uiVertreterAdresse2Lbl">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -417,15 +387,12 @@
        <widget class="QLabel" name="label_9">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>e-Mail:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -433,8 +400,8 @@
        <widget class="QLineEdit" name="uiVornameLedit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -446,15 +413,12 @@
        <widget class="QLabel" name="label_8">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
          <string>Telefon:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -462,8 +426,8 @@
        <widget class="ContactCombo" name="uiVertreterCombo">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
        </widget>
@@ -478,8 +442,8 @@
         </property>
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -491,8 +455,8 @@
        <widget class="QLineEdit" name="uiMail2Ledit">
         <property name="font">
          <font>
-          <family>Calibri</family>
-          <pointsize>11</pointsize>
+          <family>Sans Serif</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="clearButtonEnabled">
@@ -503,14 +467,14 @@
       <item row="6" column="0" colspan="4">
        <widget class="Line" name="line_2">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
       <item row="3" column="0" colspan="4">
        <widget class="Line" name="line">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -523,6 +487,18 @@
       <item row="4" column="4">
        <widget class="AlmInfoButton" name="uiInfoBtnStrasse" native="true"/>
       </item>
+      <item row="17" column="0">
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -532,8 +508,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>654</width>
-     <height>21</height>
+     <width>487</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -543,12 +519,12 @@
   <customwidget>
    <class>ContactCombo</class>
    <extends>QComboBox</extends>
-   <header>almgis.scopes.kontakt.contact_combo</header>
+   <header>almgis.core.kontakt.contact_combo</header>
   </customwidget>
   <customwidget>
    <class>AlmInfoButton</class>
    <extends>QWidget</extends>
-   <header>almgis.info_button</header>
+   <header>almgis.core.info_button</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

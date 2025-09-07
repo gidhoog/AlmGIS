@@ -1,10 +1,10 @@
-from qga.tools import getDmiState
+from qga.core.tools import getDmiState
 from sqlalchemy import select, or_
 
 from qgis.PyQt.QtCore import QModelIndex, Qt
 
-from almgis.combobox import AlmComboModel, AlmExtendedCombo, AlmComboActionAdd
-from almgis.data_model import DmKontakt, DmKontaktGemTyp
+from almgis.core.combobox import AlmComboModel, AlmExtendedCombo, AlmComboActionAdd
+from almgis.database.models import DmKontakt, DmKontaktGemTyp
 
 
 class ContactCombo(AlmExtendedCombo):

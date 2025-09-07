@@ -5,17 +5,18 @@ from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
 from qgis.PyQt.QtWidgets import QWidget, QPushButton, QVBoxLayout
 from sqlalchemy import select, func
 
-from almgis.entity import AlmEntityDialog
-from almgis.scopes.kontakt import kontakt_UI
+# from almgis.entity import AlmEntityDialog
+# from almgis.scopes.kontakt import kontakt_UI
 
-from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmKontaktEinzel, \
-    DmKontaktGem
-from qga.tools import getDmiState
+# from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmKontaktEinzel, \
+#     DmKontaktGem
+# from qga.tools import getDmiState
 
-from almgis.entity import AlmEntity
+from almgis.core.entity import AlmEntity
+from almgis.gui.kontakt.kontakt_gui import KontaktGui
 
 
-class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
+class Kontakt(AlmEntity):
     """
     klasse für einen gemeinschafts-kontakt
     """
@@ -265,13 +266,17 @@ class Kontakt(kontakt_UI.Ui_Kontakt, AlmEntity):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
-        self.setupUi(self)
+        # self.setupUi(self)
 
-        self.setupCodeUi()
-        self.uiVertreterCombo.session = self.session
+        self.ui = KontaktGui()
 
-        self._entity_dmc = DmKontaktGem
-        # self.data_class = BKontakt
+        # self.ui.show()
+
+        # self.setupCodeUi()
+        # self.uiVertreterCombo.session = self.session
+        #
+        # self._entity_dmc = DmKontaktGem
+        # # self.data_class = BKontakt
 
     # def addNewEntity(self):
     #     super().addNewEntity()

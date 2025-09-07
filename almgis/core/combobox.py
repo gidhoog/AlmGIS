@@ -1,4 +1,4 @@
-from qga.combobox import QgaComboModel, QgaComboView, \
+from qga.core.combobox import QgaComboModel, QgaComboView, \
     QgaExtendedCombo, QgaComboActionAdd
 
 # from almgis.data_session import session_cm

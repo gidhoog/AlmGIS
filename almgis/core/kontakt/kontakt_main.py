@@ -17,7 +17,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from almgis.core.data_view import AlmDataView, AlmTableModel
+from almgis.core.entity import AlmEntityDialog
 from almgis.core.fields import GeneralField
+from almgis.core.kontakt.kontakt import Kontakt
 from almgis.database.models import DmKontakt
 
 
@@ -50,29 +52,29 @@ from almgis.database.models import DmKontakt
 # from almgis.gui.kontakt.kontakt_main import KontaktMainWdgGui
 
 
-# class KontaktEntityDialog(AlmEntityDialog):
-#
-#     def __init__(self, parent):
-#         super(__class__, self).__init__(parent)
-#
-#         self.parent = parent
-#
-#         self.dialog_window_title = 'Kontakt'
-#
-#     def accept(self):
-#         # super().accept()
-#
-#         accepted_entity = self.dialogWidget.acceptEntity()
-#
-#         if accepted_entity is not False:
-#
-#             if self.dialogWidget.purpose == 'add':
-#                 self.parent.dmi_list.append(accepted_entity)
-#
-#             self.parent.update_data_view.emit(self.dialogWidget.purpose,
-#                                               False)
-#
-#             QDialog.accept(self)
+class KontaktEntityDialog(AlmEntityDialog):
+
+    def __init__(self, parent):
+        super(__class__, self).__init__(parent)
+
+        self.parent = parent
+
+        self.dialog_window_title = 'Kontakt'
+
+    def accept(self):
+        # super().accept()
+
+        accepted_entity = self.dialogWidget.acceptEntity()
+
+        if accepted_entity is not False:
+
+            if self.dialogWidget.purpose == 'add':
+                self.parent.dmi_list.append(accepted_entity)
+
+            self.parent.update_data_view.emit(self.dialogWidget.purpose,
+                                              False)
+
+            QDialog.accept(self)
 
 
 class KontaktMainWidget(QgaMainWidget):
@@ -295,7 +297,7 @@ class KontaktMain(AlmDataView):
     # _entity_dmc = DmKontakt
     # _type_dmc = DmKontaktType
     #
-    # _entity_dialog_class = KontaktEntityDialog
+    _entity_dialog_class = KontaktEntityDialog
 
     _entity_amount_text = ["Kontakt", "Kontakte", "kein Kontakt"]
     _delete_window_title = ["Kontakt löschen", "Kontakte löschen"]
@@ -309,6 +311,8 @@ class KontaktMain(AlmDataView):
     def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(gis_mode)
 #         # self.initUi()
+
+        self.test_ui = Kontakt()
 
         self._entity_dmc = DmKontakt
 
