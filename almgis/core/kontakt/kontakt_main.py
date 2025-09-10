@@ -312,7 +312,7 @@ class KontaktMain(AlmDataView):
         super(__class__, self).__init__(gis_mode)
 #         # self.initUi()
 
-        self.test_ui = Kontakt()
+        self.entity_wdg_cls = Kontakt
 
         self._entity_dmc = DmKontakt
 
