@@ -17,6 +17,7 @@ from sqlalchemy.orm import joinedload
 
 from almgis import settings_general
 from almgis.core.data_view import AlmDataView
+from almgis.core.kontakt.kontakt_main import KontaktEntityDialog
 from almgis.database.models import DmKontakt
 
 

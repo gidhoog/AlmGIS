@@ -58,23 +58,22 @@ class KontaktEntityDialog(AlmEntityDialog):
         super(__class__, self).__init__(parent)
 
         self.parent = parent
+        self.ui.setWindowTitle(self.ui.windowTitle() + ' - Kontakt')
 
-        self.dialog_window_title = 'Kontakt'
-
-    def accept(self):
-        # super().accept()
-
-        accepted_entity = self.dialogWidget.acceptEntity()
-
-        if accepted_entity is not False:
-
-            if self.dialogWidget.purpose == 'add':
-                self.parent.dmi_list.append(accepted_entity)
-
-            self.parent.update_data_view.emit(self.dialogWidget.purpose,
-                                              False)
-
-            QDialog.accept(self)
+    # def accept(self):
+    #     # super().accept()
+    #
+    #     accepted_entity = self.dialogWidget.acceptEntity()
+    #
+    #     if accepted_entity is not False:
+    #
+    #         if self.dialogWidget.purpose == 'add':
+    #             self.parent.dmi_list.append(accepted_entity)
+    #
+    #         self.parent.update_data_view.emit(self.dialogWidget.purpose,
+    #                                           False)
+    #
+    #         QDialog.accept(self)
 
 
 class KontaktMainWidget(QgaMainWidget):

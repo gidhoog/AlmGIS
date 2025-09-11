@@ -3,6 +3,10 @@ from qga.core.entity import QgaEntity
 
 
 from qga.core.entity import QgaEntity, QgaEntityDialog
+
+from almgis.core.dialog import AlmDialog
+
+
 #
 # from almgis import ProjectSessionCls
 # # from almgis import DbSession
@@ -19,7 +23,9 @@ class AlmEntity(QgaEntity):
         # self.logger = Logger
 
 
-class AlmEntityDialog(QgaEntityDialog):
+class AlmEntityDialog(AlmDialog):
 
     def __init__(self, parent=None):
         super(AlmEntityDialog, self).__init__(parent)
+
+

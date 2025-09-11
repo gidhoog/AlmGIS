@@ -114,6 +114,8 @@ class AlmSettingsApp(QgaSettings):
 
     def __init__(self):
 
+
+
         ppp = Path().absolute().joinpath('AlmGIS.ini')
         super().__init__(str(ppp), QSettings.IniFormat)
 
