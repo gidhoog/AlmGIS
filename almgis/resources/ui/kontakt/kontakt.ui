@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
+    <width>489</width>
     <height>610</height>
    </rect>
   </property>
@@ -479,13 +479,13 @@
        </widget>
       </item>
       <item row="2" column="4">
-       <widget class="AlmInfoButton" name="uiInfoBtnVorname" native="true"/>
+       <widget class="AlmInfoButtonGui" name="uiInfoBtnVorname" native="true"/>
       </item>
       <item row="1" column="4">
-       <widget class="AlmInfoButton" name="uiInfoBtnNachname" native="true"/>
+       <widget class="AlmInfoButtonGui" name="uiInfoBtnNachname" native="true"/>
       </item>
       <item row="4" column="4">
-       <widget class="AlmInfoButton" name="uiInfoBtnStrasse" native="true"/>
+       <widget class="AlmInfoButtonGui" name="uiInfoBtnStrasse" native="true"/>
       </item>
       <item row="17" column="0">
        <widget class="QLabel" name="label">
@@ -508,7 +508,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>487</width>
+     <width>489</width>
      <height>22</height>
     </rect>
    </property>
@@ -522,9 +522,9 @@
    <header>almgis.core.kontakt.contact_combo</header>
   </customwidget>
   <customwidget>
-   <class>AlmInfoButton</class>
+   <class>AlmInfoButtonGui</class>
    <extends>QWidget</extends>
-   <header>almgis.core.info_button</header>
+   <header>almgis.gui.info_button_gui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

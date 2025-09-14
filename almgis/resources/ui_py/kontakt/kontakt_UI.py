@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_KontaktGui(object):
     def setupUi(self, KontaktGui):
         KontaktGui.setObjectName("KontaktGui")
-        KontaktGui.resize(487, 610)
+        KontaktGui.resize(489, 610)
         self.centralwidget = QtWidgets.QWidget(KontaktGui)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -283,13 +283,13 @@ class Ui_KontaktGui(object):
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.gridLayout.addWidget(self.line, 3, 0, 1, 4)
-        self.uiInfoBtnVorname = AlmInfoButton(self.centralwidget)
+        self.uiInfoBtnVorname = AlmInfoButtonGui(self.centralwidget)
         self.uiInfoBtnVorname.setObjectName("uiInfoBtnVorname")
         self.gridLayout.addWidget(self.uiInfoBtnVorname, 2, 4, 1, 1)
-        self.uiInfoBtnNachname = AlmInfoButton(self.centralwidget)
+        self.uiInfoBtnNachname = AlmInfoButtonGui(self.centralwidget)
         self.uiInfoBtnNachname.setObjectName("uiInfoBtnNachname")
         self.gridLayout.addWidget(self.uiInfoBtnNachname, 1, 4, 1, 1)
-        self.uiInfoBtnStrasse = AlmInfoButton(self.centralwidget)
+        self.uiInfoBtnStrasse = AlmInfoButtonGui(self.centralwidget)
         self.uiInfoBtnStrasse.setObjectName("uiInfoBtnStrasse")
         self.gridLayout.addWidget(self.uiInfoBtnStrasse, 4, 4, 1, 1)
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -301,7 +301,7 @@ class Ui_KontaktGui(object):
         self.verticalLayout.addLayout(self.gridLayout)
         KontaktGui.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(KontaktGui)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 487, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 489, 22))
         self.menubar.setObjectName("menubar")
         KontaktGui.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(KontaktGui)
@@ -345,5 +345,5 @@ class Ui_KontaktGui(object):
         self.label_9.setText(_translate("KontaktGui", "e-Mail:"))
         self.label_8.setText(_translate("KontaktGui", "Telefon:"))
         self.label.setText(_translate("KontaktGui", "TextLabel"))
-from almgis.core.info_button import AlmInfoButton
 from almgis.core.kontakt.contact_combo import ContactCombo
+from almgis.gui.info_button_gui import AlmInfoButtonGui
