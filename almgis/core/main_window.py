@@ -1,12 +1,14 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 from qga.core.main_window import QgaMainWindow
+from qga.database.alchemy import DmBaseCommon
 from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
+from sqlalchemy import create_engine
 
 from almgis import ProjectSessionCls, settings_app, settings_user, \
     settings_project, settings_general, settings_colors, settings_paths, \
-    settings_constants
+    settings_constants, CommunitySessionCls
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
