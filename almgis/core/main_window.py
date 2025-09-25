@@ -128,7 +128,7 @@ class AlmMainWindow(QgaMainWindow):
         self.settings_paths = settings_paths
         self.settings_constants = settings_constants
 
-    def setupDatabases(self):
+    def setupDatabasesCommon(self):
         """
         richte die datenbanken für almgis ein;
         siehe: https://docs.sqlalchemy.org/en/20/orm/persistence_techniques.html#partitioning-strategies-e-g-multiple-database-backends-per-session
