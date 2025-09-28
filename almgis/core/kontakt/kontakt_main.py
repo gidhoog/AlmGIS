@@ -16,6 +16,7 @@ from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
+from almgis import settings_colors
 from almgis.core.data_view import AlmDataView, AlmTableModel
 from almgis.core.entity import AlmEntityDialog
 from almgis.core.fields import GeneralField
