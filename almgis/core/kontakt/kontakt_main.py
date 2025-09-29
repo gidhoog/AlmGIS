@@ -117,7 +117,7 @@ class KontaktTableModel(AlmTableModel):
         #     if index.column() == 1:
         #         return Qt.AlignHCenter | Qt.AlignVCenter
 
-        if index.column() == 1:
+        if index.column() == 2:
 
             if role == Qt.BackgroundRole:
 
@@ -410,11 +410,13 @@ class KontaktMain(AlmDataView):
         # self._fields.append(vorname_fld)
         # self._fields.append(name_fld)
 
+        k_uuid = GeneralField.Uuid()
         k_id = GeneralField.Id()
         k_name = Fields.Name()
         k_adresse = Fields.Adresse()
         k_telefon_all = Fields.TelefonAll()
 
+        self._fields.append(k_uuid)
         self._fields.append(k_id)
         self._fields.append(k_name)
         self._fields.append(k_adresse)
