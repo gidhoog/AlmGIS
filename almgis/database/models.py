@@ -788,7 +788,9 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
 
     uuid: Mapped[UUID] = mapped_column(primary_key=True,
                                        default=uuid4)
-    id: Mapped[int] = mapped_column(autoincrement=True)
+    # id: Mapped[int] = mapped_column(autoincrement=True,
+    #                                 unique=True,
+    #                                 nullable=False)
 
     nachname: Mapped[str] = mapped_column(nullable=True)
     vorname: Mapped[str] = mapped_column(nullable=True)
