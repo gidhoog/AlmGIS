@@ -28,7 +28,7 @@ class DmAkt(DmNonSpatialObject, DmBaseProject):
     name: Mapped[str]
     alias: Mapped[str]
     az: Mapped[int]
-    bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.uuid"))
+    bewirtschafter_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"))
     bearbeitungsstatus_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_bearbeitungsstatus.id"))
     # bearbeitungsstatus_id = Column(Integer, ForeignKey('a_alm_bearbeitungsstatus.id'))
     alm_bnr: Mapped[int]
@@ -778,18 +778,18 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
     # id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     """"""
 
-    # type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'),
-    #                                      nullable=True)
-    # """self-relation to id!!"""
-    # vertreter_id: Mapped[str] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
-    #                                           nullable=True)
-    # """"""
-
-
     id: Mapped[UUID] = mapped_column(primary_key=True,
                                        default=uuid4)
     """or 'id' is a integer """
     # id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    """"""
+    type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'),
+                                         nullable=True)
+    gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'),
+                                             nullable=True)
+    """self-relation to id!!"""
+    vertreter_id: Mapped[UUID] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
+                                              nullable=True)
     """"""
 
     nachname: Mapped[str] = mapped_column(nullable=True)
@@ -805,8 +805,6 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
     mail3: Mapped[str] = mapped_column(nullable=True)
 
     anm: Mapped[str] = mapped_column(nullable=True)
-    # gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'),
-    #                                          nullable=True)
 
     blank_value: Mapped[bool] = mapped_column(default=0)
     inactive: Mapped[bool] = mapped_column(default=0)
@@ -817,14 +815,14 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
     time_edit: Mapped[str] = mapped_column(default=datetime.now(),
                                            onupdate=datetime.now())
 
-    # rel_gem_type: Mapped['DmKontaktGemTyp'] = relationship(lazy="joined")
-    # rel_type: Mapped['DmKontaktType'] = relationship()
+    rel_type: Mapped['DmKontaktType'] = relationship()
+    rel_gem_type: Mapped['DmKontaktGemTyp'] = relationship(lazy="joined")
 
     # children = relationship("DmKontakt", back_populates="rel_vertreter")
-    # children: Mapped[List[
-    #     "DmKontakt"]] = relationship(back_populates="rel_vertreter")
-    # rel_vertreter = relationship("DmKontakt", lazy="joined", join_depth=1,
-    #                          remote_side=[id])
+    children: Mapped[List[
+        "DmKontakt"]] = relationship(back_populates="rel_vertreter")
+    rel_vertreter = relationship("DmKontakt", lazy="joined", join_depth=1,
+                             remote_side=[id])
 
     rel_akt: Mapped[List["DmAkt"]] = relationship(back_populates="rel_bewirtschafter")
 
@@ -982,7 +980,7 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
         self.not_delete = 0
 
     def __repr__(self):
-       return f"<DmKontakt(id={self.uuid}, nachname='{self.nachname}')>"
+       return f"<DmKontakt(id={self.id}, nachname='{self.nachname}')>"
 
 
 class DmKontaktEinzel(DmKontakt):
@@ -1038,11 +1036,11 @@ class DmKontaktGemTyp(DmBaseProject):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    name: Mapped[str]
-    name_short: Mapped[str]
+    name: Mapped[str] = mapped_column(nullable=True)
+    name_short: Mapped[str] = mapped_column(nullable=True)
 
-    color: Mapped[str]
-    sort: Mapped[int]
+    color: Mapped[str] = mapped_column(nullable=True)
+    sort: Mapped[int] = mapped_column(nullable=True)
 
     def __repr__(self):
        return (f"<DmKontaktGemTyp(id={self.id}, "

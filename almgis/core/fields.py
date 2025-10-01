@@ -8,14 +8,14 @@ from almgis.database.models import DmGstZuordnung, DmGst
 
 class GeneralField:
 
-    class Uuid(QgaField):
-
-        def __init__(self, name='uuid', field_type=QVariant.String):
-            super().__init__(name, field_type)
-
-            self.dmi_attr = 'uuid'
-            self.setAlias('Uuid')
-            self.visible = False
+    # class Uuid(QgaField):
+    #
+    #     def __init__(self, name='uuid', field_type=QVariant.String):
+    #         super().__init__(name, field_type)
+    #
+    #         self.dmi_attr = 'uuid'
+    #         self.setAlias('Uuid')
+    #         self.visible = False
 
     class Id(QgaField):
 
