@@ -4,7 +4,7 @@ from contextlib import contextmanager
 
 from almgis import ProjectSessionCls
 # from almgis.data_model import DmSettings
-from almgis.logger import Logger
+from almgis.core.logger import Logger
 
 """verwende den Contextmanager 'session_cm' für schnelle Datenbankzugriffe;
 danach wird automatisch 'commit' und 'close' ausgeführt"""

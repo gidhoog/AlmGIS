@@ -14,6 +14,7 @@ from sqlalchemy.sql import table, column
 
 from almgis import ProjectSessionCls
 from almgis.database.models import DmKontakt
+from almgis.database.sessions import session_cm
 
 # revision identifiers, used by Alembic.
 revision: str = '0b9a66fe2b17'
@@ -24,44 +25,23 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    # Create table
-    # op.create_table(
-    #     'users',
-    #     sa.Column('id', sa.Integer, primary_key=True),
-    #     sa.Column('name', sa.String(50), nullable=False),
-    #     sa.Column('email', sa.String(100), nullable=False, unique=True),
-    #     sa.Column('age', sa.Integer),
-    # )
 
-    sess = ProjectSessionCls()
+    # upgrade_sessio = ProjectSessionCls()
 
-    new_kont = DmKontakt()
-    new_kont.nachname = 'A1'
-    sess.add(new_kont)
-    sess.commit()
-    sess.close()
+    new_kont_01 = DmKontakt()
+    new_kont_01.nachname = 'A1'
 
-    # Define SQLAlchemy table object for bulk_insert
-    # kontakt_table = table('_tbl_alm_kontakt',
-    #                       column('uuid', sa.String(100)),
-    #                       column('nachname', sa.String(100)),
-    #                       column('vorname', sa.String(100)),
-    #                       column('plz', sa.String(100)),
-    #                       column('ort', sa.String(100)),
-    #                       column('blank_value', sa.Boolean),
-    #                       column('inactive', sa.Boolean),
-    #                       column('not_delete', sa.Boolean),
-    #                       column('user_edit', sa.String(100)),
-    #                       column('time_edit', sa.String(100))
-    #                       )
-    #
-    # # Insert seed data
-    # op.bulk_insert(kontakt_table, [
-    #     {'nachname': 'AAA', 'vorname': 'Alice', 'plz': '123', 'ort': 'TT',
-    #      'blank_value': True, 'inactive': True, 'not_delete': True, 'user_edit': 'max', 'time_edit': '2025-09-30'},
-    #     {'nachname': 'BBB', 'vorname': 'Bob', 'plz': '456', 'ort': 'ZZ',
-    #      'blank_value': True, 'inactive': True, 'not_delete': True, 'user_edit': 'max', 'time_edit': '2025-09-30'}
-    # ])
+    new_kont_02 = DmKontakt()
+    new_kont_02.nachname = 'B1'
+
+    new_kont_03 = DmKontakt()
+    new_kont_03.nachname = 'C1'
+
+    with session_cm(name='insert default data') as session:
+        session.add(new_kont_01)
+        session.add(new_kont_02)
+        session.add(new_kont_03)
+
     print('data inserted!')
 
 
