@@ -266,7 +266,6 @@ class Kontakt(AlmEntity):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
-        # self.setupUi(self)
 
         self.ui = KontaktGui()
 
