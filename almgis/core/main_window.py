@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 
 from almgis import ProjectSessionCls, settings_app, settings_user, \
     settings_project, settings_general, settings_colors, settings_paths, \
-    settings_constants, CommunitySessionCls
+    settings_constants, CommonSessionCls
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
@@ -138,10 +138,10 @@ class AlmMainWindow(QgaMainWindow):
         common_db_file = self.settings_user.value('paths/common_db_file')
         """"""
 
-        """richte die session 'CommunitySessionCls' ein"""
+        """richte die session 'CommonSessionCls' ein"""
         engine_string = 'sqlite:///' + common_db_file
         community_engine = create_engine(engine_string, echo=False)
-        CommunitySessionCls.configure(binds={DmBaseCommon: community_engine})
+        CommonSessionCls.configure(binds={DmBaseCommon: community_engine})
         """"""
 
     def signalsAction(self):

@@ -1,4 +1,5 @@
 from sqlalchemy.orm import sessionmaker
+from sympy.assumptions.handlers import CommonHandler
 
 from almgis.core.settings import AlmSettingsGeneral, AlmSettingsColors, \
     AlmSettingsPaths, AlmSettingsConstants, AlmSettingsUser, AlmSettingsApp, \
@@ -28,4 +29,4 @@ settings_user.updateSettings()
 """"""
 
 ProjectSessionCls = sessionmaker()
-CommunitySessionCls = sessionmaker()
+CommonSessionCls = sessionmaker()

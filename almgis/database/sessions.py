@@ -3,7 +3,7 @@ from contextlib import contextmanager
 # from qga import data_session
 from qga.database.session import QgaSessionCm
 
-from almgis import ProjectSessionCls
+from almgis import ProjectSessionCls, CommonSessionCls
 # from almgis.data_model import DmSettings
 from almgis.core.logger import Logger
 
@@ -14,6 +14,15 @@ class AlmPrjSessionCm(QgaSessionCm):
         super(AlmPrjSessionCm, self).__init__(name, expire_on_commit)
 
         self.session_cls = ProjectSessionCls
+        self.logger = Logger
+
+
+class AlmCommonSessionCm(QgaSessionCm):
+
+    def __init__(self, name='', expire_on_commit=True):
+        super(AlmCommonSessionCm, self).__init__(name, expire_on_commit)
+
+        self.session_cls = CommonSessionCls
         self.logger = Logger
 
 
