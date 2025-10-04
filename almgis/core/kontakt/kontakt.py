@@ -13,7 +13,8 @@ from sqlalchemy import select, func
 # from qga.tools import getDmiState
 
 from almgis.core.entity import AlmEntity
-from almgis.gui.kontakt.kontakt_gui import KontaktGui
+from almgis.database.models import DmKontaktEinzel, DmKontakt
+from almgis.gui.kontakt.kontakt_gui import KontaktEinzelGui, KontaktGemGui
 
 
 class Kontakt(AlmEntity):
@@ -267,7 +268,9 @@ class Kontakt(AlmEntity):
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
 
-        self.ui = KontaktGui()
+        self.ui = KontaktGemGui(self)
+
+        self._entity_dmc = DmKontakt
 
         # self.ui.show()
 
@@ -506,28 +509,30 @@ class KontaktEinzel(Kontakt):
 
     def __init__(self, parent=None):
         super(__class__, self).__init__(parent)
-        self.setupCodeUi()
+        # self.setupCodeUi()
+
+        self.ui = KontaktEinzelGui(self)
 
         self._entity_dmc = DmKontaktEinzel
 
-    def setupCodeUi(self):
-        super().setupCodeUi()
-
-        self.uiTypLbl.setVisible(False)
-        self.uiTypCombo.setVisible(False)
-
-        self.uiVornameLedit.setVisible(True)
-        self.uiVornameLbl.setVisible(True)
-
-        self.uiVertreterCombo.setVisible(False)
-        self.uiVertreterLbl.setVisible(False)
-
-        self.uiVertreterAdresse1Lbl.setVisible(False)
-        self.uiVertreterAdresse2Lbl.setVisible(False)
-        self.uiVertreterTelefonLbl.setVisible(False)
-        self.uiVertreterMailLbl.setVisible(False)
-
-        self.uiNachnameLbl.setText('Nachname')
+    # def setupCodeUi(self):
+    #     super().setupCodeUi()
+    #
+    #     self.uiTypLbl.setVisible(False)
+    #     self.uiTypCombo.setVisible(False)
+    #
+    #     self.uiVornameLedit.setVisible(True)
+    #     self.uiVornameLbl.setVisible(True)
+    #
+    #     self.uiVertreterCombo.setVisible(False)
+    #     self.uiVertreterLbl.setVisible(False)
+    #
+    #     self.uiVertreterAdresse1Lbl.setVisible(False)
+    #     self.uiVertreterAdresse2Lbl.setVisible(False)
+    #     self.uiVertreterTelefonLbl.setVisible(False)
+    #     self.uiVertreterMailLbl.setVisible(False)
+    #
+    #     self.uiNachnameLbl.setText('Nachname')
 
     def submitEntity(self):
 
