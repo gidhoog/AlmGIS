@@ -33,7 +33,7 @@ def upgrade() -> None:
     kt1.name_short = "E"
     kt1.sort = 0
     kt1.icon_01 = ":/svg/icons/person.svg"
-    kt1.module = "almgis.scopes.kontakt.kontakt"
+    kt1.module = "almgis.core.kontakt.kontakt"
     kt1.type_class = "KontaktEinzel"
     kt1.dmi_class = "BKontaktEinzel"
     kt1.not_delete = 1
@@ -98,23 +98,28 @@ def upgrade() -> None:
 
     new_kont_01 = DmKontakt()
     new_kont_01.nachname = 'A1'
+    new_kont_01.rel_type = kt1
 
     new_kont_02 = DmKontakt()
     new_kont_02.nachname = 'B1'
+    new_kont_02.rel_type = kt1
 
     new_kont_03 = DmKontakt()
     new_kont_03.nachname = 'C1'
+    new_kont_03.rel_type = kt1
 
     new_kont_04 = DmKontakt()
     new_kont_04.nachname = 'D1'
+    new_kont_04.rel_type = kt1
 
     new_kont_05 = DmKontakt()
     new_kont_05.nachname = 'E1'
+    new_kont_05.rel_type = kt1
 
     verein1 = DmKontakt()
     verein1.nachname = 'VereinA'
     verein1.rel_vertreter = new_kont_01
-    verein1.type_id = 1
+    verein1.rel_type = kt2
     verein1.rel_gem_type = kgt3
 
     with session_cm(name='insert default data') as session:
