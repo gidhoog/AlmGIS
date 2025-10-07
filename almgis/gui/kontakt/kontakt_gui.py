@@ -1,10 +1,11 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
+from qga.gui.entity_gui import QgaEntityGui
 
 from almgis.resources.ui_py.kontakt import kontakt_UI
 
 
-class KontaktEinzelGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
+class KontaktEinzelGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
 
     acceptEntitySignal = pyqtSignal(object)
 
@@ -277,7 +278,7 @@ class KontaktEinzelGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
         # self.ctrl.updateVornameSignal.connect(self.uiVornameLedit.setText)
         self.ctrl.updateVornameSignal.connect(self.setVorname)
 
-        self.ctrl.entity_dialog.accepted.emit(self.acceptEntitySignal)
+        # self.ctrl.entity_dialog.accepted.emit(self.acceptEntitySignal)
 
     def setVorname(self, value):
 
