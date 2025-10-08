@@ -22,8 +22,23 @@ class Kontakt(AlmEntity):
     """
     klasse für einen gemeinschafts-kontakt
     """
+    commitDataSgn = pyqtSignal()
 
-    updateVornameSignal = pyqtSignal(str)
+    # updateVornameSignal = pyqtSignal(str)
+    setTypSgn = pyqtSignal(int)
+    setNachnameSgn = pyqtSignal(str)
+    setVornameSgn = pyqtSignal(str)
+    setStrasseSgn = pyqtSignal(str)
+    setPlzSgn = pyqtSignal(str)
+    setOrtSgn = pyqtSignal(str)
+    setTelefon1Sgn = pyqtSignal(str)
+    setTelefon2Sgn = pyqtSignal(str)
+    setTelefon3Sgn = pyqtSignal(str)
+    setMail1Sgn = pyqtSignal(str)
+    setMail2Sgn = pyqtSignal(str)
+    setMail3Sgn = pyqtSignal(str)
+    setVertreterSgn = pyqtSignal(int)
+    setAnmSgn = pyqtSignal(str)
 
     # _gem_type_id = 0
     # _nachname = ''
@@ -269,12 +284,42 @@ class Kontakt(AlmEntity):
     #     self.uiAnmPedit.setPlainText(value)
     #     self._anm = value
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, entity_dlg=None):
+        super(__class__, self).__init__(parent, entity_dlg)
 
         self.ui = KontaktGemGui(self)
 
         self._entity_dmc = DmKontakt
+
+        # self.commitDataSgn.connect(self.commitData)
+
+        # self.ui.getNachnameSgn.connect()
+
+    def commitNachname(self, value):
+
+        self._entity_dmi.nachname = value
+        print(f'new entity dmi: {self._entity_dmi}')
+
+    # def commitNachname(self, value):
+    #
+    #     self._entity_dmi.nachname = value
+
+    def commitData(self):
+
+        print(f'commit entity data!')
+        self.ui.commitDataSgn.emit()
+
+    def setupEntity(self):
+
+        self.ui.getNachnameSgn.connect(self.commitNachname)
+
+        self.ui.updateDmiNachnameSgn.connect(self.updateDmiNachname)
+        self.ui.acceptWdgSgn.connect(self.commitEntity)
+
+    def updateDmiNachname(self, value):
+
+        self._entity_dmi.nachname = value
+        print(f'updated dmi: {self._entity_dmi}')
 
         # self.ui.show()
 
@@ -292,7 +337,12 @@ class Kontakt(AlmEntity):
     def emitSignals(self):
         super().emitSignals()
 
-        self.updateVornameSignal.emit(self._entity_dmi.vorname)
+        # self.updateVornameSignal.emit(self._entity_dmi.vorname)
+        # self.setDmiSignal.emit(self._entity_dmi)
+
+        self.setNachnameSgn.emit(self._entity_dmi.nachname)
+        self.setVornameSgn.emit(self._entity_dmi.vorname)
+        self.setStrasseSgn.emit(self._entity_dmi.strasse)
 
 
     def setDefaultValues(self, **kwargs):
@@ -517,9 +567,11 @@ class KontaktEinzel(Kontakt):
     klasse für die Kontaktdaten einer Einzelperson
     """
 
-    def __init__(self, parent=None):
-        super(__class__, self).__init__(parent)
+    def __init__(self, parent=None, entity_dlg=None):
+        super(__class__, self).__init__(parent, entity_dlg)
         # self.setupCodeUi()
+
+        self.entity_dlg = entity_dlg
 
         self.ui = KontaktEinzelGui(self)
 

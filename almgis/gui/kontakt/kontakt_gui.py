@@ -1,13 +1,79 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
-from qga.gui.entity_gui import QgaEntityGui
+# from qga.gui.entity_gui import QgaEntityGui
 
 from almgis.resources.ui_py.kontakt import kontakt_UI
 
 
-class KontaktEinzelGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
+class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
+
+    updateDmiNachnameSgn = pyqtSignal(str)
+    acceptWdgSgn = pyqtSignal()
+
+    commitDataSgn = pyqtSignal()
+
+    getTypSgn = pyqtSignal(int)
+    getNachnameSgn = pyqtSignal(str)
+    getVornameSgn = pyqtSignal(str)
+    getStrasseSgn = pyqtSignal(str)
+    getPlzSgn = pyqtSignal(str)
+    getOrtSgn = pyqtSignal(str)
+    getTelefon1Sgn = pyqtSignal(str)
+    getTelefon2Sgn = pyqtSignal(str)
+    getTelefon3Sgn = pyqtSignal(str)
+    getMail1Sgn = pyqtSignal(str)
+    getMail2Sgn = pyqtSignal(str)
+    getMail3Sgn = pyqtSignal(str)
+    getVertreterSgn = pyqtSignal(int)
+    getAnmSgn = pyqtSignal(str)
+
+    def __init__(self, ctrl=None):
+        super(KontaktGui, self).__init__()
+        # QgaEntityGui.__init__(self, ctrl)
+        self.setupUi(self)
+
+        self.ctrl = ctrl
+
+        self.ctrl.setNachnameSgn.connect(self.setNachname)
+        self.ctrl.setVornameSgn.connect(self.setVorname)
+        self.ctrl.setStrasseSgn.connect(self.setStrasse)
+
+        # self.commitDataSgn.connect(self.commitData)
+
+        self.ctrl.entity_dlg.ui.accepted.connect(self.acceptWdg)
+
+    def acceptWdg(self):
+
+        print(f'accept entity gui!!')
+
+        self.updateDmiNachnameSgn.emit(self.uiNachnameLedit.text())
+
+        self.acceptWdgSgn.emit()
+
+
+    def commitData(self):
+
+        print(f'lets send the data to the ctrl!')
+        self.getNachnameSgn.emit(self.uiNachnameLedit.text())
+
+    def setNachname(self, value):
+        self.uiNachnameLedit.setText(value)
+
+    def getNachname(self):
+        return self.uiNachnameLedit.text()
+
+    def setVorname(self, value):
+        self.uiVornameLedit.setText(value)
+
+    def setStrasse(self, value):
+        self.uiStrasseLedit.setText(value)
+
+
+# class KontaktEinzelGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
+class KontaktEinzelGui(KontaktGui):
 
     acceptEntitySignal = pyqtSignal(object)
+
 
     _gem_type_id = 0
     _nachname = ''
@@ -254,10 +320,11 @@ class KontaktEinzelGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
         self._anm = value
 
     def __init__(self, ctrl=None):
-        super(KontaktEinzelGui, self).__init__()
-        self.setupUi(self)
+        super(KontaktEinzelGui, self).__init__(ctrl)
+        # QgaEntityGui.__init__(self, ctrl)
+        # self.setupUi(self)
 
-        self.ctrl = ctrl
+        # self.ctrl = ctrl
 
         self.uiTypLbl.setVisible(False)
         self.uiTypCombo.setVisible(False)
@@ -276,7 +343,7 @@ class KontaktEinzelGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
         self.uiNachnameLbl.setText('Nachname')
 
         # self.ctrl.updateVornameSignal.connect(self.uiVornameLedit.setText)
-        self.ctrl.updateVornameSignal.connect(self.setVorname)
+        # self.ctrl.updateVornameSignal.connect(self.setVorname)
 
         # self.ctrl.entity_dialog.accepted.emit(self.acceptEntitySignal)
 
