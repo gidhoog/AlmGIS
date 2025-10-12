@@ -104,9 +104,9 @@ class KontaktMainWidget(QgaMainWidget):
 
 class KontaktTableModel(AlmTableModel):
 
-    def __init__(self, dmi_list=None, layerCache=None,
+    def __init__(self, layerCache=None,
                      columns=None, parent=None):
-            super().__init__(dmi_list, layerCache, columns, parent)
+            super().__init__(layerCache, columns, parent)
 
     def data(self, index: QModelIndex, role: int = ...):
 
@@ -950,11 +950,11 @@ class Fields:
 
     class Name(QgaField):
 
-        def __init__(self, name='name', field_type=QVariant.String):
+        def __init__(self, name='nachname', field_type=QVariant.String):
             super().__init__(name, field_type)
 
-            self.setAlias('Name')
-            self.dmi_attr = 'name'
+            self.setAlias('Nachname')
+            self.dmi_attr = 'nachname'
 
     class Adresse(QgaField):
 

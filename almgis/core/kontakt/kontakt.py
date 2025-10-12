@@ -22,7 +22,7 @@ class Kontakt(AlmEntity):
     """
     klasse für einen gemeinschafts-kontakt
     """
-    commitDataSgn = pyqtSignal()
+    # commitDataSgn = pyqtSignal()
 
     # updateVornameSignal = pyqtSignal(str)
     setTypSgn = pyqtSignal(int)
@@ -295,26 +295,26 @@ class Kontakt(AlmEntity):
 
         # self.ui.getNachnameSgn.connect()
 
-    def commitNachname(self, value):
-
-        self._entity_dmi.nachname = value
-        print(f'new entity dmi: {self._entity_dmi}')
-
     # def commitNachname(self, value):
     #
     #     self._entity_dmi.nachname = value
-
-    def commitData(self):
-
-        print(f'commit entity data!')
-        self.ui.commitDataSgn.emit()
+    #     print(f'new entity dmi: {self._entity_dmi}')
+    #
+    # # def commitNachname(self, value):
+    # #
+    # #     self._entity_dmi.nachname = value
+    #
+    # def commitData(self):
+    #
+    #     print(f'commit entity data!')
+    #     self.ui.commitDataSgn.emit()
 
     def setupEntity(self):
 
-        self.ui.getNachnameSgn.connect(self.commitNachname)
+        # self.ui.getNachnameSgn.connect(self.commitNachname)
 
         self.ui.updateDmiNachnameSgn.connect(self.updateDmiNachname)
-        self.ui.acceptWdgSgn.connect(self.commitEntity)
+        # self.ui.acceptEntitySgn.connect(self.commitEntity)
 
     def updateDmiNachname(self, value):
 

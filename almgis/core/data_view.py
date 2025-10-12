@@ -23,7 +23,6 @@ class AlmDataView(QgaDataView):
 
 class AlmTableModel(QgaTableModel):
 
-    def __init__(self, dmi_list=None, layerCache=None,
+    def __init__(self, layerCache=None,
                  columns=None, parent=None):
-        super(AlmTableModel, self).__init__(dmi_list, layerCache,
-        columns, parent)
+        super(AlmTableModel, self).__init__(layerCache, columns, parent)

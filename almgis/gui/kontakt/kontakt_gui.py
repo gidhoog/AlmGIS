@@ -1,16 +1,17 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
-# from qga.gui.entity_gui import QgaEntityGui
+from qga.gui.entity_gui import QgaEntityGui
 
 from almgis.resources.ui_py.kontakt import kontakt_UI
 
 
-class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
+class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
+# class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
 
     updateDmiNachnameSgn = pyqtSignal(str)
-    acceptWdgSgn = pyqtSignal()
+    # acceptEntitySgn = pyqtSignal()
 
-    commitDataSgn = pyqtSignal()
+    # commitDataSgn = pyqtSignal()
 
     getTypSgn = pyqtSignal(int)
     getNachnameSgn = pyqtSignal(str)
@@ -28,11 +29,11 @@ class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
     getAnmSgn = pyqtSignal(str)
 
     def __init__(self, ctrl=None):
-        super(KontaktGui, self).__init__()
-        # QgaEntityGui.__init__(self, ctrl)
+        # super(KontaktGui, self).__init__()
+        QgaEntityGui.__init__(self, ctrl)
         self.setupUi(self)
 
-        self.ctrl = ctrl
+        # self.ctrl = ctrl
 
         self.ctrl.setNachnameSgn.connect(self.setNachname)
         self.ctrl.setVornameSgn.connect(self.setVorname)
@@ -40,7 +41,7 @@ class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
 
         # self.commitDataSgn.connect(self.commitData)
 
-        self.ctrl.entity_dlg.ui.accepted.connect(self.acceptWdg)
+        # self.ctrl.entity_dlg.ui.accepted.connect(self.acceptWdg)
 
     def acceptWdg(self):
 
@@ -48,7 +49,8 @@ class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
 
         self.updateDmiNachnameSgn.emit(self.uiNachnameLedit.text())
 
-        self.acceptWdgSgn.emit()
+        # self.acceptEntitySgn.emit()
+        super().acceptWdg()
 
 
     def commitData(self):
@@ -72,7 +74,7 @@ class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
 # class KontaktEinzelGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
 class KontaktEinzelGui(KontaktGui):
 
-    acceptEntitySignal = pyqtSignal(object)
+    # acceptEntitySignal = pyqtSignal(object)
 
 
     _gem_type_id = 0
