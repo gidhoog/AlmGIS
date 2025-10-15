@@ -427,12 +427,14 @@ class KontaktMain(AlmDataView):
         k_name = Fields.Name()
         k_adresse = Fields.Adresse()
         k_telefon_all = Fields.TelefonAll()
+        k_vertreter_id = Fields.VertreterId()
 
         # self._fields.append(k_uuid)
         self._fields.append(k_id)
         self._fields.append(k_name)
         self._fields.append(k_adresse)
         self._fields.append(k_telefon_all)
+        self._fields.append(k_vertreter_id)
 
 #     def deleteCheck(self, dmi):
 #
@@ -940,42 +942,57 @@ class Fields:
 
     class VertreterId(QgaField):
 
-        def __init__(self, name='vertreter_id', field_type=QVariant.Int):
-            super().__init__(name, field_type)
+        def __init__(self):
+            super().__init__()
+
+            self.name = 'vertreter_id'
+            self.type = QVariant.String
 
             self.dmi_attr = 'rel_vertreter.id'
-            self.setAlias('Vertreter ID')
+            self.alias = 'Vertreter ID'
 
             self.visible = False
 
     class Name(QgaField):
 
-        def __init__(self, name='nachname', field_type=QVariant.String):
-            super().__init__(name, field_type)
+        def __init__(self):
+            super().__init__()
 
-            self.setAlias('Nachname')
+            self.name = 'nachname'
+            self.type = QVariant.String
+
+            self.alias = 'Nachname'
             self.dmi_attr = 'nachname'
 
     class Adresse(QgaField):
 
-        def __init__(self, name='adresse', field_type=QVariant.String):
-            super().__init__(name, field_type)
+        def __init__(self):
+            super().__init__()
 
-            self.setAlias('Adresse')
+            self.name = 'adresse'
+            self.type = QVariant.String
+
+            self.alias = 'Adresse'
             self.dmi_attr = 'adresse'
 
     class Strasse(QgaField):
 
-        def __init__(self, name='strasse', field_type=QVariant.String):
-            super().__init__(name, field_type)
+        def __init__(self):
+            super().__init__()
 
-            self.setAlias('Straße')
+            self.name = 'strasse'
+            self.type = QVariant.String
+
+            self.alias = 'Straße'
             self.dmi_attr = 'strasse'
 
     class TelefonAll(QgaField):
 
-        def __init__(self, name='telefon_all', field_type=QVariant.String):
-            super().__init__(name, field_type)
+        def __init__(self):
+            super().__init__()
 
-            self.setAlias('Telefonnummern')
+            self.name = 'telefon_all'
+            self.type = QVariant.String
+
+            self.alias = 'Telefonnummern'
             self.dmi_attr = 'telefon_all'
