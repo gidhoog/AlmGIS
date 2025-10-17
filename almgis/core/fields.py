@@ -34,14 +34,14 @@ class GeneralField:
 
     class TypeId(QgaField):
 
-        def __init__(self, name='type_id', field_type=QVariant.Int):
-            super().__init__(name, field_type)
+        def __init__(self):
+            super().__init__()
 
             self.name = 'type_id'
             self.type = QVariant.Int
 
             self.dmi_attr = 'type_id'
-            self.alias = 'Typ ID'
+            self.alias = 'TypID'
             self.visible = False
 
 

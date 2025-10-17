@@ -314,25 +314,18 @@ class Kontakt(AlmEntity):
         # self.ui.getNachnameSgn.connect(self.commitNachname)
 
         self.ui.updateDmiNachnameSgn.connect(self.updateDmiNachname)
+        self.ui.updateDmiVornameSgn.connect(self.updateDmiVorname)
+        self.ui.updateDmiStrasseSgn.connect(self.updateDmiStrasse)
         # self.ui.acceptEntitySgn.connect(self.commitEntity)
 
     def updateDmiNachname(self, value):
-
         self._entity_dmi.nachname = value
-        print(f'updated dmi: {self._entity_dmi}')
 
-        # self.ui.show()
+    def updateDmiVorname(self, value):
+        self._entity_dmi.vorname = value
 
-        # self.setupCodeUi()
-        # self.uiVertreterCombo.session = self.session
-        #
-        # self._entity_dmc = DmKontaktGem
-        # # self.data_class = BKontakt
-
-    # def addNewEntity(self):
-    #     super().addNewEntity()
-    #
-    #     self.uiVertreterCombo.setCurrentIndex(1)
+    def updateDmiStrasse(self, value):
+        self._entity_dmi.strasse = value
 
     def emitSignals(self):
         super().emitSignals()

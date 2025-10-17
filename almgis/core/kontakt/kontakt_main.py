@@ -404,7 +404,7 @@ class KontaktMain(AlmDataView):
 
         return dmi
 
-    def setFeatureFields(self):
+    def createFeatureFields(self):
 
         # gst_version_id_fld = QgsField("id", QVariant.Int)
         #
@@ -424,6 +424,7 @@ class KontaktMain(AlmDataView):
 
         # k_uuid = GeneralField.Uuid()
         k_id = GeneralField.Id()
+        k_type_id = GeneralField.TypeId()
         k_name = Fields.Name()
         k_adresse = Fields.Adresse()
         k_telefon_all = Fields.TelefonAll()
@@ -431,6 +432,7 @@ class KontaktMain(AlmDataView):
 
         # self._fields.append(k_uuid)
         self._fields.append(k_id)
+        self._fields.append(k_type_id)
         self._fields.append(k_name)
         self._fields.append(k_adresse)
         self._fields.append(k_telefon_all)
@@ -945,11 +947,11 @@ class Fields:
         def __init__(self):
             super().__init__()
 
-            self.name = 'vertreter_id'
+            self.name = 'vertreter_name'
             self.type = QVariant.String
 
-            self.dmi_attr = 'rel_vertreter.id'
-            self.alias = 'Vertreter ID'
+            self.dmi_attr = 'rel_vertreter.name'
+            self.alias = 'Vertreter Name'
 
             self.visible = False
 
@@ -958,11 +960,11 @@ class Fields:
         def __init__(self):
             super().__init__()
 
-            self.name = 'nachname'
+            self.name = 'name'
             self.type = QVariant.String
 
-            self.alias = 'Nachname'
-            self.dmi_attr = 'nachname'
+            self.alias = 'Name'
+            self.dmi_attr = 'name'
 
     class Adresse(QgaField):
 

@@ -9,24 +9,27 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
 # class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
 
     updateDmiNachnameSgn = pyqtSignal(str)
+    updateDmiVornameSgn = pyqtSignal(str)
+    updateDmiStrasseSgn = pyqtSignal(str)
+    updateDmiVertreterSgn = pyqtSignal(str)  # this is the uuid
     # acceptEntitySgn = pyqtSignal()
 
     # commitDataSgn = pyqtSignal()
 
-    getTypSgn = pyqtSignal(int)
-    getNachnameSgn = pyqtSignal(str)
-    getVornameSgn = pyqtSignal(str)
-    getStrasseSgn = pyqtSignal(str)
-    getPlzSgn = pyqtSignal(str)
-    getOrtSgn = pyqtSignal(str)
-    getTelefon1Sgn = pyqtSignal(str)
-    getTelefon2Sgn = pyqtSignal(str)
-    getTelefon3Sgn = pyqtSignal(str)
-    getMail1Sgn = pyqtSignal(str)
-    getMail2Sgn = pyqtSignal(str)
-    getMail3Sgn = pyqtSignal(str)
-    getVertreterSgn = pyqtSignal(int)
-    getAnmSgn = pyqtSignal(str)
+    # getTypSgn = pyqtSignal(int)
+    # getNachnameSgn = pyqtSignal(str)
+    # getVornameSgn = pyqtSignal(str)
+    # getStrasseSgn = pyqtSignal(str)
+    # getPlzSgn = pyqtSignal(str)
+    # getOrtSgn = pyqtSignal(str)
+    # getTelefon1Sgn = pyqtSignal(str)
+    # getTelefon2Sgn = pyqtSignal(str)
+    # getTelefon3Sgn = pyqtSignal(str)
+    # getMail1Sgn = pyqtSignal(str)
+    # getMail2Sgn = pyqtSignal(str)
+    # getMail3Sgn = pyqtSignal(str)
+    # getVertreterSgn = pyqtSignal(int)
+    # getAnmSgn = pyqtSignal(str)
 
     def __init__(self, ctrl=None):
         # super(KontaktGui, self).__init__()
@@ -48,15 +51,17 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
         print(f'accept entity gui!!')
 
         self.updateDmiNachnameSgn.emit(self.uiNachnameLedit.text())
+        self.updateDmiVornameSgn.emit(self.uiVornameLedit.text())
+        self.updateDmiStrasseSgn.emit(self.uiStrasseLedit.text())
 
         # self.acceptEntitySgn.emit()
         super().acceptWdg()
 
 
-    def commitData(self):
-
-        print(f'lets send the data to the ctrl!')
-        self.getNachnameSgn.emit(self.uiNachnameLedit.text())
+    # def commitData(self):
+    #
+    #     print(f'lets send the data to the ctrl!')
+    #     self.getNachnameSgn.emit(self.uiNachnameLedit.text())
 
     def setNachname(self, value):
         self.uiNachnameLedit.setText(value)
