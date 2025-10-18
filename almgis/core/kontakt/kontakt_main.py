@@ -314,7 +314,8 @@ class KontaktMain(AlmDataView):
 
         # self.entity_wdg_cls = Kontakt
 
-        self.edit_entity_by = 'id'
+        # self.edit_entity_by = 'id'
+        self.edit_entity_by = 'dmi'
 
         self._entity_dmc = DmKontakt
 
