@@ -81,7 +81,7 @@ class KontaktMainWidget(QgaMainWidget):
 
     def __init__(self, parent=None, session=None):
         # super().__init__(parent, session)
-        super().__init__()
+        super().__init__(parent)
 
         # self.ui = KontaktMainWdgGui(self)
         # self.ui = QgaMainWidgetGui(self)
@@ -89,11 +89,19 @@ class KontaktMainWidget(QgaMainWidget):
         self.ui.setTitle('alle Kontakte')
         self.main_wdg = KontaktMain(self)
 
+        self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+
+        self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
+
     # def createMw(self):
     #
     #     # self.main_wdg.initDataView()
     #
     #     self.setupMainWidget()
+
+    # def updateMainWdg(self):
+    #
+    #     self.parent.updateAppSgn.emit()
 
     def setupMainWidget(self):
         super().setupMainWidget()
@@ -297,6 +305,8 @@ class KontaktMain(AlmDataView):
     # _entity_dmc = DmKontakt
     # _type_dmc = DmKontaktType
     #
+    _dmi_dict = {}
+
     _entity_dialog_class = KontaktEntityDialog
 
     _entity_amount_text = ["Kontakt", "Kontakte", "kein Kontakt"]
@@ -315,6 +325,7 @@ class KontaktMain(AlmDataView):
         # self.entity_wdg_cls = Kontakt
 
         # self.edit_entity_by = 'id'
+        self.dmi_dict = KontaktMain._dmi_dict
         self.edit_entity_by = 'dmi'
 
         self._entity_dmc = DmKontakt
@@ -392,6 +403,7 @@ class KontaktMain(AlmDataView):
 
         stmt = select(self._entity_dmc)
         dmi = self.session.scalars(stmt).all()
+        # dmi = self.session.execute(stmt).scalars()
 
         # stmt = (select(DmKontakt)
         #         .options(
@@ -401,7 +413,7 @@ class KontaktMain(AlmDataView):
         #
         # dmi = self.session.scalars(stmt).all()
 
-        print(f'dmi: {dmi}')
+        print(f'dmi {str(self.inst_number)}: {dmi}')
 
         return dmi
 
