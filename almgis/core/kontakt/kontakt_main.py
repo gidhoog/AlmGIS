@@ -13,7 +13,7 @@ from qga.core.main_widget import QgaMainWidget
 from qga.gui.main_widget_gui import QgaMainWidgetGui
 from qgis._core import QgsField
 from qgis.PyQt.QtCore import QVariant
-from sqlalchemy import select
+from sqlalchemy import select, URL
 from sqlalchemy.orm import joinedload
 
 from almgis import settings_colors
@@ -400,6 +400,11 @@ class KontaktMain(AlmDataView):
     def getDmiList(self):
 
         # session = DbSession()
+
+        url_object = URL.create(
+            "sqlite",
+            database="appdb.db",
+        )
 
         stmt = select(self._entity_dmc)
         dmi = self.session.scalars(stmt).all()
