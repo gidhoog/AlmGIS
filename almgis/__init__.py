@@ -1,4 +1,4 @@
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.orm import sessionmaker
 
 from almgis.core.settings import AlmSettingsGeneral, AlmSettingsColors, \
     AlmSettingsPaths, AlmSettingsConstants, AlmSettingsUser, AlmSettingsApp, \
@@ -27,5 +27,5 @@ settings_app.updateSettings()
 settings_user.updateSettings()
 """"""
 
-ProjectSessionCls = sessionmaker()
-CommonSessionCls = sessionmaker()
+# ProjectSessionCls = sessionmaker()
+# CommonSessionCls = sessionmaker()

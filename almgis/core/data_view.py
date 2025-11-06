@@ -1,6 +1,7 @@
 from qga.core.data_view import QgaDataView, QgaTableModel
 
-from almgis import ProjectSessionCls, settings_colors
+from almgis import settings_colors
+from qga import Qga
 
 
 # from almgis import DbSession
@@ -15,7 +16,7 @@ class AlmDataView(QgaDataView):
     def __init__(self, gis_mode=False):
         super(__class__, self).__init__(gis_mode)
 
-        self.session = ProjectSessionCls()
+        # self.session = Qga.ProjectSessionCls()
 
     def __call__(self, *args, **kwargs):
         pass

@@ -1,14 +1,15 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
+from qga import Qga
 from qga.core.main_window import QgaMainWindow
 from qga.database.alchemy import DmBaseCommon
 from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
-from almgis import ProjectSessionCls, settings_app, settings_user, \
+from almgis import settings_app, settings_user, \
     settings_project, settings_general, settings_colors, settings_paths, \
-    settings_constants, CommonSessionCls
+    settings_constants
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
@@ -29,7 +30,7 @@ class AlmMainWindow(QgaMainWindow):
         self.start_dlg_cls = AlmDialog
         self.start_wdg_cls = AlmStartWdg
 
-        self.session_prj_cls = ProjectSessionCls
+        self.session_prj_cls = Qga.ProjectSessionCls
         self.logger = Logger
         self.dmc_settings = DmSettings
 
@@ -118,7 +119,7 @@ class AlmMainWindow(QgaMainWindow):
 
         """setze verschiedene attribute für die projekt-settings"""
         self.settings_project = settings_project
-        self.settings_project.prj_session_cls = ProjectSessionCls
+        self.settings_project.prj_session_cls = Qga.ProjectSessionCls
         self.settings_project.settings_dmc = DmSettings
         self.settings_project.logger = Logger
         """"""
@@ -141,7 +142,7 @@ class AlmMainWindow(QgaMainWindow):
         """richte die session 'CommonSessionCls' ein"""
         engine_string = 'sqlite:///' + common_db_file
         community_engine = create_engine(engine_string, echo=False)
-        CommonSessionCls.configure(binds={DmBaseCommon: community_engine})
+        Qga.CommonSessionCls.configure(binds={DmBaseCommon: community_engine})
         """"""
 
     def signalsAction(self):

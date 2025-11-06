@@ -1,6 +1,7 @@
 from qga.core.info_button import QgaInfoButton
+from qga import Qga
 
-from almgis import CommonSessionCls
+# from almgis import CommonSessionCls
 from almgis.database.models import DmInfoButton
 from almgis.database.sessions import AlmCommonSessionCm
 
@@ -11,5 +12,5 @@ class AlmInfoButton(QgaInfoButton):
         super(AlmInfoButton, self).__init__(ui)
 
         self.dmc_info_button = DmInfoButton
-        self.session = CommonSessionCls()
+        self.session = Qga.CommonSessionCls()
         self.session_cm = AlmCommonSessionCm

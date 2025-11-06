@@ -11,6 +11,7 @@ from qga.core.fields import QgaField
 from qga.core.layer import VectorLayerFactory
 from qga.core.main_widget import QgaMainWidget
 from qga.gui.main_widget_gui import QgaMainWidgetGui
+from qga import Qga
 from qgis._core import QgsField
 from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import select, URL
@@ -331,6 +332,13 @@ class KontaktMain(AlmDataView):
         self._entity_dmc = DmKontakt
 
         self.model_cls = KontaktTableModel
+
+        print(f'{Qga.test_text}')
+        print(f'.....')
+        Qga.test_text = 'now almgis test text'
+
+        print(f'{Qga.test_text}')
+        print(f'.....')
 
     def addEntity(self):
 

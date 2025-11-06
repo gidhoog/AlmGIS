@@ -3,8 +3,9 @@ from qga.core.entity import QgaEntity
 
 
 from qga.core.entity import QgaEntity, QgaEntityDialog
+from qga import Qga
 
-from almgis import ProjectSessionCls
+# from almgis import ProjectSessionCls
 from almgis.core.dialog import AlmDialog
 from almgis.database.sessions import session_cm, AlmPrjSessionCm
 
@@ -21,9 +22,9 @@ class AlmEntity(QgaEntity):
     def __init__(self, parent=None, entity_dlg=None):
         super(AlmEntity, self).__init__(parent, entity_dlg)
 
-        self.session = ProjectSessionCls()
-        self.session_cm = session_cm()
-        self.prj_session_cm = AlmPrjSessionCm
+        # self.session = Qga.ProjectSessionCls()
+        # self.session_cm = session_cm()
+        # self.prj_session_cm = AlmPrjSessionCm
         # self.logger = Logger
 
 
