@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QAction
 from qga import Qga
 from qga.core.main_window import QgaMainWindow
@@ -8,7 +8,7 @@ from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
 from almgis import settings_app, settings_user, \
-    settings_project, settings_colors, settings_paths, \
+    settings_project, settings_paths, \
     settings_constants
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
@@ -130,6 +130,11 @@ class AlmMainWindow(QgaMainWindow):
         Qga.SettingsGeneral.db_version = '0.0.1'
         """"""
 
+        """Colors"""
+        # Qga.SettingsColors.data_view_selection = QColor(100, 100, 100)  # grau
+        """"""
+
+
         # self.settings_general = settings_general
         self.settings_app = settings_app
         self.settings_user = settings_user
@@ -142,7 +147,7 @@ class AlmMainWindow(QgaMainWindow):
         """"""
 
         # self.settings_general = settings_general
-        self.settings_colors = settings_colors
+        # self.settings_colors = settings_colors
         self.settings_paths = settings_paths
         self.settings_constants = settings_constants
 

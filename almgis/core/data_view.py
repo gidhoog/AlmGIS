@@ -1,6 +1,6 @@
 from qga.core.data_view import QgaDataView, QgaTableModel
 
-from almgis import settings_colors
+# from almgis import settings_colors
 from qga import Qga
 
 
@@ -11,7 +11,7 @@ class AlmDataView(QgaDataView):
 
     # _entity_dialog_class = AlmEntityDialog
 
-    settings_colors = settings_colors
+    # settings_colors = settings_colors
 
     def __init__(self, gis_mode=False):
         super(__class__, self).__init__(gis_mode)

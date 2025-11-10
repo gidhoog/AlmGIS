@@ -31,17 +31,17 @@ from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
 #     db_version = '0.0.1'
 
 
-class AlmSettingsColors(QgaSettingsColors):
-    """
-    Klasse für alle Einstellungen die Farben betreffen;
-
-        - Einstellungen die bei kompilierten/gepackten Programmen
-         verändert werden können müssen in der Klasse 'AlmSettingsApp'
-         geschrieben werden;
-
-        - Einstellungen die vom User verändert werden können müssen
-        in der Klasse 'AlmSettingsUser' geschrieben werden;
-    """
+# class AlmSettingsColors(QgaSettingsColors):
+#     """
+#     Klasse für alle Einstellungen die Farben betreffen;
+#
+#         - Einstellungen die bei kompilierten/gepackten Programmen
+#          verändert werden können müssen in der Klasse 'AlmSettingsApp'
+#          geschrieben werden;
+#
+#         - Einstellungen die vom User verändert werden können müssen
+#         in der Klasse 'AlmSettingsUser' geschrieben werden;
+#     """
 
 
 class AlmSettingsPaths(QgaSettingsPaths):
