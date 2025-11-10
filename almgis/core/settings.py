@@ -9,26 +9,26 @@ from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
     QgaSettingsPaths, QgaSettingsConstants, QgaSettings, QgaSettingsProject
 
 
-class AlmSettingsGeneral(QgaSettingsGeneral):
-    """
-    Klasse für alle allgemeinen Einstellungen;
-
-        - Einstellungen die bei kompilierten/gepackten Programmen
-         verändert werden können müssen in der Klasse 'AlmSettingsApp'
-         geschrieben werden;
-
-        - Einstellungen die vom User verändert werden können müssen
-        in der Klasse 'AlmSettingsUser' geschrieben werden;
-    """
-
-    app_modul_name = 'almgis'
-    app_display_name = 'AlmGIS'
-    project_file_suffix = 'alm'
-
-    help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
-
-    app_version = '0.0.2'
-    db_version = '0.0.1'
+# class AlmSettingsGeneral(QgaSettingsGeneral):
+#     """
+#     Klasse für alle allgemeinen Einstellungen;
+#
+#         - Einstellungen die bei kompilierten/gepackten Programmen
+#          verändert werden können müssen in der Klasse 'AlmSettingsApp'
+#          geschrieben werden;
+#
+#         - Einstellungen die vom User verändert werden können müssen
+#         in der Klasse 'AlmSettingsUser' geschrieben werden;
+#     """
+#
+#     app_modul_name = 'almgis'
+#     app_display_name = 'AlmGIS'
+#     project_file_suffix = 'alm'
+#
+#     help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
+#
+#     app_version = '0.0.2'
+#     db_version = '0.0.1'
 
 
 class AlmSettingsColors(QgaSettingsColors):

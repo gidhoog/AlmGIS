@@ -8,7 +8,7 @@ from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
 from almgis import settings_app, settings_user, \
-    settings_project, settings_general, settings_colors, settings_paths, \
+    settings_project, settings_colors, settings_paths, \
     settings_constants
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
@@ -45,6 +45,8 @@ class AlmMainWindow(QgaMainWindow):
         self._selected_mainarea = None
 
         Logger.info("create Mainwindwos!!")
+
+        # self.setupSettings()
 
     def setupMainWindow(self):
         super().setupMainWindow()
@@ -113,7 +115,22 @@ class AlmMainWindow(QgaMainWindow):
             self.openMainWdgKontakteAlle)
 
     def setupSettings(self):
+        """
+        set here AlmGIS specific settings
+        """
 
+        """General"""
+        Qga.SettingsGeneral.app_modul_name = 'almgis'
+        Qga.SettingsGeneral.app_display_name = 'AlmGIS'
+        Qga.SettingsGeneral.project_file_suffix = 'alm'
+
+        Qga.SettingsGeneral.help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
+
+        Qga.SettingsGeneral.app_version = '0.0.2'
+        Qga.SettingsGeneral.db_version = '0.0.1'
+        """"""
+
+        # self.settings_general = settings_general
         self.settings_app = settings_app
         self.settings_user = settings_user
 
@@ -124,7 +141,7 @@ class AlmMainWindow(QgaMainWindow):
         self.settings_project.logger = Logger
         """"""
 
-        self.settings_general = settings_general
+        # self.settings_general = settings_general
         self.settings_colors = settings_colors
         self.settings_paths = settings_paths
         self.settings_constants = settings_constants
