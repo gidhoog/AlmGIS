@@ -108,22 +108,22 @@ class AlmSettingsUser(QgaSettings):
         self.updateSettings()
 
 
-class AlmSettingsApp(QgaSettings):
-
-    attr_list = [
-        ('use_project_start_selector', 'True'),
-        ('static_project_file', ''),
-        ('database/type', 'sqlite'),  # see https://docs.sqlalchemy.org/en/20/core/engines.html
-        ('database/host', 'host')
-    ]
-
-    def __init__(self):
-
-        ppp = Path().absolute().joinpath('AlmGIS.ini')
-        super().__init__(str(ppp), QSettings.IniFormat)
-
-        # self.clear()
-        self.sync()
+# class AlmSettingsApp(QgaSettings):
+#
+#     attr_list = [
+#         ('use_project_start_selector', 'True'),
+#         ('static_project_file', ''),
+#         ('database/type', 'sqlite'),  # see https://docs.sqlalchemy.org/en/20/core/engines.html
+#         ('database/host', 'host')
+#     ]
+#
+#     def __init__(self):
+#
+#         ppp = Path().absolute().joinpath('AlmGIS.ini')
+#         super().__init__(str(ppp), QSettings.IniFormat)
+#
+#         # self.clear()
+#         self.sync()
 
 
 # class AlmSettingsProject(QgaSettingsProject): ...

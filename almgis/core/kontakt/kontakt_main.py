@@ -333,13 +333,6 @@ class KontaktMain(AlmDataView):
 
         self.model_cls = KontaktTableModel
 
-        print(f'{Qga.test_text}')
-        print(f'.....')
-        Qga.test_text = 'now almgis test text'
-
-        print(f'{Qga.test_text}')
-        print(f'.....')
-
     def addEntity(self):
 
         print(f'add new kontakt!')

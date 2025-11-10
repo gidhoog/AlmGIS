@@ -8,7 +8,7 @@ from qgis.core import QgsApplication
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 
-from almgis import settings_user, settings_app
+from almgis import settings_user
 from almgis.core.logger import Logger
 from almgis.core.main_window import AlmMainWindow
 
@@ -46,7 +46,7 @@ def run():
     """"""
 
     Logger.info("+ + + + AlmGis gestartet !!! + + + +")
-    Logger.info(f'setting_app file_name: {settings_app.fileName()}')
+    # Logger.info(f'setting_app file_name: {settings_app.fileName()}')
     Logger.info(f'setting_user file_name: {settings_user.fileName()}')
 
     if platform.system() == 'Linux':

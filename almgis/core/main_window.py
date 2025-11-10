@@ -7,7 +7,7 @@ from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
-from almgis import settings_app, settings_user
+from almgis import settings_user
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
@@ -145,8 +145,18 @@ class AlmMainWindow(QgaMainWindow):
         # self.settings_project.prj_session_cls = Qga.ProjectSessionCls
         """"""
 
+        """App"""
+        Qga.SettingsApp.ini_file_name = 'AlmGIS.ini'
+        Qga.SettingsApp.attr_list = [
+            ('use_project_start_selector', 'True'),
+            ('static_project_file', ''),
+            ('database/type', 'sqlite'),  # see https://docs.sqlalchemy.org/en/20/core/engines.html
+            ('database/host', 'host')
+        ]
+        """"""
+
         # self.settings_general = settings_general
-        self.settings_app = settings_app
+        # self.settings_app = settings_app
         self.settings_user = settings_user
 
         """setze verschiedene attribute für die projekt-settings"""
