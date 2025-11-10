@@ -80,32 +80,32 @@ from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
 #         LIST = 3
 
 
-class AlmSettingsUser(QgaSettings):
-    """
-    klasse für benutzer-spezifischen Einstellungen;
-    Einstellungen werden in eine ini-datei im benutzerverzeichnis geschrieben
-    (e.g.: '/home/user/.config/NoeAbb/AlmGIS.ini'
-    oder C:/Users/ZNFF/AppData/Roaming/NoeAbb/AlmGIS.ini
-    oder /home/franz/IT/_distroboxes/.config/NoeAbb/AlmGIS.ini bei einer
-    distrobox)
-    """
-
-    attr_list = [
-        ('start_dialog', 'True'),
-        ('default_start_option', 'LAST'),  # LAST, OTHER, NEW, NONE
-        ('info_btn_editable', 'True'),
-        ('paths/last_project_file', '--'),
-        ('paths/common_db_file', '*.almgis_common.db')
-    ]
-
-    def __init__(self):
-        super().__init__(QSettings.IniFormat,
-                         QSettings.UserScope,
-                         'NoeAbb',
-                         'AlmGIS')
-
-        self.sync()
-        self.updateSettings()
+# class AlmSettingsUser(QgaSettings):
+#     """
+#     klasse für benutzer-spezifischen Einstellungen;
+#     Einstellungen werden in eine ini-datei im benutzerverzeichnis geschrieben
+#     (e.g.: '/home/user/.config/NoeAbb/AlmGIS.ini'
+#     oder C:/Users/ZNFF/AppData/Roaming/NoeAbb/AlmGIS.ini
+#     oder /home/franz/IT/_distroboxes/.config/NoeAbb/AlmGIS.ini bei einer
+#     distrobox)
+#     """
+#
+#     attr_list = [
+#         ('start_dialog', 'True'),
+#         ('default_start_option', 'LAST'),  # LAST, OTHER, NEW, NONE
+#         ('info_btn_editable', 'True'),
+#         ('paths/last_project_file', '--'),
+#         ('paths/common_db_file', '*.almgis_common.db')
+#     ]
+#
+#     def __init__(self):
+#         super().__init__(QSettings.IniFormat,
+#                          QSettings.UserScope,
+#                          'NoeAbb',
+#                          'AlmGIS')
+#
+#         self.sync()
+#         self.updateSettings()
 
 
 # class AlmSettingsApp(QgaSettings):

@@ -1,7 +1,7 @@
 # from sqlalchemy.orm import sessionmaker
 from qga import Qga
 
-from almgis.core.settings import AlmSettingsUser
+# from almgis.core.settings import AlmSettingsUser
 
 # from almgis.settings import AlmSettingsUser, AlmSettingsApp, AlmSettingsProject, \
 #     AlmSettingsConstants, AlmSettingsPaths, AlmSettingsColors, \
@@ -15,7 +15,7 @@ from almgis.core.settings import AlmSettingsUser
 # settings_paths = AlmSettingsPaths()
 # settings_constants = AlmSettingsConstants()
 
-settings_user = AlmSettingsUser()
+# settings_user = AlmSettingsUser()
 # settings_app = AlmSettingsApp()
 # settings_project = AlmSettingsProject()
 """"""
@@ -23,7 +23,7 @@ settings_user = AlmSettingsUser()
 """aktualisiere die ini-Dateien beim App-Start, falls neu Einträge eingefügt
 worden sind"""
 Qga.SettingsApp.updateSettings()
-settings_user.updateSettings()
+Qga.SettingsUser.updateSettings()
 """"""
 
 # ProjectSessionCls = sessionmaker()

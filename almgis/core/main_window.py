@@ -7,7 +7,7 @@ from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
-from almgis import settings_user
+# from almgis import settings_user
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
@@ -155,9 +155,14 @@ class AlmMainWindow(QgaMainWindow):
         ]
         """"""
 
+        """User"""
+        Qga.SettingsUser.company_name = 'NoeAbb'
+        Qga.SettingsUser.app_name = 'AlmGIS'
+        """"""
+
         # self.settings_general = settings_general
         # self.settings_app = settings_app
-        self.settings_user = settings_user
+        # self.settings_user = settings_user
 
         """setze verschiedene attribute für die projekt-settings"""
         # self.settings_project = settings_project
@@ -178,7 +183,7 @@ class AlmMainWindow(QgaMainWindow):
         """
 
         """hole file_path der common_db"""
-        common_db_file = self.settings_user.value('paths/common_db_file')
+        common_db_file = Qga.SettingsUser.value('paths/common_db_file')
         """"""
 
         """richte die session 'CommonSessionCls' ein"""
@@ -286,9 +291,9 @@ class AlmMainWindow(QgaMainWindow):
     def openSettings(self):
         super().openSettings()
 
-        if self.settings_user.value('project_start_selector') == 'True':
+        if Qga.SettingsUser.value('project_start_selector') == 'True':
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(True)
-        elif self.settings_user.value('project_start_selector') == 'False':
+        elif Qga.SettingsUser.value('project_start_selector') == 'False':
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
 
         self.settings_dlg.exec_qga()

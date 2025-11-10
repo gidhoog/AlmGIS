@@ -1,7 +1,8 @@
+from qga import Qga
 from qga.core.start_wdg import QgaStartWdg, QgaStartOptionLast, \
     QgaStartOptionOther, QgaStartOptionNew
 
-from almgis import settings_user
+# from almgis import settings_user
 from almgis.core.logger import Logger
 from almgis.database.models import DmSettings
 
@@ -18,4 +19,4 @@ class AlmStartWdg(QgaStartWdg):
 
         self.settings_dmc = DmSettings
 
-        self.last_project_file = settings_user.value('paths/last_project_file')
+        self.last_project_file = Qga.SettingsUser.value('paths/last_project_file')
