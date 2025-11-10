@@ -64,20 +64,20 @@ from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
 #                                      'print_templates'))
 
 
-class AlmSettingsConstants(QgaSettingsConstants):
-    """
-    Klasse für konstante Werte;
-    """
-
-    class CostCenterType(Enum):
-        SITE = 1
-        CROP = 4
-
-    class AttributeDataType(Enum):
-        TEXT = 0
-        INTEGER = 1
-        FLOAT = 2
-        LIST = 3
+# class AlmSettingsConstants(QgaSettingsConstants):
+#     """
+#     Klasse für konstante Werte;
+#     """
+#
+#     class CostCenterType(Enum):
+#         SITE = 1
+#         CROP = 4
+#
+#     class AttributeDataType(Enum):
+#         TEXT = 0
+#         INTEGER = 1
+#         FLOAT = 2
+#         LIST = 3
 
 
 class AlmSettingsUser(QgaSettings):
@@ -126,4 +126,4 @@ class AlmSettingsApp(QgaSettings):
         self.sync()
 
 
-class AlmSettingsProject(QgaSettingsProject): ...
+# class AlmSettingsProject(QgaSettingsProject): ...

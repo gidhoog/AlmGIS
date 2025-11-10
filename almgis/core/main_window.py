@@ -7,8 +7,7 @@ from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
-from almgis import settings_app, settings_user, \
-    settings_project
+from almgis import settings_app, settings_user
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
@@ -141,15 +140,20 @@ class AlmMainWindow(QgaMainWindow):
         # add here constant-settings
         """"""
 
+        """Project"""
+        Qga.SettingsProject.settings_dmc = DmSettings
+        # self.settings_project.prj_session_cls = Qga.ProjectSessionCls
+        """"""
+
         # self.settings_general = settings_general
         self.settings_app = settings_app
         self.settings_user = settings_user
 
         """setze verschiedene attribute für die projekt-settings"""
-        self.settings_project = settings_project
-        self.settings_project.prj_session_cls = Qga.ProjectSessionCls
-        self.settings_project.settings_dmc = DmSettings
-        self.settings_project.logger = Logger
+        # self.settings_project = settings_project
+        # self.settings_project.prj_session_cls = Qga.ProjectSessionCls
+        # self.settings_project.settings_dmc = DmSettings
+        # self.settings_project.logger = Logger
         """"""
 
         # self.settings_general = settings_general
