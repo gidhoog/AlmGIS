@@ -44,24 +44,24 @@ from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
 #     """
 
 
-class AlmSettingsPaths(QgaSettingsPaths):
-    """
-    Klasse für alle Einstellungen die Pfade und Speicherorte von Dateien
-     betreffen;
-
-        - Einstellungen die bei kompilierten/gepackten Programmen
-         verändert werden können müssen in der Klasse 'AlmSettingsApp'
-         geschrieben werden;
-
-        - Einstellungen die vom User verändert werden können müssen
-        in der Klasse 'AlmSettingsUser' geschrieben werden;
-    """
-
-    # data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
-
-    print_template_path = (Path().absolute()
-                           .joinpath('../_internal',
-                                     'print_templates'))
+# class AlmSettingsPaths(QgaSettingsPaths):
+#     """
+#     Klasse für alle Einstellungen die Pfade und Speicherorte von Dateien
+#      betreffen;
+#
+#         - Einstellungen die bei kompilierten/gepackten Programmen
+#          verändert werden können müssen in der Klasse 'AlmSettingsApp'
+#          geschrieben werden;
+#
+#         - Einstellungen die vom User verändert werden können müssen
+#         in der Klasse 'AlmSettingsUser' geschrieben werden;
+#     """
+#
+#     # data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
+#
+#     print_template_path = (Path().absolute()
+#                            .joinpath('../_internal',
+#                                      'print_templates'))
 
 
 class AlmSettingsConstants(QgaSettingsConstants):

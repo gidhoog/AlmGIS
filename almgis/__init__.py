@@ -1,6 +1,6 @@
 # from sqlalchemy.orm import sessionmaker
 
-from almgis.core.settings import AlmSettingsPaths, AlmSettingsConstants, AlmSettingsUser, AlmSettingsApp, \
+from almgis.core.settings import AlmSettingsConstants, AlmSettingsUser, AlmSettingsApp, \
     AlmSettingsProject
 
 # from almgis.settings import AlmSettingsUser, AlmSettingsApp, AlmSettingsProject, \
@@ -12,7 +12,7 @@ from almgis.core.settings import AlmSettingsPaths, AlmSettingsConstants, AlmSett
 """verwende settings systemweit"""
 # settings_general = AlmSettingsGeneral()
 # settings_colors = AlmSettingsColors()
-settings_paths = AlmSettingsPaths()
+# settings_paths = AlmSettingsPaths()
 settings_constants = AlmSettingsConstants()
 
 settings_user = AlmSettingsUser()
