@@ -13,7 +13,7 @@ from almgis.core.settings import AlmSettingsConstants, AlmSettingsUser, AlmSetti
 # settings_general = AlmSettingsGeneral()
 # settings_colors = AlmSettingsColors()
 # settings_paths = AlmSettingsPaths()
-settings_constants = AlmSettingsConstants()
+# settings_constants = AlmSettingsConstants()
 
 settings_user = AlmSettingsUser()
 settings_app = AlmSettingsApp()
