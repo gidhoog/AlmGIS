@@ -22,8 +22,8 @@ from qga import Qga
 
 """aktualisiere die ini-Dateien beim App-Start, falls neu Einträge eingefügt
 worden sind"""
-Qga.SettingsApp.updateSettings()
-Qga.SettingsUser.updateSettings()
+# Qga.SettingsApp.updateSettings()
+# Qga.SettingsUser.updateSettings()
 """"""
 
 # ProjectSessionCls = sessionmaker()

@@ -2,10 +2,11 @@ import platform
 import sys
 from time import sleep, time
 
+from qga import Qga, QgaSettingsUser
 from qga.core.splash import QgaSplash
 # from qga.splash import QgaSplash
 from qgis.core import QgsApplication
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtGui import QPixmap
 
 # from almgis import settings_user
@@ -60,6 +61,11 @@ def run():
         return
 
     app.initQgis()
+
+    # app.setOrganizationName('NoeABB2')
+    # app.setApplicationName('AlmGIS2')
+    #
+    # Qga.SettingsUser = QgaSettingsUser(QSettings.IniFormat, QSettings.UserScope, 'NoeABB2', 'AlmGIS2')
 
     main_window = AlmMainWindow()
     # main_window.setWindowState(Qt.WindowMaximized)

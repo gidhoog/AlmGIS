@@ -146,18 +146,24 @@ class AlmMainWindow(QgaMainWindow):
         """"""
 
         """App"""
-        Qga.SettingsApp.ini_file_name = 'AlmGIS.ini'
-        Qga.SettingsApp.attr_list = [
+        Qga.SettingsApp_Cls.ini_file_name = 'AlmGIS.ini'
+        Qga.SettingsApp_Cls.attr_list = [
             ('use_project_start_selector', 'True'),
             ('static_project_file', ''),
             ('database/type', 'sqlite'),  # see https://docs.sqlalchemy.org/en/20/core/engines.html
             ('database/host', 'host')
         ]
+
+        Qga.SettingsApp = Qga.SettingsApp_Cls()
         """"""
 
         """User"""
-        Qga.SettingsUser.company_name = 'NoeAbb'
-        Qga.SettingsUser.app_name = 'AlmGIS'
+        Qga.SettingsUser_Cls.company_name = 'NoeAbb'
+        Qga.SettingsUser_Cls.app_name = 'AlmGIS'
+
+        # Qga.SettingsUser.sync()
+        # Qga.SettingsUser.updateSettings()
+        Qga.SettingsUser = Qga.SettingsUser_Cls()
         """"""
 
         # self.settings_general = settings_general
