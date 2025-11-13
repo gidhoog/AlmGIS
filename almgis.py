@@ -3,6 +3,7 @@ import sys
 from time import sleep, time
 
 from qga import Qga, QgaSettingsUser
+from qga.core.logger import setupLogger
 from qga.core.splash import QgaSplash
 # from qga.splash import QgaSplash
 from qgis.core import QgsApplication
@@ -10,8 +11,9 @@ from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtGui import QPixmap
 
 # from almgis import settings_user
-from almgis.core.logger import Logger
+# from almgis.core.logger import Logger
 from almgis.core.main_window import AlmMainWindow
+from almgis.core.settings import setupSettings
 
 """import after the settings"""
 # from almgis.mainwindow import AlmMainWindow
@@ -30,6 +32,11 @@ def run():
 
     app = QgsApplication([], True)
 
+    """setup app basics"""
+    setupSettings()
+    setupLogger()
+    """"""
+
     """use a splashscreen"""
     start = time()
     pixmap = QPixmap("splash.png")
@@ -46,7 +53,7 @@ def run():
     sleep(2.0)
     """"""
 
-    Logger.info("+ + + + AlmGis gestartet !!! + + + +")
+    Qga.Logger.info("+ + + + AlmGis gestartet !!! + + + +  yeah!")
     # Logger.info(f'setting_app file_name: {settings_app.fileName()}')
     # Logger.info(f'setting_user file_name: {settings_user.fileName()}')
 
@@ -57,7 +64,7 @@ def run():
         app.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
                           True)
     else:
-        Logger.error(f'cannot set PrefixPath for QGIS! --> Quit app!')
+        # Logger.error(f'cannot set PrefixPath for QGIS! --> Quit app!')
         return
 
     app.initQgis()

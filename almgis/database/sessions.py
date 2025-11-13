@@ -6,7 +6,7 @@ from qga import Qga
 
 # from almgis import CommonSessionCls
 # from almgis.data_model import DmSettings
-from almgis.core.logger import Logger
+# from almgis.core.logger import Logger
 
 
 class AlmPrjSessionCm(QgaSessionCm):
@@ -15,7 +15,7 @@ class AlmPrjSessionCm(QgaSessionCm):
         super(AlmPrjSessionCm, self).__init__(name, expire_on_commit)
 
         self.session_cls = Qga.ProjectSessionCls
-        self.logger = Logger
+        # self.logger = Logger
 
 
 class AlmCommonSessionCm(QgaSessionCm):
@@ -24,7 +24,7 @@ class AlmCommonSessionCm(QgaSessionCm):
         super(AlmCommonSessionCm, self).__init__(name, expire_on_commit)
 
         # self.session_cls = Qga.CommonSessionCls
-        self.logger = Logger
+        self.logger = Qga.Logger
 
 
 """verwende den Contextmanager 'session_cm' für schnelle Datenbankzugriffe;

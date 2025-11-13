@@ -2,82 +2,88 @@ from enum import Enum
 from pathlib import Path
 
 from PyQt5.QtCore import QSettings
+from PyQt5.QtGui import QColor
 # from qga.settings import QgaSettings, QgaSettingsProject, QgaSettingsGeneral, \
 #     QgaSettingsColors, QgaSettingsPaths, QgaSettingsConstants
-
+from qga import Qga
+from qga.core.logger import getQgaLogger
 from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
-    QgaSettingsPaths, QgaSettingsConstants, QgaSettings, QgaSettingsProject
+    QgaSettingsPaths, QgaSettingsConstants, QgaSettingsProject, \
+    QgaSettingsUser, QgaSettingsApp
+
+from almgis.database.models import DmSettings
 
 
-# class AlmSettingsGeneral(QgaSettingsGeneral):
-#     """
-#     Klasse für alle allgemeinen Einstellungen;
-#
-#         - Einstellungen die bei kompilierten/gepackten Programmen
-#          verändert werden können müssen in der Klasse 'AlmSettingsApp'
-#          geschrieben werden;
-#
-#         - Einstellungen die vom User verändert werden können müssen
-#         in der Klasse 'AlmSettingsUser' geschrieben werden;
-#     """
-#
-#     app_modul_name = 'almgis'
-#     app_display_name = 'AlmGIS'
-#     project_file_suffix = 'alm'
-#
-#     help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
-#
-#     app_version = '0.0.2'
-#     db_version = '0.0.1'
+def setupSettings():
+    """
+    set here AlmGIS specific settings
+    """
+
+    Qga.Settings.General = AlmSettingsGeneral()
+    Qga.Settings.Colors = AlmSettingsColors()
+    Qga.Settings.Paths = AlmSettingsPaths()
+    Qga.Settings.Constants = AlmSettingsConstants()
+
+    Qga.Settings.Project = AlmSettingsProject()
+    Qga.Settings.User = AlmSettingsUser()
+    Qga.Settings.App = AlmSettingsApp()
+
+    # Qga.SettingsGeneral = AlmSettingsGeneral()
+    # Qga.SettingsColors = AlmSettingsColors()
+    # Qga.SettingsPaths = AlmSettingsPaths()
+    # Qga.SettingsConstants = AlmSettingsConstants()
+    # Qga.SettingsProject = AlmSettingsProject()
+    #
+    # Qga.SettingsUser = AlmSettingsUser()
+    # Qga.SettingsApp = AlmSettingsApp()
+
+    # """definiere logger"""
+    # Logger = getQgaLogger(Qga.SettingsGeneral.app_modul_name + '.log')
+    # """"""
 
 
-# class AlmSettingsColors(QgaSettingsColors):
-#     """
-#     Klasse für alle Einstellungen die Farben betreffen;
-#
-#         - Einstellungen die bei kompilierten/gepackten Programmen
-#          verändert werden können müssen in der Klasse 'AlmSettingsApp'
-#          geschrieben werden;
-#
-#         - Einstellungen die vom User verändert werden können müssen
-#         in der Klasse 'AlmSettingsUser' geschrieben werden;
-#     """
+class AlmSettingsGeneral(QgaSettingsGeneral):
+
+    app_modul_name = 'almgis'
+    app_display_name = 'AlmGIS'
+    project_file_suffix = 'alm'
+
+    help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
+
+    app_version = '0.0.2'
+    db_version = '0.0.1'
 
 
-# class AlmSettingsPaths(QgaSettingsPaths):
-#     """
-#     Klasse für alle Einstellungen die Pfade und Speicherorte von Dateien
-#      betreffen;
-#
-#         - Einstellungen die bei kompilierten/gepackten Programmen
-#          verändert werden können müssen in der Klasse 'AlmSettingsApp'
-#          geschrieben werden;
-#
-#         - Einstellungen die vom User verändert werden können müssen
-#         in der Klasse 'AlmSettingsUser' geschrieben werden;
-#     """
-#
-#     # data_db_path = Path('G:/ALM/AlmGIS/db/dev/test/almgis_daten.alm')
-#
-#     print_template_path = (Path().absolute()
-#                            .joinpath('../_internal',
-#                                      'print_templates'))
+class AlmSettingsColors(QgaSettingsColors):
+
+    # data_view_selection = QColor(100, 100, 100)  # grau
+    pass
+
+class AlmSettingsPaths(QgaSettingsPaths): ...
+
+class AlmSettingsConstants(QgaSettingsConstants): ...
+
+class AlmSettingsProject(QgaSettingsProject):
+
+    settings_dmc = DmSettings
 
 
-# class AlmSettingsConstants(QgaSettingsConstants):
-#     """
-#     Klasse für konstante Werte;
-#     """
-#
-#     class CostCenterType(Enum):
-#         SITE = 1
-#         CROP = 4
-#
-#     class AttributeDataType(Enum):
-#         TEXT = 0
-#         INTEGER = 1
-#         FLOAT = 2
-#         LIST = 3
+class AlmSettingsUser(QgaSettingsUser):
+
+    company_name = 'NoeAbb'
+    app_name = 'AlmGIS'
+
+
+class AlmSettingsApp(QgaSettingsApp):
+
+    ini_file_name = "AlmGIS.ini"
+
+    attr_list = [
+        ('use_project_start_selector', 'True'),
+        ('static_project_file', ''),
+        ('database/type', 'sqlite'),  # see https://docs.sqlalchemy.org/en/20/core/engines.html
+        ('database/host', 'host')
+    ]
 
 
 # class AlmSettingsUser(QgaSettings):
@@ -125,5 +131,3 @@ from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
 #         # self.clear()
 #         self.sync()
 
-
-# class AlmSettingsProject(QgaSettingsProject): ...

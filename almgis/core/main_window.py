@@ -2,6 +2,7 @@ from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QAction
 from qga import Qga
 from qga.core.main_window import QgaMainWindow
+from qga.core.logger import getQgaLogger
 from qga.database.alchemy import DmBaseCommon
 from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
@@ -11,7 +12,10 @@ from sqlalchemy import create_engine
 from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
-from almgis.core.logger import Logger
+# from almgis.core.logger import Logger
+from almgis.core.settings import AlmSettingsGeneral, AlmSettingsColors, \
+    AlmSettingsPaths, AlmSettingsConstants, AlmSettingsProject, AlmSettingsUser, \
+    AlmSettingsApp
 from almgis.database.models import DmSettings, DmKontaktType
 from almgis.gui.about import AlmAboutDialog
 from almgis.gui.main_window_gui import AlmMainWindowGui
@@ -29,7 +33,7 @@ class AlmMainWindow(QgaMainWindow):
         self.start_wdg_cls = AlmStartWdg
 
         self.session_prj_cls = Qga.ProjectSessionCls
-        self.logger = Logger
+        # self.logger = Logger
         self.dmc_settings = DmSettings
 
         QgaToast.setMaximumOnScreen(4)
@@ -42,7 +46,7 @@ class AlmMainWindow(QgaMainWindow):
         self._project_file = None
         self._selected_mainarea = None
 
-        Logger.info("create Mainwindwos!!")
+        # Logger.info("create Mainwindwos!!")
 
         # self.setupSettings()
 
@@ -112,75 +116,87 @@ class AlmMainWindow(QgaMainWindow):
         self.ui.actionOpenKontakteAlle.triggered.connect(
             self.openMainWdgKontakteAlle)
 
-    def setupSettings(self):
-        """
-        set here AlmGIS specific settings
-        """
+    # def setupSettings(self):
+    #     """
+    #     set here AlmGIS specific settings
+    #     """
+    #     Qga.SettingsGeneral = AlmSettingsGeneral()
+    #     Qga.SettingsColors = AlmSettingsColors()
+    #     Qga.SettingsPaths = AlmSettingsPaths()
+    #     Qga.SettingsConstants = AlmSettingsConstants()
+    #     Qga.SettingsProject = AlmSettingsProject()
+    #
+    #     Qga.SettingsUser = AlmSettingsUser()
+    #     Qga.SettingsApp = AlmSettingsApp()
+    #
+    #     """definiere logger"""
+    #     Logger = getQgaLogger(Qga.SettingsGeneral.app_modul_name + '.log')
+    #     """"""
 
-        """General"""
-        Qga.SettingsGeneral.app_modul_name = 'almgis'
-        Qga.SettingsGeneral.app_display_name = 'AlmGIS'
-        Qga.SettingsGeneral.project_file_suffix = 'alm'
+        # """General"""
+        # # Qga.SettingsGeneral.app_modul_name = 'almgis'
+        # # Qga.SettingsGeneral.app_display_name = 'AlmGIS'
+        # # Qga.SettingsGeneral.project_file_suffix = 'alm'
+        # #
+        # # Qga.SettingsGeneral.help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
+        # #
+        # # Qga.SettingsGeneral.app_version = '0.0.2'
+        # # Qga.SettingsGeneral.db_version = '0.0.1'
+        # """"""
+        #
+        # """Colors"""
+        # # Qga.SettingsColors.data_view_selection = QColor(100, 100, 100)  # grau
+        # """"""
+        #
+        # """Paths"""
+        # # add here path-settings
+        # """"""
+        #
+        # """Constants"""
+        # # add here constant-settings
+        # """"""
+        #
+        # """Project"""
+        # Qga.SettingsProject.settings_dmc = DmSettings
+        # # self.settings_project.prj_session_cls = Qga.ProjectSessionCls
+        # """"""
 
-        Qga.SettingsGeneral.help_url = 'https://portal.noe.gv.at/at.gv.noe.abb-wiki-p/wiki/DBALM'
-
-        Qga.SettingsGeneral.app_version = '0.0.2'
-        Qga.SettingsGeneral.db_version = '0.0.1'
-        """"""
-
-        """Colors"""
-        # Qga.SettingsColors.data_view_selection = QColor(100, 100, 100)  # grau
-        """"""
-
-        """Paths"""
-        # add here path-settings
-        """"""
-
-        """Constants"""
-        # add here constant-settings
-        """"""
-
-        """Project"""
-        Qga.SettingsProject.settings_dmc = DmSettings
-        # self.settings_project.prj_session_cls = Qga.ProjectSessionCls
-        """"""
-
-        """App"""
-        Qga.SettingsApp_Cls.ini_file_name = 'AlmGIS.ini'
-        Qga.SettingsApp_Cls.attr_list = [
-            ('use_project_start_selector', 'True'),
-            ('static_project_file', ''),
-            ('database/type', 'sqlite'),  # see https://docs.sqlalchemy.org/en/20/core/engines.html
-            ('database/host', 'host')
-        ]
-
-        Qga.SettingsApp = Qga.SettingsApp_Cls()
-        """"""
-
-        """User"""
-        Qga.SettingsUser_Cls.company_name = 'NoeAbb'
-        Qga.SettingsUser_Cls.app_name = 'AlmGIS'
-
-        # Qga.SettingsUser.sync()
-        # Qga.SettingsUser.updateSettings()
-        Qga.SettingsUser = Qga.SettingsUser_Cls()
-        """"""
-
-        # self.settings_general = settings_general
-        # self.settings_app = settings_app
-        # self.settings_user = settings_user
-
-        """setze verschiedene attribute für die projekt-settings"""
-        # self.settings_project = settings_project
-        # self.settings_project.prj_session_cls = Qga.ProjectSessionCls
-        # self.settings_project.settings_dmc = DmSettings
-        # self.settings_project.logger = Logger
-        """"""
-
-        # self.settings_general = settings_general
-        # self.settings_colors = settings_colors
-        # self.settings_paths = settings_paths
-        # self.settings_constants = settings_constants
+        # """App"""
+        # Qga.SettingsApp_Cls.ini_file_name = 'AlmGIS.ini'
+        # Qga.SettingsApp_Cls.attr_list = [
+        #     ('use_project_start_selector', 'True'),
+        #     ('static_project_file', ''),
+        #     ('database/type', 'sqlite'),  # see https://docs.sqlalchemy.org/en/20/core/engines.html
+        #     ('database/host', 'host')
+        # ]
+        #
+        # Qga.SettingsApp = Qga.SettingsApp_Cls()
+        # """"""
+        #
+        # """User"""
+        # Qga.SettingsUser_Cls.company_name = 'NoeAbb'
+        # Qga.SettingsUser_Cls.app_name = 'AlmGIS'
+        #
+        # # Qga.SettingsUser.sync()
+        # # Qga.SettingsUser.updateSettings()
+        # Qga.SettingsUser = Qga.SettingsUser_Cls()
+        # """"""
+        #
+        # # self.settings_general = settings_general
+        # # self.settings_app = settings_app
+        # # self.settings_user = settings_user
+        #
+        # """setze verschiedene attribute für die projekt-settings"""
+        # # self.settings_project = settings_project
+        # # self.settings_project.prj_session_cls = Qga.ProjectSessionCls
+        # # self.settings_project.settings_dmc = DmSettings
+        # # self.settings_project.logger = Logger
+        # """"""
+        #
+        # # self.settings_general = settings_general
+        # # self.settings_colors = settings_colors
+        # # self.settings_paths = settings_paths
+        # # self.settings_constants = settings_constants
 
     def setupDatabasesCommon(self):
         """
@@ -189,7 +205,7 @@ class AlmMainWindow(QgaMainWindow):
         """
 
         """hole file_path der common_db"""
-        common_db_file = Qga.SettingsUser.value('paths/common_db_file')
+        common_db_file = Qga.Settings.User.value('paths/common_db_file')
         """"""
 
         """richte die session 'CommonSessionCls' ein"""
@@ -297,9 +313,9 @@ class AlmMainWindow(QgaMainWindow):
     def openSettings(self):
         super().openSettings()
 
-        if Qga.SettingsUser.value('project_start_selector') == 'True':
+        if Qga.Settings.User.value('project_start_selector') == 'True':
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(True)
-        elif Qga.SettingsUser.value('project_start_selector') == 'False':
+        elif Qga.Settings.User.value('project_start_selector') == 'False':
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
 
         self.settings_dlg.exec_qga()
