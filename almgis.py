@@ -1,9 +1,10 @@
+import logging
 import platform
 import sys
 from time import sleep, time
 
-from qga import Qga, QgaSettingsUser
-from qga.core.logger import setupLogger
+from qga import Qga
+from qga.core.logger import getQgaLogger
 from qga.core.splash import QgaSplash
 from qgis.core import QgsApplication
 from PyQt5.QtCore import Qt
@@ -26,7 +27,9 @@ def run():
 
     """setup app basics"""
     setupSettings()
-    setupLogger()
+    # Qga.Logger = QgaLogger.setupLogger(QgaLogger)
+    # Qga.Logger = getQgaLogger('almgis.log')
+    getQgaLogger('almgis.log')
     """"""
 
     """use a splashscreen"""
@@ -45,7 +48,8 @@ def run():
     sleep(2.0)
     """"""
 
-    Qga.Logger.info("+ + + + AlmGis gestartet !!! + + + +  yeah!")
+    # Qga.Logger.info("+ + + + AlmGis gestartet !!! + + + +  yeah!")
+    logging.Logger('cc').info("+ + + + AlmGis gestartet !!! + + + +  222")
     # Logger.info(f'setting_app file_name: {settings_app.fileName()}')
     # Logger.info(f'setting_user file_name: {settings_user.fileName()}')
 

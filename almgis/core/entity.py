@@ -7,7 +7,7 @@ from qga import Qga
 
 # from almgis import ProjectSessionCls
 from almgis.core.dialog import AlmDialog
-from almgis.database.sessions import session_cm, AlmPrjSessionCm
+# from almgis.database.sessions import session_cm, AlmPrjSessionCm
 
 
 #

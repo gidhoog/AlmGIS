@@ -2,7 +2,7 @@ from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QAction
 from qga import Qga
 from qga.core.main_window import QgaMainWindow
-from qga.core.logger import getQgaLogger
+# from qga.core.logger import getQgaLogger
 from qga.database.alchemy import DmBaseCommon
 from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
@@ -313,9 +313,9 @@ class AlmMainWindow(QgaMainWindow):
     def openSettings(self):
         super().openSettings()
 
-        if Qga.Settings.User.value('project_start_selector') == 'True':
+        if Settings.User.value('project_start_selector') == 'True':
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(True)
-        elif Qga.Settings.User.value('project_start_selector') == 'False':
+        elif Settings.User.value('project_start_selector') == 'False':
             self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
 
         self.settings_dlg.exec_qga()
