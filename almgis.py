@@ -25,6 +25,14 @@ if sys.version < '3.0':
 
 
 def run():
+
+    # logging.basicConfig(
+    #     filename='LLLL.log',
+    #     filemode='w',
+    #     level=logging.DEBUG,
+    #     format='%(asctime)s  - %(module)s.%(funcName)s: %(levelname)-9s:%(message)s',
+    #     datefmt='%Y-%m-%d %H:%M:%S')
+
     module_logger = logging.getLogger(__name__)
 
     app = QgsApplication([], True)
@@ -53,7 +61,7 @@ def run():
     """"""
 
     # Qga.Logger.info("+ + + + AlmGis gestartet !!! + + + +  yeah!")
-    module_logger.info("+ + + + AlmGis gestartet !!! + + + +  222")
+    module_logger.debug("+ + + + AlmGis gestartet !!! + + + +  222")
     # Logger.info(f'setting_app file_name: {settings_app.fileName()}')
     # Logger.info(f'setting_user file_name: {settings_user.fileName()}')
 
