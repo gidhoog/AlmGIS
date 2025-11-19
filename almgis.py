@@ -1,11 +1,8 @@
-import logging
 import platform
 import sys
 from time import sleep, time
 
 from qga.core.logger import setupLogger
-# from qga import Qga
-# from qga.core.logger import getQgaLogger
 from qga.core.splash import QgaSplash
 from qgis.core import QgsApplication
 from PyQt5.QtCore import Qt
@@ -14,7 +11,6 @@ from PyQt5.QtGui import QPixmap
 from almgis.core.main_window import AlmMainWindow
 from almgis.core.settings import setupSettings
 
-# import qga.core.logger
 import logging
 
 # print(f'PATH: ++++++++++++++++++++++++++++++++++++++++++++++')
@@ -35,16 +31,7 @@ def run():
     """setup app basics"""
     setupSettings()
     setupLogger('almgis.log')
-    # Qga.Logger = QgaLogger.setupLogger(QgaLogger)
-    # Qga.Logger = getQgaLogger('almgis.log')
-    # getQgaLogger('almgis.log')
     """"""
-    # logging.basicConfig(
-    #     filename='LLLL.log',
-    #     filemode='w',
-    #     level=logging.DEBUG,
-    #     format='%(asctime)s  - %(module)s.%(funcName)s: %(levelname)-9s:%(message)s',
-    #     datefmt='%Y-%m-%d %H:%M:%S')
 
     module_logger = logging.getLogger(__name__)
 
@@ -66,11 +53,6 @@ def run():
     sleep(2.0)
     """"""
 
-    # Qga.Logger.info("+ + + + AlmGis gestartet !!! + + + +  yeah!")
-    module_logger.debug("+ + + + AlmGis gestartet !!! + + + +  222")
-    # Logger.info(f'setting_app file_name: {settings_app.fileName()}')
-    # Logger.info(f'setting_user file_name: {settings_user.fileName()}')
-
     if platform.system() == 'Linux':
         app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis",
                           True)
@@ -78,8 +60,10 @@ def run():
         app.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
                           True)
     else:
-        # Logger.error(f'cannot set PrefixPath for QGIS! --> Quit app!')
+        module_logger.error(f'cannot set PrefixPath for QGIS! --> Quit app!')
         return
+
+    module_logger.debug("+ + + + AlmGis gestartet !!! + + + +")
 
     app.initQgis()
 
