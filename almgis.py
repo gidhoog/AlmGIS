@@ -3,6 +3,7 @@ import platform
 import sys
 from time import sleep, time
 
+from qga.core.logger import setupLogger
 # from qga import Qga
 # from qga.core.logger import getQgaLogger
 from qga.core.splash import QgaSplash
@@ -13,6 +14,7 @@ from PyQt5.QtGui import QPixmap
 from almgis.core.main_window import AlmMainWindow
 from almgis.core.settings import setupSettings
 
+# import qga.core.logger
 import logging
 
 # print(f'PATH: ++++++++++++++++++++++++++++++++++++++++++++++')
@@ -25,7 +27,18 @@ if sys.version < '3.0':
 
 
 def run():
+    """
+    app entry point
+    :return:
+    """
 
+    """setup app basics"""
+    setupSettings()
+    setupLogger('almgis.log')
+    # Qga.Logger = QgaLogger.setupLogger(QgaLogger)
+    # Qga.Logger = getQgaLogger('almgis.log')
+    # getQgaLogger('almgis.log')
+    """"""
     # logging.basicConfig(
     #     filename='LLLL.log',
     #     filemode='w',
@@ -36,13 +49,6 @@ def run():
     module_logger = logging.getLogger(__name__)
 
     app = QgsApplication([], True)
-
-    """setup app basics"""
-    setupSettings()
-    # Qga.Logger = QgaLogger.setupLogger(QgaLogger)
-    # Qga.Logger = getQgaLogger('almgis.log')
-    # getQgaLogger('almgis.log')
-    """"""
 
     """use a splashscreen"""
     start = time()
