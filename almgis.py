@@ -33,7 +33,7 @@ def run():
     setupLogger('almgis.log')
     """"""
 
-    module_logger = logging.getLogger(__name__)
+    app_log = logging.getLogger(__name__)
 
     app = QgsApplication([], True)
 
@@ -60,10 +60,10 @@ def run():
         app.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
                           True)
     else:
-        module_logger.error(f'cannot set PrefixPath for QGIS! --> Quit app!')
+        app_log.error(f'cannot set PrefixPath for QGIS! --> Quit app!')
         return
 
-    module_logger.debug("+ + + + AlmGis gestartet !!! + + + +")
+    app_log.debug("+ + + + AlmGis gestartet !!! + + + +")
 
     app.initQgis()
 
