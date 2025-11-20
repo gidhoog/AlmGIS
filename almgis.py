@@ -2,12 +2,12 @@ import platform
 import sys
 from time import sleep, time
 
-from qga.core.logger import setupLogger
 from qga.core.splash import QgaSplash
 from qgis.core import QgsApplication
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 
+from almgis.core.logger import setupAlmLogger
 from almgis.core.main_window import AlmMainWindow
 from almgis.core.settings import setupSettings
 
@@ -30,7 +30,7 @@ def run():
 
     """setup app basics"""
     setupSettings()
-    setupLogger('almgis.log')
+    setupAlmLogger()
     """"""
 
     app_log = logging.getLogger(__name__)
