@@ -4,6 +4,7 @@ from qga import Qga
 from qga.core.main_window import QgaMainWindow
 # from qga.core.logger import getQgaLogger
 from qga.database.alchemy import DmBaseCommon
+from qga.database.session import QgaCommonSessionCls
 from qga.gui.notify import QgaToast
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
@@ -13,9 +14,9 @@ from almgis.core.dialog import AlmDialog
 from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.kontakt.kontakt_main import KontaktMainWidget
 # from almgis.core.logger import Logger
-from almgis.core.settings import AlmSettingsGeneral, AlmSettingsColors, \
-    AlmSettingsPaths, AlmSettingsConstants, AlmSettingsProject, AlmSettingsUser, \
-    AlmSettingsApp
+# from almgis.core.settings import AlmSettingsGeneral, AlmSettingsColors, \
+#     AlmSettingsPaths, AlmSettingsConstants, AlmSettingsProject, AlmSettingsUser, \
+#     AlmSettingsApp
 from almgis.database.models import DmSettings, DmKontaktType
 from almgis.gui.about import AlmAboutDialog
 from almgis.gui.main_window_gui import AlmMainWindowGui
@@ -32,7 +33,7 @@ class AlmMainWindow(QgaMainWindow):
         self.start_dlg_cls = AlmDialog
         self.start_wdg_cls = AlmStartWdg
 
-        self.session_prj_cls = Qga.ProjectSessionCls
+        # self.session_prj_cls = Qga.ProjectSessionCls
         # self.logger = Logger
         self.dmc_settings = DmSettings
 
@@ -211,7 +212,7 @@ class AlmMainWindow(QgaMainWindow):
         """richte die session 'CommonSessionCls' ein"""
         engine_string = 'sqlite:///' + common_db_file
         community_engine = create_engine(engine_string, echo=False)
-        Qga.CommonSessionCls.configure(binds={DmBaseCommon: community_engine})
+        QgaCommonSessionCls.configure(binds={DmBaseCommon: community_engine})
         """"""
 
     def signalsAction(self):

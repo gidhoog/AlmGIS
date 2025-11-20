@@ -1,4 +1,3 @@
-# from qga.core.logger import getQgaLogger
 from qga import Qga
 from qga.core.settings import QgaSettingsGeneral, QgaSettingsColors, \
     QgaSettingsPaths, QgaSettingsConstants, QgaSettingsProject, \

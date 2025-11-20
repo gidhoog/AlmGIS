@@ -1,7 +1,7 @@
 from qga.core.data_view import QgaDataView, QgaTableModel
 
 # from almgis import settings_colors
-from qga import Qga
+# from qga import Qga
 
 
 # from almgis import DbSession

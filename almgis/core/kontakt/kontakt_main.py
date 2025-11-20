@@ -14,6 +14,7 @@ from qga.gui.main_widget_gui import QgaMainWidgetGui
 from qga import Qga
 from qgis._core import QgsField
 from qgis.PyQt.QtCore import QVariant
+from requests import session
 from sqlalchemy import select, URL
 from sqlalchemy.orm import joinedload
 
@@ -23,6 +24,8 @@ from almgis.core.entity import AlmEntityDialog
 from almgis.core.fields import GeneralField
 from almgis.core.kontakt.kontakt import Kontakt
 from almgis.database.models import DmKontakt
+
+# from qga.database.session import ProjectSessionCls
 
 
 # from qgis.PyQt.QtCore import Qt
@@ -332,6 +335,13 @@ class KontaktMain(AlmDataView):
         self._entity_dmc = DmKontakt
 
         self.model_cls = KontaktTableModel
+        #
+        # session = ProjectSessionCls()
+        #
+        # stmt = select(DmKontakt)
+        # kkk = session.scalars(stmt).all()
+        #
+        # print('...')
 
     def addEntity(self):
 
