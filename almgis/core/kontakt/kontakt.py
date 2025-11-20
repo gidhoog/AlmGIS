@@ -1,17 +1,9 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtCore import QRegExp, Qt
-# from PyQt5.QtGui import QRegExpValidator
 from qgis.PyQt.QtGui import QRegExpValidator, QStandardItemModel
 from qgis.PyQt.QtWidgets import QWidget, QPushButton, QVBoxLayout
 from sqlalchemy import select, func
-
-# from almgis.entity import AlmEntityDialog
-# from almgis.scopes.kontakt import kontakt_UI
-
-# from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmKontaktEinzel, \
-#     DmKontaktGem
-# from qga.tools import getDmiState
 
 from almgis.core.entity import AlmEntity
 from almgis.database.models import DmKontaktEinzel, DmKontakt

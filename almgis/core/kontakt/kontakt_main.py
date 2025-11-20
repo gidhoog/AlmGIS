@@ -1,60 +1,14 @@
-# from pathlib import Path
-#
-# from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel, \
-#     QTimer
-# from PyQt5.QtWidgets import QDialog, QPushButton, QMessageBox
-# from qga.core.filter import QgaFilter
-# from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QColor
 from qga.core.fields import QgaField
-from qga.core.layer import VectorLayerFactory
 from qga.core.main_widget import QgaMainWidget
-from qga.gui.main_widget_gui import QgaMainWidgetGui
-from qga import Qga
-from qgis._core import QgsField
 from qgis.PyQt.QtCore import QVariant
-from requests import session
 from sqlalchemy import select, URL
-from sqlalchemy.orm import joinedload
 
-# from almgis import settings_colors
 from almgis.core.data_view import AlmDataView, AlmTableModel
 from almgis.core.entity import AlmEntityDialog
 from almgis.core.fields import GeneralField
-from almgis.core.kontakt.kontakt import Kontakt
 from almgis.database.models import DmKontakt
-
-# from qga.database.session import ProjectSessionCls
-
-
-# from qgis.PyQt.QtCore import Qt
-# from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
-#                                  QSpacerItem, QSizePolicy, QHBoxLayout,
-#                                  QMenu, QAction, QToolButton)
-# from qgis.PyQt.QtGui import QIcon
-# from qgis.gui import QgsAttributeTableModel
-# from sqlalchemy import select
-# from sqlalchemy.orm import joinedload
-#
-# from almgis import settings_general
-# from qga.core.data_view import QgaTableModel, QgaDataView
-# from qga.info_button import QgaInfoButton
-#
-# from almgis.data_session import session_cm
-# from almgis.data_view import AlmDataView
-# from qga.core.main_widget import QgaMainWidget
-#
-# from almgis.data_model import DmKontakt, DmKontaktGemTyp, DmAkt, DmKontaktType, \
-#     DmKontaktEinzel, DmKontaktGem
-# from almgis.entity import AlmEntityDialog
-# from almgis.fields import KontaktField, GeneralField
-# from almgis.info_button import AlmInfoButton
-# from almgis.scopes.kontakt.kontakt import Kontakt, KontaktEinzel
-# from almgis.scopes.kontakt.kontakt_columns import KontaktNameCol, \
-#     KontaktAdresseCol, KontaktTypeCol, KontaktGemTypeCol
-
-# from almgis.gui.kontakt.kontakt_main import KontaktMainWdgGui
 
 
 class KontaktEntityDialog(AlmEntityDialog):
@@ -65,30 +19,11 @@ class KontaktEntityDialog(AlmEntityDialog):
         self.parent = parent
         self.ui.setWindowTitle(self.ui.windowTitle() + ' - Kontakt')
 
-    # def accept(self):
-    #     # super().accept()
-    #
-    #     accepted_entity = self.dialogWidget.acceptEntity()
-    #
-    #     if accepted_entity is not False:
-    #
-    #         if self.dialogWidget.purpose == 'add':
-    #             self.parent.dmi_list.append(accepted_entity)
-    #
-    #         self.parent.update_data_view.emit(self.dialogWidget.purpose,
-    #                                           False)
-    #
-    #         QDialog.accept(self)
-
 
 class KontaktMainWidget(QgaMainWidget):
 
-    def __init__(self, parent=None, session=None):
-        # super().__init__(parent, session)
+    def __init__(self, parent=None):
         super().__init__(parent)
-
-        # self.ui = KontaktMainWdgGui(self)
-        # self.ui = QgaMainWidgetGui(self)
 
         self.ui.setTitle('alle Kontakte')
         self.main_wdg = KontaktMain(self)
@@ -96,16 +31,6 @@ class KontaktMainWidget(QgaMainWidget):
         self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
 
         self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
-
-    # def createMw(self):
-    #
-    #     # self.main_wdg.initDataView()
-    #
-    #     self.setupMainWidget()
-
-    # def updateMainWdg(self):
-    #
-    #     self.parent.updateAppSgn.emit()
 
     def setupMainWidget(self):
         super().setupMainWidget()
@@ -138,177 +63,8 @@ class KontaktTableModel(AlmTableModel):
         return super().data(index, role)
 
 
-# class KontaktModel(QgaTableModel):
-# # class KontaktModel(QgaGisTableModel):
-#
-#     # header = [
-#     #     'Typ',
-#     #     'Name',
-#     #     'Vertreter',
-#     #     'Adresse',
-#     #     'Telefon',
-#     #     'e-Mail',
-#     #     'Verwendung'
-#     # ]
-#
-#     def __init__(self, dmi_list=None, layerCache=None,
-#                  columns=None, parent=None):
-#         super().__init__(dmi_list, layerCache, columns, parent)
-#
-#         print(f'....')
-#
-#     def data(self, index: QModelIndex, role: int = ...):
-#
-#         if role == Qt.TextAlignmentRole:
-#             # Set alignment for the "Age" column (column index 1)
-#             if index.column() == 1:
-#                 return Qt.AlignHCenter | Qt.AlignVCenter
-#
-#         if role == Qt.DisplayRole:
-#             # Append a string to the "Name" column (column index 0)
-#             if index.column() == 1:
-#                 current_value = super().data(index, role)
-#                 # return f"{current_value} - Edited"
-#                 return f"{current_value} - AAA"
-#
-#         return super().data(index, role)
-#
-#     # def data(self, index, role):
-#     #
-#     #     if not self.parent.gis_mode:
-#     #
-#     #         if role == Qt.TextAlignmentRole:
-#     #             # Set alignment for the "Age" column (column index 1)
-#     #             if index.column() == 0:
-#     #                 return Qt.AlignHCenter | Qt.AlignVCenter
-#     #
-#     #         if role == Qt.DisplayRole:
-#     #
-#     #             column = self._columns[index.column()]
-#     #             # value = self._dmi_list[index.row()][index.column()]
-#     #             dmi = self._dmi_list[index.row()]
-#     #
-#     #             # Delegate role handling to the column class
-#     #             return column.handle_role(role, dmi)
-#     #
-#     #     return super().data(index, role)
-#     #
-#     # def rowCount(self, parent: QModelIndex = ...):
-#     #     """
-#     #     definiere die zeilenanzahl
-#     #     """
-#     #
-#     #     return len(self._dmi_list)
-#     #
-#     # def columnCount(self, parent: QModelIndex = ...):
-#     #     """
-#     #     definiere die spaltenanzahl
-#     #     """
-#     #     # return len(self.header)
-#     #     return len(self._columns)
-#     #
-#     # def headerData(self, column, orientation, role=None):
-#     #     """
-#     #     wenn individuelle überschriften gesetzt sind (in 'self.header')
-#     #     dann nehme diese
-#     #     """
-#     #     if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-#     #         return self._columns[column].name
-#     #     return QVariant()
-#
-#     # def flags(self, index):  # to make the table(-cells) editable
-#     #     if not index.isValid():
-#     #         return Qt.ItemIsEnabled
-#     #
-#     #     return Qt.ItemFlags(
-#     #         QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
-#
-#
-#         # if not index.isValid():
-#         #     return QVariant()
-#         #
-#         # column = self._columns[index.column()]
-#         # # value = self._dmi_list[index.row()][index.column()]
-#         # dmi = self._dmi_list[index.row()]
-#         #
-#         # # Delegate role handling to the column class
-#         # return column.handle_role(role, dmi)
-#
-#     # def data(self, index, role=None):
-#     #
-#     #     row = index.row()
-#     #     # col = index.column()
-#     #
-#     #     # if role == Qt.TextAlignmentRole:
-#     #     #
-#     #     #     if index.column() in [5, 6]:
-#     #     #
-#     #     #         return Qt.AlignRight | Qt.AlignVCenter
-#     #     #
-#     #     #     if index.column() in [1, 2, 4]:
-#     #     #
-#     #     #         return Qt.AlignHCenter | Qt.AlignVCenter
-#     #
-#     #     if index.column() == 0:
-#     #         if role == Qt.DisplayRole:
-#     #
-#     #             if self.parent.dmi_list[row].type_id == 0:
-#     #                 return self.parent.dmi_list[row].rel_type.name
-#     #             else:
-#     #                 return self.parent.dmi_list[row].rel_gem_type.name
-#     #             # return self.dmi_list[row][0]
-#     #
-#     #         if role == Qt.EditRole:
-#     #             return self.parent.dmi_list[row].rel_type.id
-#     #
-#     #     if index.column() == 1:
-#     #         if role == Qt.DisplayRole:
-#     #             return self.parent.dmi_list[row].name
-#     #         if role == Qt.EditRole:
-#     #             return self.parent.dmi_list[row].name
-#     #
-#     #     if index.column() == 2:
-#     #         if role == Qt.DisplayRole:
-#     #
-#     #             if self.parent.dmi_list[row].rel_type.id == 0:
-#     #                 return ''
-#     #             else:
-#     #                 return self.parent.dmi_list[row].rel_vertreter.name
-#     #
-#     #     if index.column() == 3:
-#     #         if role == Qt.DisplayRole:
-#     #             return self.parent.dmi_list[row].adresse
-#     #             # return self.dmi_list[row][1]
-#     #
-#     #     if index.column() == 4:
-#     #         if role == Qt.DisplayRole:
-#     #             return self.parent.dmi_list[row].telefon_all
-#     #
-#     #     if index.column() == 5:
-#     #         if role == Qt.DisplayRole:
-#     #             return self.parent.dmi_list[row].mail_all
-#     #
-#     #     if index.column() == 6:
-#     #         if role == Qt.DisplayRole:
-#     #             verwendung = []
-#     #             if self.parent.dmi_list[row].rel_akt is not None:
-#     #                 for a in self.parent.dmi_list[row].rel_akt:
-#     #                     verwendung.append(f'Akt: {a.name}')
-#     #             if self.parent.dmi_list[row].children is not None:
-#     #                 for n in self.parent.dmi_list[row].children:
-#     #                     verwendung.append(f'VertreterIn: {n.name}')
-#     #
-#     #             verwendung_text = ", ".join(str(v) for v in verwendung)
-#     #
-#     #             return verwendung_text
-
-
 class KontaktMain(AlmDataView):
 
-    # _model_class = KontaktModel
-    # _entity_dmc = DmKontakt
-    # _type_dmc = DmKontaktType
-    #
     _dmi_dict = {}
 
     _entity_dialog_class = KontaktEntityDialog
@@ -324,24 +80,13 @@ class KontaktMain(AlmDataView):
 
     def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(gis_mode)
-#         # self.initUi()
 
-        # self.entity_wdg_cls = Kontakt
-
-        # self.edit_entity_by = 'id'
         self.dmi_dict = KontaktMain._dmi_dict
         self.edit_entity_by = 'dmi'
 
         self._entity_dmc = DmKontakt
 
         self.model_cls = KontaktTableModel
-        #
-        # session = ProjectSessionCls()
-        #
-        # stmt = select(DmKontakt)
-        # kkk = session.scalars(stmt).all()
-        #
-        # print('...')
 
     def addEntity(self):
 
@@ -352,52 +97,6 @@ class KontaktMain(AlmDataView):
         self.session.add(new)
         self.session.commit()
         self.session.close()
-#
-#         filter_name = QgaFilter('Name', str)
-#         # filter_name = QgaFilter('Name  <a href="https://www.w3schools.com/">Visit W3Schools.com!</a>', str)
-#         filter_name.label.setOpenExternalLinks(True)
-#         self.filters.append(filter_name)
-
-        # self.layer = VectorLayerFactory.createLayer(
-        #     'kontakte',
-        #     geometry_type=GeometryType.NONE,
-        #     fields_list=self.getFeatureFields()
-        # )
-
-    # def createLayer(self):
-    #
-    #     layer = VectorLayerFactory.createLayer(
-    #         'kontakte',
-    #         geometry_type=self.geometry_type,
-    #         fields_list=self.getFeatureFields()
-    #     )
-
-        # # layer = GstZuordLayer(
-        # #     "Polygon?crs=epsg:31259",
-        # #     "Grundstücke",
-        # #     "memory",
-        # #     fields=self.fields,
-        # #     data_view=self
-        # # )
-        # layer = GstZuordLayer(
-        #     "Polygon?crs=epsg:31259",
-        #     "Grundstücke",
-        #     "memory"
-        # )
-        # layer.base = True
-        #
-        # # layer.entity_dialog = GstDialog
-        # # layer.entity_form = GstZuordnungDataForm
-        # layer.dmi_list = self.dmi_list
-        #
-        # # setLayerStyle(layer, 'gst_awbuch_status')
-        #
-        # layer.data_provider = layer.dataProvider()
-        #
-        # layer.data_provider.addAttributes(self.fields)
-        # layer.updateFields()
-        #
-        # return layer
 
     def getDefaultDmi(self):
 
@@ -410,8 +109,6 @@ class KontaktMain(AlmDataView):
 
     def getDmiList(self):
 
-        # session = DbSession()
-
         url_object = URL.create(
             "sqlite",
             database="appdb.db",
@@ -419,37 +116,10 @@ class KontaktMain(AlmDataView):
 
         stmt = select(self._entity_dmc)
         dmi = self.session.scalars(stmt).all()
-        # dmi = self.session.execute(stmt).scalars()
-
-        # stmt = (select(DmKontakt)
-        #         .options(
-        #     joinedload(DmKontakt.rel_type)
-        # )
-        #         .where(DmKontakt.blank_value == 0))
-        #
-        # dmi = self.session.scalars(stmt).all()
-
-        print(f'dmi {str(self.inst_number)}: {dmi}')
 
         return dmi
 
     def createFeatureFields(self):
-
-        # gst_version_id_fld = QgsField("id", QVariant.Int)
-        #
-        # nachname_fld = QgsField("nachname", QVariant.String)
-        # nachname_fld.setAlias('Nachname')
-        #
-        # vorname_fld = QgsField("vorname", QVariant.String)
-        # vorname_fld.setAlias('Vorname')
-        #
-        # name_fld = QgsField("name", QVariant.String)
-        # name_fld.setAlias('Name')
-        #
-        # self._fields.append(gst_version_id_fld)
-        # self._fields.append(nachname_fld)
-        # self._fields.append(vorname_fld)
-        # self._fields.append(name_fld)
 
         # k_uuid = GeneralField.Uuid()
         k_id = GeneralField.Id()
