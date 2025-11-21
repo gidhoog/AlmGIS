@@ -1,8 +1,6 @@
 from qga.core.combobox import QgaComboModel, QgaComboView, \
     QgaExtendedCombo, QgaComboActionAdd
 
-# from almgis.data_session import session_cm
-
 
 class AlmComboModel(QgaComboModel): pass
 

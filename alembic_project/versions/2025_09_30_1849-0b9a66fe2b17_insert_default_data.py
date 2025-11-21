@@ -10,11 +10,10 @@ from uuid import uuid4
 
 from alembic import op
 import sqlalchemy as sa
+from qga.database.session import QgaProjectSessionCm
 from sqlalchemy.sql import table, column
 
-from almgis import ProjectSessionCls
 from almgis.database.models import DmKontakt, DmKontaktType, DmKontaktGemTyp
-from almgis.database.sessions import session_cm
 
 # revision identifiers, used by Alembic.
 revision: str = '0b9a66fe2b17'
@@ -45,13 +44,14 @@ def upgrade() -> None:
     kt2.name_short = "G"
     kt2.sort = 0
     kt2.icon_01 = ":/svg/icons/group.svg"
-    kt2.module = "almgis.scopes.kontakt.kontakt"
+    kt2.module = "almgis.core.kontakt.kontakt"
     kt2.type_class = "Kontakt"
-    kt2.dmi_class = "BKontaktGem"
+    kt2.dmi_class = "DmKontaktGem"
     kt2.not_delete = 1
     kt2.sys_data = 1
 
-    with session_cm(name='insert default kontakt types') as kt_session:
+    with QgaProjectSessionCm(
+            name='insert default kontakt types') as kt_session:
         kt_session.add(kt1)
         kt_session.add(kt2)
     """"""
@@ -88,7 +88,8 @@ def upgrade() -> None:
     kgt5.name_short = 'So'
     kgt5.sort = 99
 
-    with session_cm(name='insert default kontakt_gem_type data') as kgt_session:
+    with QgaProjectSessionCm(
+            name='insert default kontakt_gem_type data') as kgt_session:
         kgt_session.add(kgt1)
         kgt_session.add(kgt2)
         kgt_session.add(kgt3)
@@ -122,7 +123,7 @@ def upgrade() -> None:
     verein1.rel_type = kt2
     verein1.rel_gem_type = kgt3
 
-    with session_cm(name='insert default data') as session:
+    with QgaProjectSessionCm(name='insert default data') as session:
         session.add(new_kont_01)
         session.add(new_kont_02)
         session.add(new_kont_03)

@@ -6,7 +6,6 @@ from almgis.resources.ui_py.kontakt import kontakt_UI
 
 
 class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
-# class KontaktGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
 
     updateDmiNachnameSgn = pyqtSignal(str)
     updateDmiVornameSgn = pyqtSignal(str)
@@ -37,6 +36,7 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
         self.setupUi(self)
 
         # self.ctrl = ctrl
+        self.info_wdg = 'KontaktGui'
 
         self.ctrl.setNachnameSgn.connect(self.setNachname)
         self.ctrl.setVornameSgn.connect(self.setVorname)
@@ -329,9 +329,9 @@ class KontaktEinzelGui(KontaktGui):
     def __init__(self, ctrl=None):
         super(KontaktEinzelGui, self).__init__(ctrl)
         # QgaEntityGui.__init__(self, ctrl)
-        # self.setupUi(self)
+        self.setupUi(self)
 
-        # self.ctrl = ctrl
+        self.ctrl = ctrl
 
         self.uiTypLbl.setVisible(False)
         self.uiTypCombo.setVisible(False)
@@ -360,10 +360,10 @@ class KontaktEinzelGui(KontaktGui):
         self.uiVornameLedit.setText(value)
 
 
-class KontaktGemGui(QMainWindow, kontakt_UI.Ui_KontaktGui):
+class KontaktGemGui(KontaktGui):
 
     def __init__(self, ctrl=None):
-        super(KontaktGemGui, self).__init__()
+        super(KontaktGemGui, self).__init__(ctrl)
         self.setupUi(self)
 
         self.ctrl = ctrl
