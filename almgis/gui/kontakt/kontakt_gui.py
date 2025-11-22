@@ -1,7 +1,10 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
 from qga.gui.entity_gui import QgaEntityGui
+from qga.database.session import QgaProjectSessionCm
+from sqlalchemy import select
 
+from almgis.database.models import DmKontaktType, DmKontaktGemTyp
 from almgis.resources.ui_py.kontakt import kontakt_UI
 
 
@@ -367,3 +370,26 @@ class KontaktGemGui(KontaktGui):
         self.setupUi(self)
 
         self.ctrl = ctrl
+
+        self.kontakt_type_dmi = []
+
+        self.getKontaktTypes()
+
+        print('...')
+
+    def getKontaktTypes(self):
+        """
+        lade kontakt-typen von der Datenbank
+        """
+        with QgaProjectSessionCm(name='get kontakt types',
+                                 expire_on_commit=False) as session:
+
+            stmt = select(DmKontaktGemTyp)
+
+            self.kontakt_type_dmi = session.scalars(stmt).all()
+
+            """add items to the combo
+            see: https://www.perplexity.ai/search/how-to-add-items-to-a-qcombobo-TvWSAWxPQvKsc1mFZlsFhg"""
+            for kontakt in self.kontakt_type_dmi:
+                self.uiTypCombo.addItem(kontakt.name, kontakt)
+            """"""
