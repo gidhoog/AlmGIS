@@ -373,23 +373,40 @@ class KontaktGemGui(KontaktGui):
 
         self.kontakt_type_dmi = []
 
-        self.getKontaktTypes()
+        self.setupTypCombo()
 
-        print('...')
+        self.uiTypCombo.currentIndexChanged.connect(self.testCombo)
 
-    def getKontaktTypes(self):
+    def testCombo(self, index):
+
+        print(f'id: {self.uiTypCombo.itemData(self.uiTypCombo.currentIndex()).id}')
+
+    def setupTypCombo(self):
         """
         lade kontakt-typen von der Datenbank
         """
         with QgaProjectSessionCm(name='get kontakt types',
-                                 expire_on_commit=False) as session:
+                                 expire_on_commit=True) as session:
 
-            stmt = select(DmKontaktGemTyp)
+            stmt = select(DmKontaktGemTyp).order_by(DmKontaktGemTyp.sort)
 
-            self.kontakt_type_dmi = session.scalars(stmt).all()
+            kkk = session.scalars(stmt).all()
+
+            # self.kontakt_type_dmi = self.getGemTypeDmi()
 
             """add items to the combo
             see: https://www.perplexity.ai/search/how-to-add-items-to-a-qcombobo-TvWSAWxPQvKsc1mFZlsFhg"""
-            for kontakt in self.kontakt_type_dmi:
+            # for kontakt in self.getGemTypeDmi():
+            for kontakt in kkk:
                 self.uiTypCombo.addItem(kontakt.name, kontakt)
             """"""
+
+    # def getGemTypeDmi(self):
+    #
+    #     with QgaProjectSessionCm(name='get kontakt types',
+    #                              expire_on_commit=True) as session:
+    #
+    #         stmt = select(DmKontaktGemTyp).order_by(DmKontaktGemTyp.sort)
+    #
+    #         kkk = session.scalars(stmt).all()
+    #         return kkk
