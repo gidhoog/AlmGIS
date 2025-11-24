@@ -1,4 +1,5 @@
 from qga.core.data_view import QgaDataView, QgaTableModel
+from qga.database.session import QgaProjectSessionCls
 
 
 class AlmDataView(QgaDataView):

@@ -17,7 +17,7 @@ class Kontakt(AlmEntity):
     # commitDataSgn = pyqtSignal()
 
     # updateVornameSignal = pyqtSignal(str)
-    setTypSgn = pyqtSignal(int)
+    setTypSgn = pyqtSignal(object)
     setNachnameSgn = pyqtSignal(str)
     setVornameSgn = pyqtSignal(str)
     setStrasseSgn = pyqtSignal(str)
@@ -276,8 +276,8 @@ class Kontakt(AlmEntity):
     #     self.uiAnmPedit.setPlainText(value)
     #     self._anm = value
 
-    def __init__(self, parent=None, entity_dlg=None):
-        super(__class__, self).__init__(parent, entity_dlg)
+    def __init__(self, parent=None, session=None, entity_dlg=None):
+        super(__class__, self).__init__(parent, session, entity_dlg)
 
         self.ui = KontaktGemGui(self)
 
@@ -303,12 +303,14 @@ class Kontakt(AlmEntity):
 
     def setupEntity(self):
 
-        # self.ui.getNachnameSgn.connect(self.commitNachname)
 
+        self.ui.updateDmiTypeSgn.connect(self.updateDmiType)
         self.ui.updateDmiNachnameSgn.connect(self.updateDmiNachname)
         self.ui.updateDmiVornameSgn.connect(self.updateDmiVorname)
         self.ui.updateDmiStrasseSgn.connect(self.updateDmiStrasse)
-        # self.ui.acceptEntitySgn.connect(self.commitEntity)
+
+    def updateDmiType(self, value):
+        self._entity_dmi.rel_gem_type = value
 
     def updateDmiNachname(self, value):
         self._entity_dmi.nachname = value
@@ -322,9 +324,7 @@ class Kontakt(AlmEntity):
     def emitSignals(self):
         super().emitSignals()
 
-        # self.updateVornameSignal.emit(self._entity_dmi.vorname)
-        # self.setDmiSignal.emit(self._entity_dmi)
-
+        self.setTypSgn.emit(self._entity_dmi.rel_gem_type)
         self.setNachnameSgn.emit(self._entity_dmi.nachname)
         self.setVornameSgn.emit(self._entity_dmi.vorname)
         self.setStrasseSgn.emit(self._entity_dmi.strasse)
@@ -552,8 +552,8 @@ class KontaktEinzel(Kontakt):
     klasse für die Kontaktdaten einer Einzelperson
     """
 
-    def __init__(self, parent=None, entity_dlg=None):
-        super(__class__, self).__init__(parent, entity_dlg)
+    def __init__(self, parent=None, session=None, entity_dlg=None):
+        super(__class__, self).__init__(parent, session, entity_dlg)
         # self.setupCodeUi()
 
         self.entity_dlg = entity_dlg

@@ -19,8 +19,8 @@ from almgis.core.dialog import AlmDialog
 
 class AlmEntity(QgaEntity):
 
-    def __init__(self, parent=None, entity_dlg=None):
-        super(AlmEntity, self).__init__(parent, entity_dlg)
+    def __init__(self, parent=None, session=None, entity_dlg=None):
+        super(AlmEntity, self).__init__(parent, session, entity_dlg)
 
         # self.session = Qga.ProjectSessionCls()
         # self.session_cm = session_cm()
