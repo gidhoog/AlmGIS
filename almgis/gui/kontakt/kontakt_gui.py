@@ -386,7 +386,7 @@ class KontaktGemGui(KontaktGui):
         lade kontakt-typen von der Datenbank
         """
         with QgaProjectSessionCm(name='get kontakt types',
-                                 expire_on_commit=True) as session:
+                                 expire_on_commit=False) as session:
 
             stmt = select(DmKontaktGemTyp).order_by(DmKontaktGemTyp.sort)
 

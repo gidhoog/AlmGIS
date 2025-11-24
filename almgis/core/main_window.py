@@ -9,7 +9,7 @@ from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
 from almgis.core.dialog import AlmDialog
-from almgis.core.kontakt.kontakt_main import KontaktMainWidget
+from almgis.scopes.kontakt.kontakt_main import KontaktMainWidget
 from almgis.database.models import DmSettings
 from almgis.gui.about import AlmAboutDialog
 from almgis.gui.main_window_gui import AlmMainWindowGui

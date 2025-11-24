@@ -32,7 +32,7 @@ def upgrade() -> None:
     kt1.name_short = "E"
     kt1.sort = 0
     kt1.icon_01 = ":/svg/icons/person.svg"
-    kt1.module = "almgis.core.kontakt.kontakt"
+    kt1.module = "almgis.scopes.kontakt.kontakt"
     kt1.type_class = "KontaktEinzel"
     kt1.dmi_class = "BKontaktEinzel"
     kt1.not_delete = 1
@@ -44,7 +44,7 @@ def upgrade() -> None:
     kt2.name_short = "G"
     kt2.sort = 0
     kt2.icon_01 = ":/svg/icons/group.svg"
-    kt2.module = "almgis.core.kontakt.kontakt"
+    kt2.module = "almgis.scopes.kontakt.kontakt"
     kt2.type_class = "Kontakt"
     kt2.dmi_class = "DmKontaktGem"
     kt2.not_delete = 1
