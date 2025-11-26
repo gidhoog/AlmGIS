@@ -302,12 +302,30 @@ class Kontakt(AlmEntity):
     #     self.ui.commitDataSgn.emit()
 
     def setupEntity(self):
+        """
+        method to setup the kontakt entity
+        """
 
-
+        """connect the ui update-signals to update the entity when
+        data in the gui changes"""
         self.ui.updateDmiTypeSgn.connect(self.updateDmiType)
         self.ui.updateDmiNachnameSgn.connect(self.updateDmiNachname)
         self.ui.updateDmiVornameSgn.connect(self.updateDmiVorname)
         self.ui.updateDmiStrasseSgn.connect(self.updateDmiStrasse)
+        self.ui.updateDmiPlzSgn.connect(self.updateDmiPlz)
+        self.ui.updateDmiOrtSgn.connect(self.updateDmiOrt)
+
+        self.ui.updateDmiTelefon1Sgn.connect(self.updateDmiTelefon1)
+        self.ui.updateDmiTelefon2Sgn.connect(self.updateDmiTelefon2)
+        self.ui.updateDmiTelefon3Sgn.connect(self.updateDmiTelefon3)
+        self.ui.updateDmiMail1Sgn.connect(self.updateDmiMail1)
+        self.ui.updateDmiMail2Sgn.connect(self.updateDmiMail2)
+        self.ui.updateDmiMail3Sgn.connect(self.updateDmiMail3)
+
+        # self.ui.updateDmiVertreterSgn.connect(self.updateDmiVertreter)
+
+        self.ui.updateDmiAnmSgn.connect(self.updateDmiAnm)
+        """"""
 
     def updateDmiType(self, value):
         self._entity_dmi.rel_gem_type = value
@@ -321,6 +339,33 @@ class Kontakt(AlmEntity):
     def updateDmiStrasse(self, value):
         self._entity_dmi.strasse = value
 
+    def updateDmiPlz(self, value):
+        self._entity_dmi.plz = value
+
+    def updateDmiOrt(self, value):
+        self._entity_dmi.ort = value
+
+    def updateDmiTelefon1(self, value):
+        self._entity_dmi.telefon1 = value
+
+    def updateDmiTelefon2(self, value):
+        self._entity_dmi.telefon2 = value
+
+    def updateDmiTelefon3(self, value):
+        self._entity_dmi.telefon3 = value
+
+    def updateDmiMail1(self, value):
+        self._entity_dmi.mail1 = value
+
+    def updateDmiMail2(self, value):
+        self._entity_dmi.mail2 = value
+
+    def updateDmiMail3(self, value):
+        self._entity_dmi.mail3 = value
+
+    def updateDmiAnm(self, value):
+        self._entity_dmi.anm = value
+
     def emitSignals(self):
         super().emitSignals()
 
@@ -328,42 +373,55 @@ class Kontakt(AlmEntity):
         self.setNachnameSgn.emit(self._entity_dmi.nachname)
         self.setVornameSgn.emit(self._entity_dmi.vorname)
         self.setStrasseSgn.emit(self._entity_dmi.strasse)
+        self.setPlzSgn.emit(self._entity_dmi.plz)
+        self.setOrtSgn.emit(self._entity_dmi.ort)
+
+        self.setTelefon1Sgn.emit(self._entity_dmi.telefon1)
+        self.setTelefon2Sgn.emit(self._entity_dmi.telefon2)
+        self.setTelefon3Sgn.emit(self._entity_dmi.telefon3)
+        self.setMail1Sgn.emit(self._entity_dmi.mail1)
+        self.setMail2Sgn.emit(self._entity_dmi.mail2)
+        self.setMail3Sgn.emit(self._entity_dmi.mail3)
+
+        # self.setVertreterSgn.emit(self._entity_dmi.strasse)
+
+        self.setAnmSgn.emit(self._entity_dmi.anm)
 
 
-    def setDefaultValues(self, **kwargs):
-        super().setDefaultValues()
+    # def setDefaultValues(self, **kwargs):
+    #     super().setDefaultValues()
+    #
+    #     self.uiVertreterCombo.setCurrentIndex(
+    #         self.uiVertreterCombo.fallback_index)
 
-        self.uiVertreterCombo.setCurrentIndex(
-            self.uiVertreterCombo.fallback_index)
+    # def initItemUi(self):
+    #     super().initItemUi()
+    #
+    #     # reg_ex = QRegExp("[0-9]+.?[0-9]{,2}")
+    #     # reg_ex = QRegExp("[A-Z][a-z]{0,50}")
+    #     reg_ex = QRegExp("[a-zA-Z0-9äöüÄÖÜß ]{0,10}")
+    #     input_validator = QRegExpValidator(reg_ex, self.uiNachnameLedit)
+    #     self.uiNachnameLedit.setValidator(input_validator)
 
-    def initItemUi(self):
-        super().initItemUi()
+    # def setupCodeUi(self):
+    #     super().setupCodeUi()
+    #
+    #     self.uiVornameLedit.setVisible(False)
+    #     self.uiVornameLbl.setVisible(False)
 
-        # reg_ex = QRegExp("[0-9]+.?[0-9]{,2}")
-        # reg_ex = QRegExp("[A-Z][a-z]{0,50}")
-        reg_ex = QRegExp("[a-zA-Z0-9äöüÄÖÜß ]{0,10}")
-        input_validator = QRegExpValidator(reg_ex, self.uiNachnameLedit)
-        self.uiNachnameLedit.setValidator(input_validator)
+    # def loadBackgroundData(self):
+    #     super().loadBackgroundData()
+    #
+    #     self.setGeminschaftsTypeCombo()
+    #
+    #     self.uiVertreterCombo.loadComboData(self.session, gruppe='e')
+    #     self.uiVertreterCombo.combo_wdg_cls = KontaktEinzel
+    #     self.uiVertreterCombo.initCombo()
 
-    def setupCodeUi(self):
-        super().setupCodeUi()
-
-        self.uiVornameLedit.setVisible(False)
-        self.uiVornameLbl.setVisible(False)
-
-    def loadBackgroundData(self):
-        super().loadBackgroundData()
-
-        self.setGeminschaftsTypeCombo()
-
-        self.uiVertreterCombo.loadComboData(self.session, gruppe='e')
-        self.uiVertreterCombo.combo_wdg_cls = KontaktEinzel
-        self.uiVertreterCombo.initCombo()
-
-    def finalEntitySettings(self):
-        super().finalEntitySettings()
-
-        self.setMinimumWidth(650)
+    # def finalEntitySettings(self):
+    #     super().finalEntitySettings()
+    #
+    #     self.setMinimumWidth(650)
 
     def setGeminschaftsTypeCombo(self):
 
@@ -409,28 +467,28 @@ class Kontakt(AlmEntity):
     #     self.uiVertreterCombo.setModel(vertreter_model)
     #     """"""
 
-    def mapEntityData(self, model=None):
-
-        if self._entity_dmi.gem_type_id != 0:  # keine Einzelperson
-            self.gem_type_id = self._entity_dmi.gem_type_id
-
-        self.nachname = self._entity_dmi.nachname
-        self.vorname = self._entity_dmi.vorname
-        self.strasse = self._entity_dmi.strasse
-        self.plz = self._entity_dmi.plz
-        self.ort = self._entity_dmi.ort
-
-        self.telefon1 = self._entity_dmi.telefon1
-        self.telefon2 = self._entity_dmi.telefon2
-        self.telefon3 = self._entity_dmi.telefon3
-        self.mail1 = self._entity_dmi.mail1
-        self.mail2 = self._entity_dmi.mail2
-        self.mail3 = self._entity_dmi.mail3
-
-        self.anm = self._entity_dmi.anm
-
-        self.vertreter_id = self._entity_dmi.vertreter_id
-        self.displayVertreterAdresse()
+    # def mapEntityData(self, model=None):
+    #
+    #     if self._entity_dmi.gem_type_id != 0:  # keine Einzelperson
+    #         self.gem_type_id = self._entity_dmi.gem_type_id
+    #
+    #     self.nachname = self._entity_dmi.nachname
+    #     self.vorname = self._entity_dmi.vorname
+    #     self.strasse = self._entity_dmi.strasse
+    #     self.plz = self._entity_dmi.plz
+    #     self.ort = self._entity_dmi.ort
+    #
+    #     self.telefon1 = self._entity_dmi.telefon1
+    #     self.telefon2 = self._entity_dmi.telefon2
+    #     self.telefon3 = self._entity_dmi.telefon3
+    #     self.mail1 = self._entity_dmi.mail1
+    #     self.mail2 = self._entity_dmi.mail2
+    #     self.mail3 = self._entity_dmi.mail3
+    #
+    #     self.anm = self._entity_dmi.anm
+    #
+    #     self.vertreter_id = self._entity_dmi.vertreter_id
+    #     self.displayVertreterAdresse()
 
     def displayVertreterAdresse(self):
 
@@ -515,31 +573,31 @@ class Kontakt(AlmEntity):
 
         return dmi
 
-    def submitEntity(self):
-        """
-        set the shown_name befor submitting
-        :return:
-        """
-        self._entity_dmi.gem_type_id = self.gem_type_id
-        self._entity_dmi.rel_gem_type = self.gem_type_dmi
-        self._entity_dmi.nachname = self.nachname
-        self._entity_dmi.vorname = self.vorname
-        self._entity_dmi.strasse = self.strasse
-
-        self._entity_dmi.plz = self.plz
-
-        self._entity_dmi.ort = self.ort
-        self._entity_dmi.telefon1 = self.telefon1
-        self._entity_dmi.telefon2 = self.telefon2
-        self._entity_dmi.telefon3 = self.telefon3
-        self._entity_dmi.mail1 = self.mail1
-        self._entity_dmi.mail2 = self.mail2
-        self._entity_dmi.mail3 = self.mail3
-
-        self._entity_dmi.anm = self.anm
-
-        self._entity_dmi.vertreter_id = self.vertreter_id
-        self._entity_dmi.rel_vertreter = self.vertreter_dmi
+    # def submitEntity(self):
+    #     """
+    #     set the shown_name befor submitting
+    #     :return:
+    #     """
+    #     self._entity_dmi.gem_type_id = self.gem_type_id
+    #     self._entity_dmi.rel_gem_type = self.gem_type_dmi
+    #     self._entity_dmi.nachname = self.nachname
+    #     self._entity_dmi.vorname = self.vorname
+    #     self._entity_dmi.strasse = self.strasse
+    #
+    #     self._entity_dmi.plz = self.plz
+    #
+    #     self._entity_dmi.ort = self.ort
+    #     self._entity_dmi.telefon1 = self.telefon1
+    #     self._entity_dmi.telefon2 = self.telefon2
+    #     self._entity_dmi.telefon3 = self.telefon3
+    #     self._entity_dmi.mail1 = self.mail1
+    #     self._entity_dmi.mail2 = self.mail2
+    #     self._entity_dmi.mail3 = self.mail3
+    #
+    #     self._entity_dmi.anm = self.anm
+    #
+    #     self._entity_dmi.vertreter_id = self.vertreter_id
+    #     self._entity_dmi.rel_vertreter = self.vertreter_dmi
 
     def signals(self):
         super().signals()
@@ -581,34 +639,34 @@ class KontaktEinzel(Kontakt):
     #
     #     self.uiNachnameLbl.setText('Nachname')
 
-    def submitEntity(self):
-
-        # einzel_typ_dmi = self.session.get(BKontaktGemTyp, 0)
-        # leerer_kontakt = self.session.get(BKontakt, 0)
-
-        # self._entity_dmi.type_id = 0
-        # self._entity_dmi.rel_type = einzel_typ_dmi
-
-        self._entity_dmi.nachname = self.nachname
-        self._entity_dmi.vorname = self.vorname
-        self._entity_dmi.strasse = self.strasse
-
-        self._entity_dmi.plz = self.plz
-
-        self._entity_dmi.ort = self.ort
-        self._entity_dmi.telefon1 = self.telefon1
-        self._entity_dmi.telefon2 = self.telefon2
-        self._entity_dmi.telefon3 = self.telefon3
-        self._entity_dmi.mail1 = self.mail1
-        self._entity_dmi.mail2 = self.mail2
-        self._entity_dmi.mail3 = self.mail3
-
-        self._entity_dmi.anm = self.anm
-
-        # self._entity_dmi.vertreter_id = 0
-        # self._entity_dmi.rel_vertreter = leerer_kontakt
-
-        self._entity_dmi.gem_type_id = 0
+    # def submitEntity(self):
+    #
+    #     # einzel_typ_dmi = self.session.get(BKontaktGemTyp, 0)
+    #     # leerer_kontakt = self.session.get(BKontakt, 0)
+    #
+    #     # self._entity_dmi.type_id = 0
+    #     # self._entity_dmi.rel_type = einzel_typ_dmi
+    #
+    #     self._entity_dmi.nachname = self.nachname
+    #     self._entity_dmi.vorname = self.vorname
+    #     self._entity_dmi.strasse = self.strasse
+    #
+    #     self._entity_dmi.plz = self.plz
+    #
+    #     self._entity_dmi.ort = self.ort
+    #     self._entity_dmi.telefon1 = self.telefon1
+    #     self._entity_dmi.telefon2 = self.telefon2
+    #     self._entity_dmi.telefon3 = self.telefon3
+    #     self._entity_dmi.mail1 = self.mail1
+    #     self._entity_dmi.mail2 = self.mail2
+    #     self._entity_dmi.mail3 = self.mail3
+    #
+    #     self._entity_dmi.anm = self.anm
+    #
+    #     # self._entity_dmi.vertreter_id = 0
+    #     # self._entity_dmi.rel_vertreter = leerer_kontakt
+    #
+    #     self._entity_dmi.gem_type_id = 0
 
 
 class KontaktNewSelector(QWidget):

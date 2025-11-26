@@ -49,7 +49,7 @@
          </font>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -232,7 +232,7 @@
          </font>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -304,7 +304,7 @@
          </font>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -330,7 +330,7 @@
          </font>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -438,18 +438,6 @@
       <item row="4" column="4">
        <widget class="AlmInfoButtonGui" name="uiInfoBtnStrasse" native="true"/>
       </item>
-      <item row="17" column="0">
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
       <item row="5" column="4">
        <widget class="AlmInfoButtonGui" name="uiInfoBtnPost" native="true"/>
       </item>
@@ -550,7 +538,7 @@
      <x>0</x>
      <y>0</y>
      <width>487</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
