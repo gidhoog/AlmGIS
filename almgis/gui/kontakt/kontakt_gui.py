@@ -1,8 +1,8 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from qga.gui.entity_gui import QgaEntityGui
-from sqlalchemy import select
+from sqlalchemy import select, and_, or_
 
-from almgis.database.models import DmKontaktGemTyp
+from almgis.database.models import DmKontaktGemTyp, DmKontakt
 from almgis.resources.ui_py.kontakt import kontakt_UI
 
 
@@ -174,6 +174,7 @@ class KontaktGemGui(KontaktGui):
         self.uiInfoBtnVorname.setVisible(False)
 
         self.setupTypCombo()
+        self.setupVertreterCombo()
 
     def acceptWdg(self):
 
@@ -193,3 +194,14 @@ class KontaktGemGui(KontaktGui):
         for kontakt in self.ctrl.session.scalars(stmt).all():
             self.uiTypCombo.addItem(kontakt.name, kontakt)
         """"""
+
+    def setupVertreterCombo(self):
+
+        stmt2 = select(DmKontakt).where(
+            or_(DmKontakt.type_id == 0, DmKontakt.blank_value == 1)
+        ).order_by(DmKontakt.nachname)
+
+        for vertreter in self.ctrl.session.scalars(stmt2).all():
+            self.uiVertreterCombo.addItem(vertreter.name, vertreter)
+
+

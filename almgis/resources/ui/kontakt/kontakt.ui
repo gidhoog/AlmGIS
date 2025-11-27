@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
+    <width>499</width>
     <height>610</height>
    </rect>
   </property>
@@ -371,7 +371,7 @@
        </widget>
       </item>
       <item row="15" column="1" colspan="3">
-       <widget class="ContactCombo" name="uiVertreterCombo">
+       <widget class="AlmExtendedComboGui" name="uiVertreterCombo">
         <property name="font">
          <font>
           <family>Sans Serif</family>
@@ -534,7 +534,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>487</width>
+     <width>499</width>
      <height>22</height>
     </rect>
    </property>
@@ -543,9 +543,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ContactCombo</class>
+   <class>AlmExtendedComboGui</class>
    <extends>QComboBox</extends>
-   <header>almgis.scopes.kontakt.contact_combo</header>
+   <header>almgis.gui.combobox_gui</header>
   </customwidget>
   <customwidget>
    <class>AlmInfoButtonGui</class>

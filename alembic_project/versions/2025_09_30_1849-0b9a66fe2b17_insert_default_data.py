@@ -6,7 +6,7 @@ Create Date: 2025-09-30 18:49:14.708080
 
 """
 from typing import Sequence, Union
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from alembic import op
 import sqlalchemy as sa
@@ -24,6 +24,21 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
+
+    """insert blank values in entity tables"""
+    b_kontakt = DmKontakt()
+    b_kontakt.id = UUID('00000000000000000000000000000000') # 32x
+    b_kontakt.type_id = 0
+    b_kontakt.nachname = '---'
+    b_kontakt.vorname = '--'
+    b_kontakt.blank_value = 1
+    b_kontakt.not_delete = 1
+    b_kontakt.user_edit = 'app'
+
+    with QgaProjectSessionCm(
+            name='insert blank values in entity tables') as blk_session:
+        blk_session.add(b_kontakt)
+    """"""
 
     """insert default kontakt type data"""
     kt1 = DmKontaktType()

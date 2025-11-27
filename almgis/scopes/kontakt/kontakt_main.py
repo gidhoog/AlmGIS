@@ -114,7 +114,7 @@ class KontaktMain(AlmDataView):
             database="appdb.db",
         )
 
-        stmt = select(self._entity_dmc)
+        stmt = select(self._entity_dmc).where(DmKontakt.blank_value == 0)
         dmi = self.session.scalars(stmt).all()
 
         return dmi

@@ -7,6 +7,7 @@ from sqlalchemy import select, func
 
 from almgis.core.entity import AlmEntity
 from almgis.database.models import DmKontaktEinzel, DmKontakt
+from almgis.gui.combobox_gui import AlmExtendedComboGui
 from almgis.gui.kontakt.kontakt_gui import KontaktEinzelGui, KontaktGemGui
 
 from qga import Qga
@@ -33,6 +34,9 @@ class Kontakt(AlmEntity):
     setMail3Sgn = pyqtSignal(str)
     setVertreterSgn = pyqtSignal(int)
     setAnmSgn = pyqtSignal(str)
+
+    blank_dmi = DmKontakt()
+    blank_dmi.nachname = '---'
 
     # _gem_type_id = 0
     # _nachname = ''
@@ -621,6 +625,8 @@ class KontaktEinzel(Kontakt):
     def __init__(self, parent=None, session=None, entity_dlg=None):
         super(__class__, self).__init__(parent, session, entity_dlg)
         # self.setupCodeUi()
+
+        a= AlmExtendedComboGui
 
         self.entity_dlg = entity_dlg
 

@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_KontaktGui(object):
     def setupUi(self, KontaktGui):
         KontaktGui.setObjectName("KontaktGui")
-        KontaktGui.resize(487, 610)
+        KontaktGui.resize(499, 610)
         self.centralwidget = QtWidgets.QWidget(KontaktGui)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -222,7 +222,7 @@ class Ui_KontaktGui(object):
         self.label_8.setFont(font)
         self.label_8.setObjectName("label_8")
         self.gridLayout.addWidget(self.label_8, 7, 0, 1, 1)
-        self.uiVertreterCombo = ContactCombo(self.centralwidget)
+        self.uiVertreterCombo = AlmExtendedComboGui(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Sans Serif")
         font.setPointSize(10)
@@ -326,7 +326,7 @@ class Ui_KontaktGui(object):
         self.verticalLayout.addLayout(self.gridLayout)
         KontaktGui.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(KontaktGui)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 487, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 499, 22))
         self.menubar.setObjectName("menubar")
         KontaktGui.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(KontaktGui)
@@ -364,5 +364,5 @@ class Ui_KontaktGui(object):
         self.label_5.setText(_translate("KontaktGui", "Telefon:"))
         self.label_9.setText(_translate("KontaktGui", "e-Mail:"))
         self.label_8.setText(_translate("KontaktGui", "Telefon:"))
+from almgis.gui.combobox_gui import AlmExtendedComboGui
 from almgis.gui.info_button_gui import AlmInfoButtonGui
-from almgis.scopes.kontakt.contact_combo import ContactCombo
