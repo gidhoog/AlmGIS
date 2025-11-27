@@ -351,7 +351,6 @@ class Ui_KontaktGui(object):
 
     def retranslateUi(self, KontaktGui):
         _translate = QtCore.QCoreApplication.translate
-        KontaktGui.setWindowTitle(_translate("KontaktGui", "MainWindow"))
         self.label_6.setText(_translate("KontaktGui", "Straße:"))
         self.uiVornameLbl.setText(_translate("KontaktGui", "Vorname:"))
         self.uiVertreterLbl.setText(_translate("KontaktGui", "Vertreter/Obmann:"))

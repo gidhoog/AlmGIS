@@ -4,6 +4,7 @@ from qga.core.entity import QgaEntity
 
 from qga.core.entity import QgaEntity, QgaEntityDialog
 from qga import Qga
+from qga.core.settings import QgaSettingsGeneral
 
 # from almgis import ProjectSessionCls
 from almgis.core.dialog import AlmDialog
@@ -32,5 +33,7 @@ class AlmEntityDialog(AlmDialog):
 
     def __init__(self, parent=None):
         super(AlmEntityDialog, self).__init__(parent)
+
+        # self.ui.setWindowTitle(QgaSettingsGeneral.app_display_name)
 
 

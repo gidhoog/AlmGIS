@@ -9,6 +9,8 @@ from almgis.core.entity import AlmEntity
 from almgis.database.models import DmKontaktEinzel, DmKontakt
 from almgis.gui.kontakt.kontakt_gui import KontaktEinzelGui, KontaktGemGui
 
+from qga import Qga
+
 
 class Kontakt(AlmEntity):
     """
@@ -279,9 +281,14 @@ class Kontakt(AlmEntity):
     def __init__(self, parent=None, session=None, entity_dlg=None):
         super(__class__, self).__init__(parent, session, entity_dlg)
 
-        self.ui = KontaktGemGui(self)
+        # self.ui = KontaktGemGui(self)
 
-        self._entity_dmc = DmKontakt
+        # print(f'-------22222222222222222222222222222222222222222')
+        #
+        # self.entity_dlg.ui.setWindowTitle(
+        #     self.ui.windowTitle() + ' - Gemeinschaftskontakt')
+        #
+        # self._entity_dmc = DmKontakt
 
         # self.commitDataSgn.connect(self.commitData)
 
@@ -609,12 +616,16 @@ class KontaktEinzel(Kontakt):
     """
     klasse für die Kontaktdaten einer Einzelperson
     """
+    # ui_cls = KontaktEinzelGui
 
     def __init__(self, parent=None, session=None, entity_dlg=None):
         super(__class__, self).__init__(parent, session, entity_dlg)
         # self.setupCodeUi()
 
         self.entity_dlg = entity_dlg
+
+        self.entity_dlg.ui.setWindowTitle(
+            Qga.Settings.General.app_display_name + ' - Einzelkontakt')
 
         self.ui = KontaktEinzelGui(self)
 
@@ -667,6 +678,25 @@ class KontaktEinzel(Kontakt):
     #     # self._entity_dmi.rel_vertreter = leerer_kontakt
     #
     #     self._entity_dmi.gem_type_id = 0
+
+class KontaktGem(Kontakt):
+    """
+    klasse für die Kontaktdaten einer Einzelperson
+    """
+    # ui_cls = KontaktGemGui
+
+    def __init__(self, parent=None, session=None, entity_dlg=None):
+        super(__class__, self).__init__(parent, session, entity_dlg)
+        # self.setupCodeUi()
+
+        self.entity_dlg = entity_dlg
+
+        self.entity_dlg.ui.setWindowTitle(
+            self.entity_dlg.ui.windowTitle() + ' - Gemeinschaftskontakt')
+
+        self.ui = KontaktGemGui(self)
+
+        self._entity_dmc = DmKontakt
 
 
 class KontaktNewSelector(QWidget):

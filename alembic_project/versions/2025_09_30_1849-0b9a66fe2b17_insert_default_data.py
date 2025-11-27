@@ -45,7 +45,7 @@ def upgrade() -> None:
     kt2.sort = 0
     kt2.icon_01 = ":/svg/icons/group.svg"
     kt2.module = "almgis.scopes.kontakt.kontakt"
-    kt2.type_class = "Kontakt"
+    kt2.type_class = "KontaktGem"
     kt2.dmi_class = "DmKontaktGem"
     kt2.not_delete = 1
     kt2.sys_data = 1

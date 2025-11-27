@@ -17,7 +17,7 @@ class KontaktEntityDialog(AlmEntityDialog):
         super(__class__, self).__init__(parent)
 
         self.parent = parent
-        self.ui.setWindowTitle(self.ui.windowTitle() + ' - Kontakt')
+        # self.ui.setWindowTitle(self.ui.windowTitle() + ' - Kontakt')
 
 
 class KontaktMainWidget(QgaMainWidget):
