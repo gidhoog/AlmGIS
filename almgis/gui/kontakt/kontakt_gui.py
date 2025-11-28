@@ -23,7 +23,7 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
     updateDmiMail2Sgn = pyqtSignal(str)
     updateDmiMail3Sgn = pyqtSignal(str)
 
-    updateDmiVertreterSgn = pyqtSignal(str)  # this is the uuid
+    updateDmiVertreterSgn = pyqtSignal(object)
 
     updateDmiAnmSgn = pyqtSignal(str)
 
@@ -49,7 +49,7 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
         self.ctrl.setMail2Sgn.connect(self.setMail2)
         self.ctrl.setMail3Sgn.connect(self.setMail3)
 
-        # self.ctrl.setVertreterSgn.connect(self.setStrasse)
+        self.ctrl.setVertreterSgn.connect(self.setVertreter)
 
         self.ctrl.setAnmSgn.connect(self.setAnm)
         """"""
@@ -75,7 +75,10 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
         self.updateDmiMail1Sgn.emit(self.uiMail1Ledit.text())
         self.updateDmiMail2Sgn.emit(self.uiMail2Ledit.text())
         self.updateDmiMail3Sgn.emit(self.uiMail3Ledit.text())
-        # self.updateDmiVertreterSgn.emit(self.uiStrasseLedit.text())
+
+        self.updateDmiVertreterSgn.emit(
+            self.uiVertreterCombo.itemData(self.uiVertreterCombo.currentIndex()))
+
         self.updateDmiAnmSgn.emit(self.uiAnmPedit.toPlainText())
 
         super().acceptWdg()
@@ -90,11 +93,21 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
                     self.uiTypCombo.setCurrentIndex(i)
                     break
 
+    def setVertreter(self, value):
+
+        if value:
+            vertreter_id = value.id
+            for i in range(self.uiVertreterCombo.count()):
+                combo_vertreter = self.uiVertreterCombo.itemData(i, role=Qt.UserRole)
+                if combo_vertreter is not None and combo_vertreter.id == vertreter_id:
+                    self.uiVertreterCombo.setCurrentIndex(i)
+                    break
+
     def setNachname(self, value):
         self.uiNachnameLedit.setText(value)
 
-    def getNachname(self):
-        return self.uiNachnameLedit.text()
+    # def getNachname(self):
+    #     return self.uiNachnameLedit.text()
 
     def setVorname(self, value):
         self.uiVornameLedit.setText(value)
@@ -175,6 +188,8 @@ class KontaktGemGui(KontaktGui):
 
         self.setupTypCombo()
         self.setupVertreterCombo()
+
+        # self.uiVertreterCombo.setCurrentIndex(-1)
 
     def acceptWdg(self):
 

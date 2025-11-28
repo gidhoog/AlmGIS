@@ -32,11 +32,11 @@ class Kontakt(AlmEntity):
     setMail1Sgn = pyqtSignal(str)
     setMail2Sgn = pyqtSignal(str)
     setMail3Sgn = pyqtSignal(str)
-    setVertreterSgn = pyqtSignal(int)
+    setVertreterSgn = pyqtSignal(object)
     setAnmSgn = pyqtSignal(str)
 
-    blank_dmi = DmKontakt()
-    blank_dmi.nachname = '---'
+    # blank_dmi = DmKontakt()
+    # blank_dmi.nachname = '---'
 
     # _gem_type_id = 0
     # _nachname = ''
@@ -333,7 +333,7 @@ class Kontakt(AlmEntity):
         self.ui.updateDmiMail2Sgn.connect(self.updateDmiMail2)
         self.ui.updateDmiMail3Sgn.connect(self.updateDmiMail3)
 
-        # self.ui.updateDmiVertreterSgn.connect(self.updateDmiVertreter)
+        self.ui.updateDmiVertreterSgn.connect(self.updateDmiVertreter)
 
         self.ui.updateDmiAnmSgn.connect(self.updateDmiAnm)
         """"""
@@ -377,6 +377,9 @@ class Kontakt(AlmEntity):
     def updateDmiAnm(self, value):
         self._entity_dmi.anm = value
 
+    def updateDmiVertreter(self, value):
+        self._entity_dmi.rel_vertreter = value
+
     def emitSignals(self):
         super().emitSignals()
 
@@ -394,7 +397,7 @@ class Kontakt(AlmEntity):
         self.setMail2Sgn.emit(self._entity_dmi.mail2)
         self.setMail3Sgn.emit(self._entity_dmi.mail3)
 
-        # self.setVertreterSgn.emit(self._entity_dmi.strasse)
+        self.setVertreterSgn.emit(self._entity_dmi.rel_vertreter)
 
         self.setAnmSgn.emit(self._entity_dmi.anm)
 
