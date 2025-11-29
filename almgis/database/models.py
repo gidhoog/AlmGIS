@@ -784,12 +784,15 @@ class DmKontakt(DmBaseProject, DmNonSpatialObject):
     # id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     """"""
     type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_type.id'),
-                                         nullable=True)
+                                         nullable=True,
+                                         default=0)
     gem_type_id: Mapped[int] = mapped_column(ForeignKey('_tbl_alm_kontakt_gem_type.id'),
-                                             nullable=True)
+                                             nullable=True,
+                                             default=0)
     """self-relation to id!!"""
     vertreter_id: Mapped[UUID] = mapped_column(ForeignKey("_tbl_alm_kontakt.id"),
-                                              nullable=True)
+                                              nullable=True,
+                                               default=UUID('00000000000000000000000000000000'))
     """"""
 
     nachname: Mapped[str] = mapped_column(nullable=True)
