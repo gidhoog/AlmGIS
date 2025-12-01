@@ -992,12 +992,18 @@ class DmKontaktEinzel(DmKontakt):
         'polymorphic_identity': 0,
     }
 
+    def __repr__(self):
+       return f"<DmKontaktEinzel(id={self.id}, nachname='{self.nachname}')>"
+
 
 class DmKontaktGem(DmKontakt):
 
     __mapper_args__ = {
         'polymorphic_identity': 1,
     }
+
+    def __repr__(self):
+       return f"<DmKontaktGem(id={self.id}, nachname='{self.nachname}')>"
 
 
 class DmKontaktType(DmBaseProject):

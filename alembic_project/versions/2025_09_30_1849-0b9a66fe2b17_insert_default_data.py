@@ -49,7 +49,7 @@ def upgrade() -> None:
     kt1.icon_01 = ":/svg/icons/person.svg"
     kt1.module = "almgis.scopes.kontakt.kontakt"
     kt1.type_class = "KontaktEinzel"
-    kt1.dmi_class = "BKontaktEinzel"
+    kt1.dmi_class = "DmKontaktEinzel"
     kt1.not_delete = 1
     kt1.sys_data = 1
 

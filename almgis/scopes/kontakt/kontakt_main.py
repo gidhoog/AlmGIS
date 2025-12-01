@@ -9,7 +9,7 @@ from sqlalchemy import select, URL
 from almgis.core.data_view import AlmDataView, AlmTableModel
 from almgis.core.entity import AlmEntityDialog
 from almgis.core.fields import GeneralField
-from almgis.database.models import DmKontakt
+from almgis.database.models import DmKontakt, DmKontaktType
 
 
 class KontaktEntityDialog(AlmEntityDialog):
@@ -67,6 +67,7 @@ class KontaktTableModel(AlmTableModel):
 class KontaktMain(AlmDataView):
 
     _dmi_dict = {}
+    _type_dmc = DmKontaktType
 
     _entity_dialog_class = KontaktEntityDialog
 
@@ -89,15 +90,15 @@ class KontaktMain(AlmDataView):
 
         self.model_cls = KontaktTableModel
 
-    def addEntity(self):
-
-        print(f'add new kontakt!')
-        new = DmKontakt()
-        new.nachname = 'new1'
-
-        self.session.add(new)
-        self.session.commit()
-        self.session.close()
+    # def addEntity(self):
+    #
+    #     print(f'add new kontakt!')
+    #     new = DmKontakt()
+    #     new.nachname = 'new1'
+    #
+    #     self.session.add(new)
+    #     self.session.commit()
+    #     self.session.close()
 
     def getDefaultDmi(self):
 
