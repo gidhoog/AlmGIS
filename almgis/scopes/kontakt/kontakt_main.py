@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QColor
 from qga.core.fields import QgaField
 from qga.core.main_widget import QgaMainWidget
+from qga.gui.data_view_gui import QgaDataViewGui
 from qgis.PyQt.QtCore import QVariant
 from sqlalchemy import select, URL
 
