@@ -4,7 +4,7 @@ from qga import Qga
 from qga.core.main_window import QgaMainWindow
 from qga.database.alchemy import DmBaseCommon
 from qga.database.session import QgaCommonSessionCls
-from qga.gui.notify import QgaToast
+from qga.gui.notify import QgaNotify
 from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
@@ -28,7 +28,7 @@ class AlmMainWindow(QgaMainWindow):
 
         self.dmc_settings = DmSettings
 
-        QgaToast.setMaximumOnScreen(4)
+        QgaNotify.setMaximumOnScreen(4)
 
         self.about_dialog_cls = AlmAboutDialog
 
@@ -148,19 +148,19 @@ class AlmMainWindow(QgaMainWindow):
 
     def testNotifySuccess(self):
 
-        self.showNotify(QgaToastPreset.SUCCESS)
+        self.showNotify(QgaNotifyPreset.SUCCESS)
 
     def testNotifyInfo(self):
 
-        self.showNotify(QgaToastPreset.INFORMATION)
+        self.showNotify(QgaNotifyPreset.INFORMATION)
 
     def testNotifyWarning(self):
 
-        self.showNotify(QgaToastPreset.WARNING)
+        self.showNotify(QgaNotifyPreset.WARNING)
 
     def testNotifyError(self):
 
-        self.showNotify(QgaToastPreset.ERROR)
+        self.showNotify(QgaNotifyPreset.ERROR)
 
     def setupMenuBar(self):
         super().setupMenuBar()
