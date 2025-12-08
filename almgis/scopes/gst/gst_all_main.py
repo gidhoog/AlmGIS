@@ -1,3 +1,5 @@
+import weakref
+
 from qga.data_view import QgaTableModel
 from qga.dialog import QgaDialog
 from qga.fields import QgaField
@@ -40,6 +42,8 @@ from qga.main_widget import QgaMainWidget
 
 from almgis.fields import GeneralField, GstZuordnungField
 
+from almgis.core.data_view import AlmTableModel
+
 
 # from almgis.scopes.gst.gst_zuordnung import GstZuordnung
 # from almgis.scopes.gst.gst_zuordnung_dataform import GstZuordnungDataForm
@@ -75,9 +79,13 @@ class GstAllMainWidget(QgaMainWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.uiTitleLbl.setText('zugeordnete Gst')
+        self.ui.setTitle('zugeordnete Gst')
 
-        self.main_wdg = GstAllDataView(self, gis_mode=True)
+        self.main_wdg = GstAllDataView(self)
+
+        self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+
+        self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
 
         # with session_cm(name='main-widget - kontakt',
         #                    expire_on_commit=False) as session:
@@ -106,18 +114,24 @@ class GstAllMainWidget(QgaMainWidget):
         #
         # self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
 
-    def initMainWidget(self):
-        super().initMainWidget()
+    def setupMainWidget(self):
+        super().setupMainWidget()
 
-        self.uiMainVlay.addWidget(self.main_wdg)
-        # self.kontakt_table.loadData()
-        # self.kontakt_table.initDataView()
+        self.main_wdg.setupDataView()
+        self.ui.mainVlay.addWidget(self.main_wdg.ui)
 
-    def createMw(self):
-
-        self.main_wdg.initDataView()
-
-        self.initMainWidget()
+    # def initMainWidget(self):
+    #     super().initMainWidget()
+    #
+    #     self.uiMainVlay.addWidget(self.main_wdg)
+    #     # self.kontakt_table.loadData()
+    #     # self.kontakt_table.initDataView()
+    #
+    # def createMw(self):
+    #
+    #     self.main_wdg.initDataView()
+    #
+    #     self.initMainWidget()
 
     def changedGisDockLevel(self, level):
         """
@@ -150,12 +164,12 @@ class GstZuordnungMainDialog(QgaDialog):
         self.set_reject_button_text('&Schließen')
 
 
-class GstAllTableModel(QgaTableModel):
+class GstAllTableModel(AlmTableModel):
 # class GstAllTableModel(QgsAttributeTableModel):
 
-    def __init__(self, dmi_list=None, layerCache=None,
+    def __init__(self, layerCache=None,
                  columns=None, parent=None):
-        super().__init__(dmi_list, layerCache, columns, parent)
+        super().__init__(layerCache, columns, parent)
 
     # def __init__(self, dmi_list=None, layerCache=None,
     #              columns=None, parent=None):
@@ -166,21 +180,21 @@ class GstAllTableModel(QgaTableModel):
 
         print(f'////////////////////////////////////////////////////')
 
-        if role == Qt.TextAlignmentRole:
-            # Set alignment for the "Age" column (column index 1)
-            if index.column() == 1:
-                return Qt.AlignHCenter | Qt.AlignVCenter
-
-        if role == Qt.DisplayRole:
-
-            if self.layer().fields().field(index.column()).name() == 'akt_name':
-                current_value = super().data(index, Qt.EditRole)
-                return f"Akt: {current_value}"
-
-            if (self.layer().fields().field(index.column()).name() in
-                    ['last_gb_area', 'last_koppel_area', 'last_gis_area']):
-                current_value = super().data(index, Qt.EditRole)
-                return convertMtoHaWithHa(current_value)
+        # if role == Qt.TextAlignmentRole:
+        #     # Set alignment for the "Age" column (column index 1)
+        #     if index.column() == 1:
+        #         return Qt.AlignHCenter | Qt.AlignVCenter
+        #
+        # if role == Qt.DisplayRole:
+        #
+        #     if self.layer().fields().field(index.column()).name() == 'akt_name':
+        #         current_value = super().data(index, Qt.EditRole)
+        #         return f"Akt: {current_value}"
+        #
+        #     if (self.layer().fields().field(index.column()).name() in
+        #             ['last_gb_area', 'last_koppel_area', 'last_gis_area']):
+        #         current_value = super().data(index, Qt.EditRole)
+        #         return convertMtoHaWithHa(current_value)
 
         return super().data(index, role)
 
@@ -247,6 +261,10 @@ class GstAllDataView(AlmDataView):
     alle gst mit akt
     """
 
+    """weak container to store all live instances of the class"""
+    _instances = weakref.WeakSet()
+    """"""
+
     _maintable_text = ["Grundstück", "Grundstücke", "kein Grundstück"]
     _delete_window_title = ["Grundstück löschen", "Grundstücke löschen"]
     _delete_window_text_single = "Soll das ausgewählte Grundstück " \
@@ -265,11 +283,13 @@ class GstAllDataView(AlmDataView):
         # self.entity_dialog_class = GstDialog
         # self.entity_widget_class = GstZuordnungDataForm
 
+        self.dmi_dict = self._dmi_dict
+
         self._entity_dmc = DmGstZuordnung
-        self._model_class = GstAllTableModel
+        self.model_class = GstAllTableModel
         # self._model_class = QgaTableModel
 
-        self.uiAddDataTbtn.setVisible(False)
+        # self.uiAddDataTbtn.setVisible(False)
 
         # _model_gis_class = GisTableModel
         # _view_gis_class = GisTableView
@@ -277,11 +297,11 @@ class GstAllDataView(AlmDataView):
         # self._commit_entity = False
         # self.edit_entity_by = 'dmi'
 
-        self.layer = VectorLayerFactory.createLayer(
-            'gst_all_main',
-            geometry_type=GeometryType.POLYGON,
-            fields_list=self.getFeatureFields()
-        )
+        # self.layer = VectorLayerFactory.createLayer(
+        #     'gst_all_main',
+        #     geometry_type=GeometryType.POLYGON,
+        #     fields_list=self.getFeatureFields()
+        # )
 
     def openGstZuordnung(self):
         """
@@ -319,10 +339,34 @@ class GstAllDataView(AlmDataView):
         stmt = ((select(DmGstZuordnung))
                 .join(DmGstZuordnung.rel_gst)
                 .group_by(DmGst.id))
+
+        """stmt für gst die zugeordnet sind"""
+        # stmt = ((select(DmGstZuordnung))
+        #         .join(DmGstZuordnung.rel_gst)
+        #         .group_by(DmGst.id))
+        """"""
         # dmi = session.scalars(stmt).unique().all()
         dmi = self.session.scalars(stmt).all()
 
         return dmi
+
+    def createFeatureFields(self):
+
+        # k_uuid = GeneralField.Uuid()
+        f_id = GeneralField.Id()
+        f_type_id = GeneralField.TypeId()
+        f_gst = Fields.GstNr()
+        f_adresse = Fields.Adresse()
+        f_telefon_all = Fields.TelefonAll()
+        f_vertreter_id = Fields.VertreterId()
+
+        # self._fields.append(k_uuid)
+        self._fields.append(f_id)
+        self._fields.append(f_type_id)
+        self._fields.append(f_gst)
+        self._fields.append(k_adresse)
+        self._fields.append(k_telefon_all)
+        self._fields.append(k_vertreter_id)
 
     def setLayer(self):
 
@@ -983,3 +1027,20 @@ class GstAllDataView(AlmDataView):
 #                 return self.header[column]
 #         # else:
 #         #     return super().headerData(column, orientation, role)
+
+
+class Fields:
+    """
+    represent the fields according to the data_model 'GstAllTableModel'
+    """
+
+    class GstNr(QgaField):
+
+        def __init__(self):
+            super().__init__()
+
+            self.name = 'gstnr'
+            self.type = QVariant.String
+
+            self.alias = 'Gst-Nr'
+            self.dmi_attr = 'gst'

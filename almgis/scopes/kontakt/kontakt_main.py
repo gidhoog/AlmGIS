@@ -94,7 +94,8 @@ class KontaktMain(AlmDataView):
 
         # self._instances.add(self)
 
-        self.dmi_dict = KontaktMain._dmi_dict
+        # self.dmi_dict = KontaktMain._dmi_dict
+        self.dmi_dict = self._dmi_dict
         self.edit_entity_by = 'dmi'
 
         self._entity_dmc = DmKontakt
@@ -119,14 +120,14 @@ class KontaktMain(AlmDataView):
     #     self.session.commit()
     #     self.session.close()
 
-    def getDefaultDmi(self):
-
-        dmi = self._entity_dmc()
-
-        dmi.nachname = 'AA'
-        dmi.vorname = 'aa'
-
-        return dmi
+    # def getDefaultDmi(self):
+    #
+    #     dmi = self._entity_dmc()
+    #
+    #     dmi.nachname = 'AA'
+    #     dmi.vorname = 'aa'
+    #
+    #     return dmi
 
     def getDmiList(self):
 

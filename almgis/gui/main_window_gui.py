@@ -31,6 +31,10 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.menuKontakte.setTitle('Kontakte')
         self.menuKontakte.addAction(self.actionOpenKontakteAlle)
 
+        self.menuGst = QMenu()
+        self.menuGst.setTitle('Grundstücke')
+        # self.menuGst.addAction(self.actionOpenKontakteAlle)
+
         self.menuAkte = QMenu()
         self.menuAkte.setTitle('Akte')
         self.menuAkte.addAction(self.actionAlleAkte)
@@ -39,5 +43,6 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
         self.menuBar().addMenu(self.menuProject)
         self.menuBar().addMenu(self.menuKontakte)
+        self.menuBar().addMenu(self.menuGst)
         self.menuBar().addMenu(self.menuAkte)
         self.menuBar().addMenu(self.menuHelp)
