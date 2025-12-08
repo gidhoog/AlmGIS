@@ -1,3 +1,5 @@
+import weakref
+
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QColor
 from qga.core.fields import QgaField
@@ -65,6 +67,13 @@ class KontaktTableModel(AlmTableModel):
 
 
 class KontaktMain(AlmDataView):
+    """
+    class for kontakts
+    """
+
+    """weak container to store all live instances of the class"""
+    _instances = weakref.WeakSet()
+    """"""
 
     _dmi_dict = {}
     _type_dmc = DmKontaktType
@@ -83,12 +92,22 @@ class KontaktMain(AlmDataView):
     def __init__(self, parent=None, gis_mode=False):
         super(__class__, self).__init__(gis_mode)
 
+        # self._instances.add(self)
+
         self.dmi_dict = KontaktMain._dmi_dict
         self.edit_entity_by = 'dmi'
 
         self._entity_dmc = DmKontakt
 
         self.model_cls = KontaktTableModel
+
+        print(f'_instances add: {self._instances}')
+
+    # def onDelete(self):
+    #
+    #     print(f'.....onDelete KontaktMain')
+    #     self._instances.remove(self)
+    #     print(f'_instances remove: {self._instances}')
 
     # def addEntity(self):
     #
