@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QMenu
 from qga.gui.main_window_gui import QgaMainWindowGui
@@ -6,8 +6,11 @@ from qga.gui.main_window_gui import QgaMainWindowGui
 
 class AlmMainWindowGui(QgaMainWindowGui):
 
-    def __init__(self):
-        super(AlmMainWindowGui, self).__init__()
+    openKontakteAllMainWdgSgn = pyqtSignal()
+    openGstAllMainWdgSgn = pyqtSignal()
+
+    def __init__(self, ctrl=None):
+        super(AlmMainWindowGui, self).__init__(ctrl)
 
         # self.useMenuBar = False
 
@@ -23,6 +26,13 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.actionOpenKontakteAlle.setText('alle Kontakte')
         self.actionOpenKontakteAlle.setIcon(
             QIcon(':/svg/icons/contacts.svg'))
+        self.actionOpenKontakteAlle.triggered.connect(self.openKontakteAllMainWdgSgn)
+
+        self.actionOpenGstAll = QAction()
+        self.actionOpenGstAll.setText('alle Grunstücke')
+        self.actionOpenGstAll.setIcon(
+            QIcon(':/svg/icons/gst_all.svg'))
+        self.actionOpenGstAll.triggered.connect(self.openGstAllMainWdgSgn)
 
     def createMenus(self):
         super().createMenus()
@@ -33,6 +43,11 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
         self.menuGst = QMenu()
         self.menuGst.setTitle('Grundstücke')
+        self.menuGst.addAction(self.actionOpenGstAll)
+        # self.menuGst.addAction(self.actionOpenKontakteAlle)
+
+        self.menuImport = QMenu()
+        self.menuImport.setTitle('Import')
         # self.menuGst.addAction(self.actionOpenKontakteAlle)
 
         self.menuAkte = QMenu()
@@ -45,4 +60,5 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.menuBar().addMenu(self.menuKontakte)
         self.menuBar().addMenu(self.menuGst)
         self.menuBar().addMenu(self.menuAkte)
+        self.menuBar().addMenu(self.menuImport)
         self.menuBar().addMenu(self.menuHelp)

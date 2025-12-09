@@ -21,7 +21,7 @@ class AlmMainWindow(QgaMainWindow):
     def __init__(self):
         super(AlmMainWindow, self).__init__()
 
-        self.ui = AlmMainWindowGui()
+        self.ui = AlmMainWindowGui(self)
 
         self.start_dlg_cls = AlmDialog
         self.start_wdg_cls = AlmStartWdg
@@ -101,8 +101,10 @@ class AlmMainWindow(QgaMainWindow):
     def connectSignals(self):
         super().connectSignals()
 
-        self.ui.actionOpenKontakteAlle.triggered.connect(
-            self.openMainWdgKontakteAlle)
+        # self.ui.actionOpenKontakteAlle.triggered.connect(
+        #     self.openKontakteAllMainWdg)
+        self.ui.openKontakteAllMainWdgSgn.connect(self.openKontakteAllMainWdg)
+        self.ui.openGstAllMainWdgSgn.connect(self.openGstAllMainWdg)
 
     def setupDatabasesCommon(self):
         """
@@ -200,9 +202,12 @@ class AlmMainWindow(QgaMainWindow):
     def setupStatusBar(self):
         super().setupStatusBar()
 
-    def openMainWdgKontakteAlle(self):
+    def openKontakteAllMainWdg(self):
+        self.openMainWidget(KontaktMainWidget, debug=False)
 
-        self.openMainWidget(KontaktMainWidget, debug=True)
+    def openGstAllMainWdg(self):
+        print(f'open gst all')
+        # self.openMainWidget(KontaktMainWidget, debug=True)
 
     def openSettings(self):
         super().openSettings()

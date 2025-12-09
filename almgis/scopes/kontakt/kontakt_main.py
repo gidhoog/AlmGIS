@@ -41,6 +41,10 @@ class KontaktMainWidget(QgaMainWidget):
         self.main_wdg.setupDataView()
         self.ui.mainVlay.addWidget(self.main_wdg.ui)
 
+    def finalizeMainWidget(self):
+
+        self.main_wdg.finalSetupDataView()
+
 
 class KontaktTableModel(AlmTableModel):
 
