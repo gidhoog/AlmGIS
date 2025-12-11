@@ -103,7 +103,10 @@ class AlmMainWindow(QgaMainWindow):
 
         # self.ui.actionOpenKontakteAlle.triggered.connect(
         #     self.openKontakteAllMainWdg)
-        self.ui.openKontakteAllMainWdgSgn.connect(self.openKontakteAllMainWdg)
+        # self.ui.openKontakteAllMainWdgSgn.connect(self.openKontakteAllMainWdg)
+        self.ui.openKontakteAllMainWdgSgn.connect(
+            self.openKontakteAllMainWdg)
+
         self.ui.openGstAllMainWdgSgn.connect(self.openGstAllMainWdg)
 
     def setupDatabasesCommon(self):
@@ -203,7 +206,9 @@ class AlmMainWindow(QgaMainWindow):
         super().setupStatusBar()
 
     def openKontakteAllMainWdg(self):
-        self.openMainWidget(KontaktMainWidget, debug=False)
+        # self.openMainWidget(KontaktMainWidget, debug=False)
+        self.insertMainWdg(KontaktMainWidget,
+                           'alle Kontakte neu')
 
     def openGstAllMainWdg(self):
         print(f'open gst all')

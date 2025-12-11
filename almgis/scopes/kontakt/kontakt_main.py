@@ -28,23 +28,31 @@ class KontaktMainWidget(QgaMainWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.ui.setTitle('alle Kontakte')
         self.main_wdg = KontaktMain(self)
 
         self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
-
         self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
 
-    def setupMainWidget(self):
-        super().setupMainWidget()
+        self.setupWdgGui()
 
-        self.main_wdg.setupDataView()
+    def setupWdg(self):
+        super().setupWdg()
+
+        self.main_wdg.setupWdg()
+
+
+    # def finalizeMainWidget(self):
+    def setupWdgGui(self):
+        super().setupWdgGui()
+
+        self.main_wdg.initUi()
+        self.ui.setTitle('alle Kontakte 1')
+
+        # self.main_wdg.finalSetupDataView()
         self.ui.mainVlay.addWidget(self.main_wdg.ui)
 
-    def finalizeMainWidget(self):
-
-        self.main_wdg.finalSetupDataView()
-
+        # self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+        # self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
 
 class KontaktTableModel(AlmTableModel):
 
@@ -107,6 +115,7 @@ class KontaktMain(AlmDataView):
         self.model_cls = KontaktTableModel
 
         print(f'_instances add: {self._instances}')
+        self.setupWdgGui()
 
     # def onDelete(self):
     #
