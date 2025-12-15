@@ -10,6 +10,9 @@ class AlmDataView(QgaDataView):
     def __call__(self, *args, **kwargs):
         pass
 
+    def initUi(self):
+        super().initUi()
+
 
 class AlmTableModel(QgaTableModel):
 

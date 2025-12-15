@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSlot, QVariant, QModelIndex, QAbstractTableModel, \
 from PyQt5.QtWidgets import QDialog, QPushButton, QMessageBox
 from qga.core.filter import QgaFilter
 from qga.core.layer import VectorLayerFactory, GeometryType, QgaFeature
-from qga.gui.main_widget_gui import QgaMainWidgetGui
+from qga.gui.main_widget_gui import QgaMainWdgGui
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import (QLabel, QComboBox, QLineEdit,
                                  QSpacerItem, QSizePolicy, QHBoxLayout,

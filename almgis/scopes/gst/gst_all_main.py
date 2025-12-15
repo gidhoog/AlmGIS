@@ -38,7 +38,7 @@ import typing
 from operator import attrgetter
 
 # from almgis.main_gis import MainGis
-from qga.main_widget import QgaMainWidget
+from qga.main_wdg import QgaMainWdg
 
 from almgis.fields import GeneralField, GstZuordnungField
 
@@ -74,7 +74,7 @@ class GstGisDock(QDockWidget):
         self.setWindowTitle('Kartenansicht')
 
 
-class GstAllMainWidget(QgaMainWidget):
+class GstAllMainWidget(QgaMainWdg):
 
     def __init__(self, parent=None):
         super().__init__(parent)

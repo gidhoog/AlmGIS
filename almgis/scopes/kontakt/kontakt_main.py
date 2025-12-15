@@ -3,9 +3,10 @@ import weakref
 from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QColor
 from qga.core.fields import QgaField
-from qga.core.main_widget import QgaMainWidget
+from qga.core.main_wdg import QgaMainWdg
 from qga.gui.data_view_gui import QgaDataViewGui
 from qgis.PyQt.QtCore import QVariant
+from qgis._gui import QgsAttributeTableView
 from sqlalchemy import select, URL
 
 from almgis.core.data_view import AlmDataView, AlmTableModel
@@ -23,36 +24,51 @@ class KontaktEntityDialog(AlmEntityDialog):
         # self.ui.setWindowTitle(self.ui.windowTitle() + ' - Kontakt')
 
 
-class KontaktMainWidget(QgaMainWidget):
+class KontaktMainWdg(QgaMainWdg):
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.main_wdg = KontaktMain(self)
+        self.content_wdg = KontaktMain(self)
+        # self.ui.uiContentVlay.addWidget(self.main_wdg.ui)
 
-        self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
-        self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
+        self.content_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+        self.parent.updateAppSgn.connect(self.content_wdg.updateDataView)
 
-        self.setupWdgGui()
+        # self.setupWdgGui()
+        # self.initUi()
 
-    def setupWdg(self):
-        super().setupWdg()
+    def initUi(self):
+        super().initUi()
 
-        self.main_wdg.setupWdg()
+        # self.content_wdg.initUi()
+        # self.ui.setTitle(self.title + '+++1')
+
+    def loadData(self):
+
+        self.content_wdg.loadData()
+
+    # def setupWdg(self):
+    #     super().setupWdg()
+
+        # self.content_wdg.setupWdg()
 
 
     # def finalizeMainWidget(self):
-    def setupWdgGui(self):
-        super().setupWdgGui()
-
-        self.main_wdg.initUi()
-        self.ui.setTitle('alle Kontakte 1')
-
-        # self.main_wdg.finalSetupDataView()
-        self.ui.mainVlay.addWidget(self.main_wdg.ui)
-
-        # self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
-        # self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
+    # def setupWdgGui(self):
+    #     super().setupWdgGui()
+    #
+    #     self.main_wdg.initUi()
+    #     self.ui.setTitle('alle Kontakte 11')
+    #
+    #     # vvv = QgsAttributeTableView()
+    #     # self.main_wdg.ui.tableVlay.addWidget(vvv)
+    #
+    #     # self.main_wdg.finalSetupDataView()
+    #     self.ui.mainVlay.addWidget(self.main_wdg.ui)
+    #
+    #     # self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+    #     # self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
 
 class KontaktTableModel(AlmTableModel):
 
@@ -115,7 +131,13 @@ class KontaktMain(AlmDataView):
         self.model_cls = KontaktTableModel
 
         print(f'_instances add: {self._instances}')
-        self.setupWdgGui()
+        # self.setupWdgGui()
+
+    def initUi(self):
+        super().initUi()
+
+        self.ui.titleLbl.setText(f'eine Liste mit allen Kontakten'
+                                 f' {str(self.inst_number)}')
 
     # def onDelete(self):
     #

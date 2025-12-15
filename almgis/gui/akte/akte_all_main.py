@@ -16,7 +16,7 @@ from almgis import settings_general
 from almgis.data_model import DmAkt, DmBearbeitungsstatus
 # from qga.entity import EntityDialog
 from qga.data_view import QgaDataView, QgaTableModel
-from qga.main_widget import QgaMainWidget
+from qga.main_wdg import QgaMainWdg
 
 from almgis.data_session import session_cm
 from almgis.data_view import AlmDataView
@@ -37,7 +37,7 @@ from almgis.scopes.akte.akt_columns import AktNameCol, AktAzCol, AktWeideareaCol
 #         self.dialog_window_title = 'Alm- und Weidebuchakt'
 
 
-class AkteAllMainWidget(QgaMainWidget):
+class AkteAllMainWidget(QgaMainWdg):
     """
     MainWidget für die Darstellung eines DataView's mit allen Akten
     """
