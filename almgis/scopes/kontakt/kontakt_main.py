@@ -42,7 +42,7 @@ class KontaktMainWdg(QgaMainWdg):
         super().initUi()
 
         # self.content_wdg.initUi()
-        # self.ui.setTitle(self.title + '+++1')
+        self.ui.setTitle(self.title + '+/+1')
 
     def loadData(self):
 
