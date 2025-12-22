@@ -678,7 +678,9 @@ class KontaktMainWdg(QgaMainWdg):
 
     # self.content_wdg.setupWdg()
 
-    # def finalizeMainWidget(self):
+    def finalizeMainWidget(self):
+
+        self.content_wdg.finalSetupDataView()
     # def setupWdgGui(self):
     #     super().setupWdgGui()
     #
