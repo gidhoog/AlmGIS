@@ -62,3 +62,7 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.menuBar().addMenu(self.menuAkte)
         self.menuBar().addMenu(self.menuImport)
         self.menuBar().addMenu(self.menuHelp)
+
+    def setupToolBar(self):
+
+        self.uiToolBar.addAction(self.actionOpenKontakteAlle)

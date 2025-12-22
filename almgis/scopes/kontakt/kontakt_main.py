@@ -24,52 +24,6 @@ class KontaktEntityDialog(AlmEntityDialog):
         # self.ui.setWindowTitle(self.ui.windowTitle() + ' - Kontakt')
 
 
-class KontaktMainWdg(QgaMainWdg):
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.content_wdg = KontaktMain(self)
-        # self.ui.uiContentVlay.addWidget(self.main_wdg.ui)
-
-        self.content_wdg.updateDataViewSgn.connect(self.updateMainWdg)
-        self.parent.updateAppSgn.connect(self.content_wdg.updateDataView)
-
-        # self.setupWdgGui()
-        # self.initUi()
-
-    def initUi(self):
-        super().initUi()
-
-        # self.content_wdg.initUi()
-        self.ui.setTitle(self.title + '+/+1')
-
-    def loadData(self):
-
-        self.content_wdg.loadData()
-
-    # def setupWdg(self):
-    #     super().setupWdg()
-
-        # self.content_wdg.setupWdg()
-
-
-    # def finalizeMainWidget(self):
-    # def setupWdgGui(self):
-    #     super().setupWdgGui()
-    #
-    #     self.main_wdg.initUi()
-    #     self.ui.setTitle('alle Kontakte 11')
-    #
-    #     # vvv = QgsAttributeTableView()
-    #     # self.main_wdg.ui.tableVlay.addWidget(vvv)
-    #
-    #     # self.main_wdg.finalSetupDataView()
-    #     self.ui.mainVlay.addWidget(self.main_wdg.ui)
-    #
-    #     # self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
-    #     # self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
-
 class KontaktTableModel(AlmTableModel):
 
     def __init__(self, layerCache=None,
@@ -692,6 +646,54 @@ class KontaktMain(AlmDataView):
 #         vertreter = KontaktNameCol('Vertreter')
 #         vertreter.set_dmi_attr('rel_vertreter')
 #         self.columns.append(vertreter)
+
+
+class KontaktMainWdg(QgaMainWdg):
+
+    content_wdg_cls = KontaktMain
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.content_wdg = self.content_wdg_cls(self)
+        # self.ui.uiContentVlay.addWidget(self.main_wdg.ui)
+
+        self.content_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+        self.parent.updateAppSgn.connect(self.content_wdg.updateDataView)
+
+        # self.setupWdgGui()
+        # self.initUi()
+
+    def initUi(self):
+        super().initUi()
+
+        # self.content_wdg.initUi()
+        self.ui.setTitle(self.title + '+/+1')
+
+    def loadData(self):
+        self.content_wdg.loadData()
+
+    # def setupWdg(self):
+    #     super().setupWdg()
+
+    # self.content_wdg.setupWdg()
+
+    # def finalizeMainWidget(self):
+    # def setupWdgGui(self):
+    #     super().setupWdgGui()
+    #
+    #     self.main_wdg.initUi()
+    #     self.ui.setTitle('alle Kontakte 11')
+    #
+    #     # vvv = QgsAttributeTableView()
+    #     # self.main_wdg.ui.tableVlay.addWidget(vvv)
+    #
+    #     # self.main_wdg.finalSetupDataView()
+    #     self.ui.mainVlay.addWidget(self.main_wdg.ui)
+    #
+    #     # self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+    #     # self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
+
 
 class Fields:
     """
