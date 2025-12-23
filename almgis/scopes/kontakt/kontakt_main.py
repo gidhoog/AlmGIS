@@ -4,10 +4,7 @@ from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtGui import QColor
 from qga.core.fields import QgaField
 from qga.core.main_wdg import QgaMainWdg
-from qga.gui.data_view_gui import QgaDataViewGui
 from qgis.PyQt.QtCore import QVariant
-from qgis._core import QgsVectorLayerCache
-from qgis._gui import QgsAttributeTableView
 from sqlalchemy import select, URL
 
 from almgis.core.data_view import AlmDataView, AlmTableModel
@@ -694,7 +691,7 @@ class KontaktMainWdg(QgaMainWdg):
         super().initUi()
 
         # self.content_wdg.initUi()
-        self.ui.setTitle(self.title + '+/+1')
+        self.ui.setTitle(self.title)
 
     @staticmethod
     def loadData(cls, session):

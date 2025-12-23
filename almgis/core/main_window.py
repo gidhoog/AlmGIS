@@ -41,62 +41,62 @@ class AlmMainWindow(QgaMainWindow):
     def setupMainWindow(self):
         super().setupMainWindow()
 
-    def setupActions(self):
-        super().setupActions()
-
-        self.uiAktionOpenAkteMain = QAction()
-        self.uiAktionOpenAkteMain.setText('Alle Akte')
-        self.uiAktionOpenAkteMain.setIcon(
-            QIcon(':/svg/icons/akte.svg'))
-
-        self.uiAktionOpenGstZuornungMain = QAction()
-        self.uiAktionOpenGstZuornungMain.setText('zugeordnete Grundstücke')
-        self.uiAktionOpenGstZuornungMain.setIcon(
-            QIcon(':/svg/icons/gst_all.svg'))
-
-        self.actionOpenKontakteAlle = QAction()
-        self.actionOpenKontakteAlle.setText('alle Kontakte')
-        self.actionOpenKontakteAlle.setIcon(
-            QIcon(':/svg/icons/contacts.svg'))
-
-        self.uiAktionCutAwbKomplex = QAction()
-        self.uiAktionCutAwbKomplex.setText('Verschnitt: Gst und Komplexe')
-        # self.uiAktionCutAwbKomplex.setIcon(
-        #     QIcon(':/svg/icons/contacts.svg'))
-
-        self.uiAktionOpenSettings = QAction()
-        self.uiAktionOpenSettings.setText('Einstellungen')
-        # self.uiAktionOpenSettings.setIcon(
-        #     QIcon(':/svg/icons/contacts.svg'))
-
-        self.uiAktionOpenGstImportPath = QAction()
-        self.uiAktionOpenGstImportPath.setText('öffne Gst-Importverzeichnis')
-        self.uiAktionOpenGstImportPath.setIcon(
-            QIcon(':/svg/icons/mActionFileOpen.svg'))
-
-        self.uiAktionImportGst = QAction()
-        self.uiAktionImportGst.setText('Gst-Importverzeichnis neu einlesen')
-        self.uiAktionImportGst.setIcon(
-            QIcon(':/svg/icons/import.svg'))
-
-        # self.uiActionOpenHelp = QAction()
-        # self.uiActionOpenHelp.setText('öffne AlmGIS-Wiki')
-        # # self.uiAktionOpenSettings.setIcon(
-        # #     QIcon(':/svg/icons/contacts.svg'))
-        #
-        # self.uiActionOpenAbout = QAction()
-        # self.uiActionOpenAbout.setText('über AlmGIS')
-        # # self.uiAktionOpenSettings.setIcon(
-        # #     QIcon(':/svg/icons/contacts.svg'))
-
-        self.uiAktionTestSuccess = QAction()
-        self.uiAktionTestSuccess.setText('Erfolg')
-        self.uiAktionTestWarning = QAction()
-        self.uiAktionTestWarning.setText('Wahrnung')
-        self.uiAktionTestError = QAction()
-        self.uiAktionTestError.setText('Error')
-        self.uiAktionTestInfo = QAction()
-        self.uiAktionTestInfo.setText('Info')
+    # def setupActions(self):
+    #     super().setupActions()
+    #
+    #     self.uiAktionOpenAkteMain = QAction()
+    #     self.uiAktionOpenAkteMain.setText('Alle Akte')
+    #     self.uiAktionOpenAkteMain.setIcon(
+    #         QIcon(':/svg/icons/akte.svg'))
+    #
+    #     self.uiAktionOpenGstZuornungMain = QAction()
+    #     self.uiAktionOpenGstZuornungMain.setText('zugeordnete Grundstücke')
+    #     self.uiAktionOpenGstZuornungMain.setIcon(
+    #         QIcon(':/svg/icons/gst_all.svg'))
+    #
+    #     self.actionOpenKontakteAlle = QAction()
+    #     self.actionOpenKontakteAlle.setText('Kontakte xxxx')
+    #     self.actionOpenKontakteAlle.setIcon(
+    #         QIcon(':/svg/icons/contacts.svg'))
+    #
+    #     self.uiAktionCutAwbKomplex = QAction()
+    #     self.uiAktionCutAwbKomplex.setText('Verschnitt: Gst und Komplexe')
+    #     # self.uiAktionCutAwbKomplex.setIcon(
+    #     #     QIcon(':/svg/icons/contacts.svg'))
+    #
+    #     self.uiAktionOpenSettings = QAction()
+    #     self.uiAktionOpenSettings.setText('Einstellungen')
+    #     # self.uiAktionOpenSettings.setIcon(
+    #     #     QIcon(':/svg/icons/contacts.svg'))
+    #
+    #     self.uiAktionOpenGstImportPath = QAction()
+    #     self.uiAktionOpenGstImportPath.setText('öffne Gst-Importverzeichnis')
+    #     self.uiAktionOpenGstImportPath.setIcon(
+    #         QIcon(':/svg/icons/mActionFileOpen.svg'))
+    #
+    #     self.uiAktionImportGst = QAction()
+    #     self.uiAktionImportGst.setText('Gst-Importverzeichnis neu einlesen')
+    #     self.uiAktionImportGst.setIcon(
+    #         QIcon(':/svg/icons/import.svg'))
+    #
+    #     # self.uiActionOpenHelp = QAction()
+    #     # self.uiActionOpenHelp.setText('öffne AlmGIS-Wiki')
+    #     # # self.uiAktionOpenSettings.setIcon(
+    #     # #     QIcon(':/svg/icons/contacts.svg'))
+    #     #
+    #     # self.uiActionOpenAbout = QAction()
+    #     # self.uiActionOpenAbout.setText('über AlmGIS')
+    #     # # self.uiAktionOpenSettings.setIcon(
+    #     # #     QIcon(':/svg/icons/contacts.svg'))
+    #
+    #     self.uiAktionTestSuccess = QAction()
+    #     self.uiAktionTestSuccess.setText('Erfolg')
+    #     self.uiAktionTestWarning = QAction()
+    #     self.uiAktionTestWarning.setText('Wahrnung')
+    #     self.uiAktionTestError = QAction()
+    #     self.uiAktionTestError.setText('Error')
+    #     self.uiAktionTestInfo = QAction()
+    #     self.uiAktionTestInfo.setText('Info')
 
     def connectSignals(self):
         super().connectSignals()
@@ -208,7 +208,7 @@ class AlmMainWindow(QgaMainWindow):
     def openKontakteAllMainWdg(self):
         # self.openMainWidget(KontaktMainWidget, debug=False)
         self.insertMainWdg(KontaktMainWdg,
-                           'alle Kontakte neu')
+                           'Kontakte')
 
     def openGstAllMainWdg(self):
         print(f'open gst all')

@@ -23,7 +23,7 @@ class AlmMainWindowGui(QgaMainWindowGui):
             QIcon(':/svg/icons/mActionFileNew.svg'))
 
         self.actionOpenKontakteAlle = QAction()
-        self.actionOpenKontakteAlle.setText('alle Kontakte')
+        self.actionOpenKontakteAlle.setText('Kontakte')
         self.actionOpenKontakteAlle.setIcon(
             QIcon(':/svg/icons/contacts.svg'))
         self.actionOpenKontakteAlle.triggered.connect(self.openKontakteAllMainWdgSgn)
