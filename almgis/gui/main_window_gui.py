@@ -11,6 +11,9 @@ class AlmMainWindowGui(QgaMainWindowGui):
     openGstMainWdgSgn = pyqtSignal()
     openGstMainAwbWdgSgn = pyqtSignal()
 
+    openGdbImportPathSgn = pyqtSignal()
+    importGdbImportPathSgn = pyqtSignal()
+
     def __init__(self, ctrl=None):
         super(AlmMainWindowGui, self).__init__(ctrl)
 
@@ -42,6 +45,18 @@ class AlmMainWindowGui(QgaMainWindowGui):
             QIcon(':/svg/icons/gst_all.svg'))
         self.actionOpenGstAwb.triggered.connect(self.openGstMainAwbWdgSgn)
 
+        self.actionOpenGdbImpPath = QAction()
+        self.actionOpenGdbImpPath.setText('öffne Gst-Importverzeichnis')
+        self.actionOpenGdbImpPath.setIcon(
+            QIcon(':/svg/icons/mActionFileOpen.svg'))
+        self.actionOpenGdbImpPath.triggered.connect(self.openGdbImportPathSgn)
+
+        self.actionImportGdbImpPath = QAction()
+        self.actionImportGdbImpPath.setText('Gst-Importverzeichnis neu einlesen')
+        self.actionImportGdbImpPath.setIcon(
+            QIcon(':/svg/icons/import.svg'))
+        self.actionImportGdbImpPath.triggered.connect(self.importGdbImportPathSgn)
+
     def createMenus(self):
         super().createMenus()
 
@@ -57,6 +72,8 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
         self.menuImport = QMenu()
         self.menuImport.setTitle('Import')
+        self.menuImport.addAction(self.actionOpenGdbImpPath)
+        self.menuImport.addAction(self.actionImportGdbImpPath)
         # self.menuGst.addAction(self.actionOpenKontakteAlle)
 
         self.menuAkte = QMenu()
