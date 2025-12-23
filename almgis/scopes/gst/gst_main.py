@@ -2,6 +2,7 @@ import weakref
 
 from qga.core.dialog import QgaDialog
 from qga.core.fields import QgaField
+from qga.core.main_wdg import QgaMainWdg
 from qgis.PyQt.QtCore import Qt, QModelIndex, QAbstractTableModel
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import (QHeaderView, QPushButton, QDialog, QDockWidget,
@@ -22,12 +23,11 @@ from sqlalchemy import func, select
 from operator import attrgetter
 
 # from almgis.main_gis import MainGis
-from qga.core.main_wdg import QgaMainWdg
-
-from almgis.core.fields import GeneralField, GstZuordnungField
 
 from almgis.core.data_view import AlmTableModel, AlmDataView
 from almgis.core.entity import AlmEntityDialog
+from almgis.database.models import DmGstZuordnung
+from almgis.scopes.gst.gst_all_main import GstAllTableModel
 
 
 # from almgis.scopes.gst.gst_zuordnung import GstZuordnung
@@ -59,82 +59,6 @@ class GstGisDock(QDockWidget):
         self.setWindowTitle('Kartenansicht')
 
 
-class GstAllMainWidget(QgaMainWdg):
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.ui.setTitle('zugeordnete Gst')
-
-        self.main_wdg = GstAllDataView(self)
-
-        self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
-
-        self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
-
-        # with session_cm(name='main-widget - kontakt',
-        #                    expire_on_commit=False) as session:
-
-        # """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
-        # self.uiGisDock = GstGisDock(self)
-        # self.guiMainGis = MainGis(self.uiGisDock, self)
-        # self.guiMainGis.setMaingisSession(self.mainwidget_session)
-        # self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
-        # self.uiGisDock.setWidget(self.guiMainGis)
-        # """"""
-        #
-        # """setzte den 'scope_id'; damit die richtigen layer aus dem
-        # daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
-        # # self.guiMainGis.scope_id = 1
-        # """"""
-        #
-        # self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
-        # """"""
-        #
-        # """setzte die karte auf die ausdehnung des gst-layers"""
-        # self.gst_table._gis_layer.updateExtents()
-        # extent = self.gst_table._gis_layer.extent()
-        # self.guiMainGis.uiCanvas.setExtent(extent)
-        # """"""
-        #
-        # self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
-
-    def setupMainWidget(self):
-        super().setupMainWidget()
-
-        self.main_wdg.setupDataView()
-        self.ui.mainVlay.addWidget(self.main_wdg.ui)
-
-    # def initMainWidget(self):
-    #     super().initMainWidget()
-    #
-    #     self.uiMainVlay.addWidget(self.main_wdg)
-    #     # self.kontakt_table.loadData()
-    #     # self.kontakt_table.initDataView()
-    #
-    # def createMw(self):
-    #
-    #     self.main_wdg.initDataView()
-    #
-    #     self.initMainWidget()
-
-    def changedGisDockLevel(self, level):
-        """
-        überwache den level des GisDock; zeige die schaltfläche 'uiUnfloatDock'
-        nur wenn es losgelöst ist
-        """
-        if level:
-            self.uiGisDock.setWindowFlags(Qt.CustomizeWindowHint |
-                                          Qt.Window |
-                                          Qt.WindowMinimizeButtonHint |
-                                          Qt.WindowMaximizeButtonHint |
-                                          Qt.WindowCloseButtonHint)
-            self.uiGisDock.widget().uiUnfoatDock.setVisible(True)
-            self.uiGisDock.show()
-        else:
-            self.uiGisDock.widget().uiUnfoatDock.setVisible(False)
-
-
 class GstZuordnungMainDialog(QgaDialog):
     """
     dialog mit dem eine grundstückszuordnung erstellt wird
@@ -149,7 +73,7 @@ class GstZuordnungMainDialog(QgaDialog):
         self.set_reject_button_text('&Schließen')
 
 
-class GstAllTableModel(AlmTableModel):
+class GstTableModel(AlmTableModel):
 # class GstAllTableModel(QgsAttributeTableModel):
 
     def __init__(self, layerCache=None,
@@ -263,7 +187,7 @@ class GstAllDataView(AlmDataView):
     # gst_zuordnung_dlg_class = GstZuordnungMainDialog
 
     def __init__(self, parent=None, gis_mode=False):
-        super(__class__, self).__init__(parent, gis_mode)
+        super(__class__, self).__init__(gis_mode)
 
         # self.entity_dialog_class = GstDialog
         # self.entity_widget_class = GstZuordnungDataForm
@@ -311,9 +235,11 @@ class GstAllDataView(AlmDataView):
     def initUi(self):
         super().initUi()
 
-        self.uiTitleLbl.setVisible(True)
+        # self.ui.setTitle('Grundstücke - Vorrat')
 
-        self.uiTitleLbl.setText('zugeordnete Grundstücke')
+        # self.uiTitleLbl.setVisible(True)
+
+        # self.uiTitleLbl.setText('zugeordnete Grundstücke')
 
     # def loadData(self, session=None):
     #
@@ -1012,6 +938,89 @@ class GstAllDataView(AlmDataView):
 #                 return self.header[column]
 #         # else:
 #         #     return super().headerData(column, orientation, role)
+
+
+class GstMainWdg(QgaMainWdg):
+
+    content_wdg_cls = GstAllDataView
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # self.ui.setTitle('zugeordnete Gst')
+
+        # self.main_wdg = GstAllDataView(self)
+        #
+        # self.main_wdg.updateDataViewSgn.connect(self.updateMainWdg)
+        #
+        # self.parent.updateAppSgn.connect(self.main_wdg.updateDataView)
+
+        # with session_cm(name='main-widget - kontakt',
+        #                    expire_on_commit=False) as session:
+
+        # """erzeuge ein main_gis widget und füge es in ein GisDock ein"""
+        # self.uiGisDock = GstGisDock(self)
+        # self.guiMainGis = MainGis(self.uiGisDock, self)
+        # self.guiMainGis.setMaingisSession(self.mainwidget_session)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.uiGisDock)
+        # self.uiGisDock.setWidget(self.guiMainGis)
+        # """"""
+        #
+        # """setzte den 'scope_id'; damit die richtigen layer aus dem
+        # daten_model 'BGisScopeLayer' für dieses main_gis widget geladen werden"""
+        # # self.guiMainGis.scope_id = 1
+        # """"""
+        #
+        # self.guiMainGis.project_instance.addMapLayer(self.gst_table._gis_layer)
+        # """"""
+        #
+        # """setzte die karte auf die ausdehnung des gst-layers"""
+        # self.gst_table._gis_layer.updateExtents()
+        # extent = self.gst_table._gis_layer.extent()
+        # self.guiMainGis.uiCanvas.setExtent(extent)
+        # """"""
+        #
+        # self.uiGisDock.topLevelChanged.connect(self.changedGisDockLevel)
+
+    def initUi(self):
+        super().initUi()
+
+        self.ui.setTitle('Grundstücke - Vorrat')
+
+    def setupMainWidget(self):
+        super().setupMainWidget()
+
+        self.main_wdg.setupDataView()
+        self.ui.mainVlay.addWidget(self.main_wdg.ui)
+
+    # def initMainWidget(self):
+    #     super().initMainWidget()
+    #
+    #     self.uiMainVlay.addWidget(self.main_wdg)
+    #     # self.kontakt_table.loadData()
+    #     # self.kontakt_table.initDataView()
+    #
+    # def createMw(self):
+    #
+    #     self.main_wdg.initDataView()
+    #
+    #     self.initMainWidget()
+
+    def changedGisDockLevel(self, level):
+        """
+        überwache den level des GisDock; zeige die schaltfläche 'uiUnfloatDock'
+        nur wenn es losgelöst ist
+        """
+        if level:
+            self.uiGisDock.setWindowFlags(Qt.CustomizeWindowHint |
+                                          Qt.Window |
+                                          Qt.WindowMinimizeButtonHint |
+                                          Qt.WindowMaximizeButtonHint |
+                                          Qt.WindowCloseButtonHint)
+            self.uiGisDock.widget().uiUnfoatDock.setVisible(True)
+            self.uiGisDock.show()
+        else:
+            self.uiGisDock.widget().uiUnfoatDock.setVisible(False)
 
 
 class Fields:

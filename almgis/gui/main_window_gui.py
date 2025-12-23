@@ -7,7 +7,9 @@ from qga.gui.main_window_gui import QgaMainWindowGui
 class AlmMainWindowGui(QgaMainWindowGui):
 
     openKontakteAllMainWdgSgn = pyqtSignal()
-    openGstAllMainWdgSgn = pyqtSignal()
+
+    openGstMainWdgSgn = pyqtSignal()
+    openGstMainAwbWdgSgn = pyqtSignal()
 
     def __init__(self, ctrl=None):
         super(AlmMainWindowGui, self).__init__(ctrl)
@@ -29,10 +31,16 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.actionOpenKontakteAlle.triggered.connect(self.openKontakteAllMainWdgSgn)
 
         self.actionOpenGstAll = QAction()
-        self.actionOpenGstAll.setText('alle Grunstücke')
+        self.actionOpenGstAll.setText('Vorrat')
         self.actionOpenGstAll.setIcon(
             QIcon(':/svg/icons/gst_all.svg'))
-        self.actionOpenGstAll.triggered.connect(self.openGstAllMainWdgSgn)
+        self.actionOpenGstAll.triggered.connect(self.openGstMainWdgSgn)
+
+        self.actionOpenGstAwb = QAction()
+        self.actionOpenGstAwb.setText('Alm- und Weidebuch')
+        self.actionOpenGstAwb.setIcon(
+            QIcon(':/svg/icons/gst_all.svg'))
+        self.actionOpenGstAwb.triggered.connect(self.openGstMainAwbWdgSgn)
 
     def createMenus(self):
         super().createMenus()
@@ -44,6 +52,7 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.menuGst = QMenu()
         self.menuGst.setTitle('Grundstücke')
         self.menuGst.addAction(self.actionOpenGstAll)
+        self.menuGst.addAction(self.actionOpenGstAwb)
         # self.menuGst.addAction(self.actionOpenKontakteAlle)
 
         self.menuImport = QMenu()
@@ -66,3 +75,4 @@ class AlmMainWindowGui(QgaMainWindowGui):
     def setupToolBar(self):
 
         self.uiToolBar.addAction(self.actionOpenKontakteAlle)
+        self.uiToolBar.addAction(self.actionOpenGstAll)

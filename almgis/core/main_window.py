@@ -9,6 +9,7 @@ from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
 from almgis.core.dialog import AlmDialog
+from almgis.scopes.gst.gst_main import GstMainWdg
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWdg
 from almgis.database.models import DmSettings
 from almgis.gui.about import AlmAboutDialog
@@ -107,7 +108,7 @@ class AlmMainWindow(QgaMainWindow):
         self.ui.openKontakteAllMainWdgSgn.connect(
             self.openKontakteAllMainWdg)
 
-        self.ui.openGstAllMainWdgSgn.connect(self.openGstAllMainWdg)
+        self.ui.openGstMainWdgSgn.connect(self.openGstMainWdg)
 
     def setupDatabasesCommon(self):
         """
@@ -210,8 +211,10 @@ class AlmMainWindow(QgaMainWindow):
         self.insertMainWdg(KontaktMainWdg,
                            'Kontakte')
 
-    def openGstAllMainWdg(self):
+    def openGstMainWdg(self):
         print(f'open gst all')
+        self.insertMainWdg(GstMainWdg,
+                           'Grundstücke - Vorrat')
         # self.openMainWidget(KontaktMainWidget, debug=True)
 
     def openSettings(self):

@@ -678,7 +678,7 @@ class KontaktMainWdg(QgaMainWdg):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.content_wdg = self.content_wdg_cls(self)
+        # self.content_wdg = self.content_wdg_cls(self)
         # self.ui.uiContentVlay.addWidget(self.main_wdg.ui)
 
         self.content_wdg.updateDataViewSgn.connect(self.updateMainWdg)
