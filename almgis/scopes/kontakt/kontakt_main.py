@@ -59,6 +59,7 @@ class KontaktMain(AlmDataView):
 
     _dmi_dict = {}
     _type_dmc = DmKontaktType
+    _entity_dmc = DmKontakt
 
     _entity_dialog_class = KontaktEntityDialog
 
@@ -80,7 +81,7 @@ class KontaktMain(AlmDataView):
         self.dmi_dict = self._dmi_dict
         self.edit_entity_by = 'dmi'
 
-        self._entity_dmc = DmKontakt
+        # self._entity_dmc = DmKontakt
 
         self.model_cls = KontaktTableModel
 
@@ -118,17 +119,37 @@ class KontaktMain(AlmDataView):
     #
     #     return dmi
 
-    def getDmiList(self):
+    @staticmethod
+    def loadData(cls, session):
+
+        dmi_list = cls.getDmiList(cls, session)
+
+        return dmi_list
+
+    @staticmethod
+    def getDmiList(cls, session):
 
         url_object = URL.create(
             "sqlite",
             database="appdb.db",
         )
 
-        stmt = select(self._entity_dmc).where(DmKontakt.blank_value == 0)
-        dmi = self.session.scalars(stmt).all()
+        stmt = select(cls._entity_dmc).where(DmKontakt.blank_value == 0)
+        dmi = session.scalars(stmt).all()
 
         return dmi
+
+    # def getDmiList(self):
+    #
+    #     url_object = URL.create(
+    #         "sqlite",
+    #         database="appdb.db",
+    #     )
+    #
+    #     stmt = select(self._entity_dmc).where(DmKontakt.blank_value == 0)
+    #     dmi = self.session.scalars(stmt).all()
+    #
+    #     return dmi
 
     def createFeatureFields(self):
 
@@ -670,8 +691,17 @@ class KontaktMainWdg(QgaMainWdg):
         # self.content_wdg.initUi()
         self.ui.setTitle(self.title + '+/+1')
 
-    def loadData(self):
-        self.content_wdg.loadData()
+    @staticmethod
+    def loadData(cls, session):
+        super().loadData(cls, session)
+
+        print(f'load kontakt main_wdg data')
+        dd = cls.content_wdg_cls.loadData(cls.content_wdg_cls, session)
+
+        return dd
+
+    # def loadData(self):
+    #     self.content_wdg.loadData()
 
     # def setupWdg(self):
     #     super().setupWdg()
