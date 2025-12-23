@@ -6,6 +6,7 @@ from qga.core.fields import QgaField
 from qga.core.main_wdg import QgaMainWdg
 from qga.gui.data_view_gui import QgaDataViewGui
 from qgis.PyQt.QtCore import QVariant
+from qgis._core import QgsVectorLayerCache
 from qgis._gui import QgsAttributeTableView
 from sqlalchemy import select, URL
 
@@ -91,8 +92,10 @@ class KontaktMain(AlmDataView):
     def initUi(self):
         super().initUi()
 
-        self.ui.titleLbl.setText(f'eine Liste mit allen Kontakten'
-                                 f' {str(self.inst_number)}')
+        # self.ui.titleLbl.setText(f'')
+
+        # self.ui.titleLbl.setText(f'eine Liste mit allen Kontakten'
+        #                          f' {str(self.inst_number)}')
 
     # def onDelete(self):
     #
@@ -119,12 +122,14 @@ class KontaktMain(AlmDataView):
     #
     #     return dmi
 
-    @staticmethod
+    @classmethod
     def loadData(cls, session):
 
-        dmi_list = cls.getDmiList(cls, session)
+        if len(cls.livingInstances()) <= 1:
+            dmi_list = cls.getDmiList(cls, session)
+            cls._dmi_dict = {str(dmi.id): dmi for dmi in dmi_list}
 
-        return dmi_list
+        return cls._dmi_dict
 
     @staticmethod
     def getDmiList(cls, session):
@@ -696,9 +701,18 @@ class KontaktMainWdg(QgaMainWdg):
         super().loadData(cls, session)
 
         print(f'load kontakt main_wdg data')
-        dd = cls.content_wdg_cls.loadData(cls.content_wdg_cls, session)
+        # dd = cls.content_wdg_cls.loadData(cls.content_wdg_cls, session)
+        dd = cls.content_wdg_cls.loadData(session)
 
         return dd
+
+    def applyData(self, data):
+
+        self.content_wdg.applyData(data)
+
+    def completeWdg(self):
+
+        self.content_wdg.completeWdg()
 
     # def loadData(self):
     #     self.content_wdg.loadData()
