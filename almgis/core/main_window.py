@@ -1,3 +1,4 @@
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 from qga import Qga
@@ -19,6 +20,8 @@ from almgis.gui.start_wdg_gui import AlmStartWdg
 
 class AlmMainWindow(QgaMainWindow):
 
+    openImportBevShpSgn = pyqtSignal()
+
     def __init__(self):
         super(AlmMainWindow, self).__init__()
 
@@ -38,6 +41,12 @@ class AlmMainWindow(QgaMainWindow):
 
         self._project_file = None
         self._selected_mainarea = None
+
+        self.openImportBevShpSgn.connect(self.openImportBevShp)
+
+    def openImportBevShp(self):
+
+        print(f'openImportBevShp')
 
     def setupMainWindow(self):
         super().setupMainWindow()

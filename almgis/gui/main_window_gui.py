@@ -51,11 +51,20 @@ class AlmMainWindowGui(QgaMainWindowGui):
             QIcon(':/svg/icons/mActionFileOpen.svg'))
         self.actionOpenGdbImpPath.triggered.connect(self.openGdbImportPathSgn)
 
+        # self.actionOpenGdbImpPath.triggered.connect(
+        #     self.ctrl.openImportBevShpSgn)
+        self.actionOpenGdbImpPath.triggered.connect(
+            self.test01)
+
         self.actionImportGdbImpPath = QAction()
         self.actionImportGdbImpPath.setText('Gst-Importverzeichnis neu einlesen')
         self.actionImportGdbImpPath.setIcon(
             QIcon(':/svg/icons/import.svg'))
         self.actionImportGdbImpPath.triggered.connect(self.importGdbImportPathSgn)
+
+    def test01(self):
+
+        print(f'...')
 
     def createMenus(self):
         super().createMenus()
@@ -83,11 +92,11 @@ class AlmMainWindowGui(QgaMainWindowGui):
     def addMenus(self):
 
         self.menuBar().addMenu(self.menuProject)
-        self.menuBar().addMenu(self.menuKontakte)
-        self.menuBar().addMenu(self.menuGst)
-        self.menuBar().addMenu(self.menuAkte)
-        self.menuBar().addMenu(self.menuImport)
-        self.menuBar().addMenu(self.menuHelp)
+        # self.menuBar().addMenu(self.menuKontakte)
+        # self.menuBar().addMenu(self.menuGst)
+        # self.menuBar().addMenu(self.menuAkte)
+        # self.menuBar().addMenu(self.menuImport)
+        # self.menuBar().addMenu(self.menuHelp)
 
     def setupToolBar(self):
 
