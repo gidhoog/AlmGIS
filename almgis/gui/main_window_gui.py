@@ -19,6 +19,20 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
         # self.useMenuBar = False
 
+    def createActions(self):
+        super().createActions()
+
+        self.actions.create(self, 'kontakt.main_all', '&Kontakte',
+                            'Ctrl+K',
+                            icon=':/svg/icons/contacts.svg')
+
+    def connectActions(self):
+        super().connectActions()
+
+        self.actions.add_connections({
+            'kontakt.main_all': self.ctrl.openKontakteAllMainWdg,
+        })
+
     def setupActions(self):
         super().setupActions()
 
@@ -66,7 +80,15 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
         print(f'...')
 
-    def createMenus(self):
+    def setupMenus(self):
+        super().setupMenus()
+
+        self.menuKontakte = QMenu()
+        self.menuKontakte.setTitle('Kontakte')
+        self.menuBar().addMenu(self.menuKontakte)
+        self.menuKontakte.addAction(self.actions.get('kontakt.main_all'))
+
+    def createMenus(self):  # löschen
         super().createMenus()
 
         self.menuKontakte = QMenu()
@@ -89,14 +111,15 @@ class AlmMainWindowGui(QgaMainWindowGui):
         self.menuAkte.setTitle('Akte')
         self.menuAkte.addAction(self.actionAlleAkte)
 
-    def addMenus(self):
-
-        self.menuBar().addMenu(self.menuProject)
-        # self.menuBar().addMenu(self.menuKontakte)
-        # self.menuBar().addMenu(self.menuGst)
-        # self.menuBar().addMenu(self.menuAkte)
-        # self.menuBar().addMenu(self.menuImport)
-        # self.menuBar().addMenu(self.menuHelp)
+    # def addMenus(self):
+    #     super().addMenus()
+    #
+    #     self.menuBar().addMenu(self.menuProject)
+    #     # self.menuBar().addMenu(self.menuKontakte)
+    #     # self.menuBar().addMenu(self.menuGst)
+    #     # self.menuBar().addMenu(self.menuAkte)
+    #     # self.menuBar().addMenu(self.menuImport)
+    #     # self.menuBar().addMenu(self.menuHelp)
 
     def setupToolBar(self):
 
