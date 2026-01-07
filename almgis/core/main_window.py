@@ -108,16 +108,16 @@ class AlmMainWindow(QgaMainWindow):
     #     self.uiAktionTestInfo = QAction()
     #     self.uiAktionTestInfo.setText('Info')
 
-    def connectSignals(self):
-        super().connectSignals()
-
-        # self.ui.actionOpenKontakteAlle.triggered.connect(
-        #     self.openKontakteAllMainWdg)
-        # self.ui.openKontakteAllMainWdgSgn.connect(self.openKontakteAllMainWdg)
-        self.ui.openKontakteAllMainWdgSgn.connect(
-            self.openKontakteAllMainWdg)
-
-        self.ui.openGstMainWdgSgn.connect(self.openGstMainWdg)
+    # def connectSignals(self):
+    #     super().connectSignals()
+    #
+    #     # self.ui.actionOpenKontakteAlle.triggered.connect(
+    #     #     self.openKontakteAllMainWdg)
+    #     # self.ui.openKontakteAllMainWdgSgn.connect(self.openKontakteAllMainWdg)
+    #     self.ui.openKontakteAllMainWdgSgn.connect(
+    #         self.openKontakteAllMainWdg)
+    #
+    #     self.ui.openGstMainWdgSgn.connect(self.openGstMainWdg)
 
     def setupDatabasesCommon(self):
         """
