@@ -56,6 +56,10 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
 
         self.setMinimumWidth(650)
 
+    def setFirstFocus(self):
+
+        self.uiNachnameLedit.setFocus()
+
     def acceptWdg(self):
 
         print(f'accept entity gui!!')
