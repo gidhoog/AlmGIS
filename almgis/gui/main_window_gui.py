@@ -85,7 +85,8 @@ class AlmMainWindowGui(QgaMainWindowGui):
 
         self.menuKontakte = QMenu()
         self.menuKontakte.setTitle('Kontakte')
-        self.menuBar().addMenu(self.menuKontakte)
+        # self.menuBar().addMenu(self.menuKontakte)
+        self.menuBar().insertMenu(self.menuImport.menuAction(), self.menuKontakte)
         self.menuKontakte.addAction(self.actions.get('kontakt.main_all'))
 
     def createMenus(self):  # löschen
