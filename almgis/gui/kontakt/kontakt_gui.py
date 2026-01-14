@@ -31,7 +31,18 @@ class KontaktGui(QgaEntityGui, kontakt_UI.Ui_KontaktGui):
         QgaEntityGui.__init__(self, ctrl)
         self.setupUi(self)
 
-        self.info_wdg = 'KontaktGui'
+        """set a group for all info-buttons"""
+        self.uiInfoBtnType.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnNachname.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnVorname.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnPost.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnStrasse.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnTelefon1.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnMail1.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnVertreter.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnVertreterAdr.ctrl.group = 'KontaktGui'
+        self.uiInfoBtnAnm.ctrl.group = 'KontaktGui'
+        """"""
 
         """catch the signals from the ctrl and set the gui widgets"""
         self.ctrl.setTypSgn.connect(self.setType)
