@@ -136,7 +136,7 @@
            <string>aus Auswahl entfernen</string>
           </property>
           <property name="icon">
-           <iconset resource="../../../resources.qrc">
+           <iconset>
             <normaloff>:/svg/resources/icons/white_cross_in_red_circle.svg</normaloff>:/svg/resources/icons/white_cross_in_red_circle.svg</iconset>
           </property>
           <property name="iconSize">
@@ -178,7 +178,7 @@
            <string>Gst zuordnen</string>
           </property>
           <property name="icon">
-           <iconset resource="../../../resources.qrc">
+           <iconset>
             <normaloff>:/svg/resources/icons/tick_green.svg</normaloff>:/svg/resources/icons/tick_green.svg</iconset>
           </property>
           <property name="iconSize">
@@ -201,7 +201,7 @@
            <string>Auswahl übernehmen</string>
           </property>
           <property name="icon">
-           <iconset resource="../../../resources.qrc">
+           <iconset>
             <normaloff>:/svg/resources/icons/arrow_down_blue.svg</normaloff>:/svg/resources/icons/arrow_down_blue.svg</iconset>
           </property>
           <property name="iconSize">
@@ -265,7 +265,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../resources.qrc"/>
+  <include location="../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
