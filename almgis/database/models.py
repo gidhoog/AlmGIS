@@ -83,8 +83,8 @@ class DmBanu(DmBaseProject):
     nu_name_short: Mapped[str]
     symbol: Mapped[int]
 
-    rel_alm_gst_nutzung: Mapped["DmGstNutzung"] = relationship(
-        back_populates='rel_banu')
+    # rel_alm_gst_nutzung: Mapped["DmGstNutzung"] = relationship(
+    #     back_populates='rel_banu')
 
 
 class DmBearbeitungsstatus(DmBaseProject):
@@ -393,12 +393,12 @@ class DmGstEigentuemer(DmBaseProject):
     id: Mapped[int] = mapped_column(primary_key=True)
     # ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
     ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id"))
-    kg_ez: Mapped[int]
-    anteil: Mapped[int]
-    anteil_von: Mapped[int]
-    name: Mapped[str]
-    geb_dat: Mapped[str]
-    adresse: Mapped[str]
+    kg_ez: Mapped[int] = mapped_column(nullable=True)
+    anteil: Mapped[int] = mapped_column(nullable=True)
+    anteil_von: Mapped[int] = mapped_column(nullable=True)
+    name: Mapped[str] = mapped_column(nullable=True)
+    geb_dat: Mapped[str] = mapped_column(nullable=True)
+    adresse: Mapped[str] = mapped_column(nullable=True)
 
     # rel_alm_gst_ez = relationship("DmGstEz",
     #                               back_populates="rel_alm_gst_eigentuemer")
@@ -458,19 +458,18 @@ class DmGstNutzung(DmBaseProject):
     id: Mapped[int] = mapped_column(primary_key=True)
     # gst_version_id = Column(Integer, ForeignKey('a_alm_gst_version.id'))
     gst_version_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_version.id"))
-    banu_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_banu.id"))
-    ba_id: Mapped[int]
-    nu_id: Mapped[int]
-    area: Mapped[int]
+    # banu_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_banu.id"))
+    banu_id: Mapped[int] = mapped_column(nullable=True)
+    ba_id: Mapped[int] = mapped_column(nullable=True)
+    nu_id: Mapped[int] = mapped_column(nullable=True)
+    area: Mapped[int] = mapped_column(nullable=True)
 
-    # rel_alm_gst_version = relationship("DmGstVersion",
-    #                                    back_populates="rel_alm_gst_nutzung")
     rel_alm_gst_version: Mapped["DmGstVersion"] = relationship(
         back_populates="rel_alm_gst_nutzung")
 
-    rel_banu: Mapped["DmBanu"] = relationship(
-        back_populates="rel_alm_gst_nutzung",
-        lazy='joined')
+    # rel_banu: Mapped["DmBanu"] = relationship(
+    #     back_populates="rel_alm_gst_nutzung",
+    #     lazy='joined')
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -489,7 +488,6 @@ class DmGstVersion(DmBaseProject):
     # gst_id = Column(Integer, ForeignKey('a_alm_gst.id', ondelete='CASCADE'))
     gst_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst.id", ondelete='CASCADE'))
 
-    # ez_id = Column(Integer, ForeignKey('a_alm_gst_ez.id'))
     ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id"))
 
     gk: Mapped[str]
