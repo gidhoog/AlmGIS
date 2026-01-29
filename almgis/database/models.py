@@ -488,7 +488,8 @@ class DmGstVersion(DmBaseProject):
     # gst_id = Column(Integer, ForeignKey('a_alm_gst.id', ondelete='CASCADE'))
     gst_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst.id", ondelete='CASCADE'))
 
-    ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id"))
+    ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id", ondelete="SET NULL"),
+                                       nullable=True)
 
     gk: Mapped[str]
     source_id: Mapped[int]
