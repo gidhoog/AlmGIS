@@ -396,8 +396,16 @@ class DmGstEigentuemer(DmBaseProject):
     kg_ez: Mapped[int] = mapped_column(nullable=True)
     anteil: Mapped[int] = mapped_column(nullable=True)
     anteil_von: Mapped[int] = mapped_column(nullable=True)
-    name: Mapped[str] = mapped_column(nullable=True)
+    titel_v: Mapped[str] = mapped_column(nullable=True)
+    nachname: Mapped[str] = mapped_column(nullable=True)
+    vorname: Mapped[str] = mapped_column(nullable=True)
+    titel_n: Mapped[str] = mapped_column(nullable=True)
     geb_dat: Mapped[str] = mapped_column(nullable=True)
+    v: Mapped[str] = mapped_column(nullable=True)
+    jur: Mapped[str] = mapped_column(nullable=True)
+    bez: Mapped[str] = mapped_column(nullable=True)
+    ra: Mapped[str] = mapped_column(nullable=True)
+    rc: Mapped[str] = mapped_column(nullable=True)
     adresse: Mapped[str] = mapped_column(nullable=True)
 
     # rel_alm_gst_ez = relationship("DmGstEz",
