@@ -149,6 +149,36 @@ def upgrade() -> None:
 
     print('data inserted!')
 
+    op.execute(
+        """
+        CREATE VIEW lyr_gst_latest AS
+        SELECT _tbl_alm_gst.id,
+               _tbl_alm_gst.gst,
+               _tbl_alm_gst_version.import_time,
+               _tbl_alm_gst_ez.datenstand,
+               _tbl_alm_gst_version.geometry
+          FROM _tbl_alm_gst
+               JOIN
+               _tbl_alm_gst_version ON _tbl_alm_gst.id = _tbl_alm_gst_version.gst_id
+               JOIN
+               _tbl_alm_gst_ez ON _tbl_alm_gst_version.ez_id = _tbl_alm_gst_ez.id
+         WHERE _tbl_alm_gst_ez.datenstand = (
+                                                SELECT max(_tbl_alm_gst_ez.datenstand) 
+                                                  FROM _tbl_alm_gst_ez
+                                                       JOIN
+                                                       _tbl_alm_gst_version ON _tbl_alm_gst_version.ez_id = _tbl_alm_gst_ez.id
+                                                 WHERE _tbl_alm_gst.id = _tbl_alm_gst_version.gst_id
+                                            )
+        """
+    )
+
+    op.execute(
+        """
+        INSERT INTO views_geometry_columns (view_name, view_geometry, view_rowid, f_table_name, f_geometry_column, read_only)
+        VALUES ('lyr_gst_latest', 'geometry', 'id', '_tbl_alm_gst_version', 'geometry', 1)
+        """
+    )
+
 
 def downgrade() -> None:
     """Downgrade schema."""
