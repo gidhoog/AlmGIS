@@ -152,23 +152,22 @@ def upgrade() -> None:
     op.execute(
         """
         CREATE VIEW lyr_gst_latest AS
+        WITH ranked AS (
+            SELECT *,
+                   ROW_NUMBER() OVER (PARTITION BY id ORDER BY datenstand DESC) AS rn
+              FROM _tbl_alm_gst_ez
+        )
         SELECT _tbl_alm_gst.id,
                _tbl_alm_gst.gst,
                _tbl_alm_gst_version.import_time,
-               _tbl_alm_gst_ez.datenstand,
+               r.datenstand,
                _tbl_alm_gst_version.geometry
           FROM _tbl_alm_gst
                JOIN
-               _tbl_alm_gst_version ON _tbl_alm_gst.id = _tbl_alm_gst_version.gst_id
+               _tbl_alm_gst_version ON _tbl_alm_gst_version.gst_id = _tbl_alm_gst.id
                JOIN
-               _tbl_alm_gst_ez ON _tbl_alm_gst_version.ez_id = _tbl_alm_gst_ez.id
-         WHERE _tbl_alm_gst_ez.datenstand = (
-                                                SELECT max(_tbl_alm_gst_ez.datenstand) 
-                                                  FROM _tbl_alm_gst_ez
-                                                       JOIN
-                                                       _tbl_alm_gst_version ON _tbl_alm_gst_version.ez_id = _tbl_alm_gst_ez.id
-                                                 WHERE _tbl_alm_gst.id = _tbl_alm_gst_version.gst_id
-                                            )
+               ranked r ON r.id = _tbl_alm_gst_version.ez_id
+         WHERE r.rn = 1
         """
     )
 
