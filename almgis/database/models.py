@@ -431,7 +431,7 @@ class DmGstEz(DmBaseProject):
     ez: Mapped[int]
     kg_ez: Mapped[str]
     datenstand: Mapped[str]
-    import_time: Mapped[str]
+    import_time: Mapped[str] = mapped_column(nullable=True)
 
     # rel_alm_gst_version = relationship("DmGstVersion",
     #                                    back_populates="rel_alm_gst_ez")
@@ -501,9 +501,10 @@ class DmGstVersion(DmBaseProject):
 
     gk: Mapped[str]
     source_id: Mapped[int]
-    import_time: Mapped[str]
+    # import_time: Mapped[str]
     geometry: Mapped[object] = mapped_column(Geometry(geometry_type="MULTIPOLYGON",
-                               srid=31259))
+                               srid=31259),
+                                             nullable=True)
     """alte configuration"""
     # geometry = Column(Geometry(geometry_type="MULTIPOLYGON",
     #                            srid=31259))
