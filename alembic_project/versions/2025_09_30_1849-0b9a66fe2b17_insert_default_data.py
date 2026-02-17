@@ -157,9 +157,9 @@ def upgrade() -> None:
                    ROW_NUMBER() OVER (PARTITION BY id ORDER BY datenstand DESC) AS rn
               FROM _tbl_alm_gst_ez
         )
-        SELECT _tbl_alm_gst.id,
+        SELECT _tbl_alm_gst_version.id,
                _tbl_alm_gst.gst,
-               _tbl_alm_gst_version.import_time,
+               r.import_time,
                r.datenstand,
                _tbl_alm_gst_version.geometry
           FROM _tbl_alm_gst
