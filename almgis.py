@@ -54,8 +54,8 @@ def run():
     """"""
 
     if platform.system() == 'Linux':
-        app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis",
-                          True)
+        # app.setPrefixPath("/var/lib/flatpak/app/org.qgis.qgis",
+        app.setPrefixPath("/usr", True)
     elif platform.system() == 'Windows':
         app.setPrefixPath("C:/work/_anwendungen/OSGeo4W/apps/qgis-ltr",
                           True)
