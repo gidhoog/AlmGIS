@@ -319,7 +319,8 @@ class DmGst(DmBaseProject):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     kg_gst: Mapped[str]
-    kgnr: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kg.kgnr"))
+    # kgnr: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kg.kgnr"))
+    kgnr: Mapped[int]
     gst: Mapped[str]
 
     """folgende Beziehungen sind 'child' Beziehungen"""
@@ -339,9 +340,9 @@ class DmGst(DmBaseProject):
         back_populates="rel_gst")
     """"""
 
-    rel_kat_gem: Mapped["DmKatGem"] = relationship(
-        back_populates="rel_alm_gst",
-        lazy='joined')
+    # rel_kat_gem: Mapped["DmKatGem"] = relationship(
+    #     back_populates="rel_alm_gst",
+    #     lazy='joined')
 
     @hybrid_property
     def gst_latest(self):
@@ -494,9 +495,12 @@ class DmGstVersion(DmBaseProject):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # gst_id = Column(Integer, ForeignKey('a_alm_gst.id', ondelete='CASCADE'))
-    gst_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst.id", ondelete='CASCADE'))
+    gst_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst.id",
+                                                   ondelete='CASCADE'),
+                                        nullable=True)
 
-    ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id", ondelete="SET NULL"),
+    ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id",
+                                                  ondelete="SET NULL"),
                                        nullable=True)
 
     gk: Mapped[str]
@@ -673,8 +677,8 @@ class DmKatGem(DmBaseProject):
     rel_alm_gst_ez: Mapped["DmGstEz"] = relationship(
         back_populates="rel_kat_gem")
 
-    rel_alm_gst: Mapped["DmGst"] = relationship(
-        back_populates="rel_kat_gem")
+    # rel_alm_gst: Mapped["DmGst"] = relationship(
+    #     back_populates="rel_kat_gem")
 
     def __repr__(self):
         return f"<DmKatGem(kgnr: {self.kgnr}, kgname: {self.kgname}, " \
