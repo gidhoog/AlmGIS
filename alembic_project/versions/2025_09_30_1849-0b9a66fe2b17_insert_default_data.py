@@ -152,22 +152,22 @@ def upgrade() -> None:
     op.execute(
         """
         CREATE VIEW lyr_gst_latest AS
-        WITH ranked AS (
-            SELECT *,
-                   ROW_NUMBER() OVER (PARTITION BY id ORDER BY datenstand DESC) AS rn
-              FROM _tbl_alm_gst_ez
-        )
-        SELECT _tbl_alm_gst_version.id,
-               _tbl_alm_gst.gst,
-               r.import_time,
-               r.datenstand,
-               _tbl_alm_gst_version.geometry
-          FROM _tbl_alm_gst
-               JOIN
-               _tbl_alm_gst_version ON _tbl_alm_gst_version.gst_id = _tbl_alm_gst.id
-               JOIN
-               ranked r ON r.id = _tbl_alm_gst_version.ez_id
-         WHERE r.rn = 1
+        SELECT *
+          FROM (
+                   SELECT _tbl_alm_gst_version.id,
+                          _tbl_alm_gst.kgnr,
+                          _tbl_alm_gst.gst,
+                          _tbl_alm_gst.kg_gst,
+                          _tbl_alm_gst_version.import_time,
+                          _tbl_alm_gst_version.datenstand,
+                          ROW_NUMBER() OVER (PARTITION BY _tbl_alm_gst.id ORDER BY _tbl_alm_gst_version.datenstand DESC) AS rn,
+                          COUNT( * ) OVER (PARTITION BY _tbl_alm_gst.id) AS version_count,
+                          _tbl_alm_gst_version.geometry
+                     FROM _tbl_alm_gst
+                          JOIN
+                          _tbl_alm_gst_version ON _tbl_alm_gst_version.gst_id = _tbl_alm_gst.id
+               )
+         WHERE rn = 1
         """
     )
 
@@ -177,6 +177,30 @@ def upgrade() -> None:
         VALUES ('lyr_gst_latest', 'geometry', 'id', '_tbl_alm_gst_version', 'geometry', 1)
         """
     )
+
+    op.execute(
+        """
+        CREATE VIEW lyr_gst_all AS
+        SELECT _tbl_alm_gst_version.id,
+               _tbl_alm_gst.kgnr,
+               _tbl_alm_gst.gst,
+               _tbl_alm_gst.kg_gst,
+               _tbl_alm_gst_version.import_time,
+               _tbl_alm_gst_version.datenstand,
+               _tbl_alm_gst_version.geometry
+          FROM _tbl_alm_gst
+               JOIN
+               _tbl_alm_gst_version ON _tbl_alm_gst_version.gst_id = _tbl_alm_gst.id
+        """
+    )
+
+    op.execute(
+        """
+        INSERT INTO views_geometry_columns (view_name, view_geometry, view_rowid, f_table_name, f_geometry_column, read_only)
+        VALUES ('lyr_gst_all', 'geometry', 'id', '_tbl_alm_gst_version', 'geometry', 1)
+        """
+    )
+
 
 
 def downgrade() -> None:
