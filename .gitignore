@@ -137,3 +137,5 @@ dmypy.json
 # /data
 .idea/
 *.AlmGIS.ini
+/AlmGIS.ini
+/almgis/database/prj_test_01.alm
