@@ -10,6 +10,7 @@ from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
 from sqlalchemy import create_engine
 
 from almgis.core.dialog import AlmDialog
+from almgis.core.settings_dlg import AlmSettingsDialog
 from almgis.scopes.gst.gst_main import GstMainWdg
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWdg
 from almgis.database.models import DmSettings
@@ -124,9 +125,11 @@ class AlmMainWindow(QgaMainWindow):
         richte die datenbanken für almgis ein;
         siehe: https://docs.sqlalchemy.org/en/20/orm/persistence_techniques.html#partitioning-strategies-e-g-multiple-database-backends-per-session
         """
+        # Qga.Settings.App.sync()
 
         """hole file_path der common_db"""
-        common_db_file = Qga.Settings.User.value('paths/common_db_file')
+        # common_db_file = Qga.Settings.App.value('paths/common_db_file')
+        common_db_file = Qga.Settings.get('path/common_db_file')
         """"""
 
         """richte die session 'QgaCommonSessionCls' ein"""
@@ -229,9 +232,11 @@ class AlmMainWindow(QgaMainWindow):
     def openSettings(self):
         super().openSettings()
 
-        if Qga.Settings.User.value('project_start_selector') == 'True':
-            self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(True)
-        elif Qga.Settings.User.value('project_start_selector') == 'False':
-            self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
+        AlmSettingsDialog(self).exec_()
 
-        self.settings_dlg.exec_qga()
+        # if Qga.Settings.User.value('project_start_selector') == 'True':
+        #     self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(True)
+        # elif Qga.Settings.User.value('project_start_selector') == 'False':
+        #     self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
+        #
+        # self.settings_dlg.exec_qga()

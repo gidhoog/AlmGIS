@@ -2,6 +2,7 @@ import platform
 import sys
 from time import sleep, time
 
+from qga import Qga
 from qga.core.splash import QgaSplash
 from qgis.core import QgsApplication
 from PyQt5.QtCore import Qt
@@ -9,7 +10,7 @@ from PyQt5.QtGui import QPixmap
 
 from almgis.core.logger import setupAlmLogger
 from almgis.core.main_window import AlmMainWindow
-from almgis.core.settings import setupSettings
+from almgis.core.settings import setupSettings, AlmSettingsManager
 
 import logging
 
@@ -29,13 +30,16 @@ def run():
     """
 
     """setup app basics"""
-    setupSettings()
+    # setupSettings()
     setupAlmLogger()
     """"""
 
     app_log = logging.getLogger(__name__)
 
     app = QgsApplication([], True)
+    app.setApplicationName("AlmGis")
+    app.setOrganizationName("NoeAbb")
+    Qga.Settings = AlmSettingsManager()
 
     """use a splashscreen"""
     start = time()

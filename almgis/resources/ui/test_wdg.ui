@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>683</width>
+    <height>602</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="KColorCombo" name="kcolorcombo">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>158</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="TextCustomEditor::RichTextEditorWidget" name="textcustomeditor::richtexteditorwidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>90</y>
+     <width>256</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="KRichTextEdit" name="krichtextedit">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>90</y>
+     <width>256</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="KRichTextWidget" name="krichtextwidget">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>310</y>
+     <width>256</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="KComboBox" name="kcombobox">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>330</y>
+     <width>87</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="KShortcutsEditor" name="kshortcutseditor">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>380</y>
+     <width>256</width>
+     <height>198</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="KPasswordLineEdit" name="kpasswordlineedit">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>290</y>
+     <width>135</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="Sonnet::DictionaryComboBox" name="sonnet::dictionarycombobox">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>30</y>
+     <width>87</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KRichTextEdit</class>
+   <extends>KTextEdit</extends>
+   <header>krichtextedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KRichTextWidget</class>
+   <extends>KRichTextEdit</extends>
+   <header>krichtextwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>ktextedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KColorCombo</class>
+   <extends>QComboBox</extends>
+   <header>kcolorcombo.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPasswordLineEdit</class>
+   <extends>QWidget</extends>
+   <header>kpasswordlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KShortcutsEditor</class>
+   <extends>QWidget</extends>
+   <header>kshortcutseditor.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Sonnet::DictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>sonnet/dictionarycombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TextCustomEditor::RichTextEditorWidget</class>
+   <extends>QWidget</extends>
+   <header>TextCustomEditor/RichTextEditorWidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
