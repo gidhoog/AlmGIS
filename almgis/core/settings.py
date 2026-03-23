@@ -80,10 +80,6 @@ class AlmSettingsManager(QgaSettingsManager):
     APP_VERSION = '0.0.2'
     DB_PROJECT_VERSION = '0.0.1'
 
-    QGA_VERSION = '0.0.1'
-    QGIS_VERSION = '3.40.11-Bratislava'
-    PYTHON_VERSION = '3.12'
-
     PROJECT_SETTINGS_DMC = DmSettings
 
     SCHEMA = [

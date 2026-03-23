@@ -230,13 +230,6 @@ class AlmMainWindow(QgaMainWindow):
         # self.openMainWidget(KontaktMainWidget, debug=True)
 
     def openSettings(self):
-        super().openSettings()
 
-        AlmSettingsDialog(self).exec_()
-
-        # if Qga.Settings.User.value('project_start_selector') == 'True':
-        #     self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(True)
-        # elif Qga.Settings.User.value('project_start_selector') == 'False':
-        #     self.settings_wdg.uiUseProjectStartSelectorCBox.setChecked(False)
-        #
-        # self.settings_dlg.exec_qga()
+        alm_settings = AlmSettingsDialog(self)
+        alm_settings.ui.exec_()
