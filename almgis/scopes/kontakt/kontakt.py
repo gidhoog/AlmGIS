@@ -634,7 +634,7 @@ class KontaktEinzel(Kontakt):
         self.entity_dlg = entity_dlg
 
         self.entity_dlg.ui.setWindowTitle(
-            Qga.Settings.General.app_display_name + ' - Einzelkontakt')
+            Qga.Settings.APP_DISPLAY_NAME + ' - Einzelkontakt')
 
         self.ui = KontaktEinzelGui(self)
 
