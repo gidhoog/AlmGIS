@@ -6,7 +6,7 @@ from qga.core.main_window import QgaMainWindow
 from qga.database.alchemy import DmBaseCommon
 from qga.database.session import QgaCommonSessionCls
 from qga.gui.notify import QgaNotify
-from qga.gui.settings_wdg import QgaSettingsDialog, QgaSettingsWdg
+from qga.core.settings_dlg import QgaSettingsDlg
 from sqlalchemy import create_engine
 
 from almgis.core.dialog import AlmDialog
@@ -37,8 +37,8 @@ class AlmMainWindow(QgaMainWindow):
 
         self.about_dialog_cls = AlmAboutDialog
 
-        self.settings_dlg_cls = QgaSettingsDialog
-        self.settings_wdg_cls = QgaSettingsWdg
+        self.settings_dlg_cls = QgaSettingsDlg
+        # self.settings_wdg_cls = QgaSettingsWdg
 
         self._project_file = None
         self._selected_mainarea = None

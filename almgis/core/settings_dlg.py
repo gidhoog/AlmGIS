@@ -1,8 +1,8 @@
 from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCheckBox, QSpinBox, QFormLayout, QComboBox, QLineEdit, QPushButton
-from qga.core.settings_dlg import (QgaSettingsDlg, SettingsPageDescriptor, SettingsRegistry, NetworkSettingsPage,
-                                     DatabaseSettingsPage, SettingsPageStartDlg)
+from qga.core.settings_dlg import QgaSettingsDlg, SettingsPageDescriptor, SettingsRegistry
+from qga.core.settings_wdg import SettingsPageStartDlg
 from qgis._gui import QgsOptionsPageWidget
 from qga import Qga
 from qga.core.tools import selectFile
@@ -104,31 +104,31 @@ SettingsRegistry.register(SettingsPageDescriptor(
     tooltip = "Startdialog",
     order   = 10,
 ))
-SettingsRegistry.register(SettingsPageDescriptor(
-    title   = "Datenbanken",
-    factory = DatabaseSettingsPage,
-    group   = "Allgemein",
-    icon    = QIcon.fromTheme("server-database"),
-    tooltip = "Angaben zu den verwendeten Datenbanken",
-    order   = 20,
-))
-
-SettingsRegistry.register(SettingsPageDescriptor(
-    title   = "General",
-    factory = GeneralSettingsPage,
-    group   = "AlmGIS",
-    icon    = QIcon.fromTheme("preferences-other"),
-    tooltip = "General application settings",
-    order   = 10,
-))
-SettingsRegistry.register(SettingsPageDescriptor(
-    title   = "Display",
-    factory = DisplaySettingsPage,
-    group   = "AlmGIS",
-    icon    = QIcon.fromTheme("video-display"),
-    tooltip = "Font size and theme",
-    order   = 20,
-))
+# SettingsRegistry.register(SettingsPageDescriptor(
+#     title   = "Datenbanken",
+#     factory = DatabaseSettingsPage,
+#     group   = "Allgemein",
+#     icon    = QIcon.fromTheme("server-database"),
+#     tooltip = "Angaben zu den verwendeten Datenbanken",
+#     order   = 20,
+# ))
+#
+# SettingsRegistry.register(SettingsPageDescriptor(
+#     title   = "General",
+#     factory = GeneralSettingsPage,
+#     group   = "AlmGIS",
+#     icon    = QIcon.fromTheme("preferences-other"),
+#     tooltip = "General application settings",
+#     order   = 10,
+# ))
+# SettingsRegistry.register(SettingsPageDescriptor(
+#     title   = "Display",
+#     factory = DisplaySettingsPage,
+#     group   = "AlmGIS",
+#     icon    = QIcon.fromTheme("video-display"),
+#     tooltip = "Font size and theme",
+#     order   = 20,
+# ))
 
 
 class AlmSettingsDialog(QgaSettingsDlg):
