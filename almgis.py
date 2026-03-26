@@ -39,7 +39,7 @@ def run():
     app = QgsApplication([], True)
     app.setApplicationName("AlmGis")
     app.setOrganizationName("NoeAbb")
-    Qga.Settings = AlmSettingsManager()
+    Qga.SettingsManager = AlmSettingsManager()
 
     """use a splashscreen"""
     start = time()

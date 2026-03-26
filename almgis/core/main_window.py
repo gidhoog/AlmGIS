@@ -129,7 +129,7 @@ class AlmMainWindow(QgaMainWindow):
 
         """hole file_path der common_db"""
         # common_db_file = Qga.Settings.App.value('paths/common_db_file')
-        common_db_file = Qga.Settings.get('path/common_db_file')
+        common_db_file = Qga.SettingsManager.get('path/common_db_file')
         """"""
 
         """richte die session 'QgaCommonSessionCls' ein"""

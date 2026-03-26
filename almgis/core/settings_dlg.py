@@ -1,7 +1,8 @@
 from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCheckBox, QSpinBox, QFormLayout, QComboBox, QLineEdit, QPushButton
-from qga.core.settings_dlg import QgaSettingsDlg, SettingsPageDescriptor, SettingsRegistry
+from qga.core.settings_dlg import QgaSettingsDlg
+from qga.core.settings_register import SettingsPageDescriptor, SettingsRegistry
 from qga.core.settings_wdg import SettingsPageStartDlg
 from qgis._gui import QgsOptionsPageWidget
 from qga import Qga

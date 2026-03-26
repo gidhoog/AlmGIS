@@ -10,4 +10,4 @@ class AlmAboutDialog(QgaAboutDialog):
 
         # self.about_wdg = QWidget()
 
-        self.dialog_window_title = Qga.Settings.APP_DISPLAY_NAME
+        self.dialog_window_title = Qga.SettingsManager.APP_DISPLAY_NAME

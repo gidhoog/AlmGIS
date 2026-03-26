@@ -16,4 +16,4 @@ class AlmStartWdg(QgaStartWdg):
 
         self.settings_dmc = DmSettings
 
-        self.last_project_file = Qga.Settings.get('path/last_project_file')
+        self.last_project_file = Qga.SettingsManager.get('path/last_project_file')
