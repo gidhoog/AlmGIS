@@ -4,7 +4,7 @@ from qga.core.entity import QgaEntity
 
 from qga.core.entity import QgaEntity, QgaEntityDialog
 from qga import Qga
-from qga.core.settings import QgaSettingsGeneral
+# from qga.core.settings import QgaSettingsGeneral
 
 # from almgis import ProjectSessionCls
 from almgis.core.dialog import AlmDialog

@@ -10,7 +10,7 @@ from PyQt5.QtGui import QPixmap
 
 from almgis.core.logger import setupAlmLogger
 from almgis.core.main_window import AlmMainWindow
-from almgis.core.settings import setupSettings, AlmSettingsManager
+from almgis.core.settings import AlmSettingsManager
 
 import logging
 

@@ -9,7 +9,7 @@ from qga import Qga
 from qga.core.tools import selectFile
 from almgis.resources.ui_py import settings_general_wdg_UI
 
-from almgis.core.settings import AlmSettingsApp, AlmSettingsUser
+# from almgis.core.settings import AlmSettingsApp, AlmSettingsUser
 
 
 class GeneralSettingsPage(QgsOptionsPageWidget, settings_general_wdg_UI.Ui_GeneralSettingsPage):
