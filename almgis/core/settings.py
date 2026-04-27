@@ -88,9 +88,9 @@ class AlmSettingsManager(QgaSettingsManager):
                     val_type=bool,
                     label="verwende Start-Dialog"),
         SettingsDef("default_start_option",
-                    'LAST',  # LAST, OTHER, NEW, NONE
+                    1,  # one value from the class DefStartOption (0, 1, 2 or 3)
                     scope="user",
-                    val_type=str,
+                    val_type=int,
                     label="Standardoption im Start-Dialog"),
         SettingsDef("path/last_project_file",
                     'C:/Daten/Temp/__Bev',
