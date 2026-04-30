@@ -6,6 +6,7 @@ pyrcc5 /home/franz/IT/Dev/Projekte/AlmGIS/almgis/images/images.qrc -o ui_py/imag
 
 # pyuic5 --from-imports ui/mainwindow.ui -o ui_py/mainwindow_UI.py
 
+pyuic5 --from-imports ui/settings_project_almgis_wdg.ui -o ui_py/settings_project_almgis_wdg_UI.py
 pyuic5 --from-imports ui/settings_general_wdg.ui -o ui_py/settings_general_wdg_UI.py
 
 pyuic5 --from-imports ui/kontakt/kontakt.ui -o ui_py/kontakt/kontakt_UI.py
