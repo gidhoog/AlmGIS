@@ -72,29 +72,29 @@ class GeneralSettingsPage(QgsOptionsPageWidget, settings_general_wdg_UI.Ui_Gener
     #     s.setValue("general/language", self.language_combo.currentText())
 
 
-class DisplaySettingsPage(QgsOptionsPageWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        s = QSettings("MyOrg", "MyApp")
-        layout = QFormLayout(self)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(12)
-
-        self.fontsize_spin = QSpinBox()
-        self.fontsize_spin.setRange(6, 72)
-        self.fontsize_spin.setSuffix(" pt")
-        layout.addRow("Font size:", self.fontsize_spin)
-
-        self.darkmode_check = QCheckBox("Enable dark mode")
-        layout.addRow("Theme:", self.darkmode_check)
-
-        self.fontsize_spin.setValue(s.value("display/fontsize", 10, type=int))
-        self.darkmode_check.setChecked(s.value("display/darkmode", False, type=bool))
-
-    def apply(self):
-        s = QSettings("MyOrg", "MyApp")
-        s.setValue("display/fontsize", self.fontsize_spin.value())
-        s.setValue("display/darkmode", self.darkmode_check.isChecked())
+# class DisplaySettingsPage(QgsOptionsPageWidget):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         s = QSettings("MyOrg", "MyApp")
+#         layout = QFormLayout(self)
+#         layout.setContentsMargins(20, 20, 20, 20)
+#         layout.setSpacing(12)
+#
+#         self.fontsize_spin = QSpinBox()
+#         self.fontsize_spin.setRange(6, 72)
+#         self.fontsize_spin.setSuffix(" pt")
+#         layout.addRow("Font size:", self.fontsize_spin)
+#
+#         self.darkmode_check = QCheckBox("Enable dark mode")
+#         layout.addRow("Theme:", self.darkmode_check)
+#
+#         self.fontsize_spin.setValue(s.value("display/fontsize", 10, type=int))
+#         self.darkmode_check.setChecked(s.value("display/darkmode", False, type=bool))
+#
+#     def apply(self):
+#         s = QSettings("MyOrg", "MyApp")
+#         s.setValue("display/fontsize", self.fontsize_spin.value())
+#         s.setValue("display/darkmode", self.darkmode_check.isChecked())
 
 
 SettingsRegistry.register(SettingsPageDescriptor(
