@@ -2,8 +2,8 @@ from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCheckBox, QSpinBox, QFormLayout, QComboBox, QLineEdit, QPushButton
 from qga.core.settings_dlg import QgaSettingsDlg, QgaSettingsPrjDlg
-from qga.core.settings_register import SettingsPageDescriptor, SettingsRegistry
-from qga.core.settings_wdg import SettingsPageStartDlg
+from qga.core.settings_register import SettingsPageDescriptor, SettingsRegistry, PropertiesRegistry
+from qga.core.settings_wdg import SettingsPageStartDlg, PropPageGeneralDlg
 from qgis._gui import QgsOptionsPageWidget
 from qga import Qga
 from qga.core.tools import selectFile
@@ -117,6 +117,16 @@ SettingsRegistry.register(
     icon    = QIcon.fromTheme("network-workgroup"),
     tooltip = "Stile",
     order   = 20,
+))
+
+PropertiesRegistry.register(
+    SettingsPageDescriptor(
+    title   = "Projektname",
+    factory = PropPageGeneralDlg,
+    group   = "Allgemein",
+    icon    = QIcon.fromTheme("network-workgroup"),
+    tooltip = "Projektname",
+    order   = 10,
 ))
 # SettingsRegistry.register(SettingsPageDescriptor(
 #     title   = "Datenbanken",
