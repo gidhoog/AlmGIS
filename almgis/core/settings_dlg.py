@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCheckBox, QSpinBox, QFormLayout, QComboBox, QLineEdit, QPushButton
-from qga.core.settings_dlg import QgaSettingsDlg
+from qga.core.settings_dlg import QgaSettingsDlg, QgaSettingsPrjDlg
 from qga.core.settings_register import SettingsPageDescriptor, SettingsRegistry
 from qga.core.settings_wdg import SettingsPageStartDlg
 from qgis._gui import QgsOptionsPageWidget
@@ -139,4 +139,14 @@ class AlmSettingsDialog(QgaSettingsDlg):
         super().__init__(parent, title="AlmGIS – Einstellungen")
 
         print('2')
+        # self.setting_reg = SettingsRegistry
+
+
+class AlmSettingsProjectDlg(QgaSettingsPrjDlg):
+
+
+    def __init__(self, parent=None):
+        super().__init__(parent, title="AlmGIS – Projekteigenschaften")
+
+        print('77')
         # self.setting_reg = SettingsRegistry

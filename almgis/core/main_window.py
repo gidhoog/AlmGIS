@@ -10,7 +10,7 @@ from qga.core.settings_dlg import QgaSettingsDlg
 from sqlalchemy import create_engine
 
 from almgis.core.dialog import AlmDialog
-from almgis.core.settings_dlg import AlmSettingsDialog
+from almgis.core.settings_dlg import AlmSettingsDialog, AlmSettingsProjectDlg
 from almgis.scopes.gst.gst_main import GstMainWdg
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWdg
 from almgis.database.models import DmSettings
@@ -232,4 +232,9 @@ class AlmMainWindow(QgaMainWindow):
     def openSettings(self):
 
         alm_settings = AlmSettingsDialog(self)
+        alm_settings.ui.exec_()
+
+    def openSettingsProject(self):
+
+        alm_settings = AlmSettingsProjectDlg(self)
         alm_settings.ui.exec_()
