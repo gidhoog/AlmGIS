@@ -7,69 +7,71 @@ from qga.core.settings_wdg import SettingsPageStartDlg
 from qgis._gui import QgsOptionsPageWidget
 from qga import Qga
 from qga.core.tools import selectFile
+
+from almgis.core.settings_wdg import SettingsAlmgisDlg
 from almgis.resources.ui_py import settings_general_wdg_UI
 
 # from almgis.core.settings import AlmSettingsApp, AlmSettingsUser
 
 
-class GeneralSettingsPage(QgsOptionsPageWidget, settings_general_wdg_UI.Ui_GeneralSettingsPage):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setupUi(self)
-
-
-        """set a group for the info-buttons"""
-        self.uiInfoTest.group = 'QgaSettingsDlg'
-        """"""
-    #     # s = QSettings("NoeAbb", "AlmGIS")
-    #     s = AlmSettingsUser()
-    #     s.sync()
-    #     s = Qga.Settings.User
-    #     print(f'Qga.Settings.User - ini: {s.fileName()}')
-    #
-        # a = Qga.Settings.App
-        # a.sync()
-        # print(f'Qga.Settings.App - ini: {a.fileName()}')
-        #
-        # AlmSettingsApp.sync()
-        # print(f'AlmSettingsApp - ini: {AlmSettingsApp.fileName()}')
-    #     layout = QFormLayout(self)
-    #     layout.setContentsMargins(20, 20, 20, 20)
-    #     layout.setSpacing(12)
-    #
-    #     self.uiSetCommonDbPbtn = QPushButton(self)
-    #     self.uiSetCommonDbPbtn.setText('aaa')
-    #
-    #     self.username_edit = QLineEdit()
-    #     layout.addRow("Username:", self.username_edit)
-    #
-    #     layout.addRow("wähle DB:", self.uiSetCommonDbPbtn)
-    #
-    #     self.autosave_check = QCheckBox("Enable auto-save on project close")
-    #     layout.addRow("Auto-save:", self.autosave_check)
-    #
-    #     self.language_combo = QComboBox()
-    #     self.language_combo.addItems(["English", "German", "French", "Italian"])
-    #     layout.addRow("Language:", self.language_combo)
-    #
-    #     # self.username_edit.setText(s.value("general/username", ""))
-    #     self.username_edit.setText(s.value("paths/common_db_file", "sss"))
-    #     self.autosave_check.setChecked(s.value("general/autosave", False, type=bool))
-    #     self.language_combo.setCurrentText(s.value("general/language", "English"))
-    #
-    #     self.uiSetCommonDbPbtn.clicked.connect(self.selectCommonDb)
-    #
-    # def selectCommonDb(self):
-    #     selectFile(self,
-    #                self.username_edit,
-    #                'wähle die Zentraldatenbank',
-    #                filter='db-Dateien (*.db)')
-    #
-    # def apply(self):
-    #     s = QSettings("MyOrg", "MyApp")
-    #     s.setValue("general/username", self.username_edit.text())
-    #     s.setValue("general/autosave", self.autosave_check.isChecked())
-    #     s.setValue("general/language", self.language_combo.currentText())
+# class GeneralSettingsPage(QgsOptionsPageWidget, settings_general_wdg_UI.Ui_GeneralSettingsPage):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.setupUi(self)
+#
+#
+#         """set a group for the info-buttons"""
+#         self.uiInfoTest.group = 'QgaSettingsDlg'
+#         """"""
+#     #     # s = QSettings("NoeAbb", "AlmGIS")
+#     #     s = AlmSettingsUser()
+#     #     s.sync()
+#     #     s = Qga.Settings.User
+#     #     print(f'Qga.Settings.User - ini: {s.fileName()}')
+#     #
+#         # a = Qga.Settings.App
+#         # a.sync()
+#         # print(f'Qga.Settings.App - ini: {a.fileName()}')
+#         #
+#         # AlmSettingsApp.sync()
+#         # print(f'AlmSettingsApp - ini: {AlmSettingsApp.fileName()}')
+#     #     layout = QFormLayout(self)
+#     #     layout.setContentsMargins(20, 20, 20, 20)
+#     #     layout.setSpacing(12)
+#     #
+#     #     self.uiSetCommonDbPbtn = QPushButton(self)
+#     #     self.uiSetCommonDbPbtn.setText('aaa')
+#     #
+#     #     self.username_edit = QLineEdit()
+#     #     layout.addRow("Username:", self.username_edit)
+#     #
+#     #     layout.addRow("wähle DB:", self.uiSetCommonDbPbtn)
+#     #
+#     #     self.autosave_check = QCheckBox("Enable auto-save on project close")
+#     #     layout.addRow("Auto-save:", self.autosave_check)
+#     #
+#     #     self.language_combo = QComboBox()
+#     #     self.language_combo.addItems(["English", "German", "French", "Italian"])
+#     #     layout.addRow("Language:", self.language_combo)
+#     #
+#     #     # self.username_edit.setText(s.value("general/username", ""))
+#     #     self.username_edit.setText(s.value("paths/common_db_file", "sss"))
+#     #     self.autosave_check.setChecked(s.value("general/autosave", False, type=bool))
+#     #     self.language_combo.setCurrentText(s.value("general/language", "English"))
+#     #
+#     #     self.uiSetCommonDbPbtn.clicked.connect(self.selectCommonDb)
+#     #
+#     # def selectCommonDb(self):
+#     #     selectFile(self,
+#     #                self.username_edit,
+#     #                'wähle die Zentraldatenbank',
+#     #                filter='db-Dateien (*.db)')
+#     #
+#     # def apply(self):
+#     #     s = QSettings("MyOrg", "MyApp")
+#     #     s.setValue("general/username", self.username_edit.text())
+#     #     s.setValue("general/autosave", self.autosave_check.isChecked())
+#     #     s.setValue("general/language", self.language_combo.currentText())
 
 
 # class DisplaySettingsPage(QgsOptionsPageWidget):
@@ -97,13 +99,24 @@ class GeneralSettingsPage(QgsOptionsPageWidget, settings_general_wdg_UI.Ui_Gener
 #         s.setValue("display/darkmode", self.darkmode_check.isChecked())
 
 
-SettingsRegistry.register(SettingsPageDescriptor(
+SettingsRegistry.register(
+    SettingsPageDescriptor(
     title   = "Startdialog",
     factory = SettingsPageStartDlg,
     group   = "Allgemein",
     icon    = QIcon.fromTheme("network-workgroup"),
     tooltip = "Startdialog",
     order   = 10,
+))
+
+SettingsRegistry.register(
+    SettingsPageDescriptor(
+    title   = "Stile",
+    factory = SettingsAlmgisDlg,
+    group   = "AlmGIS",
+    icon    = QIcon.fromTheme("network-workgroup"),
+    tooltip = "Stile",
+    order   = 20,
 ))
 # SettingsRegistry.register(SettingsPageDescriptor(
 #     title   = "Datenbanken",
