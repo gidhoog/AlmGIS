@@ -39,14 +39,14 @@ class SettingsPageDescriptor:
     order:   int                      = 100
 
 
-class SettingsRegistry:
+class SettingsPageRegistry:
     """
     Central registry for settings page descriptors.
 
     Usage
     -----
     # Register a page (typically at module / app startup)
-    SettingsRegistry.register(SettingsPageDescriptor(
+    SettingsPageRegistry.register(SettingsPageDescriptor(
         title   = "Network",
         factory = NetworkSettingsPage,
         group   = "Advanced",
@@ -56,7 +56,7 @@ class SettingsRegistry:
     ))
 
     # The dialog calls this to get all registered descriptors
-    SettingsRegistry.pages()
+    SettingsPageRegistry.pages()
     """
 
     _descriptors: list[SettingsPageDescriptor] = []
@@ -90,7 +90,7 @@ class BaseSettingsDialog(QDialog):
     Base settings dialog with a QTreeWidget on the left and a
     QStackedWidget on the right.
 
-    It reads from SettingsRegistry at construction time, so any pages
+    It reads from SettingsPageRegistry at construction time, so any pages
     registered before exec() is called will appear automatically.
 
     Subclass this to add app-specific behaviour (custom stylesheet,
@@ -274,7 +274,7 @@ class BaseSettingsDialog(QDialog):
 
     def _populate_from_registry(self):
         """
-        Read SettingsRegistry and build the tree + stack.
+        Read SettingsPageRegistry and build the tree + stack.
 
         Group nodes are created on demand the first time a group name
         is encountered. Pages with group=None are added as top-level
@@ -282,7 +282,7 @@ class BaseSettingsDialog(QDialog):
         """
         group_items: dict[str, QTreeWidgetItem] = {}
 
-        for descriptor in SettingsRegistry.pages():
+        for descriptor in SettingsPageRegistry.pages():
             page = descriptor.factory()
             self._pages.append(page)
             idx = self.stack.addWidget(page)
@@ -456,7 +456,7 @@ class DisplaySettingsPage(QgsOptionsPageWidget):
 
 
 # Register base pages — present in every application
-SettingsRegistry.register(SettingsPageDescriptor(
+SettingsPageRegistry.register(SettingsPageDescriptor(
     title   = "General",
     factory = GeneralSettingsPage,
     group   = "General",
@@ -464,7 +464,7 @@ SettingsRegistry.register(SettingsPageDescriptor(
     tooltip = "General application settings",
     order   = 10,
 ))
-SettingsRegistry.register(SettingsPageDescriptor(
+SettingsPageRegistry.register(SettingsPageDescriptor(
     title   = "Display",
     factory = DisplaySettingsPage,
     group   = "General",
@@ -541,7 +541,7 @@ class DatabaseSettingsPage(QgsOptionsPageWidget):
 
 
 # Register app-specific pages
-SettingsRegistry.register(SettingsPageDescriptor(
+SettingsPageRegistry.register(SettingsPageDescriptor(
     title   = "Network",
     factory = NetworkSettingsPage,
     group   = "Advanced",
@@ -549,7 +549,7 @@ SettingsRegistry.register(SettingsPageDescriptor(
     tooltip = "Proxy and connection settings",
     order   = 10,
 ))
-SettingsRegistry.register(SettingsPageDescriptor(
+SettingsPageRegistry.register(SettingsPageDescriptor(
     title   = "Database",
     factory = DatabaseSettingsPage,
     group   = "Advanced",

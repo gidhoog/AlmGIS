@@ -2,7 +2,7 @@ from PyQt5.QtCore import QSettings
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QCheckBox, QSpinBox, QFormLayout, QComboBox, QLineEdit, QPushButton
 from qga.core.settings_dlg import QgaSettingsDlg, QgaSettingsPrjDlg
-from qga.core.settings_register import SettingsPageDescriptor, SettingsRegistry, PropertiesRegistry
+from qga.core.settings_page_register import SettingsPageDescriptor, SettingsPageRegistry, PropertiesPageRegistry
 from qga.core.settings_wdg import SettingsPageStartDlg, PropPageGeneralDlg
 from qgis._gui import QgsOptionsPageWidget
 from qga import Qga
@@ -99,7 +99,7 @@ from almgis.resources.ui_py import settings_general_wdg_UI
 #         s.setValue("display/darkmode", self.darkmode_check.isChecked())
 
 
-SettingsRegistry.register(
+SettingsPageRegistry.register(
     SettingsPageDescriptor(
     title   = "Startdialog",
     factory = SettingsPageStartDlg,
@@ -109,7 +109,7 @@ SettingsRegistry.register(
     order   = 10,
 ))
 
-SettingsRegistry.register(
+SettingsPageRegistry.register(
     SettingsPageDescriptor(
     title   = "Stile",
     factory = SettingsAlmgisDlg,
@@ -119,7 +119,7 @@ SettingsRegistry.register(
     order   = 20,
 ))
 
-PropertiesRegistry.register(
+PropertiesPageRegistry.register(
     SettingsPageDescriptor(
     title   = "Projektname",
     factory = PropPageGeneralDlg,
@@ -128,7 +128,7 @@ PropertiesRegistry.register(
     tooltip = "Projektname",
     order   = 10,
 ))
-# SettingsRegistry.register(SettingsPageDescriptor(
+# SettingsPageRegistry.register(SettingsPageDescriptor(
 #     title   = "Datenbanken",
 #     factory = DatabaseSettingsPage,
 #     group   = "Allgemein",
@@ -137,7 +137,7 @@ PropertiesRegistry.register(
 #     order   = 20,
 # ))
 #
-# SettingsRegistry.register(SettingsPageDescriptor(
+# SettingsPageRegistry.register(SettingsPageDescriptor(
 #     title   = "General",
 #     factory = GeneralSettingsPage,
 #     group   = "AlmGIS",
@@ -145,7 +145,7 @@ PropertiesRegistry.register(
 #     tooltip = "General application settings",
 #     order   = 10,
 # ))
-# SettingsRegistry.register(SettingsPageDescriptor(
+# SettingsPageRegistry.register(SettingsPageDescriptor(
 #     title   = "Display",
 #     factory = DisplaySettingsPage,
 #     group   = "AlmGIS",
@@ -162,7 +162,7 @@ class AlmSettingsDialog(QgaSettingsDlg):
         super().__init__(parent, title="AlmGIS – Einstellungen")
 
         print('2')
-        # self.setting_reg = SettingsRegistry
+        # self.setting_reg = SettingsPageRegistry
 
 
 class AlmSettingsProjectDlg(QgaSettingsPrjDlg):
@@ -172,4 +172,4 @@ class AlmSettingsProjectDlg(QgaSettingsPrjDlg):
         super().__init__(parent, title="AlmGIS – Projekteigenschaften")
 
         print('77')
-        # self.setting_reg = SettingsRegistry
+        # self.setting_reg = SettingsPageRegistry
