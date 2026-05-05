@@ -1149,14 +1149,14 @@ class DmProperty(DmBaseProject):
     __tablename__ = '_tbl_property'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    code: Mapped[str] = mapped_column(nullable=True)
+    key: Mapped[str] = mapped_column(nullable=True)
     name: Mapped[str] = mapped_column(nullable=True)
     description: Mapped[str] = mapped_column(nullable=True)
     value: Mapped[str] = mapped_column(nullable=True)
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id={self.id}, " \
-               f"code='{self.code}, name='{self.name}')>"
+               f"code='{self.key}, name='{self.name}')>"
 
 class DmSys(DmBaseProject):
     """
