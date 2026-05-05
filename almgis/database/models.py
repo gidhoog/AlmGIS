@@ -1142,11 +1142,11 @@ class DmRechtsgrundlage(DmBaseProject):
                f"name='{self.name}')>"
 
 
-class DmSettings(DmBaseProject):
+class DmProperty(DmBaseProject):
     """
     Einstellungen die vom Benutzer verändert werden können
     """
-    __tablename__ = '_tbl_settings'
+    __tablename__ = '_tbl_property'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     code: Mapped[str] = mapped_column(nullable=True)

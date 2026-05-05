@@ -2,7 +2,7 @@ from qga import Qga
 from qga.core.start_wdg import QgaStartWdg, QgaStartOptionLast, \
     QgaStartOptionOther, QgaStartOptionNew
 
-from almgis.database.models import DmSettings
+from almgis.database.models import DmProperty
 
 
 class AlmStartWdg(QgaStartWdg):
@@ -14,6 +14,6 @@ class AlmStartWdg(QgaStartWdg):
                               QgaStartOptionOther(self),
                               QgaStartOptionNew(self)]
 
-        self.settings_dmc = DmSettings
+        self.settings_dmc = DmProperty
 
         self.last_project_file = Qga.SettingsManager.get('path/last_project_file')

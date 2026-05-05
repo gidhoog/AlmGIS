@@ -13,7 +13,7 @@ from almgis.core.dialog import AlmDialog
 from almgis.core.settings_dlg import AlmSettingsDialog, AlmSettingsProjectDlg
 from almgis.scopes.gst.gst_main import GstMainWdg
 from almgis.scopes.kontakt.kontakt_main import KontaktMainWdg
-from almgis.database.models import DmSettings
+from almgis.database.models import DmProperty
 from almgis.gui.about import AlmAboutDialog
 from almgis.gui.main_window_gui import AlmMainWindowGui
 from almgis.gui.start_wdg_gui import AlmStartWdg
@@ -31,7 +31,7 @@ class AlmMainWindow(QgaMainWindow):
         self.start_dlg_cls = AlmDialog
         self.start_wdg_cls = AlmStartWdg
 
-        self.dmc_settings = DmSettings
+        self.dmc_settings = DmProperty
 
         QgaNotify.setMaximumOnScreen(4)
 

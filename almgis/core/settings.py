@@ -1,5 +1,5 @@
 from qga.core.settings import QgaSettingsManager, SettingsDef
-from almgis.database.models import DmSettings
+from almgis.database.models import DmProperty
 
 
 class AlmSettingsManager(QgaSettingsManager):
@@ -14,7 +14,7 @@ class AlmSettingsManager(QgaSettingsManager):
     APP_VERSION = '0.0.2'
     DB_PROJECT_VERSION = '0.0.1'
 
-    PROJECT_SETTINGS_DMC = DmSettings
+    PROJECT_SETTINGS_DMC = DmProperty
 
     SCHEMA = [
         #- User settings ──────────────────────────────────────────────
