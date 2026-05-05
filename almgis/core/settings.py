@@ -14,7 +14,7 @@ class AlmSettingsManager(QgaSettingsManager):
     APP_VERSION = '0.0.2'
     DB_PROJECT_VERSION = '0.0.1'
 
-    PROJECT_SETTINGS_DMC = DmProperty
+    PROJECT_PROPERTY_DMC = DmProperty
 
     SCHEMA = [
         #- User settings ──────────────────────────────────────────────
