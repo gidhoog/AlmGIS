@@ -28,11 +28,11 @@ SettingsPageRegistry.register(
 
 PropertiesPageRegistry.register(
     SettingsPageDescriptor(
-    title   = "Projektname",
+    title   = "Datenbank",
     factory = PropPageGeneralDlg,
     group   = "Allgemein",
     icon    = QIcon.fromTheme("network-workgroup"),
-    tooltip = "Projektname",
+    tooltip = "Datenbank",
     order   = 10,
 ))
 
@@ -51,7 +51,7 @@ class AlmSettingsProjectDlg(QgaSettingsPrjDlg):
 
 
     def __init__(self, parent=None):
-        super().__init__(parent, title="AlmGIS – Projekteigenschaften")
+        super().__init__(parent, title="AlmGIS – Eigenschaften")
 
         print('77')
         # self.setting_reg = SettingsPageRegistry

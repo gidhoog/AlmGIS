@@ -234,7 +234,7 @@ class AlmMainWindow(QgaMainWindow):
         alm_settings = AlmSettingsDialog(self)
         alm_settings.ui.exec_()
 
-    def openSettingsProject(self):
-
-        alm_settings = AlmSettingsProjectDlg(self)
-        alm_settings.ui.exec_()
+    # def openSettingsProject(self):
+    #
+    #     alm_settings = AlmSettingsProjectDlg(self)
+    #     alm_settings.ui.exec_()
