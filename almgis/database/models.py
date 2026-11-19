@@ -49,8 +49,8 @@ class DmAkt(DmNonSpatialObject, DmBaseProject):
     # rel_gst_zuordnung = relationship(
     #     'DmGstZuordnung',
     #     back_populates='rel_akt')
-    rel_gst_zuordnung: Mapped[List["DmGstZuordnung"]] = relationship(
-        back_populates='rel_akt')
+    # rel_gst_zuordnung: Mapped[List["DmGstZuordnung"]] = relationship(
+    #     back_populates='rel_akt')
 
     # rel_komplex_name = relationship('DmKomplexName', back_populates='rel_akt')
     rel_komplex_name: Mapped[List["DmKomplexName"]] = relationship(
@@ -319,46 +319,24 @@ class DmGst(DmBaseProject):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     kg_gst: Mapped[str]
-    # kgnr: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_kg.kgnr"))
     kgnr: Mapped[int]
     gst: Mapped[str]
 
-    """folgende Beziehungen sind 'child' Beziehungen"""
-    # rel_alm_gst_version = relationship('DmGstVersion',
-    #                                    back_populates="rel_alm_gst",
-    #                                    cascade="all, delete, delete-orphan",
-    #                                    passive_deletes=True)
-    rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
-        back_populates="rel_alm_gst",
-        cascade="all, delete, delete-orphan",
-        passive_deletes=True,
-        lazy='joined')
-
-    # rel_gst_zuordnung = relationship('DmGstZuordnung',
-    #                                  back_populates="rel_gst")
-    rel_gst_zuordnung: Mapped[List["DmGstZuordnung"]] = relationship(
-        back_populates="rel_gst")
-    """"""
-
-    # rel_kat_gem: Mapped["DmKatGem"] = relationship(
+    # """folgende Beziehungen sind 'child' Beziehungen"""
+    # rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
     #     back_populates="rel_alm_gst",
+    #     cascade="all, delete, delete-orphan",
+    #     passive_deletes=True,
     #     lazy='joined')
+    #
+    # rel_gst_zuordnung: Mapped[List["DmGstZuordnung"]] = relationship(
+    #     back_populates="rel_gst")
+    # """"""
 
-    @hybrid_property
-    def gst_latest(self):
-        return max(self.rel_alm_gst_version,
-                   key=lambda x: x.rel_alm_gst_ez.datenstand) if self.rel_alm_gst_version else None
-
-    # @gst_latest.expression
-    # def gst_latest(cls):
-    #     subq = (
-    #         select(RelatedModel)
-    #         .filter(RelatedModel.my_model_id == cls.id)
-    #         .order_by(RelatedModel.version.desc())
-    #         .limit(1)
-    #         .scalar_subquery()
-    #     )
-    #     return subq
+    # @hybrid_property
+    # def gst_latest(self):
+    #     return max(self.rel_alm_gst_version,
+    #                key=lambda x: x.rel_alm_gst_ez.datenstand) if self.rel_alm_gst_version else None
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id: {self.id}, " \
@@ -378,8 +356,8 @@ class DmGstAwbStatus(DmBaseProject):
     sort = Column(Integer)
     color_main = Column(String)
 
-    rel_gst_zuordnung = relationship('DmGstZuordnung',
-                                     back_populates='rel_awb_status')
+    # rel_gst_zuordnung = relationship('DmGstZuordnung',
+    #                                  back_populates='rel_awb_status')
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id={self.id}, name='{self.name}')>"
@@ -436,8 +414,8 @@ class DmGstEz(DmBaseProject):
 
     # rel_alm_gst_version = relationship("DmGstVersion",
     #                                    back_populates="rel_alm_gst_ez")
-    rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
-        back_populates="rel_alm_gst_ez")
+    # rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
+    #     back_populates="rel_alm_gst_ez")
 
     # rel_alm_gst_eigentuemer = relationship("DmGstEigentuemer",
     #                                        back_populates="rel_alm_gst_ez",
@@ -473,8 +451,8 @@ class DmGstNutzung(DmBaseProject):
     nu_id: Mapped[int] = mapped_column(nullable=True)
     area: Mapped[int] = mapped_column(nullable=True)
 
-    rel_alm_gst_version: Mapped["DmGstVersion"] = relationship(
-        back_populates="rel_alm_gst_nutzung")
+    # rel_alm_gst_version: Mapped["DmGstVersion"] = relationship(
+    #     back_populates="rel_alm_gst_nutzung")
 
     # rel_banu: Mapped["DmBanu"] = relationship(
     #     back_populates="rel_alm_gst_nutzung",
@@ -520,7 +498,7 @@ class DmGstVersion(DmBaseProject):
     #                                    back_populates="rel_alm_gst_version",
     #                                    cascade="all, delete-orphan")
     rel_alm_gst_nutzung: Mapped[List["DmGstNutzung"]] = relationship(
-        back_populates="rel_alm_gst_version",
+        # back_populates="rel_alm_gst_version",
         cascade="all, delete-orphan",
         lazy='joined')
 
@@ -537,13 +515,13 @@ class DmGstVersion(DmBaseProject):
     # rel_alm_gst = relationship('DmGst',
     #                            back_populates="rel_alm_gst_version")
     rel_alm_gst: Mapped["DmGst"] = relationship(
-        back_populates="rel_alm_gst_version",
+        # back_populates="rel_alm_gst_version",
         lazy='immediate')
 
     # rel_alm_gst_ez = relationship('DmGstEz',
     #                               back_populates="rel_alm_gst_version")
     rel_alm_gst_ez: Mapped["DmGstEz"] = relationship(
-        back_populates="rel_alm_gst_version",
+        # back_populates="rel_alm_gst_version",
         lazy='joined')
     """"""
 
@@ -596,24 +574,24 @@ class DmGstZuordnung(DmBaseProject):
     # rel_akt = relationship('DmAkt',
     #                        back_populates='rel_gst_zuordnung')
     rel_akt: Mapped["DmAkt"] = relationship(
-        back_populates="rel_gst_zuordnung",
+        # back_populates="rel_gst_zuordnung",
         lazy='immediate')
 
     # rel_gst = relationship('DmGst',
     #                        back_populates='rel_gst_zuordnung')
-    rel_gst: Mapped["DmGst"] = relationship(
-        back_populates="rel_gst_zuordnung")
+    rel_gst: Mapped["DmGst"] = relationship()
+        # back_populates="rel_gst_zuordnung")
 
     # rel_awb_status = relationship('DmGstAwbStatus',
     #                               back_populates='rel_gst_zuordnung')
     rel_awb_status: Mapped["DmGstAwbStatus"] = relationship(
-        back_populates="rel_gst_zuordnung",
+        # back_populates="rel_gst_zuordnung",
         lazy='joined')
 
     # rel_rechtsgrundlage = relationship('DmRechtsgrundlage',
     #                                    back_populates='rel_gst_zuordnung')
     rel_rechtsgrundlage: Mapped["DmRechtsgrundlage"] = relationship(
-        back_populates="rel_gst_zuordnung",
+        # back_populates="rel_gst_zuordnung",
         lazy='joined')
     """"""
 
@@ -1134,8 +1112,8 @@ class DmRechtsgrundlage(DmBaseProject):
     sort = Column(Integer)
     color_main = Column(String)
 
-    rel_gst_zuordnung = relationship('DmGstZuordnung',
-                                     back_populates='rel_rechtsgrundlage')
+    # rel_gst_zuordnung = relationship('DmGstZuordnung',
+    #                                  back_populates='rel_rechtsgrundlage')
 
     def __repr__(self):
         return f"<{self.__class__.__name__}(id={self.id}, " \
