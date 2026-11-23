@@ -322,13 +322,14 @@ class DmGst(DmBaseProject):
     kgnr: Mapped[int]
     gst: Mapped[str]
 
-    # """folgende Beziehungen sind 'child' Beziehungen"""
-    # rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
-    #     back_populates="rel_alm_gst",
-    #     cascade="all, delete, delete-orphan",
-    #     passive_deletes=True,
-    #     lazy='joined')
-    #
+    """folgende Beziehungen sind 'child' Beziehungen"""
+    rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
+        back_populates="rel_alm_gst",
+        cascade="all, delete, delete-orphan",
+        passive_deletes=True,
+        lazy='joined'
+    )
+
     # rel_gst_zuordnung: Mapped[List["DmGstZuordnung"]] = relationship(
     #     back_populates="rel_gst")
     # """"""
@@ -414,8 +415,9 @@ class DmGstEz(DmBaseProject):
 
     # rel_alm_gst_version = relationship("DmGstVersion",
     #                                    back_populates="rel_alm_gst_ez")
-    # rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
-    #     back_populates="rel_alm_gst_ez")
+    rel_alm_gst_version: Mapped[List["DmGstVersion"]] = relationship(
+        back_populates="rel_alm_gst_ez"
+    )
 
     # rel_alm_gst_eigentuemer = relationship("DmGstEigentuemer",
     #                                        back_populates="rel_alm_gst_ez",
@@ -451,8 +453,8 @@ class DmGstNutzung(DmBaseProject):
     nu_id: Mapped[int] = mapped_column(nullable=True)
     area: Mapped[int] = mapped_column(nullable=True)
 
-    # rel_alm_gst_version: Mapped["DmGstVersion"] = relationship(
-    #     back_populates="rel_alm_gst_nutzung")
+    rel_alm_gst_version: Mapped["DmGstVersion"] = relationship(
+        back_populates="rel_alm_gst_nutzung")
 
     # rel_banu: Mapped["DmBanu"] = relationship(
     #     back_populates="rel_alm_gst_nutzung",
@@ -477,6 +479,7 @@ class DmGstVersion(DmBaseProject):
                                                    ondelete='CASCADE'),
                                         nullable=True)
 
+    # ez_id: Mapped[int]
     ez_id: Mapped[int] = mapped_column(ForeignKey("_tbl_alm_gst_ez.id",
                                                   ondelete="SET NULL"),
                                        nullable=True)
@@ -498,7 +501,7 @@ class DmGstVersion(DmBaseProject):
     #                                    back_populates="rel_alm_gst_version",
     #                                    cascade="all, delete-orphan")
     rel_alm_gst_nutzung: Mapped[List["DmGstNutzung"]] = relationship(
-        # back_populates="rel_alm_gst_version",
+        back_populates="rel_alm_gst_version",
         cascade="all, delete-orphan",
         lazy='joined')
 
@@ -515,27 +518,26 @@ class DmGstVersion(DmBaseProject):
     # rel_alm_gst = relationship('DmGst',
     #                            back_populates="rel_alm_gst_version")
     rel_alm_gst: Mapped["DmGst"] = relationship(
-        # back_populates="rel_alm_gst_version",
-        lazy='immediate')
+        back_populates="rel_alm_gst_version")
 
-    # rel_alm_gst_ez = relationship('DmGstEz',
-    #                               back_populates="rel_alm_gst_version")
+    # # rel_alm_gst_ez = relationship('DmGstEz',
+    # #                               back_populates="rel_alm_gst_version")
     rel_alm_gst_ez: Mapped["DmGstEz"] = relationship(
-        # back_populates="rel_alm_gst_version",
+        back_populates="rel_alm_gst_version",
         lazy='joined')
     """"""
 
-    @hybrid_property
-    # @property
-    def gst_gis_area(self):
-
-        # todo: use here 'self.geometry.ST_Area()' instead; but
-        #  'mod_spatialite' must be enabled in SQLite-Db, or use PostGIS
-
-        # aa = func.ST_Area(self.geometry)
-        aa = to_shape(self.geometry).area  # float
-
-        return aa
+    # @hybrid_property
+    # # @property
+    # def gst_gis_area(self):
+    #
+    #     # todo: use here 'self.geometry.ST_Area()' instead; but
+    #     #  'mod_spatialite' must be enabled in SQLite-Db, or use PostGIS
+    #
+    #     # aa = func.ST_Area(self.geometry)
+    #     aa = to_shape(self.geometry).area  # float
+    #
+    #     return aa
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id}, " \
